@@ -1,0 +1,38 @@
+﻿<Window x:Class="Neurotoxin.Contour.Shell.Views.ShellView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:ad="clr-namespace:AvalonDock;assembly=AvalonDock"
+        xmlns:prismrgn="clr-namespace:Microsoft.Practices.Composite.Presentation.Regions;assembly=Microsoft.Practices.Composite.Presentation"
+        Title="{Binding ApplicationTitle}" Height="720" Width="950"
+        mc:Ignorable="d" d:DesignHeight="720" d:DesignWidth="950">
+    <Window.Resources>
+        <Style TargetType="{x:Type ad:DocumentPane}">
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid x:Name="LayoutRoot" Background="#cdd6ff">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <DockPanel>
+            <Grid DockPanel.Dock="Top" Margin="8,8,8,0">
+                <ContentControl Margin="0" Grid.Row="1" DockPanel.Dock="Top" x:Name="ToolbarRegion"
+                                prismrgn:RegionManager.RegionName="ToolbarRegion" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                </ContentControl>
+            </Grid>
+
+            <ContentControl x:Name="ContentContainer">
+                <ad:DockingManager x:Name="DockingManager" Background="Transparent">
+                    <ad:ResizingPanel Orientation="Horizontal" Background="Transparent">
+                        <ad:DocumentPane x:Name="Tabs" Background="Transparent" SelectionChanged="OnTabsSelectionChanged" DataContextChanged="OnTabsDataContextChanged" />
+                    </ad:ResizingPanel>
+                </ad:DockingManager>
+            </ContentControl>
+        </DockPanel>
+    </Grid>
+</Window>

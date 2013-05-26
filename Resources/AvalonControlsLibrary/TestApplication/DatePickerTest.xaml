@@ -1,0 +1,74 @@
+﻿<Window x:Class="TestApplication.DatePickerTest"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="http://schemas.AvalonControls/AvalonControlsLibrary/Controls"
+    Title="DateTimePickerTest"
+    xmlns:current="clr-namespace:TestApplication">
+    
+
+    <Window.Resources>
+
+        <!--Control template for date picker-->
+        <ControlTemplate x:Key="DatepickerTemplate" TargetType="{x:Type local:DatePicker}">
+            <Grid DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:DatePicker}}}">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <DockPanel LastChildFill="True" Grid.Row="0">
+                    <Button Content="Prev" Name="PART_MonthBack" DockPanel.Dock="Left"/>
+                    <Button Content="Next" Name="PART_MonthForward" DockPanel.Dock="Right"/>
+                    <TextBlock Text="Month: " Margin="35,0,0,0"/>
+                    <TextBlock Text="{Binding CurrentlyViewedMonth}" />
+                </DockPanel>
+                <ComboBox Grid.Row="1" Name="PART_Dates" IsReadOnly="True" Text="{Binding CurrentlySelectedDate}">
+                    <ComboBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Width="200" Height="130"/>
+                        </ItemsPanelTemplate>
+                    </ComboBox.ItemsPanel>
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border BorderBrush="Silver" BorderThickness="1" Width="25">
+                                <TextBlock Text="{Binding DayNumber}"/>
+                            </Border>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <TextBlock Text="{TemplateBinding CurrentlySelectedDate}" Grid.Row="2" />
+            </Grid>
+        </ControlTemplate>
+    </Window.Resources>
+
+    <DockPanel LastChildFill="True">
+
+        <TextBlock DockPanel.Dock="Top">
+            <current:BrowserLink NavigateUri="http://marlongrech.wordpress.com/2007/09/11/wpf-datepicker/">For more info click here</current:BrowserLink>
+        </TextBlock>
+
+        <StackPanel>
+
+			<TextBlock Text="Original DatePicker" FontWeight="Bold"/>
+            <TextBlock Text="This also shows the MinDate and MaxDate feature" />
+			<!--Date picker 1 (Original)-->
+			<local:DatePicker Margin="0,10,0,0" Width="200" Name="datePicker" />
+			<TextBlock Margin="0,10,0,0" Text="Current Selected Date"/>
+			<TextBlock Text="{Binding ElementName=datePicker, Path=CurrentlySelectedDate}"/>
+			
+			<TextBlock Text="MultiSelect DatePicker" FontWeight="Bold"/>
+			<!--Date picker 1 (multi select datepicker)-->
+			<local:DatePicker Margin="0,10,0,0" Width="200" Name="multiSelectDatePicker" DatesSelectionMode="Extended"/>
+			<TextBlock Margin="0,10,0,0" Text="Current Selected Dates"/>
+			<ListBox Width="200" Height="150" ItemsSource="{Binding ElementName=multiSelectDatePicker, Path=CurrentlySelectedDates}"/>
+	        
+			<!--Date picker 2 (with a simple control template)-->
+			<TextBlock Text="Custom Templated DatePicker" FontWeight="Bold" Margin="0,30,0,0"/>
+			<local:DatePicker Width="200" Margin="0,10,0,0" Name="datePicker2" Template="{StaticResource DatepickerTemplate}"/>
+			<TextBlock Margin="0,10,0,0" Text="Current Selected Date"/>
+			<TextBlock Text="{Binding ElementName=datePicker2, Path=CurrentlySelectedDate}"/>
+			
+		</StackPanel>
+
+    </DockPanel>
+</Window>
