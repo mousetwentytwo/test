@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>ftplib</id>
+    <version>1.0.1.2</version>
+    <title>ftplib</title>
+    <authors>Scott Meyer</authors>
+    <owners>Scott Meyer</owners>
+    <licenseUrl>http://ftplib.codeplex.com/license</licenseUrl>
+    <projectUrl>http://ftplib.codeplex.com/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>This library wraps the wininet.dll functions for FTP to create an effective way to interact with FTP servers using the C# language and the .Net framework.</description>
+    <summary>This library wraps the wininet.dll functions for FTP to create an effective way to interact with FTP servers using the C# language and the .Net framework.</summary>
+    <releaseNotes />
+    <copyright>Scott Meyer</copyright>
+    <language />
+    <tags>Ftp FtpLibrary FtpClient</tags>
+  </metadata>
+</package>

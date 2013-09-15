@@ -20,3 +20,14 @@ d:\NTX-CNT\Contour\Neurotoxin.Contour\Neurotoxin.Contour.Core\bin\Debug\Resource
 d:\NTX-CNT\Contour\Neurotoxin.Contour\Neurotoxin.Contour.Core\bin\Debug\Resources\KV_enc.bin
 C:\merc\Contour\Neurotoxin.Contour\Neurotoxin.Contour.Core\bin\Debug\Resources\KV_dec.bin
 C:\merc\Contour\Neurotoxin.Contour\Neurotoxin.Contour.Core\bin\Debug\Resources\KV_enc.bin
+c:\merc\svn\contour\Neurotoxin.Contour\Neurotoxin.Contour.Core\bin\Debug\Resources\KV_D.bin
+c:\merc\svn\contour\Neurotoxin.Contour\Neurotoxin.Contour.Core\bin\Debug\Resources\KV_dec.bin
+c:\merc\svn\contour\Neurotoxin.Contour\Neurotoxin.Contour.Core\bin\Debug\Resources\KV_enc.bin
+c:\merc\svn\contour\Neurotoxin.Contour\Neurotoxin.Contour.Core\bin\Debug\Resources\KV_R.bin
+c:\merc\svn\contour\Neurotoxin.Contour\Neurotoxin.Contour.Core\bin\Debug\Neurotoxin.Contour.Core.dll
+c:\merc\svn\contour\Neurotoxin.Contour\Neurotoxin.Contour.Core\bin\Debug\Neurotoxin.Contour.Core.pdb
+c:\merc\svn\contour\Neurotoxin.Contour\Neurotoxin.Contour.Core\bin\Debug\Castle.Core.dll
+c:\merc\svn\contour\Neurotoxin.Contour\Neurotoxin.Contour.Core\bin\Debug\Castle.Core.xml
+c:\merc\svn\contour\Neurotoxin.Contour\Neurotoxin.Contour.Core\obj\Debug\ResolveAssemblyReference.cache
+c:\merc\svn\contour\Neurotoxin.Contour\Neurotoxin.Contour.Core\obj\Debug\Neurotoxin.Contour.Core.dll
+c:\merc\svn\contour\Neurotoxin.Contour\Neurotoxin.Contour.Core\obj\Debug\Neurotoxin.Contour.Core.pdb

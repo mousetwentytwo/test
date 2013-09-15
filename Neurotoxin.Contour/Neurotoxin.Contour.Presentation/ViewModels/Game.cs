@@ -1,9 +1,11 @@
 using System.Windows.Media;
+using Neurotoxin.Contour.Presentation.Infrastructure;
 
 namespace Neurotoxin.Contour.Presentation.ViewModels
 {
-    public class Game
+    public class Game : ViewModelBase
     {
+        //UNDONE
         public string TitleId { get; set; }
         public string Title { get; set; }
         public string Achievements { get; set; }

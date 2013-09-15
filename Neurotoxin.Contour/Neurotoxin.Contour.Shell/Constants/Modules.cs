@@ -4,5 +4,6 @@
     {
         public const string ProfileEditor = "ProfileEditor";
         public const string HexViewer = "HexViewer";
+        public const string FtpBrowser = "FtpBrowser";
     }
 }

@@ -77,12 +77,16 @@ namespace Neurotoxin.Contour.Shell.Views
             tabController.ShellView = this;
             tabController.DefaultDocumentPane = Tabs;
 
-            var mli = ModuleLoadInfoCollection.ProfileEditor.Clone();
-            mli.LoadParameter = @"..\..\..\..\Resources\mergeable\aktualis\E00001D5D85ED487.orig";
+            var mli = ModuleLoadInfoCollection.FtpBrowser.Clone();
+            tabController.AddItem(mli);
+
+            // PROFILE EDITOR
+/*            var mli = ModuleLoadInfoCollection.ProfileEditor.Clone();
+            mli.LoadParameter = @"c:\merc\Contour\Resources\woodpaul\E0000546AE28F8B7.orig";
             //mli.LoadParameter = @"..\..\..\..\Resources\mergeable\aktualis\merge.1x";
             //mli.LoadParameter = @"..\..\..\..\Resources\mergeable\aktualis\take8.base";
             //mli.LoadParameter = @"..\..\..\..\Resources\mergeable\E0000027FA233BE2";
-            tabController.AddItem(mli);
+            tabController.AddItem(mli); */
 
             this.Loaded -= OnShellViewLoaded;
         }

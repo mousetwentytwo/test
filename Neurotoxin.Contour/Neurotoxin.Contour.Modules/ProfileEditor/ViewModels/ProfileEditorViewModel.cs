@@ -272,7 +272,7 @@ namespace Neurotoxin.Contour.Modules.ProfileEditor.ViewModels
 
         private void ExecuteSaveCommand(object cmdParam)
         {
-            _profile.Save(@"..\..\..\..\Resources\mergeable\aktualis\merge.1x");
+            _profile.Save(@"c:\merc\Contour\Resources\woodpaul\E0000546AE28F8B7.out");
             //_profile.Save(@"..\..\..\..\Resources\newmergeapproach\0112_0114.out");
         }
 
