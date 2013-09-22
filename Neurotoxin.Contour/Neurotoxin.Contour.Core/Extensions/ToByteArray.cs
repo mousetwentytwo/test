@@ -4,6 +4,11 @@ namespace Neurotoxin.Contour.Core.Extensions
 {
     public static class StringToByteArray
     {
+        public static byte[] ToByteArray(this string s)
+        {
+            return ToByteArray(s, s.Length);
+        }
+
         public static byte[] ToByteArray(this string s, int length) 
         {
             return ExtensionHelper.BlockCopy(s.ToCharArray(), length);

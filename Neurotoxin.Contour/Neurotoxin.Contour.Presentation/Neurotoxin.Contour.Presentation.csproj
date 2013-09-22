@@ -83,10 +83,12 @@
     <Compile Include="Events\ModuleCloseEvent.cs" />
     <Compile Include="Events\ModuleViewShownEvent.cs" />
     <Compile Include="Events\RequestWindowCloseEvent.cs" />
+    <Compile Include="Extensions\ApplicationExtensions.cs" />
     <Compile Include="Extensions\FrameworkElementExtensions.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\StfsPackageExtensions.cs" />
     <Compile Include="Infrastructure\Constants\LoadCommand.cs" />
+    <Compile Include="Infrastructure\MapDataGridSortingEventToCommand.cs" />
     <Compile Include="Infrastructure\DelegateCommand.cs" />
     <Compile Include="Infrastructure\EventInformation.cs" />
     <Compile Include="Infrastructure\IDelegateCommand.cs" />

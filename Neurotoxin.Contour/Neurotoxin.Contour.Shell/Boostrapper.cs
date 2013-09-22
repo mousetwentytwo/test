@@ -43,11 +43,6 @@ namespace Neurotoxin.Contour.Shell
             get { return logger; }
         }
 
-        //protected override void InitializeModules()
-        //{
-        //    base.InitializeModules();
-        //}
-
         private IEnumerable<IGeneralController> GetControllers()
         {
             return new IGeneralController[]

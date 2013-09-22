@@ -100,6 +100,8 @@
     <Compile Include="Io\Stfs\Data\IVolumeDescriptor.cs" />
     <Compile Include="Io\Stfs\BinMapEntry.cs" />
     <Compile Include="Io\Stfs\ProfileEmbeddedContent.cs" />
+    <Compile Include="Io\Stfs\StfsPackage.cs" />
+    <Compile Include="Io\Stfs\SvodPackage.cs" />
     <Compile Include="LogHelper.cs" />
     <Compile Include="Models\BinaryContainer.cs" />
     <Compile Include="Models\BinaryLocation.cs" />
@@ -130,7 +132,7 @@
     <Compile Include="Io\Stfs\Data\HashEntry.cs" />
     <Compile Include="Io\Stfs\HashTable.cs" />
     <Compile Include="Io\Stfs\Data\LicenseEntry.cs" />
-    <Compile Include="Io\Stfs\StfsPackage.cs" />
+    <Compile Include="Io\Stfs\Package.cs" />
     <Compile Include="Io\Stfs\Data\StfsVolumeDescriptor.cs" />
     <Compile Include="Models\OffsetTable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

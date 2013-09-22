@@ -6,12 +6,12 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.Views
 {
     public partial class FtpBrowserView : ModuleViewBase
     {
-        private new FtpBrowserViewModel ViewModel
+        public const string DateTimeUiFormat = "dd/MM/yyyy HH:mm";
+
+        public new FtpBrowserViewModel ViewModel
         {
             get { return (FtpBrowserViewModel)base.ViewModel; }
         }
-
-        public static FtpBrowserView Current { get; set; }
 
         public FtpBrowserView(FtpBrowserViewModel viewModel)
         {
@@ -26,7 +26,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.Views
 
         public override bool Close()
         {
-            FtpBrowserViewModel viewModel = (FtpBrowserViewModel)ViewModel;
+            //FtpBrowserViewModel viewModel = (FtpBrowserViewModel)ViewModel;
             //if (viewModel.KeepDirty()) return false;
             //viewModel.ResetChanges();
             return base.Close();

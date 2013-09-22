@@ -47,8 +47,9 @@ namespace Neurotoxin.Contour.Presentation.Extensions
             return treeItem;
         }
 
-        private static BitmapImage GetBitmapFromByteArray(byte[] bytes)
+        public static BitmapImage GetBitmapFromByteArray(byte[] bytes)
         {
+            if (bytes == null || bytes.Length == 0) return null;
             var bitmap = new BitmapImage();
             bitmap.BeginInit();
             bitmap.StreamSource = new MemoryStream(bytes);

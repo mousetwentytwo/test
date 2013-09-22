@@ -1,42 +1,35 @@
 ﻿using System;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Net;
-using FtpLib;
-using Neurotoxin.Contour.Core;
-using Neurotoxin.Contour.Core.Io.Stfs;
-using Neurotoxin.Contour.Core.Models;
-using Neurotoxin.Contour.Presentation.Extensions;
+using System.Windows;
 using Neurotoxin.Contour.Presentation.Infrastructure;
 using Neurotoxin.Contour.Presentation.Infrastructure.Constants;
-using Neurotoxin.Contour.Presentation.ViewModels;
+using System.Linq;
 
 namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
 {
-    /// <summary>
-    /// ViewModel for FtpBrowserView.
-    /// </summary>
+
     public class FtpBrowserViewModel : ModuleViewModelBase
     {
-        private FtpConnection _ftpClient;
-
         #region Properties
 
-        private const string LEFTCONTENT = "LeftContent";
-        private ObservableCollection<FtpItem> _leftContent;
-        public ObservableCollection<FtpItem> LeftContent
+        private const string FTP = "Ftp";
+        private FtpContentViewModel _ftp;
+        public FtpContentViewModel Ftp
         {
-            get { return _leftContent; }
-            set { _leftContent = value; NotifyPropertyChanged(LEFTCONTENT); }
+            get { return _ftp; }
+            set { _ftp = value; NotifyPropertyChanged(FTP); }
         }
 
-        private const string LEFTSELECTION = "LeftSelection";
-        private FtpItem _leftSelection;
-        public FtpItem LeftSelection
+        private const string LOCALFILESYSTEM = "LocalFileSystem";
+        private LocalPaneViewModel _localFileSystem;
+        public LocalPaneViewModel LocalFileSystem
         {
-            get { return _leftSelection; }
-            set { _leftSelection = value; NotifyPropertyChanged(LEFTCONTENT); }
+            get { return _localFileSystem; }
+            set { _localFileSystem = value; NotifyPropertyChanged(LOCALFILESYSTEM); }
+        }
+
+        private PaneViewModelBase ActivePane
+        {
+            get { return Ftp.IsActive ? (PaneViewModelBase) Ftp : (LocalFileSystem.IsActive ? LocalFileSystem : null); }
         }
 
         #endregion
@@ -56,109 +49,130 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             throw new NotImplementedException();
         }
 
-        #region Commands
-
-        public DelegateCommand<object> ChangeDirectoryCommand { get; private set; }
-
-        private void ExecuteChangeDirectoryCommand(object cmdParam)
+        public override void LoadDataAsync(LoadCommand cmd, object cmdParam)
         {
-            LoadSubscribe();
-            //WorkerThread.Run(ChangeDirectory, ChangeDirectoryCallback);
+            switch (cmd)
+            {
+                case LoadCommand.Load:
+                    Ftp = new FtpContentViewModel(this);
+                    Ftp.LoadDataAsync(cmd, cmdParam);
+                    LocalFileSystem = new LocalPaneViewModel(this);
+                    LocalFileSystem.LoadDataAsync(cmd, cmdParam);
+                    break;
+            }
         }
 
-        private bool CanExecuteChangeDirectoryCommand(object cmdParam)
+        #region EditCommand
+
+        public DelegateCommand<object> EditCommand { get; private set; }
+
+        private void ExecuteEditCommand(object cmdParam)
         {
-            //UNDONE
-            return true;
+            MessageBox.Show("Not supported yet");
         }
 
-        public override void RaiseCanExecuteChanges()
+        private bool CanExecuteEditCommand(object cmdParam)
         {
-            base.RaiseCanExecuteChanges();
-            ChangeDirectoryCommand.RaiseCanExecuteChanged();
+            return Ftp.IsActive && Ftp.Selection != null;
+        }
+
+        #endregion
+
+        #region CopyCommand
+
+        public DelegateCommand<object> CopyCommand { get; private set; }
+
+        private void ExecuteCopyCommand(object cmdParam)
+        {
+            if (ActivePane == Ftp)
+            {
+                Ftp.DownloadAll(LocalFileSystem.SelectedPath);
+                LocalFileSystem.Refresh();
+            } 
+            else
+            {
+                Ftp.UploadAll(LocalFileSystem.Content.Where(item => item.IsSelected).Select(item => item.Path));
+                Ftp.Refresh();
+            }
+        }
+
+        private bool CanExecuteCopyCommand(object cmdParam)
+        {
+            return ActivePane != null && ActivePane.Selection != null;
+        }
+
+        #endregion
+
+        #region MoveCommand
+
+        public DelegateCommand<object> MoveCommand { get; private set; }
+
+        private void ExecuteMoveCommand(object cmdParam)
+        {
+            CopyCommand.Execute(cmdParam);
+            DeleteCommand.Execute(cmdParam);
+        }
+
+        private bool CanExecuteMoveCommand(object cmdParam)
+        {
+            return ActivePane != null && ActivePane.Selection != null;
+        }
+
+        #endregion
+
+        #region NewFolderCommand
+
+        public DelegateCommand<object> NewFolderCommand { get; private set; }
+
+        private void ExecuteNewFolderCommand(object cmdParam)
+        {
+            //UNDONE: pop up a pane dependent input dialog
+            var name = "";
+            ActivePane.CreateFolder(name);
+            ActivePane.Refresh();
+        }
+
+        private bool CanExecuteNewFolderCommand(object cmdParam)
+        {
+            return ActivePane != null;
+        }
+
+        #endregion
+
+        #region DeleteCommand
+
+        public DelegateCommand<object> DeleteCommand { get; private set; }
+
+        private void ExecuteDeleteCommand(object cmdParam)
+        {
+            ActivePane.DeleteAll();
+            ActivePane.Refresh();
+        }
+
+        private bool CanExecuteDeleteCommand(object cmdParam)
+        {
+            return ActivePane != null && ActivePane.Selection != null;
         }
 
         #endregion
 
         public FtpBrowserViewModel()
         {
-            ChangeDirectoryCommand = new DelegateCommand<object>(ExecuteChangeDirectoryCommand, CanExecuteChangeDirectoryCommand);
+            EditCommand = new DelegateCommand<object>(ExecuteEditCommand, CanExecuteEditCommand);
+            CopyCommand = new DelegateCommand<object>(ExecuteCopyCommand, CanExecuteCopyCommand);
+            MoveCommand = new DelegateCommand<object>(ExecuteMoveCommand, CanExecuteMoveCommand);
+            NewFolderCommand = new DelegateCommand<object>(ExecuteNewFolderCommand, CanExecuteNewFolderCommand);
+            DeleteCommand = new DelegateCommand<object>(ExecuteDeleteCommand, CanExecuteDeleteCommand);
         }
 
-        public override void LoadDataAsync(LoadCommand cmd, object cmdParam)
+        public override void RaiseCanExecuteChanges()
         {
-            switch (cmd)
-            {
-                case LoadCommand.Load:
-                    LoadSubscribe();
-                    WorkerThread.Run(Connect, ConnectCallback);
-                    break;
-            }
+            base.RaiseCanExecuteChanges();
+            EditCommand.RaiseCanExecuteChanged();
+            CopyCommand.RaiseCanExecuteChanged();
+            MoveCommand.RaiseCanExecuteChanged();
+            NewFolderCommand.RaiseCanExecuteChanged();
+            DeleteCommand.RaiseCanExecuteChanged();
         }
-
-        private void LoadSubscribe()
-        {
-            IsInProgress = true;
-            LoadingQueueLength = 1;
-            LoadingProgress = 0;
-            LogHelper.StatusBarChange += LogHelperStatusBarChange;
-            LogHelper.StatusBarMax += LogHelperStatusBarMax;
-            LogHelper.StatusBarText += LogHelperStatusBarText;
-        }
-
-        private void LogHelperStatusBarChange(object sender, ValueChangedEventArgs e)
-        {
-            UIThread.BeginRun(() => LoadingProgress = e.NewValue);
-        }
-
-        private void LogHelperStatusBarMax(object sender, ValueChangedEventArgs e)
-        {
-            UIThread.BeginRun(() =>
-                                  {
-                                      LoadingQueueLength = e.NewValue;
-                                      LoadingProgress = 0;
-                                  });
-        }
-
-        private void LogHelperStatusBarText(object sender, TextChangedEventArgs e)
-        {
-            UIThread.BeginRun(() => LoadingInfo = e.Text);
-        }
-
-        private ObservableCollection<FtpItem> Connect()
-        {
-            var baseDir = "/Hdd1/Content/";
-            _ftpClient = new FtpConnection("192.168.1.110","xbox", "xbox");
-            _ftpClient.Open();
-            _ftpClient.Login();
-            _ftpClient.SetCurrentDirectory(baseDir);
-            var content = new ObservableCollection<FtpItem>();
-            if (!Directory.Exists("tmp")) Directory.CreateDirectory("tmp");
-            foreach(var di in _ftpClient.GetDirectories())
-            {
-                var path = string.Format("{1}{0}/FFFE07D1/00010000/{0}", di.Name, baseDir);
-                var tmpPath = string.Format("tmp/{0}", di.Name);
-                if (!_ftpClient.FileExists(path)) continue;
-                _ftpClient.GetFile(path, tmpPath, false); // throws exception!!!
-                var stfs = ModelFactory.GetModel<StfsPackage>(tmpPath);
-                content.Add(new FtpItem
-                                {
-                                    TitleId = di.Name,
-                                    Title = stfs.DisplayName
-                                });
-            }
-            return content;
-        }
-
-        private void ConnectCallback(ObservableCollection<FtpItem> content)
-        {
-            LeftContent = content;
-            IsInProgress = false;
-            LogHelper.StatusBarChange -= LogHelperStatusBarChange;
-            LogHelper.StatusBarMax -= LogHelperStatusBarMax;
-            LogHelper.StatusBarText -= LogHelperStatusBarText;
-            LoadingInfo = "Done.";
-        }
-
     }
 }
