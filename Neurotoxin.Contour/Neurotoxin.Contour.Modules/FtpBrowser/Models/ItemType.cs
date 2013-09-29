@@ -9,5 +9,6 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.Models
     {
         File,
         Directory,
+        Drive
     }
 }

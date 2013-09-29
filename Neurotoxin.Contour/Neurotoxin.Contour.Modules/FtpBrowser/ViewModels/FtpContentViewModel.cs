@@ -231,16 +231,16 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
         {
             Parent.IsInProgress = false;
             Parent.StatusBarText = "Connected.";
-            Drive = "Hdd1";
+            Drives = _ftpClient.GetList().Select(drive => new FileSystemItemViewModel(new FileSystemItem
+                                                                                          {
+                                                                                              Path = string.Format("/{0}/", drive.Name),
+                                                                                              Title = drive.Name,
+                                                                                              Type = ItemType.Drive
+                                                                                          })).ToObservableCollection();
+            Drive = Drives.First();
             Stack = new Stack<FileSystemItem>();
-            var root = new FileSystemItem
-                {
-                    Path = string.Format("/{0}/", Drive),
-                    Title = Drive,
-                    Type = ItemType.Directory
-                };
-            Stack.Push(root);
-            ChangeDirectoryCommand.Execute(root.Path);
+            Stack.Push(Drive.Model);
+            ChangeDirectoryCommand.Execute(Drive.Path);
         }
 
         private void RecognizeTitle(FileSystemItem ftpItem)

@@ -37,11 +37,19 @@
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <TextBlock Text="{Binding CurrentFolder.Path}" Background="{Binding Path=IsActive, Converter={StaticResource PaneHeaderBackgroundConverter}}" Padding="2" FontWeight="Bold"/>
+        <StackPanel Orientation="Horizontal">
+            <ComboBox ItemsSource="{Binding Drives}" SelectedItem="{Binding Drive}"/>
+        </StackPanel>
+        <TextBlock Text="{Binding CurrentFolder.Path}" 
+                   Background="{Binding Path=IsActive, Converter={StaticResource PaneHeaderBackgroundConverter}}" 
+                   Padding="2" 
+                   FontWeight="Bold"
+                   Grid.Row="1"/>
         <DataGrid x:Name="Grid"
-                Grid.Row="1" 
+                Grid.Row="2" 
                 ItemsSource="{Binding Items}" 
                 SelectedItem="{Binding CurrentRow}"
                 AutoGenerateColumns="False" 

@@ -65,16 +65,16 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             switch (cmd)
             {
                 case LoadCommand.Load:
-                    Drive = "C:";
+                    Drives = DriveInfo.GetDrives().Select(drive => new FileSystemItemViewModel(new FileSystemItem
+                                                                                                   {
+                                                                                                       Path = drive.Name,
+                                                                                                       Title = drive.Name.TrimEnd('\\'),
+                                                                                                       Type = ItemType.Drive
+                                                                                                   })).ToObservableCollection();
+                    Drive = Drives.First();
                     Stack = new Stack<FileSystemItem>();
-                    var root = new FileSystemItem
-                        {
-                            Path = string.Format("{0}\\", Drive),
-                            Title = Drive,
-                            Type = ItemType.Directory
-                        };
-                    Stack.Push(root);
-                    ChangeDirectoryCommand.Execute(root.Path);
+                    Stack.Push(Drive.Model);
+                    ChangeDirectoryCommand.Execute(Drive.Path);
                     break;
             }
         }

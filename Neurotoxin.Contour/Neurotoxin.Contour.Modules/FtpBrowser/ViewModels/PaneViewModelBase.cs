@@ -44,9 +44,17 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             }
         }
 
+        private const string DRIVES = "Drives";
+        private ObservableCollection<FileSystemItemViewModel> _drives;
+        public ObservableCollection<FileSystemItemViewModel> Drives
+        {
+            get { return _drives; }
+            set { _drives = value; NotifyPropertyChanged(DRIVES); }
+        }
+
         private const string DRIVE = "Drive";
-        private string _drive;
-        public string Drive
+        private FileSystemItemViewModel _drive;
+        public FileSystemItemViewModel Drive
         {
             get { return _drive; }
             set { _drive = value; NotifyPropertyChanged(DRIVE); }
