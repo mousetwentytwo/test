@@ -20,43 +20,36 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             var content = new List<FileSystemItem>();
             if (Stack.Count > 1)
             {
+                var parentFolder = Stack.ElementAt(1);
                 content.Add(new FileSystemItem
-                    {
-                        Title = "[..]",
-                        Type = Selection.Type,
-                        Date = Selection.Date,
-                        Path = Path.GetDirectoryName(SelectedPath),
-                        Thumbnail = ApplicationExtensions.GetContentByteArray("/Resources/up.png")
-                    });
-            }
-            foreach (var di in Directory.GetDirectories(SelectedPath))
-            {
-                var name = Path.GetFileName(di);
-                var directory = new FileSystemItem
                 {
-                    TitleId = name,
-                    Type = ItemType.Directory,
-                    Date = Directory.GetLastWriteTime(di),
-                    Path = di,
-                    Thumbnail = ApplicationExtensions.GetContentByteArray("/Resources/folder.png")
-                };
-
-                content.Add(directory);
+                    Title = "[..]",
+                    Type = parentFolder.Type,
+                    Date = parentFolder.Date,
+                    Path = parentFolder.Path,
+                    Thumbnail = ApplicationExtensions.GetContentByteArray("/Resources/up.png")
+                });
             }
-            foreach (var fi in Directory.GetFiles(SelectedPath))
-            {
-                var name = Path.GetFileName(fi);
-                var file = new FileSystemItem
-                    {
-                        Title = name,
-                        Type = ItemType.File,
-                        Date = File.GetLastWriteTime(fi),
-                        Path = fi,
-                        Size = new FileInfo(fi).Length,
-                        Thumbnail = ApplicationExtensions.GetContentByteArray("/Resources/file.png")
-                    };
-                content.Add(file);
-            }
+            var selectedPath = CurrentFolder.Path;
+            var directories = Directory.GetDirectories(selectedPath);
+            content.AddRange(directories.Select(di => new FileSystemItem
+                                                          {
+                                                              TitleId = Path.GetFileName(di),
+                                                              Type = ItemType.Directory,
+                                                              Date = Directory.GetLastWriteTime(di),
+                                                              Path = di,
+                                                              Thumbnail = ApplicationExtensions.GetContentByteArray("/Resources/folder.png")
+                                                          }));
+            var files = Directory.GetFiles(selectedPath);
+            content.AddRange(files.Select(fi => new FileSystemItem
+                                                    {
+                                                        Title = Path.GetFileName(fi),
+                                                        Type = ItemType.File,
+                                                        Date = File.GetLastWriteTime(fi),
+                                                        Path = fi,
+                                                        Size = new FileInfo(fi).Length,
+                                                        Thumbnail = ApplicationExtensions.GetContentByteArray("/Resources/file.png")
+                                                    }));
             return content;
         }
 
@@ -73,8 +66,8 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             {
                 case LoadCommand.Load:
                     Drive = "C:";
-                    Stack = new Stack<FileSystemItemViewModel>();
-                    var root = new FileSystemItemViewModel
+                    Stack = new Stack<FileSystemItem>();
+                    var root = new FileSystemItem
                         {
                             Path = string.Format("{0}\\", Drive),
                             Title = Drive,

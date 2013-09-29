@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using System.Windows.Media;
 
 namespace Neurotoxin.Contour.Presentation.Extensions
 {
@@ -15,7 +16,7 @@ namespace Neurotoxin.Contour.Presentation.Extensions
         {
             while (true)
             {
-                var p = f.Parent ?? f.TemplatedParent;
+                var p = VisualTreeHelper.GetParent(f) ?? f.Parent ?? f.TemplatedParent;
                 if (p == null)
                     return null;
                 if (p is T)

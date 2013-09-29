@@ -65,6 +65,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FtpBrowser\Constants\ToggleSelectionMode.cs" />
     <Compile Include="FtpBrowser\Converters\PaneHeaderBackgroundConverter.cs" />
     <Compile Include="FtpBrowser\Converters\SizeAlignmentConverter.cs" />
     <Compile Include="FtpBrowser\Converters\SizeConverter.cs" />

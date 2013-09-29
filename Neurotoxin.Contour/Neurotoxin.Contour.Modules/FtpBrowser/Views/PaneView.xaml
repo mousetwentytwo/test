@@ -5,6 +5,9 @@
                     xmlns:inf="clr-namespace:Neurotoxin.Contour.Presentation.Infrastructure;assembly=Neurotoxin.Contour.Presentation"
                     xmlns:converters="clr-namespace:Neurotoxin.Contour.Modules.FtpBrowser.Converters"
                     xmlns:views="clr-namespace:Neurotoxin.Contour.Modules.FtpBrowser.Views"
+                    xmlns:co="clr-namespace:Neurotoxin.Contour.Presentation.Converters;assembly=Neurotoxin.Contour.Presentation"
+                    xmlns:constants="clr-namespace:Neurotoxin.Contour.Modules.FtpBrowser.Constants"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib" 
                     MinHeight="300">
     <inf:ModuleViewBase.Resources>
         <converters:SizeConverter x:Key="SizeConverter"/>
@@ -12,14 +15,22 @@
         <converters:TitleConverter x:Key="TitleConverter"/>
         <converters:TitleIdConverter x:Key="TitleIdConverter"/>
         <converters:PaneHeaderBackgroundConverter x:Key="PaneHeaderBackgroundConverter"/>
+        <co:NotNullOrEmptyConverter x:Key="NotNullOrEmptyConverter"/>
 
-        <SolidColorBrush x:Key="ControlMediumColor" Color="#FF7381F9"/>
-        <SolidColorBrush x:Key="ControlMediumColor2" Color="#FFEEEEEE"/>
+        <inf:BindingProxy x:Key="ViewModel" Data="{Binding}"/>
+        <constants:ToggleSelectionMode x:Key="Insert">Insert</constants:ToggleSelectionMode>
+        <constants:ToggleSelectionMode x:Key="Space">Space</constants:ToggleSelectionMode>
+        <constants:ToggleSelectionMode x:Key="ShiftDown">ShiftDown</constants:ToggleSelectionMode>
+        <constants:ToggleSelectionMode x:Key="ShiftUp">ShiftUp</constants:ToggleSelectionMode>
+        <system:Boolean x:Key="True">True</system:Boolean>
     </inf:ModuleViewBase.Resources>
 
     <e:Interaction.Triggers>
         <e:EventTrigger EventName="MouseUp">
             <inf:MapMouseEventToCommand Command="{Binding SetActiveCommand}"/>
+        </e:EventTrigger>
+        <e:EventTrigger EventName="PreviewMouseDown">
+            <inf:MapMouseEventToCommand Command="{Binding MouseSelectionCommand}"/>
         </e:EventTrigger>
     </e:Interaction.Triggers>
 
@@ -28,14 +39,14 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <TextBlock Text="{Binding SelectedPath}" Background="{Binding Path=IsActive, Converter={StaticResource PaneHeaderBackgroundConverter}}" Padding="2" FontWeight="Bold"/>
+        <TextBlock Text="{Binding CurrentFolder.Path}" Background="{Binding Path=IsActive, Converter={StaticResource PaneHeaderBackgroundConverter}}" Padding="2" FontWeight="Bold"/>
         <DataGrid x:Name="Grid"
                 Grid.Row="1" 
-                ItemsSource="{Binding Content}" 
-                SelectedItem="{Binding Selection}"
+                ItemsSource="{Binding Items}" 
+                SelectedItem="{Binding CurrentRow}"
                 AutoGenerateColumns="False" 
                 Background="White"
-                SelectionMode="Extended" 
+                SelectionMode="Single" 
                 GridLinesVisibility="None"
                 CanUserAddRows="False"
                 CanUserReorderColumns="False"
@@ -44,6 +55,15 @@
                 CanUserResizeColumns="True"
                 CanUserSortColumns="True"
                 SelectionUnit="FullRow">
+            <DataGrid.Resources>
+                <Style TargetType="{x:Type TextBlock}" x:Key="CellText">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                            <Setter Property="Foreground" Value="Red"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.Resources>
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Name" SortMemberPath="Title" Width="*">
                     <DataGridTemplateColumn.CellTemplate>
@@ -51,21 +71,21 @@
                             <Grid Background="#00000000">
                                 <StackPanel Orientation="Horizontal">
                                     <Image Source="{Binding Thumbnail}" Width="16" Height="16" Margin="2,0,3,0"/>
-                                    <TextBlock FontWeight="Bold">
-                                <TextBlock.Text>
-                                    <MultiBinding Converter="{StaticResource TitleConverter}">
-                                        <Binding Path="Title"/>
-                                        <Binding Path="TitleId"/>
-                                    </MultiBinding>
-                                </TextBlock.Text>
+                                    <TextBlock FontWeight="Bold" Style="{StaticResource CellText}">
+                                        <TextBlock.Text>
+                                            <MultiBinding Converter="{StaticResource TitleConverter}">
+                                                <Binding Path="Title"/>
+                                                <Binding Path="TitleId"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
                                     </TextBlock>
-                                    <TextBlock Foreground="DarkGray">
-                                <TextBlock.Text>
-                                    <MultiBinding Converter="{StaticResource TitleIdConverter}">
-                                        <Binding Path="Title"/>
-                                        <Binding Path="TitleId"/>
-                                    </MultiBinding>
-                                </TextBlock.Text>
+                                    <TextBlock Opacity="0.4" Style="{StaticResource CellText}">
+                                        <TextBlock.Text>
+                                            <MultiBinding Converter="{StaticResource TitleIdConverter}">
+                                                <Binding Path="Title"/>
+                                                <Binding Path="TitleId"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
                                     </TextBlock>
                                 </StackPanel>
                             </Grid>
@@ -83,6 +103,11 @@
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="{Binding Path=Size, Converter={StaticResource SizeAlignmentConverter}}"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                    <Setter Property="Foreground" Value="Red"/>
+                                </DataTrigger>
+                            </Style.Triggers>
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
@@ -90,27 +115,68 @@
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="Right"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                    <Setter Property="Foreground" Value="Red"/>
+                                </DataTrigger>
+                            </Style.Triggers>
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
             </DataGrid.Columns>
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
-                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                    <Setter Property="ContextMenu">
+                        <Setter.Value>
+                            <ContextMenu>
+                                <MenuItem Header="Refresh Title"
+                                          Command="{Binding Source={StaticResource ViewModel}, Path=Data.RefreshTitleCommand}" CommandParameter="{Binding}"
+                                          IsEnabled="{Binding Source={StaticResource ViewModel}, Path=Data.RefreshTitleCommand, Converter={StaticResource NotNullOrEmptyConverter}, FallbackValue=False}"/>
+                                <MenuItem Header="Copy TitleID to Clipboard"
+                                          Command="{Binding Source={StaticResource ViewModel}, Path=Data.CopyTitleIdToClipboardCommand}" CommandParameter="{Binding}"
+                                          IsEnabled="{Binding Source={StaticResource ViewModel}, Path=Data.CopyTitleIdToClipboardCommand, Converter={StaticResource NotNullOrEmptyConverter}, FallbackValue=False}"/>
+                                <MenuItem Header="Search Google"
+                                          Command="{Binding Source={StaticResource ViewModel}, Path=Data.SearchGoogleCommand}" CommandParameter="{Binding}"
+                                          IsEnabled="{Binding Source={StaticResource ViewModel}, Path=Data.SearchGoogleCommand, Converter={StaticResource NotNullOrEmptyConverter}, FallbackValue=False}"/>
+                            </ContextMenu>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="DataGridRow">
+                                <Grid>
+                                    <DataGridCellsPresenter/>
+                                    <Rectangle StrokeThickness="1" Stroke="Black" StrokeDashArray="1 2" SnapsToDevicePixels="true" Opacity="0" x:Name="Focus"/>
+                                </Grid>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter TargetName="Focus" Property="Opacity" Value="1"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
                 </Style>
             </DataGrid.RowStyle>            
             <DataGrid.CellStyle>
                 <Style TargetType="DataGridCell">
                     <Style.Triggers>
-                        <MultiDataTrigger>
-                            <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsSelected}" Value="True"/>
-                                <Condition Binding="{Binding ElementName=LayoutRoot, Path=DataContext.IsActive}" Value="False"/>
-                            </MultiDataTrigger.Conditions>
-                            <Setter Property="Background" Value="{StaticResource ControlMediumColor2}"/>
-                            <Setter Property="Foreground" Value="#FF888888"/>
-                        </MultiDataTrigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="Foreground" Value="Black"/>
+                        </Trigger>
                     </Style.Triggers>
+                    <Setter Property="FocusVisualStyle">
+                        <Setter.Value>
+                            <Style>
+                                <Setter Property="Control.Template">
+                                    <Setter.Value>
+                                        <ControlTemplate/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </Setter.Value>
+                    </Setter>
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="DataGridCell">
@@ -141,12 +207,13 @@
                 </e:EventTrigger>
             </e:Interaction.Triggers>
             <DataGrid.InputBindings>
-                <KeyBinding Command="{Binding CalculateSizeCommand}"
-                        CommandParameter="{Binding ElementName=Grid, Path=SelectedItem}"
-                        Key="Space"/>
-                <KeyBinding Command="{Binding ChangeDirectoryCommand}"
-                        CommandParameter="{Binding ElementName=Grid, Path=SelectedItem}"
-                        Key="Enter"/>
+                <KeyBinding Command="{Binding ToggleSelectionCommand}" CommandParameter="{StaticResource Insert}" Key="Insert"/>
+                <KeyBinding Command="{Binding ToggleSelectionCommand}" CommandParameter="{StaticResource Space}" Key="Space"/>
+                <KeyBinding Command="{Binding ToggleSelectionCommand}" CommandParameter="{StaticResource ShiftDown}" Key="Down" Modifiers="Shift"/>
+                <KeyBinding Command="{Binding ToggleSelectionCommand}" CommandParameter="{StaticResource ShiftUp}" Key="Up" Modifiers="Shift"/>
+                <KeyBinding Command="{Binding CalculateSizeCommand}" CommandParameter="{StaticResource True}" Key="L" Modifiers="Ctrl"/>
+                <KeyBinding Command="{Binding ChangeDirectoryCommand}" Key="Enter"/>
+                <KeyBinding Command="{Binding SelectAllCommand}" Key="A" Modifiers="Ctrl"/>
             </DataGrid.InputBindings>
         </DataGrid>
     </Grid>

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Media;
 using Neurotoxin.Contour.Modules.FtpBrowser.Models;
+using Neurotoxin.Contour.Presentation.Extensions;
 using Neurotoxin.Contour.Presentation.Infrastructure;
 
 namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
@@ -12,69 +13,58 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
     {
         private const string UPDIRECTORY = "[..]";
 
-        private const string PATH = "Path";
-        private string _path;
+        private readonly FileSystemItem _model;
+        public FileSystemItem Model
+        {
+            get { return _model; }
+        }
+
         public string Path
         {
-            get { return _path; }
-            set { _path = value; NotifyPropertyChanged(PATH); }
+            get { return _model.Path; }
         }
 
         private const string TITLE = "Title";
-        private string _title;
         public string Title
         {
-            get { return _title; }
-            set { _title = value; NotifyPropertyChanged(TITLE); }
+            get { return _model.Title; }
+            set { _model.Title = value; NotifyPropertyChanged(TITLE); }
         }
-
-        private const string TITLEID = "TitleId";
-        private string _titleId;
 
         public string TitleId
         {
-            get { return _titleId; }
-            set { _titleId = value; NotifyPropertyChanged(TITLEID); }
+            get { return _model.TitleId; }
         }
 
-        private const string THUMBNAIL = "Thumbnail";
+        private const string THUMBNAIL = "THUMBNAIL";
         private ImageSource _thumbnail;
         public ImageSource Thumbnail
         {
-            get { return _thumbnail; }
-            set { _thumbnail = value; NotifyPropertyChanged(THUMBNAIL); }
+            get { return _thumbnail ?? (_thumbnail = StfsPackageExtensions.GetBitmapFromByteArray(_model.Thumbnail)); }
         }
 
-        private const string TYPE = "Type";
-        private ItemType _type;
         public ItemType Type
         {
-            get { return _type; }
-            set { _type = value; NotifyPropertyChanged(TYPE); }
+            get { return _model.Type; }
         }
 
         private const string SUBTYPE = "SubType";
-        private ItemSubtype _subType;
         public ItemSubtype Subtype
         {
-            get { return _subType; }
-            set { _subType = value; NotifyPropertyChanged(SUBTYPE); }
+            get { return _model.Subtype; }
+            set { _model.Subtype = value; NotifyPropertyChanged(SUBTYPE); }
         }
 
         private const string SIZE = "Size";
-        private long? _size;
         public long? Size
         {
-            get { return _size; }
-            set { _size = value; NotifyPropertyChanged(SIZE); }
+            get { return _model.Size; }
+            set { _model.Size = value; NotifyPropertyChanged(SIZE); }
         }
 
-        private const string DATE = "Date";
-        private DateTime _date;
         public DateTime Date
         {
-            get { return _date; }
-            set { _date = value; NotifyPropertyChanged(DATE); }
+            get { return _model.Date; }
         }
 
         private const string ISSELECTED = "IsSelected";
@@ -91,5 +81,17 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             set { if (value) Title = UPDIRECTORY; }
         }
 
+        public FileSystemItemViewModel(FileSystemItem model)
+        {
+            _model = model;
+        }
+
+        public void NotifyModelChanges()
+        {
+            _thumbnail = null;
+            NotifyPropertyChanged(TITLE);
+            NotifyPropertyChanged(THUMBNAIL);
+            NotifyPropertyChanged(SUBTYPE);
+        }
     }
 }

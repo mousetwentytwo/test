@@ -73,7 +73,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
 
         private bool CanExecuteEditCommand(object cmdParam)
         {
-            return Ftp.IsActive && Ftp.Selection != null;
+            return Ftp.IsActive && Ftp.CurrentRow != null;
         }
 
         #endregion
@@ -84,21 +84,22 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
 
         private void ExecuteCopyCommand(object cmdParam)
         {
+            //UNDONE: support multiselection
             if (ActivePane == Ftp)
             {
-                Ftp.DownloadAll(LocalFileSystem.SelectedPath);
+                Ftp.DownloadAll(LocalFileSystem.CurrentRow.Path);
                 LocalFileSystem.Refresh();
-            } 
+            }
             else
             {
-                Ftp.UploadAll(LocalFileSystem.Content.Where(item => item.IsSelected).Select(item => item.Path));
+                Ftp.UploadAll(LocalFileSystem.Items.Where(item => item.IsSelected).Select(item => item.Path));
                 Ftp.Refresh();
             }
         }
 
         private bool CanExecuteCopyCommand(object cmdParam)
         {
-            return ActivePane != null && ActivePane.Selection != null;
+            return ActivePane != null && ActivePane.CurrentRow != null;
         }
 
         #endregion
@@ -115,7 +116,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
 
         private bool CanExecuteMoveCommand(object cmdParam)
         {
-            return ActivePane != null && ActivePane.Selection != null;
+            return ActivePane != null && ActivePane.CurrentRow != null;
         }
 
         #endregion
@@ -151,7 +152,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
 
         private bool CanExecuteDeleteCommand(object cmdParam)
         {
-            return ActivePane != null && ActivePane.Selection != null;
+            return ActivePane != null && ActivePane.CurrentRow != null;
         }
 
         #endregion

@@ -14,6 +14,19 @@ namespace Neurotoxin.Contour.Presentation.Infrastructure
                 UIThread.Run(callback, result);
             }, null);
         }
+
+        public static void Run<T>(Func<object[], T> work, Action<AsyncResult<T>> callback, params object[] args)
+        {
+            work.BeginInvoke(args, asyncResult =>
+                                       {
+                                           var result = new AsyncResult<T>
+                                                            {
+                                                                Args = args, 
+                                                                Result = work.EndInvoke(asyncResult)
+                                                            };
+                                           UIThread.Run(callback, result);
+                                       }, null);
+        }
     }
 
     public static class UIThread

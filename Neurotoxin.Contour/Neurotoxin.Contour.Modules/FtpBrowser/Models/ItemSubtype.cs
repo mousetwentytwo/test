@@ -9,9 +9,11 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.Models
         GamesFolder,
         Game,
         GameOnDemand,
+        XboxLiveArcadeGame,
         DownloadableContent,
         DownloadableContents,
         TitleUpdate,
-        TitleUpdates
+        TitleUpdates,
+        AvatarItems
     }
 }
