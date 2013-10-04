@@ -39,30 +39,49 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal">
-            <ComboBox ItemsSource="{Binding Drives}" SelectedItem="{Binding Drive}"/>
-        </StackPanel>
+        
+        <Grid Grid.Row="0" Margin="2,2,0,5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <ComboBox Grid.Column="0" ItemsSource="{Binding Drives}" SelectedItem="{Binding Drive}" Margin="0,0,3,0">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Title}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <TextBlock Grid.Column="1" Text="{Binding DriveLabel}" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,5,0"/>
+            <TextBlock Grid.Column="2" Text="{Binding FreeSpace}" VerticalAlignment="Center"/>
+        </Grid>
+        
         <TextBlock Text="{Binding CurrentFolder.Path}" 
                    Background="{Binding Path=IsActive, Converter={StaticResource PaneHeaderBackgroundConverter}}" 
                    Padding="2" 
                    FontWeight="Bold"
                    Grid.Row="1"/>
+        
         <DataGrid x:Name="Grid"
-                Grid.Row="2" 
-                ItemsSource="{Binding Items}" 
-                SelectedItem="{Binding CurrentRow}"
-                AutoGenerateColumns="False" 
-                Background="White"
-                SelectionMode="Single" 
-                GridLinesVisibility="None"
-                CanUserAddRows="False"
-                CanUserReorderColumns="False"
-                CanUserDeleteRows="False"
-                CanUserResizeRows="False"
-                CanUserResizeColumns="True"
-                CanUserSortColumns="True"
-                SelectionUnit="FullRow">
+                  Grid.Row="2" 
+                  ItemsSource="{Binding Items}" 
+                  SelectedItem="{Binding CurrentRow}"
+                  AutoGenerateColumns="False" 
+                  Background="White"
+                  SelectionMode="Single" 
+                  GridLinesVisibility="None"
+                  CanUserAddRows="False"
+                  CanUserReorderColumns="False"
+                  CanUserDeleteRows="False"
+                  CanUserResizeRows="False"
+                  CanUserResizeColumns="True"
+                  CanUserSortColumns="True"
+                  SelectionUnit="FullRow"
+                  SelectionChanged="Grid_OnSelectionChanged">
             <DataGrid.Resources>
                 <Style TargetType="{x:Type TextBlock}" x:Key="CellText">
                     <Style.Triggers>
@@ -73,10 +92,10 @@
                 </Style>
             </DataGrid.Resources>
             <DataGrid.Columns>
-                <DataGridTemplateColumn Header="Name" SortMemberPath="Title" Width="*">
+                <DataGridTemplateColumn Header="Name" SortMemberPath="Title" Width="*" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Grid Background="#00000000">
+                            <Grid Background="Transparent">
                                 <StackPanel Orientation="Horizontal">
                                     <Image Source="{Binding Thumbnail}" Width="16" Height="16" Margin="2,0,3,0"/>
                                     <TextBlock FontWeight="Bold" Style="{StaticResource CellText}">
@@ -99,8 +118,20 @@
                             </Grid>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <Grid Background="Transparent">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Image Grid.Column="0" Source="{Binding Thumbnail}" Width="16" Height="16" Margin="2,0,3,0"/>
+                                <TextBox Grid.Column="1" Text="{Binding Title}" FontWeight="Bold"/>
+                            </Grid>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn Header="Size" SortMemberPath="Size" Width="80">
+                <DataGridTextColumn Header="Size" SortMemberPath="Size" Width="80" IsReadOnly="True">
                     <DataGridTextColumn.Binding>
                         <MultiBinding Converter="{StaticResource SizeConverter}">
                             <Binding Path="Type"/>
@@ -119,7 +150,7 @@
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding Path=Date, StringFormat={x:Static views:FtpBrowserView.DateTimeUiFormat}}" Header="Date" SortMemberPath="Date" Width="100">
+                <DataGridTextColumn Binding="{Binding Path=Date, StringFormat={x:Static views:FtpBrowserView.DateTimeUiFormat}}" Header="Date" SortMemberPath="Date" Width="100" IsReadOnly="True">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -146,6 +177,10 @@
                                 <MenuItem Header="Search Google"
                                           Command="{Binding Source={StaticResource ViewModel}, Path=Data.SearchGoogleCommand}" CommandParameter="{Binding}"
                                           IsEnabled="{Binding Source={StaticResource ViewModel}, Path=Data.SearchGoogleCommand, Converter={StaticResource NotNullOrEmptyConverter}, FallbackValue=False}"/>
+                                <Separator/>
+                                <MenuItem Header="Rename"
+                                          Command="{Binding Source={StaticResource ViewModel}, Path=Data.RenameCommand}" CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                          IsEnabled="{Binding Source={StaticResource ViewModel}, Path=Data.RenameCommand, Converter={StaticResource NotNullOrEmptyConverter}, FallbackValue=False}"/>
                             </ContextMenu>
                         </Setter.Value>
                     </Setter>
@@ -208,10 +243,16 @@
             </DataGrid.CellStyle>
             <e:Interaction.Triggers>
                 <e:EventTrigger EventName="MouseDoubleClick">
-                    <inf:MapMouseEventToCommand Command="{Binding ChangeDirectoryCommand}" CommandParameter="{Binding Path}"/>
+                    <inf:MapMouseEventToCommand Command="{Binding ChangeDirectoryCommand}"/>
+                </e:EventTrigger>
+                <e:EventTrigger EventName="PreviewKeyDown">
+                    <inf:MapKeyboardEventToCommand Command="{Binding ChangeDirectoryCommand}"/>
                 </e:EventTrigger>
                 <e:EventTrigger EventName="Sorting">
                     <inf:MapDataGridSortingEventToCommand Command="{Binding SortingCommand}"/>
+                </e:EventTrigger>
+                <e:EventTrigger EventName="CellEditEnding">
+                    <inf:MapEventToCommand Command="{Binding EndEditCommand}"/>
                 </e:EventTrigger>
             </e:Interaction.Triggers>
             <DataGrid.InputBindings>
@@ -220,9 +261,11 @@
                 <KeyBinding Command="{Binding ToggleSelectionCommand}" CommandParameter="{StaticResource ShiftDown}" Key="Down" Modifiers="Shift"/>
                 <KeyBinding Command="{Binding ToggleSelectionCommand}" CommandParameter="{StaticResource ShiftUp}" Key="Up" Modifiers="Shift"/>
                 <KeyBinding Command="{Binding CalculateSizeCommand}" CommandParameter="{StaticResource True}" Key="L" Modifiers="Ctrl"/>
-                <KeyBinding Command="{Binding ChangeDirectoryCommand}" Key="Enter"/>
                 <KeyBinding Command="{Binding SelectAllCommand}" Key="A" Modifiers="Ctrl"/>
+                <KeyBinding Command="{Binding RenameCommand}" CommandParameter="{Binding ElementName=Grid}" Key="F6" Modifiers="Shift"/>
             </DataGrid.InputBindings>
         </DataGrid>
+
+        <TextBlock Text="{Binding SizeInfo}" Padding="2" Grid.Row="3"/>
     </Grid>
 </inf:ModuleViewBase>

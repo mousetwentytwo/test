@@ -15,11 +15,11 @@ namespace Neurotoxin.Contour.Presentation.Infrastructure
             }, null);
         }
 
-        public static void Run<T>(Func<object[], T> work, Action<AsyncResult<T>> callback, params object[] args)
+        public static void Run<TResult, TArguments>(Func<TArguments, TResult> work, Action<AsyncResult<TResult, TArguments>> callback, TArguments args) where TArguments : IAsyncCallArguments
         {
             work.BeginInvoke(args, asyncResult =>
                                        {
-                                           var result = new AsyncResult<T>
+                                           var result = new AsyncResult<TResult, TArguments>
                                                             {
                                                                 Args = args, 
                                                                 Result = work.EndInvoke(asyncResult)

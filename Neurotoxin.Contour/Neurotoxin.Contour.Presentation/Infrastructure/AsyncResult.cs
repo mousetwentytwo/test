@@ -2,10 +2,10 @@ using System;
 
 namespace Neurotoxin.Contour.Presentation.Infrastructure
 {
-    public class AsyncResult<T>
+    public class AsyncResult<TResult, TArguments> where TArguments : IAsyncCallArguments
     {
-        public T Result { get; set; }
+        public TResult Result { get; set; }
         public Exception Exception { get; set; }
-        public object[] Args { get; set; }
+        public TArguments Args { get; set; }
     }
 }

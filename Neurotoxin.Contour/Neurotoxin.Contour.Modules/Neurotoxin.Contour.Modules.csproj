@@ -66,16 +66,24 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FtpBrowser\Constants\ToggleSelectionMode.cs" />
+    <Compile Include="FtpBrowser\Constants\TransferMode.cs" />
     <Compile Include="FtpBrowser\Converters\PaneHeaderBackgroundConverter.cs" />
     <Compile Include="FtpBrowser\Converters\SizeAlignmentConverter.cs" />
     <Compile Include="FtpBrowser\Converters\SizeConverter.cs" />
     <Compile Include="FtpBrowser\Converters\TitleConverter.cs" />
     <Compile Include="FtpBrowser\Converters\TitleIdConverter.cs" />
     <Compile Include="FtpBrowser\Events\ActivePaneChangedEvent.cs" />
-    <Compile Include="FtpBrowser\Helpers\FileSystemItemViewModelComparer.cs" />
     <Compile Include="FtpBrowser\Models\FileSystemItem.cs" />
     <Compile Include="FtpBrowser\Models\ItemSubtype.cs" />
     <Compile Include="FtpBrowser\Models\ItemType.cs" />
+    <Compile Include="FtpBrowser\Events\FtpOperationProgressChangedEvent.cs" />
+    <Compile Include="FtpBrowser\Events\FtpOperationFinishedEvent.cs" />
+    <Compile Include="FtpBrowser\Events\FtpOperationStartedEvent.cs" />
+    <Compile Include="FtpBrowser\ViewModels\Helpers\IFileManager.cs" />
+    <Compile Include="FtpBrowser\ViewModels\Helpers\LocalWrapper.cs" />
+    <Compile Include="FtpBrowser\ViewModels\Helpers\TitleManager.cs" />
+    <Compile Include="FtpBrowser\ViewModels\Helpers\FtpWrapper.cs" />
+    <Compile Include="FtpBrowser\ViewModels\IPaneViewModel.cs" />
     <Compile Include="FtpBrowser\ViewModels\LocalFileSystemContentViewModel.cs" />
     <Compile Include="FtpBrowser\ViewModels\PaneViewModelBase.cs" />
     <Compile Include="FtpBrowser\ViewModels\FtpContentViewModel.cs" />

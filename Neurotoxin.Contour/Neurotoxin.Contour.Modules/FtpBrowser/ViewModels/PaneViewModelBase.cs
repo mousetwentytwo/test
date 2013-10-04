@@ -8,12 +8,11 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using System.Windows.Media;
 using Neurotoxin.Contour.Modules.FtpBrowser.Constants;
 using Neurotoxin.Contour.Modules.FtpBrowser.Events;
 using Neurotoxin.Contour.Modules.FtpBrowser.Models;
+using Neurotoxin.Contour.Modules.FtpBrowser.ViewModels.Helpers;
 using Neurotoxin.Contour.Presentation.Extensions;
 using Neurotoxin.Contour.Presentation.Infrastructure;
 using Neurotoxin.Contour.Presentation.Infrastructure.Constants;
@@ -23,13 +22,16 @@ using Microsoft.Practices.ObjectBuilder2;
 
 namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
 {
-    public abstract class PaneViewModelBase : ViewModelBase
+    public abstract class PaneViewModelBase<T> : ViewModelBase, IPaneViewModel where T : IFileManager
     {
-        protected readonly BinaryFormatter BinaryFormatter;
-
-        protected ModuleViewModelBase Parent { get; set; }
+        protected bool IsInEditMode;
 
         #region Properties
+
+        internal readonly T FileManager;
+        internal readonly TitleManager<T> TitleManager;
+
+        protected ModuleViewModelBase Parent { get; private set; }
 
         private const string ISACTIVE = "IsActive";
         private bool _isActive;
@@ -57,12 +59,36 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
         public FileSystemItemViewModel Drive
         {
             get { return _drive; }
-            set { _drive = value; NotifyPropertyChanged(DRIVE); }
+            set
+            {
+                if (IsDriveAccessible(value))
+                {
+                    _drive = value;
+                    ChangeDrive();
+                }
+                NotifyPropertyChanged(DRIVE);
+            }
+        }
+
+        private const string DRIVELABEL = "DriveLabel";
+        private string _driveLabel;
+        public string DriveLabel
+        {
+            get { return _driveLabel; }
+            set { _driveLabel = value; NotifyPropertyChanged(DRIVELABEL); }
+        }
+
+        private const string FREESPACE = "FreeSpace";
+        private string _freeSpace;
+        public string FreeSpace
+        {
+            get { return _freeSpace; }
+            set { _freeSpace = value; NotifyPropertyChanged(FREESPACE); }
         }
 
         private const string STACK = "Stack";
-        private Stack<FileSystemItem> _stack;
-        public Stack<FileSystemItem> Stack
+        private Stack<FileSystemItemViewModel> _stack;
+        public Stack<FileSystemItemViewModel> Stack
         {
             get { return _stack; }
             set { _stack = value; NotifyPropertyChanged(STACK); }
@@ -71,7 +97,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
         private const string CURRENTFOLDER = "CurrentFolder";
         public FileSystemItemViewModel CurrentFolder
         {
-            get { return _stack != null && _stack.Count > 0 ? new FileSystemItemViewModel(_stack.Peek()) : null; }
+            get { return _stack != null && _stack.Count > 0 ? _stack.Peek() : null; }
         }
 
         private const string ITEMS = "Items";
@@ -79,7 +105,12 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
         public ObservableCollection<FileSystemItemViewModel> Items
         {
             get { return _items; }
-            set { _items = value; NotifyPropertyChanged(ITEMS); }
+            private set { _items = value; NotifyPropertyChanged(ITEMS); }
+        }
+
+        public IEnumerable<FileSystemItemViewModel> SelectedItems
+        {
+            get { return Items.Where(item => item.IsSelected); }
         }
 
         private const string CURRENTROW = "CurrentRow";
@@ -87,37 +118,33 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
         public FileSystemItemViewModel CurrentRow
         {
             get { return _currentRow; }
-            set
-            {
-                _currentRow = value; 
-                NotifyPropertyChanged(CURRENTROW);
-                if (value == null) return;
-                var cell = FocusManager.GetFocusedElement(Application.Current.Windows[0]) as DataGridCell;
-                if (cell != null && cell.DataContext != value)
-                {
-                    var grid = cell.FindAncestor<DataGrid>();
-                    if (grid != null)
-                    {
-                        var rowContainer = grid.ItemContainerGenerator.ContainerFromItem(value) as DataGridRow;
-                        if (rowContainer != null)
-                        {
-                            var root = VisualTreeHelper.GetChild(rowContainer, 0);
-                            var cellsPresenter = (DataGridCellsPresenter)VisualTreeHelper.GetChild(root, 0);
-                            var firstCell = cellsPresenter.ItemContainerGenerator.ContainerFromIndex(0) as DataGridCell;
-                            if (firstCell != null) firstCell.Focus();
-                        }
-                    }
-                }
-            }
+            set { _currentRow = value; NotifyPropertyChanged(CURRENTROW); }
         }
+
+        private const string SIZEINFO = "SizeInfo";
+        public string SizeInfo
+        {
+            get
+            {
+                if (Items == null) return null;
+
+                var selectedSize = Items.Where(item => item.Size != null && item.IsSelected).Sum(item => item.Size.Value);
+                var totalSize = Items.Where(item => item.Size != null).Sum(item => item.Size.Value);
+                var selectedFileCount = Items.Count(item => item.Type == ItemType.File && item.IsSelected);
+                var totalFileCount = Items.Count(item => item.Type == ItemType.File);
+                var selectedDirCount = Items.Count(item => item.Type == ItemType.Directory && item.IsSelected);
+                var totalDirCount = Items.Count(item => item.Type == ItemType.Directory && !item.IsUpDirectory);
+                const string s = "s";
+
+                return string.Format("{0:#,0} / {1:#,0} bytes in {2} / {3} file{4}, {5} / {6} dir{7}", selectedSize,
+                                     totalSize, selectedFileCount, totalFileCount, totalFileCount > 1 ? s : string.Empty,
+                                     selectedDirCount, totalDirCount, totalDirCount > 1 ? s : string.Empty);
+            }
+        }        
 
         private string _sortMemberPath;
         private ListSortDirection _listSortDirection;
-
-        public FileSystemItemViewModel[] SelectedItems
-        {
-            get { return Items.Where(item => item.IsSelected).ToArray(); }
-        }
+        private readonly Dictionary<FileSystemItemViewModel, Stack<FileSystemItemViewModel>> _stackCache = new Dictionary<FileSystemItemViewModel, Stack<FileSystemItemViewModel>>();
 
         #endregion
 
@@ -128,6 +155,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
         private void ExecuteSetActiveCommand(EventInformation<MouseEventArgs> eventInformation)
         {
             IsActive = true;
+            if (CurrentRow == null) CurrentRow = Items.FirstOrDefault();
         }
 
         #endregion
@@ -138,34 +166,76 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
 
         private void ExecuteChangeDirectoryCommand(object cmdParam)
         {
-            var eventInformation = cmdParam as EventInformation<System.Windows.Input.MouseEventArgs>;
-            if (eventInformation != null)
-            {
-                var e = eventInformation.EventArgs;
-                var dataContext = ((FrameworkElement) e.OriginalSource).DataContext;
-                if (!(dataContext is FileSystemItemViewModel) || CurrentRow.Type == ItemType.File) return;
-            }
-
             if (CurrentRow != null)
             {
                 if (CurrentRow.IsUpDirectory)
                     Stack.Pop();
                 else
-                    Stack.Push(CurrentRow.Model);
+                    Stack.Push(CurrentRow);
             }
             NotifyPropertyChanged(CURRENTFOLDER);
-            Parent.IsInProgress = true;
-            WorkerThread.Run(ChangeDirectory, ChangeDirectoryCallback);
+            WorkerThread.Run(ChangeDirectoryOuter, ChangeDirectoryCallback);
         }
 
-        protected abstract List<FileSystemItem> ChangeDirectory();
-
-        protected virtual void ChangeDirectoryCallback(List<FileSystemItem> items)
+        private bool CanExecuteChangeDirectoryCommand(object cmdParam)
         {
-            SortContent(items.Select(c => new FileSystemItemViewModel(c)));
-            if (IsActive) CurrentRow = Items.FirstOrDefault();
-            Parent.IsInProgress = false;
+            if (IsInEditMode) return false;
+
+            var item = cmdParam as FileSystemItemViewModel;
+            if (item != null)
+            {
+                return item.Type != ItemType.File;
+            }
+
+            var mouseEvent = cmdParam as EventInformation<MouseEventArgs>;
+            if (mouseEvent != null)
+            {
+                var e = mouseEvent.EventArgs;
+                var dataContext = ((FrameworkElement)e.OriginalSource).DataContext;
+                if (!(dataContext is FileSystemItemViewModel)) return false;
+            }
+
+            var keyEvent = cmdParam as EventInformation<KeyEventArgs>;
+            if (keyEvent != null)
+            {
+                var e = keyEvent.EventArgs;
+                var dataContext = ((FrameworkElement)e.OriginalSource).DataContext;
+                if (!(dataContext is FileSystemItemViewModel)) return false;
+                return e.Key == Key.Enter;
+            }
+
+            return CurrentRow == null || CurrentRow.Type != ItemType.File;
         }
+
+        //TODO: Refactor
+        private List<FileSystemItem> ChangeDirectoryOuter()
+        {
+            var content = ChangeDirectory();
+            if (Stack.Count > 1)
+            {
+                var parentFolder = Stack.ElementAt(1);
+                content.Insert(0, new FileSystemItem
+                {
+                    Title = "[..]",
+                    Type = parentFolder.Type,
+                    Date = parentFolder.Date,
+                    Path = parentFolder.Path,
+                    Thumbnail = ApplicationExtensions.GetContentByteArray("/Resources/up.png")
+                });
+            }
+            return content;
+        }
+
+        internal abstract List<FileSystemItem> ChangeDirectory(string selectedPath = null);
+
+        protected virtual void ChangeDirectoryCallback(List<FileSystemItem> result)
+        {
+            SortContent(result.Select(c => new FileSystemItemViewModel(c)));
+            SetActiveCommand.Execute(null);
+
+            NotifyPropertyChanged(SIZEINFO);
+        }
+
 
         #endregion
 
@@ -176,17 +246,19 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
 
         private void ExecuteCalculateSizeCommand(bool calculateAll)
         {
-            Parent.IsInProgress = true;
             if (calculateAll)
             {
-                _calculationQueue = new Queue<FileSystemItemViewModel>(SelectedItems);
+                _calculationQueue = new Queue<FileSystemItemViewModel>(SelectedItems.Where(item => item.Type == ItemType.Directory));
             } 
-            else
+            else if (CurrentRow.Type == ItemType.Directory)
             {
                 _calculationQueue = new Queue<FileSystemItemViewModel>();
                 _calculationQueue.Enqueue(CurrentRow);
             }
-            if (_calculationQueue.Count > 0) WorkerThread.Run(CalculateSize, CalculateSizeCallback);
+            if (_calculationQueue != null && _calculationQueue.Count > 0)
+            {
+                WorkerThread.Run(CalculateSize, CalculateSizeCallback);
+            }
         }
 
         private bool CanExecuteCalculateSizeCommand(bool cmdParam)
@@ -208,10 +280,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             {
                 WorkerThread.Run(CalculateSize, CalculateSizeCallback);
             } 
-            else
-            {
-                Parent.IsInProgress = false;
-            }
+            NotifyPropertyChanged(SIZEINFO);
         }
 
         #endregion
@@ -299,6 +368,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
                     }
                     break;
             }
+            NotifyPropertyChanged(SIZEINFO);
         }
 
         #endregion
@@ -310,6 +380,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
         private void ExecuteSelectAllCommand(EventInformation<EventArgs> cmdParam)
         {
             Items.Where(row => !row.IsUpDirectory).ForEach(row => row.IsSelected = true);
+            NotifyPropertyChanged(SIZEINFO);
         }
 
         #endregion
@@ -343,21 +414,66 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             {
                 item.IsSelected = true;
             }
+            NotifyPropertyChanged(SIZEINFO);
         }
 
         #endregion
 
-        protected PaneViewModelBase(ModuleViewModelBase parent)
+        #region EndEditCommand
+
+        public DelegateCommand<EventInformation<EventArgs>> EndEditCommand { get; private set; }
+
+        private void ExecuteEndEditCommand(EventInformation<EventArgs> eventInformation)
+        {
+            IsInEditMode = false;
+            ChangeDirectoryCommand.RaiseCanExecuteChanged();
+        }
+
+        #endregion
+
+        #region RefreshTitleCommand
+
+        public DelegateCommand<FileSystemItemViewModel> RefreshTitleCommand { get; private set; }
+
+        private void ExecuteRefreshTitleCommand(FileSystemItemViewModel cmdParam)
+        {
+            WorkerThread.Run(RefreshTitle, RefreshTitleCallback);
+        }
+
+        private bool CanExecuteRefreshTitleCommand(FileSystemItemViewModel cmdParam)
+        {
+            return true;
+        }
+
+        private FileSystemItemViewModel RefreshTitle()
+        {
+            var result = CurrentRow;
+            var model = CurrentRow.Model;
+            TitleManager.RecognizeTitle(model, CurrentFolder);
+            return result;
+        }
+
+        private void RefreshTitleCallback(FileSystemItemViewModel item)
+        {
+            item.NotifyModelChanges();
+        }
+
+        #endregion
+
+        protected PaneViewModelBase(ModuleViewModelBase parent, T fileManager)
         {
             Parent = parent;
-            BinaryFormatter = new BinaryFormatter();
+            FileManager = fileManager;
+            TitleManager = new TitleManager<T>(fileManager);
             SetActiveCommand = new DelegateCommand<EventInformation<MouseEventArgs>>(ExecuteSetActiveCommand);
-            ChangeDirectoryCommand = new DelegateCommand<object>(ExecuteChangeDirectoryCommand);
+            ChangeDirectoryCommand = new DelegateCommand<object>(ExecuteChangeDirectoryCommand, CanExecuteChangeDirectoryCommand);
             CalculateSizeCommand = new DelegateCommand<bool>(ExecuteCalculateSizeCommand, CanExecuteCalculateSizeCommand);
             SortingCommand = new DelegateCommand<EventInformation<DataGridSortingEventArgs>>(ExecuteSortingCommand);
             ToggleSelectionCommand = new DelegateCommand<ToggleSelectionMode>(ExecuteToggleSelectionCommand);
             SelectAllCommand = new DelegateCommand<EventInformation<EventArgs>>(ExecuteSelectAllCommand);
             MouseSelectionCommand = new DelegateCommand<EventInformation<MouseEventArgs>>(ExecuteMouseSelectionCommand);
+            EndEditCommand = new DelegateCommand<EventInformation<EventArgs>>(ExecuteEndEditCommand);
+            RefreshTitleCommand = new DelegateCommand<FileSystemItemViewModel>(ExecuteRefreshTitleCommand, CanExecuteRefreshTitleCommand);
             eventAggregator.GetEvent<ActivePaneChangedEvent>().Subscribe(e =>
                                                                              {
                                                                                  if (e.ActivePane == this) return;
@@ -369,13 +485,32 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
 
         public abstract void LoadDataAsync(LoadCommand cmd, object cmdParam);
 
-        public abstract void DeleteAll();
+        public abstract bool Delete(FileSystemItemViewModel item);
 
-        public abstract void CreateFolder(string name);
+        public abstract bool CreateFolder(string name);
+
+        protected abstract bool IsDriveAccessible(FileSystemItemViewModel drive);
+
+        protected virtual void ChangeDrive()
+        {
+            if (_stackCache.ContainsKey(Drive))
+            {
+                Stack = _stackCache[Drive];
+            }
+            else
+            {
+                Stack = new Stack<FileSystemItemViewModel>();
+                Stack.Push(Drive);
+                _stackCache.Add(Drive, Stack);
+            }
+            CurrentRow = null;
+            ChangeDirectoryCommand.Execute(Stack.Peek().Path);
+        }
 
         public override void RaiseCanExecuteChanges()
         {
             base.RaiseCanExecuteChanges();
+            RefreshTitleCommand.RaiseCanExecuteChanged();
             Parent.RaiseCanExecuteChanges();
         }
 
@@ -384,21 +519,22 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             ChangeDirectoryCommand.Execute(Stack.Peek().Path);
         }
 
-        protected void SaveCache(FileSystemItem fileSystemItem, string path)
+        public Queue<FileSystemItemViewModel> PopulateQueue()
         {
-            var fs = new FileStream(path, FileMode.Create);
-            BinaryFormatter.Serialize(fs, fileSystemItem);
-            fs.Flush();
-            fs.Close();
+            var queue = new Queue<FileSystemItemViewModel>();
+            PopulateQueue(queue, SelectedItems.Any() ? SelectedItems : new[] { CurrentRow });
+            return queue;
         }
 
-        protected FileSystemItem LoadCache(string path)
+        private void PopulateQueue(Queue<FileSystemItemViewModel> queue, IEnumerable<FileSystemItemViewModel> items)
         {
-            if (!File.Exists(path)) return null;
-            var fs = new FileStream(path, FileMode.Open);
-            var cachedItem = (FileSystemItem)BinaryFormatter.Deserialize(fs);
-            fs.Close();
-            return cachedItem;
+            foreach (var item in items)
+            {
+                queue.Enqueue(item);
+                if (item.Type == ItemType.Directory)
+                    PopulateQueue(queue, ChangeDirectory(item.Path).Select(c => new FileSystemItemViewModel(c)));
+            }
         }
+
     }
 }

@@ -7,9 +7,9 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.Events
 
     public class ActivePaneChangedEventArgs
     {
-        public PaneViewModelBase ActivePane { get; private set; }
+        public IPaneViewModel ActivePane { get; private set; }
 
-        public ActivePaneChangedEventArgs(PaneViewModelBase activePane)
+        public ActivePaneChangedEventArgs(IPaneViewModel activePane)
         {
             ActivePane = activePane;
         }

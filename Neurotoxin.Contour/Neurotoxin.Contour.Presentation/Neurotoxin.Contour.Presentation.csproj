@@ -84,12 +84,14 @@
     <Compile Include="Events\ModuleViewShownEvent.cs" />
     <Compile Include="Events\RequestWindowCloseEvent.cs" />
     <Compile Include="Extensions\ApplicationExtensions.cs" />
+    <Compile Include="Extensions\DataGridExtensions.cs" />
     <Compile Include="Extensions\FrameworkElementExtensions.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\StfsPackageExtensions.cs" />
     <Compile Include="Infrastructure\AsyncResult.cs" />
     <Compile Include="Infrastructure\BindingProxy.cs" />
     <Compile Include="Infrastructure\Constants\LoadCommand.cs" />
+    <Compile Include="Infrastructure\IAsyncCallArguments.cs" />
     <Compile Include="Infrastructure\MapDataGridSortingEventToCommand.cs" />
     <Compile Include="Infrastructure\DelegateCommand.cs" />
     <Compile Include="Infrastructure\EventInformation.cs" />

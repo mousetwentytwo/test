@@ -22,7 +22,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.Converters
                                        subtype != ItemSubtype.Undefined
                                            ? subtype.ToString().ToUpper()
                                            : type.ToString().ToUpper())
-                       : size.Value.ToString("0,0", CultureInfo.InvariantCulture);
+                       : size.Value.ToString("#,0", CultureInfo.InvariantCulture);
         }
 
         public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)
