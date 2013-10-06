@@ -39,6 +39,11 @@
                 <Button Grid.Column="4" Content="F8 Delete" Command="{Binding DeleteCommand}"/>
             </Grid>
         </Grid>
+        <e:Interaction.Triggers>
+            <e:EventTrigger EventName="PreviewKeyDown">
+                <inf:MapKeyboardEventToCommand Command="{Binding SwitchPaneCommand}"/>
+            </e:EventTrigger>
+        </e:Interaction.Triggers>
         <Grid.InputBindings>
             <KeyBinding Command="{Binding EditCommand}" Key="F4"/>
             <KeyBinding Command="{Binding CopyCommand}" Key="F5"/>

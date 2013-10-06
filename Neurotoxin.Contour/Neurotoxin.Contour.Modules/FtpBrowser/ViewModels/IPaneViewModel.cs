@@ -9,6 +9,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
         FileSystemItemViewModel CurrentRow { get; set; }
 
         Queue<FileSystemItemViewModel> PopulateQueue();
+        void SetActive();
         void Refresh();
         bool CreateFolder(string name);
         bool Delete(FileSystemItemViewModel item);

@@ -9,7 +9,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.Models
     public class FileSystemItem
     {
         public string Title;
-        public string TitleId;
+        public string Name;
         public byte[] Thumbnail;
         public ItemType Type;
         public ItemSubtype Subtype;
@@ -22,7 +22,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.Models
             return new FileSystemItem
                 {
                     Title = Title,
-                    TitleId = TitleId,
+                    Name = Name,
                     Thumbnail = Thumbnail,
                     Type = Type,
                     Subtype = Subtype,

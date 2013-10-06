@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Input;
 using Neurotoxin.Contour.Modules.FtpBrowser.Events;
-using Neurotoxin.Contour.Modules.FtpBrowser.ViewModels.Helpers;
 using Neurotoxin.Contour.Presentation.Infrastructure;
 using Neurotoxin.Contour.Presentation.Infrastructure.Constants;
 using System.Linq;
@@ -62,12 +62,12 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             switch (cmd)
             {
                 case LoadCommand.Load:
-                    Ftp = new FtpContentViewModel(this, new FtpWrapper());
+                    Ftp = new FtpContentViewModel(this);
                     Ftp.FileManager.FtpOperationStarted += FtpWrapperOnFtpOperationStarted;
                     Ftp.FileManager.FtpOperationFinished += FtpWrapperOnFtpOperationFinished;
                     Ftp.FileManager.FtpOperationProgressChanged += FtpWrapperOnFtpOperationProgressChanged;
                     Ftp.LoadDataAsync(cmd, cmdParam);
-                    LocalFileSystem = new LocalPaneViewModel(this, new LocalWrapper());
+                    LocalFileSystem = new LocalPaneViewModel(this);
                     LocalFileSystem.LoadDataAsync(cmd, cmdParam);
                     break;
             }
@@ -94,18 +94,35 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             UIThread.Run(() => LoadingProgress = args.Percentage);
         }
 
-        #region EditCommand
+        #region SwitchPaneCommand
 
-        public DelegateCommand<object> EditCommand { get; private set; }
+        public DelegateCommand<EventInformation<KeyEventArgs>> SwitchPaneCommand { get; private set; }
 
-        private void ExecuteEditCommand(object cmdParam)
+        private bool CanExecuteSwitchPaneCommand(EventInformation<KeyEventArgs> eventInformation)
         {
-            MessageBox.Show("Not supported yet");
+            return eventInformation.EventArgs.Key == Key.Tab;
         }
 
-        private bool CanExecuteEditCommand(object cmdParam)
+        private void ExecuteSwitchPaneCommand(EventInformation<KeyEventArgs> eventInformation)
         {
-            return Ftp.IsActive && Ftp.CurrentRow != null;
+            TargetPane.SetActive();
+            eventInformation.EventArgs.Handled = true;
+        }
+
+        #endregion
+
+        #region EditCommand
+
+        public DelegateCommand EditCommand { get; private set; }
+
+        private bool CanExecuteEditCommand()
+        {
+            return true;
+        }
+        
+        private void ExecuteEditCommand()
+        {
+            MessageBox.Show("Not supported yet");
         }
 
         #endregion
@@ -113,16 +130,15 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
         #region CopyCommand
 
         private Queue<FileSystemItemViewModel> _queue;
-//        private TransferQueue _transferQueue;
 
-        public DelegateCommand<object> CopyCommand { get; private set; }
+        public DelegateCommand CopyCommand { get; private set; }
 
-        private bool CanExecuteCopyCommand(object cmdParam)
+        private bool CanExecuteCopyCommand()
         {
             return SourcePane != null && (SourcePane.SelectedItems.Any() || SourcePane.CurrentRow != null);
         }
 
-        private void ExecuteCopyCommand(object cmdParam)
+        private void ExecuteCopyCommand()
         {
             _queue = SourcePane.PopulateQueue();
             StartCopy();
@@ -165,14 +181,14 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
 
         #region MoveCommand
 
-        public DelegateCommand<object> MoveCommand { get; private set; }
+        public DelegateCommand MoveCommand { get; private set; }
 
-        private bool CanExecuteMoveCommand(object cmdParam)
+        private bool CanExecuteMoveCommand()
         {
             return SourcePane != null && SourcePane.CurrentRow != null;
         }
 
-        private void ExecuteMoveCommand(object cmdParam)
+        private void ExecuteMoveCommand()
         {
             _queue = SourcePane.PopulateQueue();
             StartMove();
@@ -216,9 +232,14 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
 
         #region NewFolderCommand
 
-        public DelegateCommand<object> NewFolderCommand { get; private set; }
+        public DelegateCommand NewFolderCommand { get; private set; }
 
-        private void ExecuteNewFolderCommand(object cmdParam)
+        private bool CanExecuteNewFolderCommand()
+        {
+            return SourcePane != null;
+        }
+
+        private void ExecuteNewFolderCommand()
         {
             //UNDONE: pop up a pane dependent input dialog
             var name = "";
@@ -226,18 +247,18 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             SourcePane.Refresh();
         }
 
-        private bool CanExecuteNewFolderCommand(object cmdParam)
-        {
-            return SourcePane != null;
-        }
-
         #endregion
 
         #region DeleteCommand
 
-        public DelegateCommand<object> DeleteCommand { get; private set; }
+        public DelegateCommand DeleteCommand { get; private set; }
 
-        private void ExecuteDeleteCommand(object cmdParam)
+        private bool CanExecuteDeleteCommand()
+        {
+            return SourcePane != null && SourcePane.CurrentRow != null;
+        }
+
+        private void ExecuteDeleteCommand()
         {
             _queue = new Queue<FileSystemItemViewModel>(SourcePane.SelectedItems.Any() ? SourcePane.SelectedItems : new[] { SourcePane.CurrentRow });
             StartDelete();
@@ -268,20 +289,16 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             SourcePane.Refresh();
         }
 
-        private bool CanExecuteDeleteCommand(object cmdParam)
-        {
-            return SourcePane != null && SourcePane.CurrentRow != null;
-        }
-
         #endregion
 
         public FtpBrowserViewModel()
         {
-            EditCommand = new DelegateCommand<object>(ExecuteEditCommand, CanExecuteEditCommand);
-            CopyCommand = new DelegateCommand<object>(ExecuteCopyCommand, CanExecuteCopyCommand);
-            MoveCommand = new DelegateCommand<object>(ExecuteMoveCommand, CanExecuteMoveCommand);
-            NewFolderCommand = new DelegateCommand<object>(ExecuteNewFolderCommand, CanExecuteNewFolderCommand);
-            DeleteCommand = new DelegateCommand<object>(ExecuteDeleteCommand, CanExecuteDeleteCommand);
+            SwitchPaneCommand = new DelegateCommand<EventInformation<KeyEventArgs>>(ExecuteSwitchPaneCommand, CanExecuteSwitchPaneCommand);
+            EditCommand = new DelegateCommand(ExecuteEditCommand, CanExecuteEditCommand);
+            CopyCommand = new DelegateCommand(ExecuteCopyCommand, CanExecuteCopyCommand);
+            MoveCommand = new DelegateCommand(ExecuteMoveCommand, CanExecuteMoveCommand);
+            NewFolderCommand = new DelegateCommand(ExecuteNewFolderCommand, CanExecuteNewFolderCommand);
+            DeleteCommand = new DelegateCommand(ExecuteDeleteCommand, CanExecuteDeleteCommand);
         }
 
         public override void RaiseCanExecuteChanges()

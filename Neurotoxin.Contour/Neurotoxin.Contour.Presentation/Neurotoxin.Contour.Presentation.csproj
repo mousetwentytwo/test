@@ -91,6 +91,8 @@
     <Compile Include="Infrastructure\AsyncResult.cs" />
     <Compile Include="Infrastructure\BindingProxy.cs" />
     <Compile Include="Infrastructure\Constants\LoadCommand.cs" />
+    <Compile Include="Infrastructure\MapDataGridRowEditEndingEventToCommand.cs" />
+    <Compile Include="Infrastructure\MapDataGridCellEditEndingEventToCommand.cs" />
     <Compile Include="Infrastructure\IAsyncCallArguments.cs" />
     <Compile Include="Infrastructure\MapDataGridSortingEventToCommand.cs" />
     <Compile Include="Infrastructure\DelegateCommand.cs" />

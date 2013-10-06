@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\DeclaredOnlyAttribute.cs" />
+    <Compile Include="Attributes\StringValueAttribute.cs" />
     <Compile Include="Constants\AchievementLockFlags.cs" />
     <Compile Include="Constants\AssetSubcategory.cs" />
     <Compile Include="Constants\BlockStatus.cs" />
@@ -73,6 +74,7 @@
     <Compile Include="Exceptions\ModelFactoryException.cs" />
     <Compile Include="Extensions\ByteArrayExtensions.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
+    <Compile Include="Extensions\EnumHelper.cs" />
     <Compile Include="Extensions\ExtensionHelper.cs" />
     <Compile Include="Extensions\MemberInfoExtensions.cs" />
     <Compile Include="Extensions\MethodInfoExtensions.cs" />

@@ -5,8 +5,10 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels.Helpers
 {
     public interface IFileManager
     {
+        List<FileSystemItem> GetDrives(); 
         List<FileSystemItem> GetList(string path = null);
 
+        bool DriveIsReady(string drive);
         bool FileExists(string path);
         bool FolderExists(string path);
 

@@ -19,6 +19,25 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels.Helpers
     {
         private readonly BinaryFormatter _binaryFormatter;
         private readonly T _fileManager;
+        private readonly Dictionary<string, ItemSubtype> _recognitionKeywords = new Dictionary<string, ItemSubtype>
+        {
+            {"^Content$", ItemSubtype.Content},
+            {"^0000000000000000$", ItemSubtype.GamesFolder},
+            {"^00000002$", ItemSubtype.DownloadableContents},
+            {"^00004000$", ItemSubtype.NXEFiles},
+            {"^00007000$", ItemSubtype.GODFiles},
+            {"^00009000$", ItemSubtype.AvatarItems},
+            {"^00020000$", ItemSubtype.GamerPictures},
+            {"^00030000$", ItemSubtype.Themes},
+            {"^00080000$", ItemSubtype.XboxLiveArcadeGame}, //demos?!
+            {"^00090000$", ItemSubtype.Videos},
+            {"^000B0000$", ItemSubtype.TitleUpdates},
+            {"^000D0000$", ItemSubtype.XboxLiveArcadeGame},
+            {"^584E07D2$", ItemSubtype.IndiePlayer},
+            {"^FFFE[0-9A-F]{4}$", ItemSubtype.SystemData},
+            {"^[0-9A-F]{8}$", ItemSubtype.Game},
+            {"^E00001[0-9A-F]{10}$", ItemSubtype.Profile},
+        };
 
         public TitleManager(T fileManager)
         {
@@ -26,7 +45,12 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels.Helpers
             _fileManager = fileManager;
         }
 
-        public void RecognizeTitle(FileSystemItem item, FileSystemItemViewModel parentFolder)
+        public bool IsXboxFolder(FileSystemItem item)
+        {
+            return !string.IsNullOrEmpty(item.Name) && _recognitionKeywords.Keys.Any(key => new Regex(key).IsMatch(item.Name));
+        }
+
+        public void RecognizeTitle(FileSystemItem item, FileSystemItem parentFolder)
         {
             var tmpPath = GetTempFileName(item);
             var cachedItem = LoadCache(tmpPath);
@@ -36,103 +60,78 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels.Helpers
                 item.Subtype = cachedItem.Subtype;
                 item.Title = cachedItem.Title;
                 item.Thumbnail = cachedItem.Thumbnail;
+                if (item.Subtype == ItemSubtype.Game && parentFolder.Subtype == ItemSubtype.Profile) item.Subtype = ItemSubtype.GameSaves;
             }
             else
             {
-                RecognizeTitle(item, parentFolder, tmpPath);
-            }
-
-            //TODO: refactor TitleId property
-            var name = item.TitleId ?? item.Title;
-
-            switch (name)
-            {
-                case "Content":
-                    item.Title = "[Content]";
-                    item.TitleId = null;
-                    item.Subtype = ItemSubtype.Content;
-                    break;
-                case "0000000000000000":
-                    item.Title = "[Games]";
-                    item.TitleId = null;
-                    item.Subtype = ItemSubtype.GamesFolder;
-                    break;
-                case "00000002":
-                    item.Title = "[Downloadable Contents]";
-                    item.Subtype = ItemSubtype.DownloadableContents;
-                    break;
-                case "00007000":
-                    item.Title = "[GOD Contents]";
-                    item.Subtype = ItemSubtype.GameOnDemand;
-                    break;
-                case "00009000":
-                    item.Title = "[Avatar Items]";
-                    item.Subtype = ItemSubtype.AvatarItems;
-                    break;
-                case "000D0000":
-                    item.Title = "[XBLA Contents]";
-                    item.Subtype = ItemSubtype.XboxLiveArcadeGame;
-                    break;
-                case "000B0000":
-                    item.Title = "[Title Updates]";
-                    item.Subtype = ItemSubtype.TitleUpdates;
-                    break;
-                case "584E07D2":
-                    item.Title = "XNA Indie Player";
-                    break;
-                default:
-                    if (name.StartsWith("FFFE"))
+                var subtypeKey = _recognitionKeywords.Keys.FirstOrDefault(key => new Regex(key).IsMatch(item.Name));
+                if (subtypeKey != null)
+                {
+                    item.Subtype = _recognitionKeywords[subtypeKey];
+                    switch (item.Subtype)
                     {
-                        item.Title = "[System Data]";
-                        item.Subtype = ItemSubtype.Undefined;
-                        item.Thumbnail = ApplicationExtensions.GetContentByteArray("/Resources/folder.png");
+                        case ItemSubtype.SystemData:
+                            switch (item.Name)
+                            {
+                                case "FFFE07C3":
+                                    item.Title = "Gamer Pictures";
+                                    break;
+                                case "FFFE07D1":
+                                    item.Title = "Profile Data";
+                                    break;
+                                case "FFFE07DF":
+                                    item.Title = "Avatar Editor";
+                                    break;
+                                default:
+                                    item.Title = EnumHelper.GetStringValue(item.Subtype);
+                                    break;
+                            }
+                            break;
+                        default:
+                            item.Title = EnumHelper.GetStringValue(item.Subtype);
+                            break;
                     }
-                    break;
+                }
+                RecognizeTitle(item, parentFolder, tmpPath);
             }
         }
 
-        private void RecognizeTitle(FileSystemItem item, FileSystemItemViewModel parentFolder, string tmpPath)
+        private void RecognizeTitle(FileSystemItem item, FileSystemItem parentFolder, string tmpPath)
         {
-            switch (parentFolder.Subtype)
+            switch (item.Subtype)
             {
-                case ItemSubtype.Content:
-                    var profilePath = string.Format("{1}{0}/FFFE07D1/00010000/{0}", item.TitleId, parentFolder.Path);
-                    if (GetProfileData(item, profilePath)) SaveCache(item, tmpPath);
-                    break;
-                case ItemSubtype.GamesFolder:
-                    item.Subtype = ItemSubtype.Game;
-                    if (GetGameData(item) || GetGameDataFromJqe360(item)) SaveCache(item, tmpPath);
-                    break;
                 case ItemSubtype.Profile:
-                    item.Subtype = ItemSubtype.GameSaves;
+                    var profilePath = item.Type == ItemType.Directory
+                                          ? string.Format("{1}/FFFE07D1/00010000/{0}", item.Name, item.Path)
+                                          : item.Path;
+                    if (GetProfileData(item, profilePath)) SaveCache(item, tmpPath);
+                    return;
+                case ItemSubtype.Game:
                     if (GetGameData(item) || GetGameDataFromJqe360(item)) SaveCache(item, tmpPath);
-                    break;
-                case ItemSubtype.TitleUpdates:
-                    item.Subtype = ItemSubtype.TitleUpdate;
-                    break;
-                case ItemSubtype.DownloadableContents:
-                    item.Subtype = ItemSubtype.DownloadableContent;
-                    break;
-            }
+                    if (parentFolder.Subtype == ItemSubtype.Profile) item.Subtype = ItemSubtype.GameSaves;
+                    return;
+                default:
+                    if (item.Type != ItemType.File) return;
 
-            if (item.Type == ItemType.File)
-            {
-                switch (item.Subtype)
-                {
-                    case ItemSubtype.Profile:
-                        GetProfileData(item, item.Path);
-                        break;
-                    default:
-                        var header = _fileManager.ReadFileHeader(item.Path);
-                        var svod = ModelFactory.GetModel<SvodPackage>(header);
-                        if (svod.IsValid)
-                        {
-                            item.Title = svod.DisplayName;
-                            item.Thumbnail = svod.ThumbnailImage;
-                            SaveCache(item, tmpPath);
-                        }
-                        break;
-                }
+                    switch (parentFolder.Subtype)
+                    {
+                        case ItemSubtype.TitleUpdates:
+                            item.Subtype = ItemSubtype.TitleUpdate;
+                            break;
+                        case ItemSubtype.DownloadableContents:
+                            item.Subtype = ItemSubtype.DownloadableContent;
+                            break;
+                    }
+
+                    var header = _fileManager.ReadFileHeader(item.Path);
+                    var svod = ModelFactory.GetModel<SvodPackage>(header);
+                    if (svod.IsValid)
+                    {
+                        item.Title = svod.DisplayName;
+                        item.Thumbnail = svod.ThumbnailImage;
+                        SaveCache(item, tmpPath);
+                    }
+                    break;
             }
         }
 
@@ -141,7 +140,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels.Helpers
             switch (item.Type)
             {
                 case ItemType.Directory:
-                    return string.Format("tmp/{0}", item.TitleId);
+                    return string.Format("tmp/{0}", item.Name);
                 case ItemType.File:
                     var md5 = MD5.Create();
                     var hash = md5.ComputeHash(Encoding.ASCII.GetBytes(item.Path));
@@ -169,12 +168,12 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels.Helpers
         {
             var infoFileFound = false;
 
-            var systemdir = item.TitleId.StartsWith("5841") ? "000D0000" : "00007000";
+            var systemdir = item.Name.StartsWith("5841") ? "000D0000" : "00007000";
 
             //TODO
             var Drive = "Hdd1";
 
-            var gamePath = string.Format("/{1}/Content/0000000000000000/{0}/{2}/", item.TitleId, Drive, systemdir);
+            var gamePath = string.Format("/{1}/Content/0000000000000000/{0}/{2}/", item.Name, Drive, systemdir);
             if (_fileManager.FolderExists(gamePath))
             {
                 var file = _fileManager.GetList(gamePath).FirstOrDefault(i => i.Type == ItemType.File);
@@ -197,7 +196,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels.Helpers
 
         private static bool GetGameDataFromJqe360(FileSystemItem item)
         {
-            var request = WebRequest.Create(string.Format("http://covers.jqe360.com/main.php?search={0}", item.TitleId));
+            var request = WebRequest.Create(string.Format("http://covers.jqe360.com/main.php?search={0}", item.Name));
             string title = null;
             var result = false;
             try
@@ -208,7 +207,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels.Helpers
                 {
                     var responseReader = new StreamReader(stream);
                     var htmlText = responseReader.ReadToEnd();
-                    var regex = new Regex(string.Format("Title: .*?>(.*?)<.*?TitleID: {0}", item.TitleId), RegexOptions.IgnoreCase);
+                    var regex = new Regex(string.Format("Title: .*?>(.*?)<.*?TitleID: {0}", item.Name), RegexOptions.IgnoreCase);
                     title = regex.Match(htmlText).Groups[1].Value;
                     result = true;
                 }
@@ -220,17 +219,28 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels.Helpers
             return result;
         }
 
-        private void SaveCache(FileSystemItem fileSystemItem, string path)
+        public void SaveCache(FileSystemItem item, string path = null)
         {
+            if (path == null) path = GetTempFileName(item);
             var fs = new FileStream(path, FileMode.Create);
-            _binaryFormatter.Serialize(fs, fileSystemItem);
+            _binaryFormatter.Serialize(fs, item);
             fs.Flush();
             fs.Close();
         }
 
+        public bool HasCache(FileSystemItem item)
+        {
+            return item.Type != ItemType.Drive && HasCache(GetTempFileName(item));
+        }
+
+        private bool HasCache(string path)
+        {
+            return File.Exists(path);
+        }
+
         private FileSystemItem LoadCache(string path)
         {
-            if (!File.Exists(path)) return null;
+            if (!HasCache(path)) return null;
             var fs = new FileStream(path, FileMode.Open);
             var cachedItem = (FileSystemItem)_binaryFormatter.Deserialize(fs);
             fs.Close();

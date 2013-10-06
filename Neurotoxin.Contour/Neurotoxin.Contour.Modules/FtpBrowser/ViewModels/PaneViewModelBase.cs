@@ -6,9 +6,11 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using Neurotoxin.Contour.Modules.FtpBrowser.Constants;
 using Neurotoxin.Contour.Modules.FtpBrowser.Events;
 using Neurotoxin.Contour.Modules.FtpBrowser.Models;
@@ -113,12 +115,14 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             get { return Items.Where(item => item.IsSelected); }
         }
 
+        private FileSystemItemViewModel _previouslyFocusedRow;
+
         private const string CURRENTROW = "CurrentRow";
         private FileSystemItemViewModel _currentRow;
         public FileSystemItemViewModel CurrentRow
         {
             get { return _currentRow; }
-            set { _currentRow = value; NotifyPropertyChanged(CURRENTROW); }
+            set { _currentRow = value; NotifyPropertyChanged(CURRENTROW); RaiseCanExecuteChanges(); }
         }
 
         private const string SIZEINFO = "SizeInfo";
@@ -154,8 +158,13 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
 
         private void ExecuteSetActiveCommand(EventInformation<MouseEventArgs> eventInformation)
         {
+            SetActive();
+        }
+
+        public void SetActive()
+        {
             IsActive = true;
-            if (CurrentRow == null) CurrentRow = Items.FirstOrDefault();
+            CurrentRow = CurrentRow ?? _previouslyFocusedRow ?? Items.FirstOrDefault();
         }
 
         #endregion
@@ -163,19 +172,6 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
         #region ChangeDirectoryCommand
 
         public DelegateCommand<object> ChangeDirectoryCommand { get; private set; }
-
-        private void ExecuteChangeDirectoryCommand(object cmdParam)
-        {
-            if (CurrentRow != null)
-            {
-                if (CurrentRow.IsUpDirectory)
-                    Stack.Pop();
-                else
-                    Stack.Push(CurrentRow);
-            }
-            NotifyPropertyChanged(CURRENTFOLDER);
-            WorkerThread.Run(ChangeDirectoryOuter, ChangeDirectoryCallback);
-        }
 
         private bool CanExecuteChangeDirectoryCommand(object cmdParam)
         {
@@ -207,6 +203,22 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             return CurrentRow == null || CurrentRow.Type != ItemType.File;
         }
 
+        private void ExecuteChangeDirectoryCommand(object cmdParam)
+        {
+            var keyEvent = cmdParam as EventInformation<KeyEventArgs>;
+            if (keyEvent != null) keyEvent.EventArgs.Handled = true;
+
+            if (CurrentRow != null)
+            {
+                if (CurrentRow.IsUpDirectory)
+                    Stack.Pop();
+                else
+                    Stack.Push(CurrentRow);
+            }
+            NotifyPropertyChanged(CURRENTFOLDER);
+            WorkerThread.Run(ChangeDirectoryOuter, ChangeDirectoryCallback);
+        }
+
         //TODO: Refactor
         private List<FileSystemItem> ChangeDirectoryOuter()
         {
@@ -226,7 +238,37 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             return content;
         }
 
-        internal abstract List<FileSystemItem> ChangeDirectory(string selectedPath = null);
+        private List<FileSystemItem> ChangeDirectory(string selectedPath = null)
+        {
+            var recognize = false;
+            if (selectedPath == null)
+            {
+                recognize = true;
+                selectedPath = CurrentFolder.Path;
+            }
+
+            var content = FileManager.GetList(selectedPath);
+
+            foreach (var item in content)
+            {
+                switch (item.Type)
+                {
+                    case ItemType.Directory:
+                        item.Thumbnail = ApplicationExtensions.GetContentByteArray("/Resources/folder.png");
+                        break;
+                    case ItemType.File:
+                        item.Thumbnail = ApplicationExtensions.GetContentByteArray("/Resources/file.png");
+                        break;
+                    default:
+                        throw new NotSupportedException();
+                }
+                if (recognize && (CurrentFolder.Subtype != ItemSubtype.Undefined || TitleManager.IsXboxFolder(item)))
+                {
+                    TitleManager.RecognizeTitle(item, CurrentFolder.Model);
+                }
+            }
+            return content;
+        }
 
         protected virtual void ChangeDirectoryCallback(List<FileSystemItem> result)
         {
@@ -261,9 +303,9 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             }
         }
 
-        private bool CanExecuteCalculateSizeCommand(bool cmdParam)
+        private bool CanExecuteCalculateSizeCommand(bool calculateAll)
         {
-            return CurrentRow != null;
+            return true;
         }
 
         private long CalculateSize()
@@ -271,9 +313,14 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             return CalculateSize(_calculationQueue.Peek().Path);
         }
 
-        protected abstract long CalculateSize(string path);
+        private long CalculateSize(string path)
+        {
+            var list = FileManager.GetList(path);
+            return list.Where(item => item.Type == ItemType.File).Sum(fi => fi.Size.HasValue ? fi.Size.Value : 0)
+                 + list.Where(item => item.Type == ItemType.Directory).Sum(di => CalculateSize(string.Format("{0}{1}/", path, di.Name)));
+        }
 
-        protected virtual void CalculateSizeCallback(long size)
+        private void CalculateSizeCallback(long size)
         {
             _calculationQueue.Dequeue().Size = size;
             if (_calculationQueue.Count > 0)
@@ -323,8 +370,8 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
 
             if (_sortMemberPath == "Title")
                 collection = _listSortDirection == ListSortDirection.Ascending
-                                 ? collection.ThenBy(p => p.TitleId)
-                                 : collection.ThenByDescending(p => p.TitleId);
+                                 ? collection.ThenBy(p => p.Name)
+                                 : collection.ThenByDescending(p => p.Name);
 
             collection = collection.ThenByDescending(p => p.Type);
             var list = collection.ToList();
@@ -419,43 +466,93 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
 
         #endregion
 
-        #region EndEditCommand
-
-        public DelegateCommand<EventInformation<EventArgs>> EndEditCommand { get; private set; }
-
-        private void ExecuteEndEditCommand(EventInformation<EventArgs> eventInformation)
-        {
-            IsInEditMode = false;
-            ChangeDirectoryCommand.RaiseCanExecuteChanged();
-        }
-
-        #endregion
-
         #region RefreshTitleCommand
 
-        public DelegateCommand<FileSystemItemViewModel> RefreshTitleCommand { get; private set; }
+        public DelegateCommand RefreshTitleCommand { get; private set; }
 
-        private void ExecuteRefreshTitleCommand(FileSystemItemViewModel cmdParam)
+        private void ExecuteRefreshTitleCommand()
         {
             WorkerThread.Run(RefreshTitle, RefreshTitleCallback);
         }
 
-        private bool CanExecuteRefreshTitleCommand(FileSystemItemViewModel cmdParam)
+        private bool CanExecuteRefreshTitleCommand()
         {
-            return true;
+            return CurrentRow != null && TitleManager.HasCache(CurrentRow.Model);
         }
 
         private FileSystemItemViewModel RefreshTitle()
         {
             var result = CurrentRow;
             var model = CurrentRow.Model;
-            TitleManager.RecognizeTitle(model, CurrentFolder);
+            TitleManager.RecognizeTitle(model, CurrentFolder.Model);
             return result;
         }
 
-        private void RefreshTitleCallback(FileSystemItemViewModel item)
+        private static void RefreshTitleCallback(FileSystemItemViewModel item)
         {
             item.NotifyModelChanges();
+        }
+
+        #endregion
+
+        #region CopyTitleIdToClipboardCommand
+
+        public DelegateCommand CopyTitleIdToClipboardCommand { get; private set; }
+
+        private void ExecuteCopyTitleIdToClipboardCommand()
+        {
+            Clipboard.SetData(DataFormats.Text, CurrentRow.Name);
+        }
+
+        private bool CanExecuteCopyTitleIdToClipboardCommand()
+        {
+            return CurrentRow != null && TitleManager.IsXboxFolder(CurrentRow.Model);
+        }
+
+        #endregion
+
+        #region SearchGoogleCommand
+
+        public DelegateCommand SearchGoogleCommand { get; private set; }
+
+        private void ExecuteSearchGoogleCommand()
+        {
+            System.Diagnostics.Process.Start(string.Format("http://www.google.com/#q={0}", CurrentRow.Name));
+        }
+
+        private bool CanExecuteSearchGoogleCommand()
+        {
+            return CurrentRow != null && TitleManager.IsXboxFolder(CurrentRow.Model);
+        }
+
+        #endregion
+
+        #region BeginRenameCommand
+
+        public DelegateCommand<object> RenameCommand { get; private set; }
+
+        private bool CanExecuteRenameCommand(object cmdParam)
+        {
+            return CurrentRow != null && TitleManager.HasCache(CurrentRow.Model);
+        }
+
+        private void ExecuteRenameCommand(object cmdParam)
+        {
+            var grid = cmdParam as DataGrid;
+            var row = grid != null ? grid.FindRowByValue(CurrentRow) : cmdParam as DataGridRow;
+            if (row == null) return;
+            row.FirstCell().IsEditing = true;
+            IsInEditMode = true;
+            ChangeDirectoryCommand.RaiseCanExecuteChanged();
+            CurrentRow.PropertyChanged += EndRename;
+        }
+
+        private void EndRename(object sender, PropertyChangedEventArgs e)
+        {
+            IsInEditMode = false;
+            ChangeDirectoryCommand.RaiseCanExecuteChanged();
+            TitleManager.SaveCache(CurrentRow.Model);
+            CurrentRow.PropertyChanged -= EndRename;
         }
 
         #endregion
@@ -465,6 +562,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             Parent = parent;
             FileManager = fileManager;
             TitleManager = new TitleManager<T>(fileManager);
+
             SetActiveCommand = new DelegateCommand<EventInformation<MouseEventArgs>>(ExecuteSetActiveCommand);
             ChangeDirectoryCommand = new DelegateCommand<object>(ExecuteChangeDirectoryCommand, CanExecuteChangeDirectoryCommand);
             CalculateSizeCommand = new DelegateCommand<bool>(ExecuteCalculateSizeCommand, CanExecuteCalculateSizeCommand);
@@ -472,12 +570,16 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             ToggleSelectionCommand = new DelegateCommand<ToggleSelectionMode>(ExecuteToggleSelectionCommand);
             SelectAllCommand = new DelegateCommand<EventInformation<EventArgs>>(ExecuteSelectAllCommand);
             MouseSelectionCommand = new DelegateCommand<EventInformation<MouseEventArgs>>(ExecuteMouseSelectionCommand);
-            EndEditCommand = new DelegateCommand<EventInformation<EventArgs>>(ExecuteEndEditCommand);
-            RefreshTitleCommand = new DelegateCommand<FileSystemItemViewModel>(ExecuteRefreshTitleCommand, CanExecuteRefreshTitleCommand);
+            RefreshTitleCommand = new DelegateCommand(ExecuteRefreshTitleCommand, CanExecuteRefreshTitleCommand);
+            CopyTitleIdToClipboardCommand = new DelegateCommand(ExecuteCopyTitleIdToClipboardCommand, CanExecuteCopyTitleIdToClipboardCommand);
+            SearchGoogleCommand = new DelegateCommand(ExecuteSearchGoogleCommand, CanExecuteSearchGoogleCommand);
+            RenameCommand = new DelegateCommand<object>(ExecuteRenameCommand, CanExecuteRenameCommand);
+
             eventAggregator.GetEvent<ActivePaneChangedEvent>().Subscribe(e =>
                                                                              {
                                                                                  if (e.ActivePane == this) return;
                                                                                  IsActive = false;
+                                                                                 _previouslyFocusedRow = CurrentRow;
                                                                                  CurrentRow = null;
                                                                              });
             if (!Directory.Exists("tmp")) Directory.CreateDirectory("tmp");
@@ -485,11 +587,37 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
 
         public abstract void LoadDataAsync(LoadCommand cmd, object cmdParam);
 
-        public abstract bool Delete(FileSystemItemViewModel item);
+        public bool Delete(FileSystemItemViewModel item)
+        {
+            //TODO: handle errors
 
-        public abstract bool CreateFolder(string name);
+            if (item.Type == ItemType.Directory)
+            {
+                FileManager.DeleteFolder(item.Path);
+            }
+            else
+            {
+                FileManager.DeleteFile(item.Path);
+            }
+            return true;
+        }
 
-        protected abstract bool IsDriveAccessible(FileSystemItemViewModel drive);
+        public bool CreateFolder(string name)
+        {
+            var path = string.Format("{0}{1}", CurrentFolder.Path, name);
+            FileManager.CreateFolder(path);
+            return true;
+        }
+
+        private bool IsDriveAccessible(FileSystemItemViewModel drive)
+        {
+            var result = FileManager.DriveIsReady(drive.Path);
+            if (!result)
+            {
+                MessageBox.Show(string.Format("{0} is not accessible.", drive.Title));
+            }
+            return result;
+        }
 
         protected virtual void ChangeDrive()
         {
@@ -511,6 +639,9 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
         {
             base.RaiseCanExecuteChanges();
             RefreshTitleCommand.RaiseCanExecuteChanged();
+            CopyTitleIdToClipboardCommand.RaiseCanExecuteChanged();
+            SearchGoogleCommand.RaiseCanExecuteChanged();
+            RenameCommand.RaiseCanExecuteChanged();
             Parent.RaiseCanExecuteChanges();
         }
 

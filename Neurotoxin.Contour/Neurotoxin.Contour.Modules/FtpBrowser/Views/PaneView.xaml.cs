@@ -2,7 +2,6 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using Neurotoxin.Contour.Modules.FtpBrowser.ViewModels;
 using Neurotoxin.Contour.Presentation.Infrastructure;
 using Neurotoxin.Contour.Presentation.Extensions;
 
@@ -19,16 +18,29 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.Views
         {
             var currentRow = e.AddedItems.Count > 0 ? e.AddedItems[0] : null;
             if (currentRow == null) return;
-            Grid.ItemContainerGenerator.StatusChanged += SetFocusToTheFirstCellOfCurrentRowWhenReady;
+            SetFocusToTheFirstCellOfCurrentRow();
         }
 
-        private void SetFocusToTheFirstCellOfCurrentRowWhenReady(object sender, EventArgs e)
+        private void ItemContainerGeneratorStatusChanged(object sender, EventArgs e)
         {
             var generator = (ItemContainerGenerator)sender;
             if (generator.Status != GeneratorStatus.ContainersGenerated) return;
-            var row = generator.ContainerFromItem(Grid.SelectedItem) as DataGridRow;
-            row.FirstCell().Focus();
-            generator.StatusChanged -= SetFocusToTheFirstCellOfCurrentRowWhenReady;
+            SetFocusToTheFirstCellOfCurrentRow();
+            generator.StatusChanged -= ItemContainerGeneratorStatusChanged;
+        }
+
+        private void SetFocusToTheFirstCellOfCurrentRow()
+        {
+            if (Grid.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated)
+            {
+                if (Grid.SelectedItem == null) return;
+                var row = Grid.ItemContainerGenerator.ContainerFromItem(Grid.SelectedItem) as DataGridRow;
+                row.FirstCell().Focus();
+            }
+            else
+            {
+                Grid.ItemContainerGenerator.StatusChanged += ItemContainerGeneratorStatusChanged;
+            }
         }
     }
 }

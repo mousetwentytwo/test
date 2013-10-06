@@ -38,6 +38,5 @@ namespace Neurotoxin.Contour.Presentation.Extensions
             var list = items.ToList();
             return new ObservableCollection<T>(list);
         }
-
     }
 }

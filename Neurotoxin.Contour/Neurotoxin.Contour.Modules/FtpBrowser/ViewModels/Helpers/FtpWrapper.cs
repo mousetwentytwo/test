@@ -34,31 +34,37 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels.Helpers
             return true;
         }
 
+        public List<FileSystemItem> GetDrives()
+        {
+            NotifyFtpOperationStarted(false);
+            var currentFolder = _ftpClient.GetCurrentFolder();
+            _ftpClient.ChangeFolder("/");
+            var result = _ftpClient.GetList().Select(di => new FileSystemItem
+            {
+                Name = di.Name,
+                Type = ItemType.Drive,
+                Date = di.ModifyDate,
+                Path = string.Format("/{0}/", di.Name),
+            }).ToList();
+            _ftpClient.ChangeFolder(currentFolder);
+            NotifyFtpOperationFinished();
+            return result;
+        }
+
         public List<FileSystemItem> GetList(string path = null)
         {
             NotifyFtpOperationStarted(false);
             if (path != null) _ftpClient.ChangeFolder(path);
             var currentPath = _ftpClient.GetCurrentFolder();
 
-            //TODO: refactor TitleID
-            var result = _ftpClient.GetList().Select(di => di.IsFolder
-                                                               ? new FileSystemItem
-                                                                   {
-                                                                       TitleId = di.Name,
-                                                                       Type = ItemType.Directory,
-                                                                       Date = di.ModifyDate,
-                                                                       Path =
-                                                                           string.Format("{0}{1}/", currentPath, di.Name),
-                                                                   }
-                                                               : new FileSystemItem
-                                                                   {
-                                                                       Title = di.Name,
-                                                                       Type = ItemType.File,
-                                                                       Date = di.ModifyDate,
-                                                                       Path =
-                                                                           string.Format("{0}{1}", currentPath, di.Name),
-                                                                       Size = di.Size,
-                                                                   }).ToList();
+            var result = _ftpClient.GetList().Select(di => new FileSystemItem
+            {
+                Name = di.Name,
+                Type = di.IsFolder ? ItemType.Directory : ItemType.File,
+                Date = di.ModifyDate,
+                Path = string.Format("{0}/{1}{2}", currentPath, di.Name, di.IsFolder ? "/" : string.Empty),
+                Size = di.Size
+            }).ToList();
             NotifyFtpOperationFinished();
             return result;
         }
@@ -69,6 +75,19 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels.Helpers
             var filename = path.Replace(dir, String.Empty);
             _ftpClient.ChangeFolder(dir);
             return filename;
+        }
+
+        public bool DriveIsReady(string drive)
+        {
+            try
+            {
+                _ftpClient.ChangeFolder(drive);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         /// <summary>

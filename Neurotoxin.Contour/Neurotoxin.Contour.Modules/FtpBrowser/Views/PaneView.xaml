@@ -13,7 +13,7 @@
         <converters:SizeConverter x:Key="SizeConverter"/>
         <converters:SizeAlignmentConverter x:Key="SizeAlignmentConverter"/>
         <converters:TitleConverter x:Key="TitleConverter"/>
-        <converters:TitleIdConverter x:Key="TitleIdConverter"/>
+        <converters:NameConverter x:Key="NameConverter"/>
         <converters:PaneHeaderBackgroundConverter x:Key="PaneHeaderBackgroundConverter"/>
         <co:NotNullOrEmptyConverter x:Key="NotNullOrEmptyConverter"/>
 
@@ -52,7 +52,7 @@
             <ComboBox Grid.Column="0" ItemsSource="{Binding Drives}" SelectedItem="{Binding Drive}" Margin="0,0,3,0">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding Title}"/>
+                        <TextBlock Text="{Binding Name}"/>
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
@@ -81,7 +81,7 @@
                   CanUserResizeColumns="True"
                   CanUserSortColumns="True"
                   SelectionUnit="FullRow"
-                  SelectionChanged="Grid_OnSelectionChanged">
+                  SelectionChanged="Grid_OnSelectionChanged" Focusable="False">
             <DataGrid.Resources>
                 <Style TargetType="{x:Type TextBlock}" x:Key="CellText">
                     <Style.Triggers>
@@ -102,15 +102,16 @@
                                         <TextBlock.Text>
                                             <MultiBinding Converter="{StaticResource TitleConverter}">
                                                 <Binding Path="Title"/>
-                                                <Binding Path="TitleId"/>
+                                                <Binding Path="Name"/>
+                                                <Binding Path="Type"/>
                                             </MultiBinding>
                                         </TextBlock.Text>
                                     </TextBlock>
                                     <TextBlock Opacity="0.4" Style="{StaticResource CellText}">
                                         <TextBlock.Text>
-                                            <MultiBinding Converter="{StaticResource TitleIdConverter}">
+                                            <MultiBinding Converter="{StaticResource NameConverter}">
                                                 <Binding Path="Title"/>
-                                                <Binding Path="TitleId"/>
+                                                <Binding Path="Name"/>
                                             </MultiBinding>
                                         </TextBlock.Text>
                                     </TextBlock>
@@ -126,7 +127,7 @@
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
                                 <Image Grid.Column="0" Source="{Binding Thumbnail}" Width="16" Height="16" Margin="2,0,3,0"/>
-                                <TextBox Grid.Column="1" Text="{Binding Title}" FontWeight="Bold"/>
+                                <TextBox x:Name="TitleEditBox" Grid.Column="1" Text="{Binding Title, UpdateSourceTrigger=LostFocus}" FontWeight="Bold"/>
                             </Grid>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellEditingTemplate>
@@ -169,18 +170,14 @@
                         <Setter.Value>
                             <ContextMenu>
                                 <MenuItem Header="Refresh Title"
-                                          Command="{Binding Source={StaticResource ViewModel}, Path=Data.RefreshTitleCommand}" CommandParameter="{Binding}"
-                                          IsEnabled="{Binding Source={StaticResource ViewModel}, Path=Data.RefreshTitleCommand, Converter={StaticResource NotNullOrEmptyConverter}, FallbackValue=False}"/>
+                                          Command="{Binding Source={StaticResource ViewModel}, Path=Data.RefreshTitleCommand}"/>
                                 <MenuItem Header="Copy TitleID to Clipboard"
-                                          Command="{Binding Source={StaticResource ViewModel}, Path=Data.CopyTitleIdToClipboardCommand}" CommandParameter="{Binding}"
-                                          IsEnabled="{Binding Source={StaticResource ViewModel}, Path=Data.CopyTitleIdToClipboardCommand, Converter={StaticResource NotNullOrEmptyConverter}, FallbackValue=False}"/>
+                                          Command="{Binding Source={StaticResource ViewModel}, Path=Data.CopyTitleIdToClipboardCommand}"/>
                                 <MenuItem Header="Search Google"
-                                          Command="{Binding Source={StaticResource ViewModel}, Path=Data.SearchGoogleCommand}" CommandParameter="{Binding}"
-                                          IsEnabled="{Binding Source={StaticResource ViewModel}, Path=Data.SearchGoogleCommand, Converter={StaticResource NotNullOrEmptyConverter}, FallbackValue=False}"/>
+                                          Command="{Binding Source={StaticResource ViewModel}, Path=Data.SearchGoogleCommand}"/>
                                 <Separator/>
                                 <MenuItem Header="Rename"
-                                          Command="{Binding Source={StaticResource ViewModel}, Path=Data.RenameCommand}" CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
-                                          IsEnabled="{Binding Source={StaticResource ViewModel}, Path=Data.RenameCommand, Converter={StaticResource NotNullOrEmptyConverter}, FallbackValue=False}"/>
+                                          Command="{Binding Source={StaticResource ViewModel}, Path=Data.RenameCommand}" CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
                             </ContextMenu>
                         </Setter.Value>
                     </Setter>
@@ -250,9 +247,6 @@
                 </e:EventTrigger>
                 <e:EventTrigger EventName="Sorting">
                     <inf:MapDataGridSortingEventToCommand Command="{Binding SortingCommand}"/>
-                </e:EventTrigger>
-                <e:EventTrigger EventName="CellEditEnding">
-                    <inf:MapEventToCommand Command="{Binding EndEditCommand}"/>
                 </e:EventTrigger>
             </e:Interaction.Triggers>
             <DataGrid.InputBindings>

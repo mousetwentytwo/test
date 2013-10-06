@@ -71,7 +71,7 @@
     <Compile Include="FtpBrowser\Converters\SizeAlignmentConverter.cs" />
     <Compile Include="FtpBrowser\Converters\SizeConverter.cs" />
     <Compile Include="FtpBrowser\Converters\TitleConverter.cs" />
-    <Compile Include="FtpBrowser\Converters\TitleIdConverter.cs" />
+    <Compile Include="FtpBrowser\Converters\NameConverter.cs" />
     <Compile Include="FtpBrowser\Events\ActivePaneChangedEvent.cs" />
     <Compile Include="FtpBrowser\Models\FileSystemItem.cs" />
     <Compile Include="FtpBrowser\Models\ItemSubtype.cs" />
