@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
 using Neurotoxin.Contour.Modules.FtpBrowser.Constants;
 using Neurotoxin.Contour.Modules.FtpBrowser.Events;
 using Neurotoxin.Contour.Modules.FtpBrowser.Models;
@@ -26,7 +22,8 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
 {
     public abstract class PaneViewModelBase<T> : ViewModelBase, IPaneViewModel where T : IFileManager
     {
-        protected bool IsInEditMode;
+        private bool _isInEditMode;
+        private bool _isBusy;
 
         #region Properties
 
@@ -42,9 +39,10 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             get { return _isActive; }
             set
             {
+                var changed = value != _isActive;
                 _isActive = value; 
                 NotifyPropertyChanged(ISACTIVE);
-                if (value) eventAggregator.GetEvent<ActivePaneChangedEvent>().Publish(new ActivePaneChangedEventArgs(this));
+                if (value && changed) eventAggregator.GetEvent<ActivePaneChangedEvent>().Publish(new ActivePaneChangedEventArgs(this));
             }
         }
 
@@ -164,7 +162,21 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
         public void SetActive()
         {
             IsActive = true;
-            CurrentRow = CurrentRow ?? _previouslyFocusedRow ?? Items.FirstOrDefault();
+            if (CurrentRow != null) 
+            {
+                CurrentRow = CurrentRow; //surely need to notify?!
+                return;
+            }
+            if (_previouslyFocusedRow != null)
+            {
+                var previous = Items.FirstOrDefault(item => item.Path == _previouslyFocusedRow.Path);
+                if (previous != null)
+                {
+                    CurrentRow = previous;
+                    return;
+                }
+            }
+            CurrentRow = Items.FirstOrDefault();
         }
 
         #endregion
@@ -175,7 +187,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
 
         private bool CanExecuteChangeDirectoryCommand(object cmdParam)
         {
-            if (IsInEditMode) return false;
+            if (_isInEditMode || _isBusy) return false;
 
             var item = cmdParam as FileSystemItemViewModel;
             if (item != null)
@@ -205,13 +217,14 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
 
         private void ExecuteChangeDirectoryCommand(object cmdParam)
         {
+            _isBusy = true;
             var keyEvent = cmdParam as EventInformation<KeyEventArgs>;
             if (keyEvent != null) keyEvent.EventArgs.Handled = true;
 
             if (CurrentRow != null)
             {
                 if (CurrentRow.IsUpDirectory)
-                    Stack.Pop();
+                    _previouslyFocusedRow = Stack.Pop();
                 else
                     Stack.Push(CurrentRow);
             }
@@ -225,7 +238,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             var content = ChangeDirectory();
             if (Stack.Count > 1)
             {
-                var parentFolder = Stack.ElementAt(1);
+                var parentFolder = Stack.Peek();
                 content.Insert(0, new FileSystemItem
                 {
                     Title = "[..]",
@@ -274,8 +287,8 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
         {
             SortContent(result.Select(c => new FileSystemItemViewModel(c)));
             SetActiveCommand.Execute(null);
-
             NotifyPropertyChanged(SIZEINFO);
+            _isBusy = false;
         }
 
 
@@ -484,7 +497,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
         {
             var result = CurrentRow;
             var model = CurrentRow.Model;
-            TitleManager.RecognizeTitle(model, CurrentFolder.Model);
+            TitleManager.RecognizeTitle(model, CurrentFolder.Model, true);
             return result;
         }
 
@@ -542,14 +555,14 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             var row = grid != null ? grid.FindRowByValue(CurrentRow) : cmdParam as DataGridRow;
             if (row == null) return;
             row.FirstCell().IsEditing = true;
-            IsInEditMode = true;
+            _isInEditMode = true;
             ChangeDirectoryCommand.RaiseCanExecuteChanged();
             CurrentRow.PropertyChanged += EndRename;
         }
 
         private void EndRename(object sender, PropertyChangedEventArgs e)
         {
-            IsInEditMode = false;
+            _isInEditMode = false;
             ChangeDirectoryCommand.RaiseCanExecuteChanged();
             TitleManager.SaveCache(CurrentRow.Model);
             CurrentRow.PropertyChanged -= EndRename;
@@ -663,7 +676,17 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             {
                 queue.Enqueue(item);
                 if (item.Type == ItemType.Directory)
+                {
+                    var start = queue.Count;
                     PopulateQueue(queue, ChangeDirectory(item.Path).Select(c => new FileSystemItemViewModel(c)));
+                    var end = queue.Count;
+                    long size = 0;
+                    for (var i = start; i < end; i++)
+                    {
+                        size += queue.ElementAt(i).Size ?? 0;
+                    }
+                    item.Size = size;
+                }
             }
         }
 

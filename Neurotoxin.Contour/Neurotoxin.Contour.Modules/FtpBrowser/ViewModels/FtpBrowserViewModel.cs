@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
 using Neurotoxin.Contour.Modules.FtpBrowser.Events;
+using Neurotoxin.Contour.Modules.FtpBrowser.Models;
+using Neurotoxin.Contour.Presentation.Events;
 using Neurotoxin.Contour.Presentation.Infrastructure;
 using Neurotoxin.Contour.Presentation.Infrastructure.Constants;
 using System.Linq;
@@ -12,7 +14,9 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
 
     public class FtpBrowserViewModel : ModuleViewModelBase
     {
-        #region Properties
+        private Queue<FileSystemItemViewModel> _queue;
+
+        #region Main window properties
 
         private const string FTP = "Ftp";
         private FtpContentViewModel _ftp;
@@ -38,6 +42,85 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
         private IPaneViewModel TargetPane
         {
             get { return SourcePane == Ftp ? (IPaneViewModel)LocalFileSystem : SourcePane == LocalFileSystem ? Ftp : null; }
+        }
+
+        #endregion
+
+        #region Transfer properties
+
+        private const string ACTIONLABEL = "ActionLabel";
+        private string _actionLabel;
+        public string ActionLabel
+        {
+            get { return _actionLabel; }
+            set { _actionLabel = value; NotifyPropertyChanged(ACTIONLABEL); }
+        }
+
+        private const string SOURCEFILE = "SourceFile";
+        private string _sourceFile;
+        public string SourceFile
+        {
+            get { return _sourceFile; }
+            set { _sourceFile = value; NotifyPropertyChanged(SOURCEFILE); }
+        }
+
+        private const string TARGETFILE = "TargetFile";
+        private string _targetFile;
+        public string TargetFile
+        {
+            get { return _targetFile; }
+            set { _targetFile = value; NotifyPropertyChanged(TARGETFILE); }
+        }
+
+        private const string CURRENTFILEPROGRESS = "CurrentFileProgress";
+        private int _currentFileProgress;
+        public int CurrentFileProgress
+        {
+            get { return _currentFileProgress; }
+            set { _currentFileProgress = value; NotifyPropertyChanged(CURRENTFILEPROGRESS); }
+        }
+
+        private const string TOTALPROGRESS = "TotalProgress";
+        public int TotalProgress
+        {
+            get { return (int)(BytesTransfered * 100 / TotalBytes); }
+        }
+
+        private const string FILESTRANSFERED = "FilesTransfered";
+        private int _filesTransfered;
+        public int FilesTransfered
+        {
+            get { return _filesTransfered; }
+            set { _filesTransfered = value; NotifyPropertyChanged(FILESTRANSFERED); }
+        }
+
+        private const string FILECOUNT = "FileCount";
+        private int _fileCount;
+        public int FileCount
+        {
+            get { return _fileCount; }
+            set { _fileCount = value; NotifyPropertyChanged(FILECOUNT); }
+        }
+
+        private const string BYTESTRANSFERED = "BytesTransfered";
+        private long _bytesTransfered;
+        public long BytesTransfered
+        {
+            get { return _bytesTransfered; }
+            set
+            {
+                _bytesTransfered = value;
+                NotifyPropertyChanged(BYTESTRANSFERED);
+                NotifyPropertyChanged(TOTALPROGRESS);
+            }
+        }
+
+        private const string TOTALBYTES = "TotalBytes";
+        private long _totalBytes;
+        public long TotalBytes
+        {
+            get { return _totalBytes; }
+            set { _totalBytes = value; NotifyPropertyChanged(TOTALBYTES); }
         }
 
         #endregion
@@ -91,7 +174,11 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
 
         private void FtpWrapperOnFtpOperationProgressChanged(object sender, FtpOperationProgressChangedEventArgs args)
         {
-            UIThread.Run(() => LoadingProgress = args.Percentage);
+            UIThread.Run(() =>
+                {
+                    LoadingProgress = args.Percentage;
+                    CurrentFileProgress = args.Percentage;
+                });
         }
 
         #region SwitchPaneCommand
@@ -129,8 +216,6 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
 
         #region CopyCommand
 
-        private Queue<FileSystemItemViewModel> _queue;
-
         public DelegateCommand CopyCommand { get; private set; }
 
         private bool CanExecuteCopyCommand()
@@ -141,6 +226,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
         private void ExecuteCopyCommand()
         {
             _queue = SourcePane.PopulateQueue();
+            InitializeTransfer("Copy:");
             StartCopy();
         }
 
@@ -167,13 +253,13 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
 
         private void EndCopy(bool result)
         {
-            var item = _queue.Dequeue();
-            if (result) item.IsSelected = false;
+            UpdateTransfer(result);
             StartCopy();
         }
 
         private void FinishCopy()
         {
+            FinishTransfer();
             TargetPane.Refresh();
         }
 
@@ -191,6 +277,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
         private void ExecuteMoveCommand()
         {
             _queue = SourcePane.PopulateQueue();
+            InitializeTransfer("Move:");
             StartMove();
         }
 
@@ -217,13 +304,13 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
 
         private void EndMove(bool result)
         {
-            var item = _queue.Dequeue();
-            if (result) item.IsSelected = false;
+            UpdateTransfer(result);
             StartMove();
         }
 
         private void FinishMove()
         {
+            FinishTransfer();
             SourcePane.Refresh();
             TargetPane.Refresh();
         }
@@ -279,6 +366,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
 
         private void EndDelete(bool result)
         {
+            UpdateTransfer(result);
             var item = _queue.Dequeue();
             if (result) item.IsSelected = false;
             StartDelete();
@@ -309,6 +397,29 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             MoveCommand.RaiseCanExecuteChanged();
             NewFolderCommand.RaiseCanExecuteChanged();
             DeleteCommand.RaiseCanExecuteChanged();
+        }
+
+        private void InitializeTransfer(string actionLabel)
+        {
+            FileCount = _queue.Count;
+            TotalBytes = _queue.Where(item => item.Type == ItemType.File).Sum(item => item.Size ?? 0);
+            IsInProgress = true;
+            ActionLabel = actionLabel;
+            eventAggregator.GetEvent<TransferStartedEvent>().Publish(new TransferStartedEventArgs());
+        }
+
+        private void UpdateTransfer(bool result)
+        {
+            var item = _queue.Dequeue();
+            FilesTransfered++;
+            if (item.Type == ItemType.File) BytesTransfered += item.Size ?? 0;
+            if (result) item.IsSelected = false;
+        }
+
+        private void FinishTransfer()
+        {
+            IsInProgress = false;
+            eventAggregator.GetEvent<TransferFinishedEvent>().Publish(new TransferFinishedEventArgs());
         }
     }
 }

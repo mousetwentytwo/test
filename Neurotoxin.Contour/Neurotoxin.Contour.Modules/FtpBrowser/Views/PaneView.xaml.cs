@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -9,9 +10,12 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.Views
 {
     public partial class PaneView : ModuleViewBase
     {
+        public const string DateTimeUiFormat = "dd/MM/yyyy HH:mm";
+
         public PaneView()
         {
             InitializeComponent();
+            Grid.ItemContainerGenerator.StatusChanged += ItemContainerGeneratorStatusChanged;
         }
 
         private void Grid_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -21,26 +25,21 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.Views
             SetFocusToTheFirstCellOfCurrentRow();
         }
 
-        private void ItemContainerGeneratorStatusChanged(object sender, EventArgs e)
-        {
-            var generator = (ItemContainerGenerator)sender;
-            if (generator.Status != GeneratorStatus.ContainersGenerated) return;
-            SetFocusToTheFirstCellOfCurrentRow();
-            generator.StatusChanged -= ItemContainerGeneratorStatusChanged;
-        }
-
         private void SetFocusToTheFirstCellOfCurrentRow()
         {
             if (Grid.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated)
             {
                 if (Grid.SelectedItem == null) return;
                 var row = Grid.ItemContainerGenerator.ContainerFromItem(Grid.SelectedItem) as DataGridRow;
-                row.FirstCell().Focus();
+                if (row != null) row.FirstCell().Focus();
             }
-            else
-            {
-                Grid.ItemContainerGenerator.StatusChanged += ItemContainerGeneratorStatusChanged;
-            }
+        }
+
+        private void ItemContainerGeneratorStatusChanged(object sender, EventArgs e)
+        {
+            var generator = (ItemContainerGenerator)sender;
+            if (generator.Status != GeneratorStatus.ContainersGenerated) return;
+            SetFocusToTheFirstCellOfCurrentRow();
         }
     }
 }

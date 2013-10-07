@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
+using Neurotoxin.Contour.Modules.FtpBrowser.Events;
 using Neurotoxin.Contour.Modules.FtpBrowser.ViewModels;
 using Neurotoxin.Contour.Presentation.Infrastructure;
 
@@ -6,7 +8,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.Views
 {
     public partial class FtpBrowserView : ModuleViewBase
     {
-        public const string DateTimeUiFormat = "dd/MM/yyyy HH:mm";
+        private TransferProgressDialog _transferProgressDialog;
 
         public new FtpBrowserViewModel ViewModel
         {
@@ -16,20 +18,20 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.Views
         public FtpBrowserView(FtpBrowserViewModel viewModel)
         {
             InitializeComponent();
-            this.DataContext = viewModel;
-            this.Loaded += View_Loaded;
+            DataContext = viewModel;
+            eventAggregator.GetEvent<TransferStartedEvent>().Subscribe(ShowTransferProgressDialog);
+            eventAggregator.GetEvent<TransferFinishedEvent>().Subscribe(HideTransferProgressDialog);
         }
 
-        void View_Loaded(object sender, RoutedEventArgs e)
+        private void ShowTransferProgressDialog(TransferStartedEventArgs transferStartedEventArgs)
         {
+            if (_transferProgressDialog == null) _transferProgressDialog = new TransferProgressDialog(ViewModel);
+            _transferProgressDialog.Show();
         }
 
-        public override bool Close()
+        private void HideTransferProgressDialog(TransferFinishedEventArgs transferFinishedEventArgs)
         {
-            //FtpBrowserViewModel viewModel = (FtpBrowserViewModel)ViewModel;
-            //if (viewModel.KeepDirty()) return false;
-            //viewModel.ResetChanges();
-            return base.Close();
+            _transferProgressDialog.Hide();
         }
     }
 }

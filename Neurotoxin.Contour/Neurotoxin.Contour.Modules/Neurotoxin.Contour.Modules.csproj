@@ -73,6 +73,8 @@
     <Compile Include="FtpBrowser\Converters\TitleConverter.cs" />
     <Compile Include="FtpBrowser\Converters\NameConverter.cs" />
     <Compile Include="FtpBrowser\Events\ActivePaneChangedEvent.cs" />
+    <Compile Include="FtpBrowser\Events\TransferFinishedEvent.cs" />
+    <Compile Include="FtpBrowser\Events\TransferStartedEvent.cs" />
     <Compile Include="FtpBrowser\Models\FileSystemItem.cs" />
     <Compile Include="FtpBrowser\Models\ItemSubtype.cs" />
     <Compile Include="FtpBrowser\Models\ItemType.cs" />
@@ -84,12 +86,15 @@
     <Compile Include="FtpBrowser\ViewModels\Helpers\TitleManager.cs" />
     <Compile Include="FtpBrowser\ViewModels\Helpers\FtpWrapper.cs" />
     <Compile Include="FtpBrowser\ViewModels\IPaneViewModel.cs" />
-    <Compile Include="FtpBrowser\ViewModels\LocalFileSystemContentViewModel.cs" />
+    <Compile Include="FtpBrowser\ViewModels\LocalPaneViewModel.cs" />
     <Compile Include="FtpBrowser\ViewModels\PaneViewModelBase.cs" />
     <Compile Include="FtpBrowser\ViewModels\FtpContentViewModel.cs" />
     <Compile Include="FtpBrowser\ViewModels\FileSystemItemViewModel.cs" />
     <Compile Include="FtpBrowser\ModuleInit.cs" />
     <Compile Include="FtpBrowser\ViewModels\FtpBrowserViewModel.cs" />
+    <Compile Include="FtpBrowser\Views\TransferProgressDialog.xaml.cs">
+      <DependentUpon>TransferProgressDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="FtpBrowser\Views\PaneView.xaml.cs">
       <DependentUpon>PaneView.xaml</DependentUpon>
     </Compile>
@@ -120,6 +125,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="FtpBrowser\Views\TransferProgressDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="FtpBrowser\Views\PaneView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

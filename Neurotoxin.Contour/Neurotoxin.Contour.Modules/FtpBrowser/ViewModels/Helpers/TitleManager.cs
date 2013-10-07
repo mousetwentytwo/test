@@ -23,10 +23,12 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels.Helpers
         {
             {"^Content$", ItemSubtype.Content},
             {"^0000000000000000$", ItemSubtype.GamesFolder},
+            {"^00000001$", ItemSubtype.SaveData},
             {"^00000002$", ItemSubtype.DownloadableContents},
-            {"^00004000$", ItemSubtype.NXEFiles},
-            {"^00007000$", ItemSubtype.GODFiles},
+            {"^00004000$", ItemSubtype.NXEData},
+            {"^00007000$", ItemSubtype.GODData},
             {"^00009000$", ItemSubtype.AvatarItems},
+            {"^00010000$", ItemSubtype.ProfileData},
             {"^00020000$", ItemSubtype.GamerPictures},
             {"^00030000$", ItemSubtype.Themes},
             {"^00080000$", ItemSubtype.XboxLiveArcadeGame}, //demos?!
@@ -50,10 +52,10 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels.Helpers
             return !string.IsNullOrEmpty(item.Name) && _recognitionKeywords.Keys.Any(key => new Regex(key).IsMatch(item.Name));
         }
 
-        public void RecognizeTitle(FileSystemItem item, FileSystemItem parentFolder)
+        public void RecognizeTitle(FileSystemItem item, FileSystemItem parentFolder, bool refresh = false)
         {
             var tmpPath = GetTempFileName(item);
-            var cachedItem = LoadCache(tmpPath);
+            var cachedItem = !refresh ? LoadCache(tmpPath) : null;
             var hasCache = cachedItem != null;
             if (hasCache)
             {
