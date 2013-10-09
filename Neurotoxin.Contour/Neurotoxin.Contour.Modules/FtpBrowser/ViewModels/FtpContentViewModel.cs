@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using Neurotoxin.Contour.Modules.FtpBrowser.Constants;
 using Neurotoxin.Contour.Modules.FtpBrowser.Models;
 using Neurotoxin.Contour.Modules.FtpBrowser.ViewModels.Helpers;
 using Neurotoxin.Contour.Presentation.Extensions;
@@ -56,23 +57,48 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             Drive = Drives.First();
         }
 
-        public bool Download(FileSystemItemViewModel ftpItem, string targetPath)
+        public bool Download(FileSystemItemViewModel ftpItem, string targetPath, CopyBehavior behavior, bool overwriteOlderOnly)
         {
-            //TODO: append / rewrite / etc. options
-
             var remotePath = ftpItem.Path;
             var localPath = remotePath.Replace(CurrentFolder.Path, targetPath).Replace('/', '\\');
+
+            FileMode mode;
+            switch (behavior)
+            {
+                case CopyBehavior.Default:
+                    mode = FileMode.CreateNew;
+                    break;
+                case CopyBehavior.Overwrite:
+                    mode = FileMode.Create;
+                    break;
+                case CopyBehavior.Resume:
+                    mode = FileMode.Append;
+                    break;
+                default:
+                    throw new ArgumentException("Invalid Copy behavior: " + behavior);
+            }
 
             switch (ftpItem.Type)
             {
                 case ItemType.File:
-                    var fs = new FileStream(localPath, FileMode.OpenOrCreate);
-                    FileManager.DownloadFile(remotePath, localPath);
+                    if (behavior == CopyBehavior.Overwrite && overwriteOlderOnly)
+                    {
+                        var fileDate = File.GetLastWriteTime(localPath);
+                        if (fileDate > ftpItem.Date) return false;
+                    }
+                    var fs = new FileStream(localPath, mode);
+                    long remoteStartPosition = 0;
+                    if (behavior == CopyBehavior.Resume)
+                    {
+                        var fi = new FileInfo(localPath);
+                        remoteStartPosition = fi.Length;
+                    }
+                    FileManager.DownloadFile(remotePath, fs, remoteStartPosition);
                     fs.Flush();
                     fs.Close();
                     break;
                 case ItemType.Directory:
-                    Directory.CreateDirectory(localPath);
+                    if (!Directory.Exists(localPath)) Directory.CreateDirectory(localPath);
                     break;
                 default:
                     throw new NotSupportedException();
@@ -80,20 +106,40 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             return true;
         }
 
-        public bool Upload(FileSystemItemViewModel localItem, string sourcePath)
+        public bool Upload(FileSystemItemViewModel localItem, string sourcePath, CopyBehavior behavior, bool overwriteOlderOnly)
         {
-            //TODO: append / rewrite / etc. options
-
             var localPath = localItem.Path;
             var remotePath = localPath.Replace(sourcePath, CurrentFolder.Path).Replace('\\', '/');
 
             switch (localItem.Type)
             {
                 case ItemType.File:
-                    FileManager.UploadFile(remotePath, localPath);
+                    if (behavior == CopyBehavior.Overwrite && overwriteOlderOnly)
+                    {
+                        var fileDate = FileManager.GetFileModificationTime(remotePath);
+                        if (fileDate > localItem.Date) return false;
+                    }
+                    switch (behavior)
+                    {
+                        case CopyBehavior.Default:
+                            if (FileManager.FileExists(remotePath))
+                                throw new Exception("Target already exists");
+                            FileManager.UploadFile(remotePath, localPath);
+                            break;
+                        case CopyBehavior.Overwrite:
+                            //TODO: assumption only!
+                            FileManager.UploadFile(remotePath, localPath);
+                            break;
+                        case CopyBehavior.Resume:
+                            FileManager.AppendFile(remotePath, localPath);
+                            break;
+                        default:
+                            throw new ArgumentException("Invalid Copy behavior: " + behavior);
+                    }
+                    
                     break;
                 case ItemType.Directory:
-                    FileManager.CreateFolder(remotePath);
+                    if (!FileManager.FolderExists(remotePath)) FileManager.CreateFolder(remotePath);
                     break;
                 default:
                     throw new NotSupportedException();

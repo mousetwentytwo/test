@@ -36,6 +36,11 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             get { return _model.Name; }
         }
 
+        public string ComputedName
+        {
+            get { return Title ?? Name; }
+        }
+
         private const string THUMBNAIL = "THUMBNAIL";
         private ImageSource _thumbnail;
         public ImageSource Thumbnail

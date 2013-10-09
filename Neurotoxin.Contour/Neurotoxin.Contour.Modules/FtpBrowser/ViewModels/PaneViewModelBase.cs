@@ -144,8 +144,8 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             }
         }        
 
-        private string _sortMemberPath;
-        private ListSortDirection _listSortDirection;
+        private string _sortMemberPath = "ComputedName";
+        private ListSortDirection _listSortDirection = ListSortDirection.Ascending;
         private readonly Dictionary<FileSystemItemViewModel, Stack<FileSystemItemViewModel>> _stackCache = new Dictionary<FileSystemItemViewModel, Stack<FileSystemItemViewModel>>();
 
         #endregion
@@ -357,36 +357,30 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             _sortMemberPath = column.SortMemberPath;
             _listSortDirection = column.SortDirection == ListSortDirection.Ascending ? ListSortDirection.Descending : ListSortDirection.Ascending;
             var selection = CurrentRow;
-            SortContent(Items);
+            SortContent();
             CurrentRow = selection;
             column.SortDirection = _listSortDirection;
         }
 
+        private void SortContent()
+        {
+            SortContent(Items);
+        }
+
         private void SortContent(IEnumerable<FileSystemItemViewModel> content)
         {
-            Items = Items ?? new ObservableCollection<FileSystemItemViewModel>();
-            if (_sortMemberPath == null)
-            {
-                Items.Clear();
-                Items.AddRange(content);
-                return;
-            }
+            if (content == null) return;
+
             var type = typeof(FileSystemItemViewModel);
             var instance = Expression.Parameter(type);
             var callPreporty = Expression.PropertyOrField(instance, _sortMemberPath);
             var lambda = Expression.Lambda<Func<FileSystemItemViewModel, object>>(callPreporty, instance);
             var orderBy = lambda.Compile();
 
-            var collection = _listSortDirection == ListSortDirection.Ascending
-                                 ? content.OrderBy(orderBy)
-                                 : content.OrderByDescending(orderBy);
-
-            if (_sortMemberPath == "Title")
-                collection = _listSortDirection == ListSortDirection.Ascending
-                                 ? collection.ThenBy(p => p.Name)
-                                 : collection.ThenByDescending(p => p.Name);
-
-            collection = collection.ThenByDescending(p => p.Type);
+            var collection = content.OrderByDescending(p => p.Type);
+            collection = _listSortDirection == ListSortDirection.Ascending
+                                 ? collection.ThenBy(orderBy)
+                                 : collection.ThenByDescending(orderBy);
             var list = collection.ToList();
 
             var up = list.FirstOrDefault(item => item.IsUpDirectory);
@@ -457,24 +451,65 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
 
             if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
             {
-                var start = Items.IndexOf(CurrentRow);
-                var end = Items.IndexOf(item);
-                if (end < start)
-                {
-                    var tmp = start;
-                    start = end;
-                    end = tmp;
-                }
-                for (var i = start; i <= end; i++)
-                {
-                    Items[i].IsSelected = true;
-                }
+                SelectIntervalOfItems(CurrentRow, item);
             }
             else if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
             {
                 item.IsSelected = true;
             }
             NotifyPropertyChanged(SIZEINFO);
+        }
+
+        private void SelectIntervalOfItems(FileSystemItemViewModel from, FileSystemItemViewModel to, bool value = true)
+        {
+            var start = Items.IndexOf(from);
+            var end = Items.IndexOf(to);
+            if (end < start)
+            {
+                var tmp = start;
+                start = end;
+                end = tmp;
+            }
+            for (var i = start; i <= end; i++)
+            {
+                Items[i].IsSelected = value;
+            }            
+        }
+
+        #endregion
+
+        #region GoToFirstCommand
+
+        public DelegateCommand<bool> GoToFirstCommand { get; private set; }
+
+        private bool CanExecuteGoToFirstCommand(bool select)
+        {
+            return Items.Count > 0;
+        }
+
+        private void ExecuteGoToFirstCommand(bool select)
+        {
+            var first = Items.First();
+            if (select) SelectIntervalOfItems(first, CurrentRow, !CurrentRow.IsSelected);
+            CurrentRow = first;
+        }
+
+        #endregion
+
+        #region GoToLastCommand
+
+        public DelegateCommand<bool> GoToLastCommand { get; private set; }
+
+        private bool CanExecuteGoToLastCommand(bool select)
+        {
+            return Items.Count > 0;
+        }
+
+        private void ExecuteGoToLastCommand(bool select)
+        {
+            var last = Items.Last();
+            if (select) SelectIntervalOfItems(CurrentRow, last, !CurrentRow.IsSelected);
+            CurrentRow = last;
         }
 
         #endregion
@@ -583,6 +618,8 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             ToggleSelectionCommand = new DelegateCommand<ToggleSelectionMode>(ExecuteToggleSelectionCommand);
             SelectAllCommand = new DelegateCommand<EventInformation<EventArgs>>(ExecuteSelectAllCommand);
             MouseSelectionCommand = new DelegateCommand<EventInformation<MouseEventArgs>>(ExecuteMouseSelectionCommand);
+            GoToFirstCommand = new DelegateCommand<bool>(ExecuteGoToFirstCommand, CanExecuteGoToFirstCommand);
+            GoToLastCommand = new DelegateCommand<bool>(ExecuteGoToLastCommand, CanExecuteGoToLastCommand);
             RefreshTitleCommand = new DelegateCommand(ExecuteRefreshTitleCommand, CanExecuteRefreshTitleCommand);
             CopyTitleIdToClipboardCommand = new DelegateCommand(ExecuteCopyTitleIdToClipboardCommand, CanExecuteCopyTitleIdToClipboardCommand);
             SearchGoogleCommand = new DelegateCommand(ExecuteSearchGoogleCommand, CanExecuteSearchGoogleCommand);
@@ -596,6 +633,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
                                                                                  CurrentRow = null;
                                                                              });
             if (!Directory.Exists("tmp")) Directory.CreateDirectory("tmp");
+            Items = new ObservableCollection<FileSystemItemViewModel>();
         }
 
         public abstract void LoadDataAsync(LoadCommand cmd, object cmdParam);

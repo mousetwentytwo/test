@@ -6,32 +6,27 @@ namespace Neurotoxin.Contour.Presentation.Infrastructure
 {
     public static class WorkerThread
     {
-        public static void Run<T>(Func<T> work, Action<T> callback)
+        public static void Run<T>(Func<T> work, Action<T> success, Action<Exception> error = null)
         {
-            work.BeginInvoke(asyncResult => 
-            {
-                var result = work.EndInvoke(asyncResult);
-                UIThread.Run(callback, result);
+            work.BeginInvoke(asyncResult =>
+                {
+                    try
+                    {
+                        var result = work.EndInvoke(asyncResult);
+                        UIThread.Run(success, result);
+                    }
+                    catch (Exception ex)
+                    {
+                        if (error != null) UIThread.Run(error, ex);
+                    }
+                
             }, null);
-        }
-
-        public static void Run<TResult, TArguments>(Func<TArguments, TResult> work, Action<AsyncResult<TResult, TArguments>> callback, TArguments args) where TArguments : IAsyncCallArguments
-        {
-            work.BeginInvoke(args, asyncResult =>
-                                       {
-                                           var result = new AsyncResult<TResult, TArguments>
-                                                            {
-                                                                Args = args, 
-                                                                Result = work.EndInvoke(asyncResult)
-                                                            };
-                                           UIThread.Run(callback, result);
-                                       }, null);
         }
     }
 
     public static class UIThread
     {
-        public static readonly Dispatcher Dispatcher = Application.Current.Dispatcher;
+        private static readonly Dispatcher Dispatcher = Application.Current.Dispatcher;
 
         public static bool IsUIThread
         {

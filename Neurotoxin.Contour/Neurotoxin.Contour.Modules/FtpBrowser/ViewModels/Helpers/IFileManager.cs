@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Neurotoxin.Contour.Modules.FtpBrowser.Models;
 
@@ -7,6 +8,8 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels.Helpers
     {
         List<FileSystemItem> GetDrives(); 
         List<FileSystemItem> GetList(string path = null);
+
+        DateTime GetFileModificationTime(string path);
 
         bool DriveIsReady(string drive);
         bool FileExists(string path);

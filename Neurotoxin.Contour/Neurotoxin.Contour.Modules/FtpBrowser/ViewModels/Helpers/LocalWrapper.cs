@@ -42,6 +42,11 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels.Helpers
             return list;
         }
 
+        public DateTime GetFileModificationTime(string path)
+        {
+            return File.GetLastWriteTime(path);
+        }
+
         public bool DriveIsReady(string drive)
         {
             var driveInfo = DriveInfo.GetDrives().First(d => d.Name == drive);

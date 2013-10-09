@@ -65,8 +65,9 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FtpBrowser\Constants\CopyBehaviorScope.cs" />
     <Compile Include="FtpBrowser\Constants\ToggleSelectionMode.cs" />
-    <Compile Include="FtpBrowser\Constants\TransferMode.cs" />
+    <Compile Include="FtpBrowser\Constants\CopyBehavior.cs" />
     <Compile Include="FtpBrowser\Converters\PaneHeaderBackgroundConverter.cs" />
     <Compile Include="FtpBrowser\Converters\SizeAlignmentConverter.cs" />
     <Compile Include="FtpBrowser\Converters\SizeConverter.cs" />
@@ -81,6 +82,7 @@
     <Compile Include="FtpBrowser\Events\FtpOperationProgressChangedEvent.cs" />
     <Compile Include="FtpBrowser\Events\FtpOperationFinishedEvent.cs" />
     <Compile Include="FtpBrowser\Events\FtpOperationStartedEvent.cs" />
+    <Compile Include="FtpBrowser\Models\TransferErrorDialogResult.cs" />
     <Compile Include="FtpBrowser\ViewModels\Helpers\IFileManager.cs" />
     <Compile Include="FtpBrowser\ViewModels\Helpers\LocalWrapper.cs" />
     <Compile Include="FtpBrowser\ViewModels\Helpers\TitleManager.cs" />
@@ -92,6 +94,9 @@
     <Compile Include="FtpBrowser\ViewModels\FileSystemItemViewModel.cs" />
     <Compile Include="FtpBrowser\ModuleInit.cs" />
     <Compile Include="FtpBrowser\ViewModels\FtpBrowserViewModel.cs" />
+    <Compile Include="FtpBrowser\Views\TransferErrorDialog.xaml.cs">
+      <DependentUpon>TransferErrorDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="FtpBrowser\Views\TransferProgressDialog.xaml.cs">
       <DependentUpon>TransferProgressDialog.xaml</DependentUpon>
     </Compile>
@@ -125,6 +130,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="FtpBrowser\Views\TransferErrorDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="FtpBrowser\Views\TransferProgressDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

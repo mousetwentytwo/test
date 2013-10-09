@@ -77,6 +77,11 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels.Helpers
             return filename;
         }
 
+        public DateTime GetFileModificationTime(string path)
+        {
+            return _ftpClient.GetFileModificationTime(path);
+        }
+
         public bool DriveIsReady(string drive)
         {
             try
@@ -140,10 +145,17 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels.Helpers
             fs.Close();
         }
 
-        internal void DownloadFile(string path, Stream stream)
+        internal void DownloadFile(string path, Stream stream, long remoteStartPosition = 0)
         {
             NotifyFtpOperationStarted(true);
-            _ftpClient.Download(LocateDirectory(path), stream);
+            if (remoteStartPosition != 0)
+            {
+                _ftpClient.Download(LocateDirectory(path), remoteStartPosition, stream);
+            }
+            else
+            {
+                _ftpClient.Download(LocateDirectory(path), stream);
+            }
             NotifyFtpOperationFinished(stream.Length);
         }
 
@@ -171,6 +183,19 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels.Helpers
         {
             NotifyFtpOperationStarted(true);
             _ftpClient.Upload(remotePath, localPath);
+            NotifyFtpOperationFinished();
+        }
+
+        internal void AppendFile(string remotePath, string localPath)
+        {
+            NotifyFtpOperationStarted(true);
+            var filename = LocateDirectory(remotePath);
+            var list = _ftpClient.GetList();
+            var file = list.FirstOrDefault(f => f.Name == filename);
+            var size = file != null ? file.Size.Value : 0;
+            var fs = new FileStream(localPath, FileMode.Open);
+            fs.Seek(size, SeekOrigin.Begin);
+            _ftpClient.Append(remotePath, fs);
             NotifyFtpOperationFinished();
         }
 
