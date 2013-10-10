@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows;
-using Neurotoxin.Contour.Modules.FtpBrowser.Events;
 using Neurotoxin.Contour.Modules.FtpBrowser.ViewModels;
 using Neurotoxin.Contour.Presentation.Infrastructure;
 
@@ -19,17 +18,17 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.Views
         {
             InitializeComponent();
             DataContext = viewModel;
-            eventAggregator.GetEvent<TransferStartedEvent>().Subscribe(ShowTransferProgressDialog);
-            eventAggregator.GetEvent<TransferFinishedEvent>().Subscribe(HideTransferProgressDialog);
+            viewModel.TransferStarted += ViewModelOnTransferStarted;
+            viewModel.TransferFinished += ViewModelOnTransferFinished;
         }
 
-        private void ShowTransferProgressDialog(TransferStartedEventArgs transferStartedEventArgs)
+        private void ViewModelOnTransferStarted()
         {
             if (_transferProgressDialog == null) _transferProgressDialog = new TransferProgressDialog(ViewModel);
             _transferProgressDialog.Show();
         }
 
-        private void HideTransferProgressDialog(TransferFinishedEventArgs transferFinishedEventArgs)
+        private void ViewModelOnTransferFinished()
         {
             _transferProgressDialog.Hide();
         }

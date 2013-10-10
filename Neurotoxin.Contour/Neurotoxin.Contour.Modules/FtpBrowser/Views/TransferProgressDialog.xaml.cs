@@ -7,15 +7,21 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.Views
     {
         public const string BytesFormat = "{0:#,0}";
 
+        private FtpBrowserViewModel ViewModel
+        {
+            get { return (FtpBrowserViewModel) DataContext; }
+        }
+
         public TransferProgressDialog(FtpBrowserViewModel viewModel)
         {
+            Owner = Application.Current.MainWindow;
             InitializeComponent();
-            this.DataContext = viewModel;
+            DataContext = viewModel;
         }
 
         private void CancelButtonClick(object sender, RoutedEventArgs e)
         {
-
+            ViewModel.AbortTransfer();
         }
     }
 }

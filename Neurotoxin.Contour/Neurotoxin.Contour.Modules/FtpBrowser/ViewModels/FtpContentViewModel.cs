@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Neurotoxin.Contour.Modules.FtpBrowser.Constants;
+using Neurotoxin.Contour.Modules.FtpBrowser.Exceptions;
 using Neurotoxin.Contour.Modules.FtpBrowser.Models;
 using Neurotoxin.Contour.Modules.FtpBrowser.ViewModels.Helpers;
 using Neurotoxin.Contour.Presentation.Extensions;
@@ -57,45 +58,39 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             Drive = Drives.First();
         }
 
-        public bool Download(FileSystemItemViewModel ftpItem, string targetPath, CopyBehavior behavior, bool overwriteOlderOnly)
+        public bool Download(FileSystemItemViewModel ftpItem, string targetPath, CopyAction action)
         {
             var remotePath = ftpItem.Path;
             var localPath = remotePath.Replace(CurrentFolder.Path, targetPath).Replace('/', '\\');
 
             FileMode mode;
-            switch (behavior)
+            long remoteStartPosition = 0;
+            switch (action)
             {
-                case CopyBehavior.Default:
+                case CopyAction.CreateNew:
                     mode = FileMode.CreateNew;
                     break;
-                case CopyBehavior.Overwrite:
+                case CopyAction.Overwrite:
                     mode = FileMode.Create;
                     break;
-                case CopyBehavior.Resume:
+                case CopyAction.OverwriteOlder:
+                    var fileDate = File.GetLastWriteTime(localPath);
+                    if (fileDate > ftpItem.Date) return false;
+                    mode = FileMode.Create;
+                    break;
+                case CopyAction.Resume:
                     mode = FileMode.Append;
+                    var fi = new FileInfo(localPath);
+                    remoteStartPosition = fi.Length;
                     break;
                 default:
-                    throw new ArgumentException("Invalid Copy behavior: " + behavior);
+                    throw new ArgumentException("Invalid Copy action: " + action);
             }
 
             switch (ftpItem.Type)
             {
                 case ItemType.File:
-                    if (behavior == CopyBehavior.Overwrite && overwriteOlderOnly)
-                    {
-                        var fileDate = File.GetLastWriteTime(localPath);
-                        if (fileDate > ftpItem.Date) return false;
-                    }
-                    var fs = new FileStream(localPath, mode);
-                    long remoteStartPosition = 0;
-                    if (behavior == CopyBehavior.Resume)
-                    {
-                        var fi = new FileInfo(localPath);
-                        remoteStartPosition = fi.Length;
-                    }
-                    FileManager.DownloadFile(remotePath, fs, remoteStartPosition);
-                    fs.Flush();
-                    fs.Close();
+                    FileManager.DownloadFile(remotePath, localPath, mode, remoteStartPosition);
                     break;
                 case ItemType.Directory:
                     if (!Directory.Exists(localPath)) Directory.CreateDirectory(localPath);
@@ -106,7 +101,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             return true;
         }
 
-        public bool Upload(FileSystemItemViewModel localItem, string sourcePath, CopyBehavior behavior, bool overwriteOlderOnly)
+        public bool Upload(FileSystemItemViewModel localItem, string sourcePath, CopyAction action)
         {
             var localPath = localItem.Path;
             var remotePath = localPath.Replace(sourcePath, CurrentFolder.Path).Replace('\\', '/');
@@ -114,29 +109,28 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             switch (localItem.Type)
             {
                 case ItemType.File:
-                    if (behavior == CopyBehavior.Overwrite && overwriteOlderOnly)
+                    switch (action)
                     {
-                        var fileDate = FileManager.GetFileModificationTime(remotePath);
-                        if (fileDate > localItem.Date) return false;
-                    }
-                    switch (behavior)
-                    {
-                        case CopyBehavior.Default:
+                        case CopyAction.CreateNew:
                             if (FileManager.FileExists(remotePath))
-                                throw new Exception("Target already exists");
+                                throw new TransferException(TransferErrorType.WriteAccessError, "Target already exists");
                             FileManager.UploadFile(remotePath, localPath);
                             break;
-                        case CopyBehavior.Overwrite:
+                        case CopyAction.Overwrite:
                             //TODO: assumption only!
                             FileManager.UploadFile(remotePath, localPath);
                             break;
-                        case CopyBehavior.Resume:
+                        case CopyAction.OverwriteOlder:
+                            var fileDate = FileManager.GetFileModificationTime(remotePath);
+                            if (fileDate > localItem.Date) return false;
+                            FileManager.UploadFile(remotePath, localPath);
+                            break;
+                        case CopyAction.Resume:
                             FileManager.AppendFile(remotePath, localPath);
                             break;
                         default:
-                            throw new ArgumentException("Invalid Copy behavior: " + behavior);
+                            throw new ArgumentException("Invalid Copy action: " + action);
                     }
-                    
                     break;
                 case ItemType.Directory:
                     if (!FileManager.FolderExists(remotePath)) FileManager.CreateFolder(remotePath);
@@ -145,6 +139,11 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
                     throw new NotSupportedException();
             }
             return true;
+        }
+
+        public void RestoreConnection()
+        {
+            FileManager.RestoreConnection();
         }
     }
 }

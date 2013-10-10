@@ -4,9 +4,9 @@ using System.Windows;
 using System.Windows.Input;
 using Neurotoxin.Contour.Modules.FtpBrowser.Constants;
 using Neurotoxin.Contour.Modules.FtpBrowser.Events;
+using Neurotoxin.Contour.Modules.FtpBrowser.Exceptions;
 using Neurotoxin.Contour.Modules.FtpBrowser.Models;
 using Neurotoxin.Contour.Modules.FtpBrowser.Views;
-using Neurotoxin.Contour.Presentation.Events;
 using Neurotoxin.Contour.Presentation.Infrastructure;
 using Neurotoxin.Contour.Presentation.Infrastructure.Constants;
 using System.Linq;
@@ -17,8 +17,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
     public class FtpBrowserViewModel : ModuleViewModelBase
     {
         private Queue<FileSystemItemViewModel> _queue;
-        private CopyBehavior _copyBehavior;
-        private bool _overwriteOlder;
+        private CopyAction _rememberedCopyAction;
 
         #region Main window properties
 
@@ -52,12 +51,12 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
 
         #region Transfer properties
 
-        private const string ACTIONLABEL = "ActionLabel";
-        private string _actionLabel;
-        public string ActionLabel
+        private const string TRANSFERPROGRESSDIALOGMODE = "TransferProgressDialogMode";
+        private TransferProgressDialogMode _transferProgressDialogMode;
+        public TransferProgressDialogMode TransferProgressDialogMode
         {
-            get { return _actionLabel; }
-            set { _actionLabel = value; NotifyPropertyChanged(ACTIONLABEL); }
+            get { return _transferProgressDialogMode; }
+            set { _transferProgressDialogMode = value; NotifyPropertyChanged(TRANSFERPROGRESSDIALOGMODE); }
         }
 
         private const string SOURCEFILE = "SourceFile";
@@ -66,14 +65,6 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
         {
             get { return _sourceFile; }
             set { _sourceFile = value; NotifyPropertyChanged(SOURCEFILE); }
-        }
-
-        private const string TARGETFILE = "TargetFile";
-        private string _targetFile;
-        public string TargetFile
-        {
-            get { return _targetFile; }
-            set { _targetFile = value; NotifyPropertyChanged(TARGETFILE); }
         }
 
         private const string CURRENTFILEPROGRESS = "CurrentFileProgress";
@@ -87,7 +78,16 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
         private const string TOTALPROGRESS = "TotalProgress";
         public int TotalProgress
         {
-            get { return (int)(BytesTransfered * 100 / TotalBytes); }
+            get
+            {
+                switch (TransferProgressDialogMode)
+                {
+                    case TransferProgressDialogMode.Delete:
+                        return FilesTransfered*100/FileCount;
+                    default:
+                        return (int)(BytesTransfered * 100 / TotalBytes);
+                }
+            }
         }
 
         private const string FILESTRANSFERED = "FilesTransfered";
@@ -230,22 +230,23 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
         private void ExecuteCopyCommand()
         {
             _queue = SourcePane.PopulateQueue();
-            InitializeTransfer("Copy:");
+            InitializeTransfer(TransferProgressDialogMode.Copy);
             CopyStart();
         }
 
-        private void CopyStart(CopyBehavior? behavior = null)
+        private void CopyStart(CopyAction? action = null)
         {
             if (_queue.Count > 0)
             {
                 var item = _queue.Peek();
+                SourceFile = item.Path.Replace(Ftp.CurrentFolder.Path, string.Empty);
                 if (SourcePane == Ftp)
                 {
-                    WorkerThread.Run(() => Ftp.Download(item, TargetPane.CurrentFolder.Path, behavior ?? _copyBehavior, _overwriteOlder), CopySuccess, CopyError);
+                    WorkerThread.Run(() => Ftp.Download(item, TargetPane.CurrentFolder.Path, action ?? _rememberedCopyAction), CopySuccess, CopyError);
                 }
                 else
                 {
-                    WorkerThread.Run(() => Ftp.Upload(item, SourcePane.CurrentFolder.Path, behavior ?? _copyBehavior, _overwriteOlder), CopySuccess, CopyError);
+                    WorkerThread.Run(() => Ftp.Upload(item, SourcePane.CurrentFolder.Path, action ?? _rememberedCopyAction), CopySuccess, CopyError);
                 } 
             }
             else
@@ -286,22 +287,23 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
         private void ExecuteMoveCommand()
         {
             _queue = SourcePane.PopulateQueue();
-            InitializeTransfer("Move:");
+            InitializeTransfer(TransferProgressDialogMode.Move);
             MoveStart();
         }
 
-        private void MoveStart(CopyBehavior? behavior = null)
+        private void MoveStart(CopyAction? action = null)
         {
             if (_queue.Count > 0)
             {
                 var item = _queue.Peek();
+                SourceFile = item.Path.Replace(Ftp.CurrentFolder.Path, string.Empty);
                 if (SourcePane == Ftp)
                 {
-                    WorkerThread.Run(() => { Ftp.Download(item, TargetPane.CurrentFolder.Path, behavior ?? _copyBehavior, _overwriteOlder); Ftp.Delete(item); return true; }, MoveSuccess, MoveError);
+                    WorkerThread.Run(() => { Ftp.Download(item, TargetPane.CurrentFolder.Path, action ?? _rememberedCopyAction); Ftp.Delete(item); return true; }, MoveSuccess, MoveError);
                 }
                 else
                 {
-                    WorkerThread.Run(() => { Ftp.Upload(item, SourcePane.CurrentFolder.Path, behavior ?? _copyBehavior, _overwriteOlder); LocalFileSystem.Delete(item); return true; }, MoveSuccess, MoveError);
+                    WorkerThread.Run(() => { Ftp.Upload(item, SourcePane.CurrentFolder.Path, action ?? _rememberedCopyAction); LocalFileSystem.Delete(item); return true; }, MoveSuccess, MoveError);
                 }
             }
             else
@@ -362,14 +364,17 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
         private void ExecuteDeleteCommand()
         {
             _queue = new Queue<FileSystemItemViewModel>(SourcePane.SelectedItems.Any() ? SourcePane.SelectedItems : new[] { SourcePane.CurrentRow });
+            InitializeTransfer(TransferProgressDialogMode.Delete);
             DeleteStart();
         }
 
-        private void DeleteStart()
+        private void DeleteStart(CopyAction? action = null)
         {
             if (_queue.Count > 0)
             {
-                WorkerThread.Run(() => SourcePane.Delete(_queue.Peek()), DeleteSuccess, DeleteError);
+                var item = _queue.Peek();
+                SourceFile = item.Path.Replace(Ftp.CurrentFolder.Path, string.Empty);
+                WorkerThread.Run(() => SourcePane.Delete(item), DeleteSuccess, DeleteError);
             }
             else
             {
@@ -388,12 +393,33 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
 
         private void DeleteError(Exception exception)
         {
-            throw new NotImplementedException();
+            ShowTransferErrorDialog(exception, DeleteStart, DeleteSuccess, DeleteFinish);
         }
 
         private void DeleteFinish()
         {
+            FinishTransfer();
             SourcePane.Refresh();
+        }
+
+        #endregion
+
+        #region Events
+
+        public event TransferStartedEventHandler TransferStarted;
+
+        private void NotifyTransferStarted()
+        {
+            var handler = TransferStarted;
+            if (handler != null) handler.Invoke();
+        }
+
+        public event TransferFinishedEventHandler TransferFinished;
+
+        private void NotifyTransferFinished()
+        {
+            var handler = TransferFinished;
+            if (handler != null) handler.Invoke();
         }
 
         #endregion
@@ -418,45 +444,80 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             DeleteCommand.RaiseCanExecuteChanged();
         }
 
-        private void InitializeTransfer(string actionLabel)
+        private void InitializeTransfer(TransferProgressDialogMode mode)
         {
+            _rememberedCopyAction = CopyAction.CreateNew;
             FileCount = _queue.Count;
             TotalBytes = _queue.Where(item => item.Type == ItemType.File).Sum(item => item.Size ?? 0);
+            FilesTransfered = 0;
+            BytesTransfered = 0;
             IsInProgress = true;
-            ActionLabel = actionLabel;
-            eventAggregator.GetEvent<TransferStartedEvent>().Publish(new TransferStartedEventArgs());
+            TransferProgressDialogMode = mode;
+            NotifyTransferStarted();
         }
 
-        private void ShowTransferErrorDialog(Exception exception, Action<CopyBehavior?> retry, Action<bool> skip, Action cancel)
+        private void ShowTransferErrorDialog(Exception exception, Action<CopyAction?> retry, Action<bool> skip, Action cancel)
         {
-            var dialog = new TransferErrorDialog(exception);
-            var result = dialog.ShowDialog() == true
+            var transferException = exception as TransferException;
+            if (transferException != null)
+            {
+                TransferErrorDialogResult result;
+                switch (transferException.Type)
+                {
+                    case TransferErrorType.ReadAccessError:
+                        result = ShowTransferErrorDialog<ReadErrorDialog>(exception);
+                        break;
+                    case TransferErrorType.WriteAccessError:
+                        result = ShowTransferErrorDialog<WriteErrorDialog>(exception);
+                        break;
+                    case TransferErrorType.LostConnection:
+                        result = new TransferErrorDialogResult(CopyBehavior.Cancel);
+                        var reconnectionDialog = new ReconnectionDialog();
+                        if (reconnectionDialog.ShowDialog() == true)
+                        {
+                            Ftp.RestoreConnection();
+                        }
+                        else
+                        {
+                            throw new NotImplementedException("FTP is a must in this version :D");
+                        }
+                        break;
+                    default:
+                        throw new NotSupportedException("Invalid transfer error type: " + transferException.Type);
+                }
+
+                if (result.Scope == CopyActionScope.All && result.Action.HasValue)
+                {
+                    _rememberedCopyAction = result.Action.Value;
+                }
+
+                switch (result.Behavior)
+                {
+                    case CopyBehavior.Retry:
+                        retry.Invoke(result.Action);
+                        break;
+                    case CopyBehavior.Skip:
+                        skip.Invoke(false);
+                        break;
+                    case CopyBehavior.Cancel:
+                        cancel.Invoke();
+                        break;
+                }
+            }
+            else
+            {
+                MessageBox.Show("Uknown error occured: " + exception.Message);
+            }
+        }
+
+        private TransferErrorDialogResult ShowTransferErrorDialog<T>(Exception exception) where T : ITransferErrorDialog
+        {
+            var dialogConstructor = typeof (T).GetConstructor(new[] {typeof (Exception)});
+            if (dialogConstructor == null) throw new Exception("Constructor is missing");
+            var dialog = (T)dialogConstructor.Invoke(new object[] { exception});
+            return dialog.ShowDialog() == true
                              ? dialog.Result
-                             : new TransferErrorDialogResult(CopyBehavior.Cancel, CopyBehaviorScope.All);
-
-            switch (result.Behavior)
-            {
-                case CopyBehavior.Overwrite:
-                case CopyBehavior.Resume:
-                    retry.Invoke(result.Behavior);
-                    break;
-                case CopyBehavior.Skip:
-                    skip.Invoke(false);
-                    break;
-                case CopyBehavior.Cancel:
-                    cancel.Invoke();
-                    break;
-            }
-
-            switch (result.Scope)
-            {
-                case CopyBehaviorScope.All:
-                    _copyBehavior = result.Behavior;
-                    break;
-                case CopyBehaviorScope.AllOlder:
-                    _overwriteOlder = true;
-                    break;
-            }
+                             : new TransferErrorDialogResult(CopyBehavior.Cancel);
         }
 
         private void UpdateTransfer(bool result)
@@ -467,10 +528,15 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             if (result) item.IsSelected = false;
         }
 
+        internal void AbortTransfer()
+        {
+            throw new NotImplementedException();
+        }
+
         private void FinishTransfer()
         {
             IsInProgress = false;
-            eventAggregator.GetEvent<TransferFinishedEvent>().Publish(new TransferFinishedEventArgs());
+            NotifyTransferFinished();
         }
     }
 }

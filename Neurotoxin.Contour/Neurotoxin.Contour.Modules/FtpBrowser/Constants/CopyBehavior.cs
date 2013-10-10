@@ -2,10 +2,8 @@
 {
     public enum CopyBehavior
     {
-        Default,
-        Overwrite,
+        Retry,
         Skip,
-        Resume,
         Cancel
     }
 }

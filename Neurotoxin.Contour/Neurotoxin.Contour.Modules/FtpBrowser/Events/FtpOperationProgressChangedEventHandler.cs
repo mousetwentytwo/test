@@ -1,6 +1,6 @@
 ﻿namespace Neurotoxin.Contour.Modules.FtpBrowser.Events
 {
-    public delegate void FtpOperationProgressChangedEvent(object sender, FtpOperationProgressChangedEventArgs args);
+    public delegate void FtpOperationProgressChangedEventHandler(object sender, FtpOperationProgressChangedEventArgs args);
 
     public class FtpOperationProgressChangedEventArgs
     {

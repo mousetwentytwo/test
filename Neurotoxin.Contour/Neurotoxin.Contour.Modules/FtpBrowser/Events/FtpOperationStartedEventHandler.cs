@@ -1,6 +1,6 @@
 ﻿namespace Neurotoxin.Contour.Modules.FtpBrowser.Events
 {
-    public delegate void FtpOperationStartedEvent(object sender, FtpOperationStartedEventArgs args);
+    public delegate void FtpOperationStartedEventHandler(object sender, FtpOperationStartedEventArgs args);
 
     public class FtpOperationStartedEventArgs
     {

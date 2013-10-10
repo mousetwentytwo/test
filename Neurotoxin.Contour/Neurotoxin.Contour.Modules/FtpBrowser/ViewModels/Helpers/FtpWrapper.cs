@@ -4,7 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Limilabs.FTP.Client;
+using Neurotoxin.Contour.Modules.FtpBrowser.Constants;
 using Neurotoxin.Contour.Modules.FtpBrowser.Events;
+using Neurotoxin.Contour.Modules.FtpBrowser.Exceptions;
 using Neurotoxin.Contour.Modules.FtpBrowser.Models;
 
 namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels.Helpers
@@ -14,59 +16,86 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels.Helpers
         private Ftp _ftpClient;
         private bool _downloadHeaderOnly;
 
-        public event FtpOperationStartedEvent FtpOperationStarted;
-        public event FtpOperationFinishedEvent FtpOperationFinished;
-        public event FtpOperationProgressChangedEvent FtpOperationProgressChanged;
+        public event FtpOperationStartedEventHandler FtpOperationStarted;
+        public event FtpOperationFinishedEventHandler FtpOperationFinished;
+        public event FtpOperationProgressChangedEventHandler FtpOperationProgressChanged;
 
         internal bool Connect()
         {
-            _ftpClient = new Ftp();
-            _ftpClient.Connect("127.0.0.1");
-            _ftpClient.Login("xbox", "hardcore21*");
-            //_ftpClient.Connect("192.168.1.110");
-            //_ftpClient.Login("xbox", "xbox");
+            try 
+            {
+                //TODO: config
 
-            //HACK: FSD FTP states that it supports SIZE command, but it throws a "not implemented" exception
-            var mi = _ftpClient.Extensions.GetType().GetMethod("method_4", BindingFlags.Instance | BindingFlags.NonPublic);
-            mi.Invoke(_ftpClient.Extensions, new object[] { false });
+                _ftpClient = new Ftp();
+                _ftpClient.Connect("127.0.0.1");
+                _ftpClient.Login("xbox", "hardcore21*");
+                //_ftpClient.Connect("192.168.1.110");
+                //_ftpClient.Login("xbox", "xbox");
 
-            _ftpClient.Progress += FtpClientProgressChanged;
+                //HACK: FSD FTP states that it supports SIZE command, but it throws a "not implemented" exception
+                var mi = _ftpClient.Extensions.GetType().GetMethod("method_4", BindingFlags.Instance | BindingFlags.NonPublic);
+                mi.Invoke(_ftpClient.Extensions, new object[] { false });
+
+                _ftpClient.Progress += FtpClientProgressChanged;
+            }
+            catch (FtpException ex)
+            {
+                throw new NotImplementedException();
+            }
             return true;
         }
 
         public List<FileSystemItem> GetDrives()
         {
             NotifyFtpOperationStarted(false);
-            var currentFolder = _ftpClient.GetCurrentFolder();
-            _ftpClient.ChangeFolder("/");
-            var result = _ftpClient.GetList().Select(di => new FileSystemItem
+            try
             {
-                Name = di.Name,
-                Type = ItemType.Drive,
-                Date = di.ModifyDate,
-                Path = string.Format("/{0}/", di.Name),
-            }).ToList();
-            _ftpClient.ChangeFolder(currentFolder);
-            NotifyFtpOperationFinished();
-            return result;
+                var currentFolder = _ftpClient.GetCurrentFolder();
+                _ftpClient.ChangeFolder("/");
+                var result = _ftpClient.GetList().Select(di => new FileSystemItem
+                    {
+                        Name = di.Name,
+                        Type = ItemType.Drive,
+                        Date = di.ModifyDate,
+                        Path = string.Format("/{0}/", di.Name),
+                    }).ToList();
+                _ftpClient.ChangeFolder(currentFolder);
+                NotifyFtpOperationFinished();
+                return result;
+            }
+            catch (FtpException ex)
+            {
+                NotifyFtpOperationFinished();
+                if (_ftpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
+                throw new TransferException(TransferErrorType.LostConnection, ex.Message);
+            } 
         }
 
         public List<FileSystemItem> GetList(string path = null)
         {
             NotifyFtpOperationStarted(false);
-            if (path != null) _ftpClient.ChangeFolder(path);
-            var currentPath = _ftpClient.GetCurrentFolder();
-
-            var result = _ftpClient.GetList().Select(di => new FileSystemItem
+            try
             {
-                Name = di.Name,
-                Type = di.IsFolder ? ItemType.Directory : ItemType.File,
-                Date = di.ModifyDate,
-                Path = string.Format("{0}/{1}{2}", currentPath, di.Name, di.IsFolder ? "/" : string.Empty),
-                Size = di.Size
-            }).ToList();
-            NotifyFtpOperationFinished();
-            return result;
+                if (path != null) _ftpClient.ChangeFolder(path);
+                var currentPath = _ftpClient.GetCurrentFolder();
+
+                var result = _ftpClient.GetList().Select(di => new FileSystemItem
+                    {
+                        Name = di.Name,
+                        Type = di.IsFolder ? ItemType.Directory : ItemType.File,
+                        Date = di.ModifyDate,
+                        Path = string.Format("{0}/{1}{2}", currentPath, di.Name, di.IsFolder ? "/" : string.Empty),
+                        Size = di.Size
+                    }).ToList();
+                NotifyFtpOperationFinished();
+                return result;
+            }
+            catch (FtpException ex)
+            {
+                NotifyFtpOperationFinished();
+                if (_ftpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
+                throw new TransferException(TransferErrorType.LostConnection, ex.Message);
+            }          
         }
 
         private string LocateDirectory(string path)
@@ -79,7 +108,16 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels.Helpers
 
         public DateTime GetFileModificationTime(string path)
         {
-            return _ftpClient.GetFileModificationTime(path);
+            try
+            {
+                return _ftpClient.GetFileModificationTime(path);
+            }
+            catch (FtpException ex)
+            {
+                NotifyFtpOperationFinished();
+                if (_ftpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
+                throw new TransferException(TransferErrorType.LostConnection, ex.Message);
+            }
         }
 
         public bool DriveIsReady(string drive)
@@ -132,34 +170,43 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels.Helpers
         internal byte[] DownloadFile(string path)
         {
             NotifyFtpOperationStarted(true);
-            var result = _ftpClient.Download(LocateDirectory(path));
-            NotifyFtpOperationFinished(result.Length);
-            return result;
+            try
+            {
+                var result = _ftpClient.Download(LocateDirectory(path));
+                NotifyFtpOperationFinished(result.Length);
+                return result;
+            }
+            catch (FtpException ex)
+            {
+                NotifyFtpOperationFinished();
+                if (_ftpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
+                throw new TransferException(TransferErrorType.LostConnection, ex.Message);
+            }
         }
 
-        internal void DownloadFile(string remotePath, string localPath)
-        {
-            var fs = new FileStream(localPath, FileMode.OpenOrCreate);
-            DownloadFile(remotePath, fs);
-            fs.Flush();
-            fs.Close();
-        }
-
-        internal void DownloadFile(string path, Stream stream, long remoteStartPosition = 0)
+        internal void DownloadFile(string remotePath, string localPath, FileMode mode, long remoteStartPosition = 0)
         {
             NotifyFtpOperationStarted(true);
-            if (remoteStartPosition != 0)
+            try
             {
-                _ftpClient.Download(LocateDirectory(path), remoteStartPosition, stream);
+                var fs = new FileStream(localPath, mode);
+                _ftpClient.Download(LocateDirectory(remotePath), remoteStartPosition, fs);
+                NotifyFtpOperationFinished(fs.Length);
             }
-            else
+            catch (IOException ex)
             {
-                _ftpClient.Download(LocateDirectory(path), stream);
+                NotifyFtpOperationFinished();
+                throw new TransferException(TransferErrorType.WriteAccessError, ex.Message);
             }
-            NotifyFtpOperationFinished(stream.Length);
+            catch (FtpException ex)
+            {
+                NotifyFtpOperationFinished();
+                if (_ftpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
+                throw new TransferException(TransferErrorType.LostConnection, ex.Message);
+            }
         }
 
-        internal byte[] DownloadHeader(string path)
+        private byte[] DownloadHeader(string path)
         {
             NotifyFtpOperationStarted(false);
             _downloadHeaderOnly = true;
@@ -182,8 +229,22 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels.Helpers
         internal void UploadFile(string remotePath, string localPath)
         {
             NotifyFtpOperationStarted(true);
-            _ftpClient.Upload(remotePath, localPath);
-            NotifyFtpOperationFinished();
+            try
+            {
+                _ftpClient.Upload(remotePath, localPath);
+                NotifyFtpOperationFinished();
+            }
+            catch (IOException ex)
+            {
+                NotifyFtpOperationFinished();
+                throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
+            }
+            catch (FtpException ex)
+            {
+                NotifyFtpOperationFinished();
+                if (_ftpClient.Connected) throw new TransferException(TransferErrorType.WriteAccessError, ex.Message);
+                throw new TransferException(TransferErrorType.LostConnection, ex.Message);
+            }
         }
 
         internal void AppendFile(string remotePath, string localPath)
@@ -193,10 +254,24 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels.Helpers
             var list = _ftpClient.GetList();
             var file = list.FirstOrDefault(f => f.Name == filename);
             var size = file != null ? file.Size.Value : 0;
-            var fs = new FileStream(localPath, FileMode.Open);
-            fs.Seek(size, SeekOrigin.Begin);
-            _ftpClient.Append(remotePath, fs);
-            NotifyFtpOperationFinished();
+            try
+            {
+                var fs = new FileStream(localPath, FileMode.Open);
+                fs.Seek(size, SeekOrigin.Begin);
+                _ftpClient.Append(remotePath, fs);
+                NotifyFtpOperationFinished();
+            }
+            catch (IOException ex)
+            {
+                NotifyFtpOperationFinished();
+                throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
+            }
+            catch (FtpException ex)
+            {
+                NotifyFtpOperationFinished();
+                if (_ftpClient.Connected) throw new TransferException(TransferErrorType.WriteAccessError, ex.Message);
+                throw new TransferException(TransferErrorType.LostConnection, ex.Message);
+            }
         }
 
         private void FtpClientProgressChanged(object sender, ProgressEventArgs e)
@@ -213,17 +288,50 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels.Helpers
 
         public void DeleteFolder(string path)
         {
-            _ftpClient.DeleteFolderRecursively(path);
+            try
+            {
+                _ftpClient.DeleteFolderRecursively(path);
+            }
+            catch (FtpException ex)
+            {
+                //TODO: not read
+                if (_ftpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
+                throw new TransferException(TransferErrorType.LostConnection, ex.Message);
+            }
         }
 
         public void DeleteFile(string path)
         {
-            _ftpClient.DeleteFile(path);
+            try
+            {
+                _ftpClient.DeleteFile(path);
+            }
+            catch (FtpException ex)
+            {
+                //TODO: not read
+                if (_ftpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
+                throw new TransferException(TransferErrorType.LostConnection, ex.Message);
+            }
         }
 
         public void CreateFolder(string path)
         {
-            _ftpClient.CreateFolder(path);
+            try
+            {
+                _ftpClient.CreateFolder(path);
+            }
+            catch (FtpException ex)
+            {
+                //TODO: not read
+                if (_ftpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
+                throw new TransferException(TransferErrorType.LostConnection, ex.Message);
+            }
+        }
+
+        public void RestoreConnection()
+        {
+            _ftpClient.Progress -= FtpClientProgressChanged;
+            Connect();
         }
 
         private void NotifyFtpOperationStarted(bool binaryTransfer)

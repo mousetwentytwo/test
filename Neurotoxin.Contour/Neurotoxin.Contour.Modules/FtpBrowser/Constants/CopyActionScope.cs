@@ -1,6 +1,6 @@
 ﻿namespace Neurotoxin.Contour.Modules.FtpBrowser.Constants
 {
-    public enum CopyBehaviorScope
+    public enum CopyActionScope
     {
         Current,
         All,

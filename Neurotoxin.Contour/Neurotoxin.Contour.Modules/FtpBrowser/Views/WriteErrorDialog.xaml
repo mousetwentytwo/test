@@ -1,7 +1,7 @@
-﻿<Window x:Class="Neurotoxin.Contour.Modules.FtpBrowser.Views.TransferErrorDialog"
+﻿<Window x:Class="Neurotoxin.Contour.Modules.FtpBrowser.Views.WriteErrorDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Width="400" Topmost="True" SizeToContent="Height">
+        Width="400" Topmost="True" SizeToContent="Height" WindowStartupLocation="CenterOwner">
     
     <Grid x:Name="LayoutRoot" Margin="5">
         <Grid.ColumnDefinitions>

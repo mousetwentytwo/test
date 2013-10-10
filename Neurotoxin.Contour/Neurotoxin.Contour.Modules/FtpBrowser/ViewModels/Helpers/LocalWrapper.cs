@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Neurotoxin.Contour.Modules.FtpBrowser.Constants;
+using Neurotoxin.Contour.Modules.FtpBrowser.Exceptions;
 using Neurotoxin.Contour.Modules.FtpBrowser.Models;
 
 namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels.Helpers
@@ -44,7 +46,14 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels.Helpers
 
         public DateTime GetFileModificationTime(string path)
         {
-            return File.GetLastWriteTime(path);
+            try
+            {
+                return File.GetLastWriteTime(path);
+            }
+            catch (IOException ex)
+            {
+                throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
+            }
         }
 
         public bool DriveIsReady(string drive)
@@ -65,31 +74,68 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels.Helpers
 
         public void DeleteFolder(string path)
         {
-            Directory.Delete(path, true);
+            try
+            {
+                Directory.Delete(path, true);
+            }
+            catch (IOException ex)
+            {
+                //TODO: not read
+                throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
+            }
         }
 
         public void DeleteFile(string path)
         {
-            File.Delete(path);
+            try {
+                File.Delete(path);
+            }
+            catch (IOException ex)
+            {
+                //TODO: not read
+                throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
+            }
         }
 
         public void CreateFolder(string path)
         {
-            Directory.CreateDirectory(path);
+            try
+            {
+                Directory.CreateDirectory(path);
+            }
+            catch (IOException ex)
+            {
+                //TODO: not read
+                throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
+            }
         }
 
         public byte[] ReadFileContent(string path)
         {
-            return File.ReadAllBytes(path);
+            try
+            {
+                return File.ReadAllBytes(path);
+            }
+            catch (IOException ex)
+            {
+                throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
+            }
         }
 
         public byte[] ReadFileHeader(string path)
         {
-            var fs = new FileStream(path, FileMode.Open);
-            var bytes = new byte[0x971A];
-            fs.Read(bytes, 0, bytes.Length);
-            fs.Close();
-            return bytes;
+            try
+            {
+                var fs = new FileStream(path, FileMode.Open);
+                var bytes = new byte[0x971A];
+                fs.Read(bytes, 0, bytes.Length);
+                fs.Close();
+                return bytes;
+            }
+            catch (Exception ex)
+            {
+                throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
+            }
         }
     }
 }
