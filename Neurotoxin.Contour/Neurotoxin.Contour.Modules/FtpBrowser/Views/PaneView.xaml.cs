@@ -1,12 +1,8 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Reflection;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Input;
-using System.Windows.Media;
 using Neurotoxin.Contour.Presentation.Infrastructure;
 using Neurotoxin.Contour.Presentation.Extensions;
 
@@ -28,6 +24,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.Views
         {
             var m = Grid.GetType().GetMethod("PerformSort", BindingFlags.Instance | BindingFlags.NonPublic);
             m.Invoke(Grid, new object[] { Grid.Columns[0] });
+            Grid.Loaded -= GridOnLoaded;
         }
 
         private void GridOnSorting(object sender, DataGridSortingEventArgs e)

@@ -14,7 +14,6 @@ using Neurotoxin.Contour.Modules.FtpBrowser.ViewModels.Helpers;
 using Neurotoxin.Contour.Presentation.Extensions;
 using Neurotoxin.Contour.Presentation.Infrastructure;
 using Neurotoxin.Contour.Presentation.Infrastructure.Constants;
-using Expression = System.Linq.Expressions.Expression;
 using Microsoft.Practices.Composite;
 using Microsoft.Practices.ObjectBuilder2;
 
@@ -24,6 +23,9 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
     {
         private bool _isInEditMode;
         private bool _isBusy;
+        private string _sortMemberPath = "ComputedName";
+        private ListSortDirection _listSortDirection = ListSortDirection.Ascending;
+        private readonly Dictionary<FileSystemItemViewModel, Stack<FileSystemItemViewModel>> _stackCache = new Dictionary<FileSystemItemViewModel, Stack<FileSystemItemViewModel>>();
 
         #region Properties
 
@@ -143,10 +145,6 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
                                      selectedDirCount, totalDirCount, totalDirCount > 1 ? s : string.Empty);
             }
         }        
-
-        private string _sortMemberPath = "ComputedName";
-        private ListSortDirection _listSortDirection = ListSortDirection.Ascending;
-        private readonly Dictionary<FileSystemItemViewModel, Stack<FileSystemItemViewModel>> _stackCache = new Dictionary<FileSystemItemViewModel, Stack<FileSystemItemViewModel>>();
 
         #endregion
 
@@ -371,18 +369,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
         {
             if (content == null) return;
 
-            var type = typeof(FileSystemItemViewModel);
-            var instance = Expression.Parameter(type);
-            var callPreporty = Expression.PropertyOrField(instance, _sortMemberPath);
-            var lambda = Expression.Lambda<Func<FileSystemItemViewModel, object>>(callPreporty, instance);
-            var orderBy = lambda.Compile();
-
-            var collection = content.OrderByDescending(p => p.Type);
-            collection = _listSortDirection == ListSortDirection.Ascending
-                                 ? collection.ThenBy(orderBy)
-                                 : collection.ThenByDescending(orderBy);
-            var list = collection.ToList();
-
+            var list = content.OrderByDescending(p => p.Type).ThenByProperty(_sortMemberPath, _listSortDirection).ToList();
             var up = list.FirstOrDefault(item => item.IsUpDirectory);
             if (up != null)
             {

@@ -67,6 +67,11 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             set { _model.Size = value; NotifyPropertyChanged(SIZE); }
         }
 
+        public long ComputedSize
+        {
+            get { return Size ?? 0; }
+        }
+
         public DateTime Date
         {
             get { return _model.Date; }

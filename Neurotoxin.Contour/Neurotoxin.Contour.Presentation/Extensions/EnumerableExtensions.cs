@@ -2,7 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 
 namespace Neurotoxin.Contour.Presentation.Extensions
@@ -37,6 +39,24 @@ namespace Neurotoxin.Contour.Presentation.Extensions
         {
             var list = items.ToList();
             return new ObservableCollection<T>(list);
+        }
+
+        public static IOrderedEnumerable<T> ThenByProperty<T>(this IOrderedEnumerable<T> items, string propertyName, ListSortDirection direction)
+        {
+            var type = typeof (T);
+            var instance = Expression.Parameter(type);
+            var callProperty = Expression.PropertyOrField(instance, propertyName);
+            var func = typeof(Func<,>).MakeGenericType(type, callProperty.Type);
+            var lambda = Expression.Lambda(func, callProperty, instance);
+            var methodName = direction == ListSortDirection.Ascending ? "ThenBy" : "ThenByDescending";
+
+            return typeof (Enumerable).GetMethods().Single(
+                method => method.Name == methodName
+                          && method.IsGenericMethodDefinition
+                          && method.GetGenericArguments().Length == 2
+                          && method.GetParameters().Length == 2)
+                       .MakeGenericMethod(type, callProperty.Type)
+                       .Invoke(null, new object[] {items, lambda.Compile()}) as IOrderedEnumerable<T>;
         }
     }
 }
