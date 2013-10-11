@@ -14,21 +14,52 @@ using Neurotoxin.Contour.Presentation.Infrastructure.Constants;
 
 namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
 {
-    public class FtpContentViewModel : PaneViewModelBase<FtpWrapper>
+    public class FtpContentViewModel : FileListPaneViewModelBase<FtpWrapper>
     {
+
+        #region DisconnectCommand
+
+        public DelegateCommand<EventInformation<EventArgs>> DisconnectCommand { get; private set; }
+
+        private void ExecuteDisconnectCommand(EventInformation<EventArgs> cmdParam)
+        {
+            FileManager.Disconnect();
+            //TODO: via event aggregator
+            ((FtpBrowserViewModel)Parent).FtpDisconnect();
+        }
+
+        #endregion
 
         public FtpContentViewModel(ModuleViewModelBase parent) : base(parent, new FtpWrapper())
         {
+            DisconnectCommand = new DelegateCommand<EventInformation<EventArgs>>(ExecuteDisconnectCommand);
         }
 
-        public override void LoadDataAsync(LoadCommand cmd, object cmdParam)
+        public override void LoadDataAsync(LoadCommand cmd, object cmdParam, Action success = null, Action error = null)
         {
             switch (cmd)
             {
                 case LoadCommand.Load:
-                    WorkerThread.Run(Connect, ConnectCallback);
+                    WorkerThread.Run(() => Connect((FtpConnectionItemViewModel)cmdParam), (r) =>
+                        {
+                            ConnectCallback(r);
+                            if (r && success != null) success.Invoke();
+                            if (!r && error != null) error.Invoke();
+                        });
                     break;
             }
+        }
+
+        private bool Connect(FtpConnectionItemViewModel connection)
+        {
+            return FileManager.Connect(connection.Address, connection.Port, connection.Username, connection.Password);
+        }
+
+        private void ConnectCallback(bool success)
+        {
+            if (!success) return;
+            Drives = FileManager.GetDrives().Select(d => new FileSystemItemViewModel(d)).ToObservableCollection();
+            Drive = Drives.First();
         }
 
         protected override void ChangeDrive()
@@ -45,17 +76,6 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
                 DriveLabel = null;
             }
             base.ChangeDrive();
-        }
-
-        private bool Connect()
-        {
-            return FileManager.Connect();
-        }
-
-        private void ConnectCallback(bool success)
-        {
-            Drives = FileManager.GetDrives().Select(d => new FileSystemItemViewModel(d)).ToObservableCollection();
-            Drive = Drives.First();
         }
 
         public bool Download(FileSystemItemViewModel ftpItem, string targetPath, CopyAction action)

@@ -8,13 +8,21 @@ using Neurotoxin.Contour.Presentation.Infrastructure.Constants;
 
 namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
 {
-    public class LocalPaneViewModel : PaneViewModelBase<LocalWrapper>
+    public class LocalPaneViewModel : FileListPaneViewModelBase<LocalWrapper>
     {
+        private const string FREESPACE = "FreeSpace";
+        private string _freeSpace;
+        public string FreeSpace
+        {
+            get { return _freeSpace; }
+            set { _freeSpace = value; NotifyPropertyChanged(FREESPACE); }
+        }
+
         public LocalPaneViewModel(ModuleViewModelBase parent) : base(parent, new LocalWrapper())
         {
         }
 
-        public override void LoadDataAsync(LoadCommand cmd, object cmdParam)
+        public override void LoadDataAsync(LoadCommand cmd, object cmdParam, Action success = null, Action error = null)
         {
             switch (cmd)
             {

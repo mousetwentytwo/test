@@ -21,12 +21,32 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
 
         #region Main window properties
 
+        private const string STOREDCONNECTIONS = "StoredConnections";
+        private StoredConnectionsViewModel _storedConnections;
+        public StoredConnectionsViewModel StoredConnections
+        {
+            get { return _storedConnections; }
+            set { _storedConnections = value; NotifyPropertyChanged(STOREDCONNECTIONS); }
+        }
+
+        private const string STOREDCONNECTIONSVISIBILITY = "StoredConnectionsVisibility";
+        public Visibility StoredConnectionsVisibility
+        {
+            get { return Ftp != null ? Visibility.Collapsed : Visibility.Visible; }
+        }
+
         private const string FTP = "Ftp";
         private FtpContentViewModel _ftp;
         public FtpContentViewModel Ftp
         {
             get { return _ftp; }
             set { _ftp = value; NotifyPropertyChanged(FTP); }
+        }
+
+        private const string FTPVISIBILITY = "FtpVisibility";
+        public Visibility FtpVisibility
+        {
+            get { return Ftp != null ? Visibility.Visible : Visibility.Collapsed; }
         }
 
         private const string LOCALFILESYSTEM = "LocalFileSystem";
@@ -37,14 +57,27 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             set { _localFileSystem = value; NotifyPropertyChanged(LOCALFILESYSTEM); }
         }
 
-        private IPaneViewModel SourcePane
+        private IPaneViewModel RightPane
         {
-            get { return Ftp.IsActive ? (IPaneViewModel)Ftp : (LocalFileSystem.IsActive ? LocalFileSystem : null); }
+            get { return Ftp != null ? (IPaneViewModel)Ftp : StoredConnections; }
         }
 
-        private IPaneViewModel TargetPane
+        private IFileListPaneViewModel SourcePane
         {
-            get { return SourcePane == Ftp ? (IPaneViewModel)LocalFileSystem : SourcePane == LocalFileSystem ? Ftp : null; }
+            get
+            {
+                var rightPane = RightPane as IFileListPaneViewModel;
+                return rightPane != null && rightPane.IsActive ? rightPane : (LocalFileSystem.IsActive ? LocalFileSystem : null);
+            }
+        }
+
+        private IFileListPaneViewModel TargetPane
+        {
+            get
+            {
+                var rightPane = RightPane as IFileListPaneViewModel;
+                return rightPane != null && rightPane.IsActive ? LocalFileSystem : (LocalFileSystem.IsActive ? rightPane : null);
+            }
         }
 
         #endregion
@@ -149,11 +182,8 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             switch (cmd)
             {
                 case LoadCommand.Load:
-                    Ftp = new FtpContentViewModel(this);
-                    Ftp.FileManager.FtpOperationStarted += FtpWrapperOnFtpOperationStarted;
-                    Ftp.FileManager.FtpOperationFinished += FtpWrapperOnFtpOperationFinished;
-                    Ftp.FileManager.FtpOperationProgressChanged += FtpWrapperOnFtpOperationProgressChanged;
-                    Ftp.LoadDataAsync(cmd, cmdParam);
+                    StoredConnections = new StoredConnectionsViewModel(this);
+                    StoredConnections.LoadDataAsync(cmd, cmdParam);
                     LocalFileSystem = new LocalPaneViewModel(this);
                     LocalFileSystem.LoadDataAsync(cmd, cmdParam);
                     break;
@@ -208,7 +238,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
 
         private bool CanExecuteEditCommand()
         {
-            return true;
+            return false;
         }
         
         private void ExecuteEditCommand()
@@ -224,7 +254,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
 
         private bool CanExecuteCopyCommand()
         {
-            return SourcePane != null && (SourcePane.SelectedItems.Any() || SourcePane.CurrentRow != null);
+            return TargetPane != null && SourcePane != null && SourcePane.CurrentRow != null;
         }
 
         private void ExecuteCopyCommand()
@@ -281,7 +311,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
 
         private bool CanExecuteMoveCommand()
         {
-            return SourcePane != null && SourcePane.CurrentRow != null;
+            return TargetPane != null && SourcePane != null && SourcePane.CurrentRow != null;
         }
 
         private void ExecuteMoveCommand()
@@ -444,6 +474,33 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             DeleteCommand.RaiseCanExecuteChanged();
         }
 
+        internal void FtpConnect(IStoredConnectionViewModel connection)
+        {
+            Ftp = new FtpContentViewModel(this);
+            Ftp.LoadDataAsync(LoadCommand.Load, connection, FtpConnectSuccess, FtpConnectError);
+        }
+
+        private void FtpConnectSuccess()
+        {
+            Ftp.FileManager.FtpOperationStarted += FtpWrapperOnFtpOperationStarted;
+            Ftp.FileManager.FtpOperationFinished += FtpWrapperOnFtpOperationFinished;
+            Ftp.FileManager.FtpOperationProgressChanged += FtpWrapperOnFtpOperationProgressChanged;
+            NotifyPropertyChanged(FTPVISIBILITY);
+            NotifyPropertyChanged(STOREDCONNECTIONSVISIBILITY);
+        }
+
+        private void FtpConnectError()
+        {
+            FtpDisconnect();
+        }
+
+        internal void FtpDisconnect()
+        {
+            Ftp = null;
+            NotifyPropertyChanged(FTPVISIBILITY);
+            NotifyPropertyChanged(STOREDCONNECTIONSVISIBILITY);
+        }
+
         private void InitializeTransfer(TransferProgressDialogMode mode)
         {
             _rememberedCopyAction = CopyAction.CreateNew;
@@ -479,7 +536,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
                         }
                         else
                         {
-                            throw new NotImplementedException("FTP is a must in this version :D");
+                            FtpDisconnect();
                         }
                         break;
                     default:

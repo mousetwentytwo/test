@@ -65,6 +65,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FtpBrowser\Constants\ConnectionType.cs" />
     <Compile Include="FtpBrowser\Constants\CopyAction.cs" />
     <Compile Include="FtpBrowser\Constants\CopyActionScope.cs" />
     <Compile Include="FtpBrowser\Constants\ToggleSelectionMode.cs" />
@@ -87,18 +88,28 @@
     <Compile Include="FtpBrowser\Events\FtpOperationProgressChangedEventHandler.cs" />
     <Compile Include="FtpBrowser\Events\FtpOperationFinishedEventHandler.cs" />
     <Compile Include="FtpBrowser\Events\FtpOperationStartedEventHandler.cs" />
+    <Compile Include="FtpBrowser\Models\FtpConnection.cs" />
+    <Compile Include="FtpBrowser\Models\StoredConnectionBase.cs" />
     <Compile Include="FtpBrowser\Models\TransferErrorDialogResult.cs" />
+    <Compile Include="FtpBrowser\ViewModels\NewConnectionPlaceholderViewModel.cs" />
+    <Compile Include="FtpBrowser\ViewModels\IStoredConnectionViewModel.cs" />
+    <Compile Include="FtpBrowser\ViewModels\FtpConnectionItemViewModel.cs" />
+    <Compile Include="FtpBrowser\ViewModels\PaneViewModelBase.cs" />
+    <Compile Include="FtpBrowser\ViewModels\StoredConnectionsViewModel.cs" />
     <Compile Include="FtpBrowser\ViewModels\Helpers\IFileManager.cs" />
     <Compile Include="FtpBrowser\ViewModels\Helpers\LocalWrapper.cs" />
     <Compile Include="FtpBrowser\ViewModels\Helpers\TitleManager.cs" />
     <Compile Include="FtpBrowser\ViewModels\Helpers\FtpWrapper.cs" />
-    <Compile Include="FtpBrowser\ViewModels\IPaneViewModel.cs" />
+    <Compile Include="FtpBrowser\ViewModels\IFileListPaneViewModel.cs" />
     <Compile Include="FtpBrowser\ViewModels\LocalPaneViewModel.cs" />
-    <Compile Include="FtpBrowser\ViewModels\PaneViewModelBase.cs" />
+    <Compile Include="FtpBrowser\ViewModels\FileListPaneViewModelBase.cs" />
     <Compile Include="FtpBrowser\ViewModels\FtpContentViewModel.cs" />
     <Compile Include="FtpBrowser\ViewModels\FileSystemItemViewModel.cs" />
     <Compile Include="FtpBrowser\ModuleInit.cs" />
     <Compile Include="FtpBrowser\ViewModels\FtpBrowserViewModel.cs" />
+    <Compile Include="FtpBrowser\Views\StoredConnectionsView.xaml.cs">
+      <DependentUpon>StoredConnectionsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="FtpBrowser\Views\ReconnectionDialog.xaml.cs">
       <DependentUpon>ReconnectionDialog.xaml</DependentUpon>
     </Compile>
@@ -142,6 +153,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="FtpBrowser\Views\StoredConnectionsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="FtpBrowser\Views\ReconnectionDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

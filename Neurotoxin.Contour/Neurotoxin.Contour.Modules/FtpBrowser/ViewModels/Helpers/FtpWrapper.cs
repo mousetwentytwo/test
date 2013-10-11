@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Windows;
 using Limilabs.FTP.Client;
 using Neurotoxin.Contour.Modules.FtpBrowser.Constants;
 using Neurotoxin.Contour.Modules.FtpBrowser.Events;
@@ -15,22 +16,26 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels.Helpers
     {
         private Ftp _ftpClient;
         private bool _downloadHeaderOnly;
+        private string _address;
+        private int _port;
+        private string _username;
+        private string _password;
 
         public event FtpOperationStartedEventHandler FtpOperationStarted;
         public event FtpOperationFinishedEventHandler FtpOperationFinished;
         public event FtpOperationProgressChangedEventHandler FtpOperationProgressChanged;
 
-        internal bool Connect()
+        internal bool Connect(string address, int port, string username, string password)
         {
-            try 
+            try
             {
-                //TODO: config
-
+                _address = address;
+                _port = port;
+                _username = username;
+                _password = password;
                 _ftpClient = new Ftp();
-                _ftpClient.Connect("127.0.0.1");
-                _ftpClient.Login("xbox", "hardcore21*");
-                //_ftpClient.Connect("192.168.1.110");
-                //_ftpClient.Login("xbox", "xbox");
+                _ftpClient.Connect(address, port);
+                _ftpClient.Login(username, password);
 
                 //HACK: FSD FTP states that it supports SIZE command, but it throws a "not implemented" exception
                 var mi = _ftpClient.Extensions.GetType().GetMethod("method_4", BindingFlags.Instance | BindingFlags.NonPublic);
@@ -40,9 +45,22 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels.Helpers
             }
             catch (FtpException ex)
             {
-                throw new NotImplementedException();
+                MessageBox.Show(ex.Message);
+                return false;
             }
             return true;
+        }
+
+        internal void Disconnect()
+        {
+            try
+            {
+                _ftpClient.Close();
+            }
+            catch
+            {
+                //NOTE: intentional
+            }
         }
 
         public List<FileSystemItem> GetDrives()
@@ -221,7 +239,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels.Helpers
             }
             _downloadHeaderOnly = false;
             ms.Flush();
-            Connect();
+            RestoreConnection();
             NotifyFtpOperationFinished(ms.Length);
             return ms.ToArray();
         }
@@ -331,7 +349,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels.Helpers
         public void RestoreConnection()
         {
             _ftpClient.Progress -= FtpClientProgressChanged;
-            Connect();
+            Connect(_address, _port, _username, _password);
         }
 
         private void NotifyFtpOperationStarted(bool binaryTransfer)

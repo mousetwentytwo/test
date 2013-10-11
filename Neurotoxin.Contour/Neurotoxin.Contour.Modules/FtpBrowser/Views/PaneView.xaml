@@ -11,6 +11,7 @@
                     xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
                     MinHeight="300">
     <inf:ModuleViewBase.Resources>
+        <co:NotNullOrEmptyConverter x:Key="NotNullOrEmptyConverter"/>
         <converters:SizeConverter x:Key="SizeConverter"/>
         <converters:SizeAlignmentConverter x:Key="SizeAlignmentConverter"/>
         <converters:TitleConverter x:Key="TitleConverter"/>
@@ -58,7 +59,10 @@
                 </ComboBox.ItemTemplate>
             </ComboBox>
             <TextBlock Grid.Column="1" Text="{Binding DriveLabel}" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,5,0"/>
-            <TextBlock Grid.Column="2" Text="{Binding FreeSpace}" VerticalAlignment="Center"/>
+            <TextBlock Grid.Column="2" Text="{Binding FreeSpace}" VerticalAlignment="Center" 
+                       Visibility="{Binding FreeSpace, Converter={StaticResource NotNullOrEmptyConverter}, FallbackValue=Collapsed}"/>
+            <Button Grid.Column="2" HorizontalAlignment="Right" Content="Disconnect" Command="{Binding DisconnectCommand}" Margin="0,0,3,0" Width="75"
+                    Visibility="{Binding DisconnectCommand, Converter={StaticResource NotNullOrEmptyConverter}, FallbackValue=Collapsed}"/>
         </Grid>
         
         <TextBlock Text="{Binding CurrentFolder.Path}" 
