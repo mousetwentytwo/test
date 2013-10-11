@@ -6,6 +6,8 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.Views
 {
     public partial class ReconnectionDialog : Window
     {
+        public static readonly string WarningMessageFormat = "The connection with {0} has been lost.";
+
         public ReconnectionDialog()
         {
             Owner = Application.Current.MainWindow;

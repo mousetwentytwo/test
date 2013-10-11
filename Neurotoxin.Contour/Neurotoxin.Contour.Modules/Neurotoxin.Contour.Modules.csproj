@@ -91,6 +91,7 @@
     <Compile Include="FtpBrowser\Models\FtpConnection.cs" />
     <Compile Include="FtpBrowser\Models\StoredConnectionBase.cs" />
     <Compile Include="FtpBrowser\Models\TransferErrorDialogResult.cs" />
+    <Compile Include="FtpBrowser\ViewModels\IPaneViewModel.cs" />
     <Compile Include="FtpBrowser\ViewModels\NewConnectionPlaceholderViewModel.cs" />
     <Compile Include="FtpBrowser\ViewModels\IStoredConnectionViewModel.cs" />
     <Compile Include="FtpBrowser\ViewModels\FtpConnectionItemViewModel.cs" />
@@ -107,6 +108,9 @@
     <Compile Include="FtpBrowser\ViewModels\FileSystemItemViewModel.cs" />
     <Compile Include="FtpBrowser\ModuleInit.cs" />
     <Compile Include="FtpBrowser\ViewModels\FtpBrowserViewModel.cs" />
+    <Compile Include="FtpBrowser\Views\NewConnectionDialog.xaml.cs">
+      <DependentUpon>NewConnectionDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="FtpBrowser\Views\StoredConnectionsView.xaml.cs">
       <DependentUpon>StoredConnectionsView.xaml</DependentUpon>
     </Compile>
@@ -153,6 +157,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="FtpBrowser\Views\NewConnectionDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="FtpBrowser\Views\StoredConnectionsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

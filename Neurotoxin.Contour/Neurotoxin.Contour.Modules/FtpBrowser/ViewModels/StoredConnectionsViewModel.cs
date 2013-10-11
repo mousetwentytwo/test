@@ -123,7 +123,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
                                     Thumbnail = ApplicationExtensions.GetContentByteArray("/Resources/Connections/slim.png")
                                 }
                         };
-                    foreach (var item in items)
+                    foreach (var item in items.OrderBy(i => i.Name))
                     {
                         Items.Add(new FtpConnectionItemViewModel(item));
                     }
