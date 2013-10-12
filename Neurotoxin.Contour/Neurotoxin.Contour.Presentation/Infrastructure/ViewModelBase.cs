@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Reflection;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
-using Neurotoxin.Contour.Presentation.Events;
 
 namespace Neurotoxin.Contour.Presentation.Infrastructure
 {
-    public abstract class ViewModelBase : INotifyPropertyChanged, IDisposable, IDataErrorInfo
+    public abstract class ViewModelBase : INotifyPropertyChanged, IDisposable
     {
         protected readonly IUnityContainer container;
         protected readonly IEventAggregator eventAggregator;
@@ -57,32 +55,15 @@ namespace Neurotoxin.Contour.Presentation.Infrastructure
             IsDisposed = true;
         }
 
-        #region IDataErrorInfo Members
+        private Dictionary<string, MandatoryProperty> MandatoryProperties { get; set; }
 
-        public Dictionary<string, MandatoryProperty> MandatoryProperties { get; private set; }
-
-        public string Error
-        {
-            get { return null; }
-        }
-
-        public string this[string columnName]
-        {
-            get
-            {
-                var errors = Validate(columnName);
-                return errors != null && errors.Count() != 0
-                           ? string.Join(Environment.NewLine, errors.ToArray())
-                           : string.Empty;
-            }
-        }
-
-        public virtual IEnumerable<string> Validate(string columnName)
+        private string Validate(string columnName)
         {
             if (MandatoryProperties.ContainsKey(columnName) && MandatoryProperties[columnName].IsEnabled)
             {
                 var value = MandatoryProperties[columnName].Property.GetValue(this, null);
-                return MandatoryProperties[columnName].Validators.Where(v => !v.IsValid(value)).Select(s => s.ErrorMessage);
+                var firstError = MandatoryProperties[columnName].Validators.FirstOrDefault(v => !v.IsValid(value));
+                return firstError != null ? (firstError.ErrorMessage ?? "Invalid value") : null;
             }
             return null;
         }
@@ -94,11 +75,8 @@ namespace Neurotoxin.Contour.Presentation.Infrastructure
 
         public bool HasError(string propertyName)
         {
-            var errors = Validate(propertyName);
-            return errors != null && errors.Count() != 0;
+            return string.IsNullOrEmpty(Validate(propertyName));
         }
-
-        #endregion
 
     }
 }

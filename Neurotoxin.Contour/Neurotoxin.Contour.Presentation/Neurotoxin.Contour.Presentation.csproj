@@ -121,6 +121,8 @@
     <Compile Include="Infrastructure\WorkerThread.cs" />
     <Compile Include="Primitives\StatusBarBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Validation\IPv4Address.cs" />
+    <Compile Include="Validation\Required.cs" />
     <Compile Include="ViewModels\Achievement.cs" />
     <Compile Include="ViewModels\Game.cs" />
     <Compile Include="ViewModels\TreeView.cs" />

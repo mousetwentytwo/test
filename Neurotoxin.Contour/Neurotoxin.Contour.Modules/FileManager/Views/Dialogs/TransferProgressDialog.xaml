@@ -1,0 +1,48 @@
+﻿<Window x:Class="Neurotoxin.Contour.Modules.FileManager.Views.Dialogs.TransferProgressDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:converters="clr-namespace:Neurotoxin.Contour.Modules.FileManager.Converters"
+        xmlns:dialogs="clr-namespace:Neurotoxin.Contour.Modules.FileManager.Views.Dialogs" 
+        Width="400" Topmost="True" SizeToContent="Height" WindowStartupLocation="CenterOwner">
+    <Window.Resources>
+        <converters:TransferProgressDialogModeConverter x:Key="TransferProgressDialogModeConverter"/>
+    </Window.Resources>
+    <Grid x:Name="LayoutRoot" Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="{Binding TransferProgressDialogMode}" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+        <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding SourceFile}" Margin="0,0,0,5" TextTrimming="CharacterEllipsis" />
+        <DockPanel Grid.Row="2" Grid.ColumnSpan="2" Margin="0,2,0,2" Visibility="{Binding TransferProgressDialogMode, Converter={StaticResource TransferProgressDialogModeConverter}}">
+            <TextBlock DockPanel.Dock="Right" Text="%" Margin="2,0,0,0" />
+            <TextBlock DockPanel.Dock="Right" Text="{Binding CurrentFileProgress}" Margin="5,0,0,0" Width="30" HorizontalAlignment="Right" />
+            <ProgressBar Minimum="0" Maximum="100" Value="{Binding CurrentFileProgress}"/>
+        </DockPanel>
+        <DockPanel Grid.Row="3" Grid.ColumnSpan="2" Margin="0,2,0,2">
+            <TextBlock DockPanel.Dock="Right" Text="%" Margin="2,0,0,0" />
+            <TextBlock DockPanel.Dock="Right" Text="{Binding TotalProgress}" Margin="5,0,0,0" Width="30" HorizontalAlignment="Right" />
+            <ProgressBar Minimum="0" Maximum="100" Value="{Binding TotalProgress}"/>
+        </DockPanel>
+        <StackPanel Grid.Row="4" Grid.Column="0" Orientation="Horizontal">
+            <TextBlock Text="{Binding FilesTransfered}"/>
+            <TextBlock Text=" / "/>
+            <TextBlock Text="{Binding FileCount}"/>
+        </StackPanel>
+        <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Visibility="{Binding TransferProgressDialogMode, Converter={StaticResource TransferProgressDialogModeConverter}}">
+            <TextBlock Text="{Binding Path=BytesTransfered, StringFormat={x:Static dialogs:TransferProgressDialog.BytesFormat}}"/>
+            <TextBlock Text=" / "/>
+            <TextBlock Text="{Binding Path=TotalBytes, StringFormat={x:Static dialogs:TransferProgressDialog.BytesFormat}}"/>
+        </StackPanel>
+        <Button Grid.Row="5" Grid.ColumnSpan="2" HorizontalAlignment="Right" Width="75" Content="Cancel" Click="CancelButtonClick"/>
+    </Grid>
+</Window>

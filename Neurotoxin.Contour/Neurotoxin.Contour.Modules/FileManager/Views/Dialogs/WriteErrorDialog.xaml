@@ -1,0 +1,41 @@
+﻿<Window x:Class="Neurotoxin.Contour.Modules.FileManager.Views.Dialogs.WriteErrorDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:views="clr-namespace:Neurotoxin.Contour.Modules.FileManager.Views" Width="400" Topmost="True" SizeToContent="Height" WindowStartupLocation="CenterOwner">
+    
+    <Grid x:Name="LayoutRoot" Margin="5">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <GroupBox Header="Overwrite:" Grid.ColumnSpan="3" Grid.Row="0" Margin="5,5,5,10">
+            <views:FileDetailsBox x:Name="TargetFile"/>
+        </GroupBox>
+
+        <GroupBox Header="With this:" Grid.ColumnSpan="3" Grid.Row="1" Margin="5,0,0,5">
+            <views:FileDetailsBox x:Name="SourceFile"/>
+        </GroupBox>
+
+        <Button Grid.Column="0" Grid.Row="2" Content="Overwrite" Margin="5" x:Name="Overwrite" Click="ButtonClick"/>
+        <Button Grid.Column="1" Grid.Row="2" Content="Overwrite all" Margin="5" x:Name="OverwriteAll" Click="ButtonClick"/>
+        <Button Grid.Column="2" Grid.Row="2" Content="Overwrite all older" Margin="5" x:Name="OverwriteAllOlder" Click="ButtonClick"/>
+
+        <Button Grid.Column="0" Grid.Row="3" Content="Resume" Margin="5" x:Name="Resume" Click="ButtonClick"/>
+        <Button Grid.Column="1" Grid.Row="3" Content="Resume all" Margin="5" x:Name="ResumeAll" Click="ButtonClick"/>
+        <Button Grid.Column="2" Grid.Row="3" Content="Rename" Margin="5" x:Name="Rename" Click="ButtonClick"/>
+
+        <Button Grid.Column="0" Grid.Row="4" Content="Skip" Margin="5" x:Name="Skip" Click="ButtonClick"/>
+        <Button Grid.Column="1" Grid.Row="4" Content="Skip all" Margin="5" x:Name="SkipAll" Click="ButtonClick"/>
+        <Button Grid.Column="2" Grid.Row="4" Content="Cancel" Margin="5" x:Name="Cancel" Click="ButtonClick"/>
+
+    </Grid>
+</Window>

@@ -21,9 +21,9 @@ namespace Neurotoxin.Contour.Shell.Constants
             Singleton = true
         };
 
-        public static ModuleLoadInfo FtpBrowser = new ModuleLoadInfo
+        public static ModuleLoadInfo FileManager = new ModuleLoadInfo
         {
-            ModuleName = Modules.FtpBrowser,
+            ModuleName = Modules.FileManager,
             Title = "Ftp Client",
             LoadCommand = LoadCommand.Load,
             Singleton = true
