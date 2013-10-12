@@ -7,7 +7,7 @@ using System.Windows.Controls;
 
 namespace Neurotoxin.Contour.Presentation.Validation
 {
-    public class IPv4Address : ValidationRule
+    public class IsIPv4Address : ValidationRule
     {
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {

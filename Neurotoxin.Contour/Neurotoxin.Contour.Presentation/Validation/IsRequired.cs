@@ -7,7 +7,7 @@ using System.Windows.Controls;
 
 namespace Neurotoxin.Contour.Presentation.Validation
 {
-    public class Required : ValidationRule
+    public class IsRequired : ValidationRule
     {
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {

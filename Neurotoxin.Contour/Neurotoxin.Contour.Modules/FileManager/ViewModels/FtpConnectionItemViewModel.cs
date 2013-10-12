@@ -14,7 +14,6 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
         private readonly FtpConnection _model;
 
         private const string NAME = "Name";
-        [Required]
         public string Name
         {
             get { return _model.Name; }
@@ -37,7 +36,6 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
         }
 
         private const string ADDRESS = "Address";
-        [Required]
         public string Address
         {
             get { return _model.Address; }
@@ -52,7 +50,6 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
         }
 
         private const string USERNAME = "Username";
-        [Required]
         public string Username
         {
             get { return _model.Username; }
@@ -60,7 +57,6 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
         }
 
         private const string PASSWORD = "Password";
-        [Required]
         public string Password
         {
             get { return _model.Password; }

@@ -17,8 +17,21 @@ namespace Neurotoxin.Contour.Modules.FileManager.Views.Dialogs
         {
             var viewModel = (FtpConnectionItemViewModel) DataContext;
             viewModel.SetImageId(((ComboBoxItem)Version.SelectedItem).Tag.ToString());
+            if (HasError()) return;
             DialogResult = true;
             Close();
+        }
+
+        private bool HasError()
+        {
+            var result = false;
+            var controls = new[] {Name, Address, Port, Username, Password};
+            foreach (var control in controls)
+            {
+                control.GetBindingExpression(TextBox.TextProperty).UpdateSource();
+                if (Validation.GetHasError(control)) result = true;
+            }
+            return result;
         }
 
         private void CancelButtonClick(object sender, RoutedEventArgs e)

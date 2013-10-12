@@ -70,6 +70,7 @@
     <Compile Include="Controls\StatusBar.xaml.cs">
       <DependentUpon>StatusBar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\BooleanOrConverter.cs" />
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\NotNullOrEmptyConverter.cs" />
     <Compile Include="Converters\NowPrefixConverter.cs" />
@@ -121,8 +122,9 @@
     <Compile Include="Infrastructure\WorkerThread.cs" />
     <Compile Include="Primitives\StatusBarBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Validation\IPv4Address.cs" />
-    <Compile Include="Validation\Required.cs" />
+    <Compile Include="Validation\IsInteger.cs" />
+    <Compile Include="Validation\IsIPv4Address.cs" />
+    <Compile Include="Validation\IsRequired.cs" />
     <Compile Include="ViewModels\Achievement.cs" />
     <Compile Include="ViewModels\Game.cs" />
     <Compile Include="ViewModels\TreeView.cs" />
@@ -141,6 +143,10 @@
       <SubType>Designer</SubType>
     </Page>
     <EmbeddedResource Include="Templates\TabContentTemplate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Templates\Copy of TabContentTemplate.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
