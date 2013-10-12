@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace Neurotoxin.Contour.Core.Extensions
 {
@@ -12,6 +13,19 @@ namespace Neurotoxin.Contour.Core.Extensions
         public static byte[] ToByteArray(this string s, int length) 
         {
             return ExtensionHelper.BlockCopy(s.ToCharArray(), length);
+        }
+
+        public static byte[] FromHex(this string s)
+        {
+            var j = s.Length/2;
+            var bytes = new byte[j];
+            for (var i = 0; i < s.Length; i=i+2)
+            {
+                var b = s.Substring(i, 2);
+                j--;
+                bytes[j] = byte.Parse(b, NumberStyles.HexNumber);
+            }
+            return bytes;
         }
     }
 

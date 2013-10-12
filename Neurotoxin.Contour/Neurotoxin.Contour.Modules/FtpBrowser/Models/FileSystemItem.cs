@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Neurotoxin.Contour.Core.Constants;
+using Neurotoxin.Contour.Modules.FtpBrowser.Constants;
 
 namespace Neurotoxin.Contour.Modules.FtpBrowser.Models
 {
@@ -12,7 +11,8 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.Models
         public string Name;
         public byte[] Thumbnail;
         public ItemType Type;
-        public ItemSubtype Subtype;
+        public TitleType TitleType;
+        public ContentType ContentType;
         [NonSerialized] public string Path;
         [NonSerialized] public long? Size;
         [NonSerialized] public DateTime Date;
@@ -25,7 +25,8 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.Models
                     Name = Name,
                     Thumbnail = Thumbnail,
                     Type = Type,
-                    Subtype = Subtype,
+                    TitleType = TitleType,
+                    ContentType = ContentType,
                     Path = Path,
                     Size = Size,
                     Date = Date

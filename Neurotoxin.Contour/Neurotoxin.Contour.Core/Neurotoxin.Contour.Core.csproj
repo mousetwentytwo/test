@@ -52,7 +52,7 @@
     <Compile Include="Constants\ConsoleType.cs" />
     <Compile Include="Constants\ConsoleTypeFlags.cs" />
     <Compile Include="Constants\ContentType.cs" />
-    <Compile Include="Constants\Copy of TransferFlags.cs" />
+    <Compile Include="Constants\ReservedFlags.cs" />
     <Compile Include="Constants\Country.cs" />
     <Compile Include="Constants\EndianType.cs" />
     <Compile Include="Constants\EntryType.cs" />
@@ -80,6 +80,7 @@
     <Compile Include="Extensions\MethodInfoExtensions.cs" />
     <Compile Include="Extensions\StreamExtensions.cs" />
     <Compile Include="Extensions\LongExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\ToBigEndian.cs" />
     <Compile Include="Extensions\ToByteArray.cs" />
     <Compile Include="Extensions\VersionExtensions.cs" />

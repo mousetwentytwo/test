@@ -7,8 +7,10 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Neurotoxin.Contour.Core.Constants;
 using Neurotoxin.Contour.Modules.FtpBrowser.Constants;
 using Neurotoxin.Contour.Modules.FtpBrowser.Events;
+using Neurotoxin.Contour.Modules.FtpBrowser.Interfaces;
 using Neurotoxin.Contour.Modules.FtpBrowser.Models;
 using Neurotoxin.Contour.Modules.FtpBrowser.ViewModels.Helpers;
 using Neurotoxin.Contour.Presentation.Extensions;
@@ -217,9 +219,9 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
                     default:
                         throw new NotSupportedException();
                 }
-                if (recognize && (CurrentFolder.Subtype != ItemSubtype.Undefined || _titleManager.IsXboxFolder(item)))
+                if (recognize && (CurrentFolder.ContentType != ContentType.Undefined || _titleManager.IsXboxFolder(item)))
                 {
-                    _titleManager.RecognizeTitle(item, CurrentFolder.Model);
+                    _titleManager.RecognizeTitle(item);
                 }
             }
             return content;
@@ -462,8 +464,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
         private FileSystemItemViewModel RefreshTitle()
         {
             var result = CurrentRow;
-            var model = CurrentRow.Model;
-            _titleManager.RecognizeTitle(model, CurrentFolder.Model, true);
+            _titleManager.RecognizeTitle(CurrentRow.Model, true);
             return result;
         }
 
@@ -649,6 +650,11 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
         public override void Refresh()
         {
             ChangeDirectoryCommand.Execute(Stack.Peek().Path);
+        }
+
+        public FileSystemItemViewModel GetItemViewModel(string itemPath)
+        {
+            return new FileSystemItemViewModel(_titleManager.RecognizeTitle(itemPath));
         }
 
         public Queue<FileSystemItemViewModel> PopulateQueue()

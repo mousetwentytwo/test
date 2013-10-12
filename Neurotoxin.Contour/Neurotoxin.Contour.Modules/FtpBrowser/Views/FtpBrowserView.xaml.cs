@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using Neurotoxin.Contour.Modules.FtpBrowser.ViewModels;
+using Neurotoxin.Contour.Modules.FtpBrowser.Views.Dialogs;
 using Neurotoxin.Contour.Presentation.Infrastructure;
 
 namespace Neurotoxin.Contour.Modules.FtpBrowser.Views

@@ -2,19 +2,21 @@
 using System.Windows;
 using System.Windows.Controls;
 using Neurotoxin.Contour.Modules.FtpBrowser.Constants;
+using Neurotoxin.Contour.Modules.FtpBrowser.Exceptions;
+using Neurotoxin.Contour.Modules.FtpBrowser.Interfaces;
 using Neurotoxin.Contour.Modules.FtpBrowser.Models;
+using Neurotoxin.Contour.Modules.FtpBrowser.ViewModels;
 
-namespace Neurotoxin.Contour.Modules.FtpBrowser.Views
+namespace Neurotoxin.Contour.Modules.FtpBrowser.Views.Dialogs
 {
     public partial class WriteErrorDialog : Window, ITransferErrorDialog
     {
         public TransferErrorDialogResult Result { get; private set; }
 
-        public WriteErrorDialog(Exception exception)
+        public WriteErrorDialog(TransferException exception, FileSystemItemViewModel sourceFile, FileSystemItemViewModel targetFile)
         {
             Owner = Application.Current.MainWindow;
             InitializeComponent();
-            ErrorMessage.Text = exception.Message;
         }
 
         private void ButtonClick(object sender, RoutedEventArgs e)

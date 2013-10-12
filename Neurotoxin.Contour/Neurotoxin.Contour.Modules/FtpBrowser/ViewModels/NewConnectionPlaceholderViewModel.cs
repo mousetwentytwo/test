@@ -1,4 +1,5 @@
 ﻿using System.Windows.Media;
+using Neurotoxin.Contour.Modules.FtpBrowser.Interfaces;
 using Neurotoxin.Contour.Presentation.Extensions;
 using Neurotoxin.Contour.Presentation.Infrastructure;
 

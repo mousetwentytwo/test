@@ -1,8 +1,8 @@
-﻿<Window x:Class="Neurotoxin.Contour.Modules.FtpBrowser.Views.TransferProgressDialog"
+﻿<Window x:Class="Neurotoxin.Contour.Modules.FtpBrowser.Views.Dialogs.TransferProgressDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:views="clr-namespace:Neurotoxin.Contour.Modules.FtpBrowser.Views"
         xmlns:converters="clr-namespace:Neurotoxin.Contour.Modules.FtpBrowser.Converters"
+        xmlns:dialogs="clr-namespace:Neurotoxin.Contour.Modules.FtpBrowser.Views.Dialogs" 
         Width="400" Topmost="True" SizeToContent="Height" WindowStartupLocation="CenterOwner">
     <Window.Resources>
         <converters:TransferProgressDialogModeConverter x:Key="TransferProgressDialogModeConverter"/>
@@ -39,9 +39,9 @@
             <TextBlock Text="{Binding FileCount}"/>
         </StackPanel>
         <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Visibility="{Binding TransferProgressDialogMode, Converter={StaticResource TransferProgressDialogModeConverter}}">
-            <TextBlock Text="{Binding Path=BytesTransfered, StringFormat={x:Static views:TransferProgressDialog.BytesFormat}}"/>
+            <TextBlock Text="{Binding Path=BytesTransfered, StringFormat={x:Static dialogs:TransferProgressDialog.BytesFormat}}"/>
             <TextBlock Text=" / "/>
-            <TextBlock Text="{Binding Path=TotalBytes, StringFormat={x:Static views:TransferProgressDialog.BytesFormat}}"/>
+            <TextBlock Text="{Binding Path=TotalBytes, StringFormat={x:Static dialogs:TransferProgressDialog.BytesFormat}}"/>
         </StackPanel>
         <Button Grid.Row="5" Grid.ColumnSpan="2" HorizontalAlignment="Right" Width="75" Content="Cancel" Click="CancelButtonClick"/>
     </Grid>

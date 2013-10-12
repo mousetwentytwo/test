@@ -2,9 +2,10 @@
 using System.Windows;
 using System.Windows.Controls;
 using Neurotoxin.Contour.Modules.FtpBrowser.Constants;
+using Neurotoxin.Contour.Modules.FtpBrowser.Interfaces;
 using Neurotoxin.Contour.Modules.FtpBrowser.Models;
 
-namespace Neurotoxin.Contour.Modules.FtpBrowser.Views
+namespace Neurotoxin.Contour.Modules.FtpBrowser.Views.Dialogs
 {
     public partial class ReadErrorDialog : Window, ITransferErrorDialog
     {

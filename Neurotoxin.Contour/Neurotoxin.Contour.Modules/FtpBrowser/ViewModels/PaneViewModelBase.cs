@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Input;
 using Neurotoxin.Contour.Modules.FtpBrowser.Events;
+using Neurotoxin.Contour.Modules.FtpBrowser.Interfaces;
 using Neurotoxin.Contour.Presentation.Infrastructure;
 
 namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels

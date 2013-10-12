@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using Neurotoxin.Contour.Modules.FtpBrowser.ViewModels;
 
-namespace Neurotoxin.Contour.Modules.FtpBrowser.Views
+namespace Neurotoxin.Contour.Modules.FtpBrowser.Views.Dialogs
 {
     public partial class TransferProgressDialog : Window
     {

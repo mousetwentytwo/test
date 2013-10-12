@@ -2,7 +2,8 @@
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
-using Neurotoxin.Contour.Modules.FtpBrowser.Models;
+using Neurotoxin.Contour.Core.Constants;
+using Neurotoxin.Contour.Modules.FtpBrowser.Constants;
 
 namespace Neurotoxin.Contour.Modules.FtpBrowser.Converters
 {
@@ -14,13 +15,13 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.Converters
         {
             if (values[0] == DependencyProperty.UnsetValue || values[1] == DependencyProperty.UnsetValue || values[2] == DependencyProperty.UnsetValue) return null;
             var type = (ItemType) values[0];
-            var subtype = (ItemSubtype)values[1];
+            var contentType = (TitleType)values[1];
             var size = (long?) values[2];
 
             return size == null
                        ? string.Format("<{0}>",
-                                       subtype != ItemSubtype.Undefined
-                                           ? subtype.ToString().ToUpper()
+                                       contentType != TitleType.Undefined
+                                           ? contentType.ToString().ToUpper()
                                            : type.ToString().ToUpper())
                        : size.Value.ToString("#,0", CultureInfo.InvariantCulture);
         }

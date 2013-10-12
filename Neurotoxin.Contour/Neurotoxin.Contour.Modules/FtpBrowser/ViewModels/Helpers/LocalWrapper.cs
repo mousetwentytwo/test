@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Neurotoxin.Contour.Modules.FtpBrowser.Constants;
 using Neurotoxin.Contour.Modules.FtpBrowser.Exceptions;
+using Neurotoxin.Contour.Modules.FtpBrowser.Interfaces;
 using Neurotoxin.Contour.Modules.FtpBrowser.Models;
 
 namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels.Helpers

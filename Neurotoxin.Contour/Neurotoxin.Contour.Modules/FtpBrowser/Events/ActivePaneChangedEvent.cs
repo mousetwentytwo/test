@@ -1,4 +1,5 @@
 using Microsoft.Practices.Composite.Presentation.Events;
+using Neurotoxin.Contour.Modules.FtpBrowser.Interfaces;
 using Neurotoxin.Contour.Modules.FtpBrowser.ViewModels;
 
 namespace Neurotoxin.Contour.Modules.FtpBrowser.Events

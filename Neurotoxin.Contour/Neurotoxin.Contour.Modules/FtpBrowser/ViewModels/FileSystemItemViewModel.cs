@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Media;
+using Neurotoxin.Contour.Core.Constants;
+using Neurotoxin.Contour.Modules.FtpBrowser.Constants;
 using Neurotoxin.Contour.Modules.FtpBrowser.Models;
 using Neurotoxin.Contour.Presentation.Extensions;
 using Neurotoxin.Contour.Presentation.Infrastructure;
@@ -53,11 +55,18 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             get { return _model.Type; }
         }
 
-        private const string SUBTYPE = "SubType";
-        public ItemSubtype Subtype
+        private const string TITLETYPE = "TitleType";
+        public TitleType TitleType
         {
-            get { return _model.Subtype; }
-            set { _model.Subtype = value; NotifyPropertyChanged(SUBTYPE); }
+            get { return _model.TitleType; }
+            set { _model.TitleType = value; NotifyPropertyChanged(TITLETYPE); }
+        }
+
+        private const string CONTENTTYPE = "ContentType";
+        public ContentType ContentType
+        {
+            get { return _model.ContentType; }
+            set { _model.ContentType = value; NotifyPropertyChanged(CONTENTTYPE); }
         }
 
         private const string SIZE = "Size";
@@ -101,7 +110,8 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             _thumbnail = null;
             NotifyPropertyChanged(TITLE);
             NotifyPropertyChanged(THUMBNAIL);
-            NotifyPropertyChanged(SUBTYPE);
+            NotifyPropertyChanged(TITLETYPE);
+            NotifyPropertyChanged(CONTENTTYPE);
         }
     }
 }

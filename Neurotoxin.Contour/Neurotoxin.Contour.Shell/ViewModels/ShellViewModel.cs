@@ -67,7 +67,7 @@ namespace Neurotoxin.Contour.Shell.ViewModels
             Assembly assembly = Assembly.GetAssembly(typeof(ShellViewModel));
             AssemblyName assemblyName = assembly.GetName();
             Version version = assemblyName.Version;
-            ApplicationTitle = String.Format("CONtour v{0}", version);
+            ApplicationTitle = String.Format("GODspeed v{0}", version);
 
 
             //UnityInstance.Container.Resolve<ShellClosedEvent>().Subscribe(OnShellClosed, ThreadOption.PublisherThread, false);

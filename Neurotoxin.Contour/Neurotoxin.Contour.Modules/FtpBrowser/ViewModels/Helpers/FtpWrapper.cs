@@ -8,6 +8,7 @@ using Limilabs.FTP.Client;
 using Neurotoxin.Contour.Modules.FtpBrowser.Constants;
 using Neurotoxin.Contour.Modules.FtpBrowser.Events;
 using Neurotoxin.Contour.Modules.FtpBrowser.Exceptions;
+using Neurotoxin.Contour.Modules.FtpBrowser.Interfaces;
 using Neurotoxin.Contour.Modules.FtpBrowser.Models;
 
 namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels.Helpers
@@ -211,12 +212,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels.Helpers
                 _ftpClient.Download(LocateDirectory(remotePath), remoteStartPosition, fs);
                 NotifyFtpOperationFinished(fs.Length);
             }
-            catch (IOException ex)
-            {
-                NotifyFtpOperationFinished();
-                throw new TransferException(TransferErrorType.WriteAccessError, ex.Message);
-            }
-            catch (FtpException ex)
+            catch (Exception ex)
             {
                 NotifyFtpOperationFinished();
                 if (_ftpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);

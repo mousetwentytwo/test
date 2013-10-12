@@ -1,4 +1,4 @@
-﻿namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
+﻿namespace Neurotoxin.Contour.Modules.FtpBrowser.Interfaces
 {
     public interface IPaneViewModel
     {

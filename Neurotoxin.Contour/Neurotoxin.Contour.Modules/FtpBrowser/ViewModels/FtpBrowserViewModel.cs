@@ -5,8 +5,10 @@ using System.Windows.Input;
 using Neurotoxin.Contour.Modules.FtpBrowser.Constants;
 using Neurotoxin.Contour.Modules.FtpBrowser.Events;
 using Neurotoxin.Contour.Modules.FtpBrowser.Exceptions;
+using Neurotoxin.Contour.Modules.FtpBrowser.Interfaces;
 using Neurotoxin.Contour.Modules.FtpBrowser.Models;
 using Neurotoxin.Contour.Modules.FtpBrowser.Views;
+using Neurotoxin.Contour.Modules.FtpBrowser.Views.Dialogs;
 using Neurotoxin.Contour.Presentation.Infrastructure;
 using Neurotoxin.Contour.Presentation.Infrastructure.Constants;
 using System.Linq;
@@ -522,10 +524,20 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
                 switch (transferException.Type)
                 {
                     case TransferErrorType.ReadAccessError:
-                        result = ShowTransferErrorDialog<ReadErrorDialog>(exception);
+                        {
+                            var dialog = new ReadErrorDialog(exception);
+                            result = dialog.ShowDialog() == true
+                                         ? dialog.Result
+                                         : new TransferErrorDialogResult(CopyBehavior.Cancel);
+                        }
                         break;
                     case TransferErrorType.WriteAccessError:
-                        result = ShowTransferErrorDialog<WriteErrorDialog>(exception);
+                        {
+                            var dialog = new WriteErrorDialog(transferException, SourcePane.GetItemViewModel(transferException.SourceFile), TargetPane.GetItemViewModel(transferException.TargetFile));
+                            result = dialog.ShowDialog() == true
+                                         ? dialog.Result
+                                         : new TransferErrorDialogResult(CopyBehavior.Cancel);
+                        }
                         break;
                     case TransferErrorType.LostConnection:
                         result = new TransferErrorDialogResult(CopyBehavior.Cancel);
@@ -565,16 +577,6 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             {
                 MessageBox.Show("Uknown error occured: " + exception.Message);
             }
-        }
-
-        private TransferErrorDialogResult ShowTransferErrorDialog<T>(Exception exception) where T : ITransferErrorDialog
-        {
-            var dialogConstructor = typeof (T).GetConstructor(new[] {typeof (Exception)});
-            if (dialogConstructor == null) throw new Exception("Constructor is missing");
-            var dialog = (T)dialogConstructor.Invoke(new object[] { exception});
-            return dialog.ShowDialog() == true
-                             ? dialog.Result
-                             : new TransferErrorDialogResult(CopyBehavior.Cancel);
         }
 
         private void UpdateTransfer(bool result)

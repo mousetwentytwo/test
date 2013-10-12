@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using Neurotoxin.Contour.Modules.FtpBrowser.ViewModels;
 
-namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
+namespace Neurotoxin.Contour.Modules.FtpBrowser.Interfaces
 {
     public interface IFileListPaneViewModel : IPaneViewModel
     {
@@ -11,5 +12,6 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
         Queue<FileSystemItemViewModel> PopulateQueue();
         bool CreateFolder(string name);
         bool Delete(FileSystemItemViewModel item);
+        FileSystemItemViewModel GetItemViewModel(string itemPath);
     }
 }

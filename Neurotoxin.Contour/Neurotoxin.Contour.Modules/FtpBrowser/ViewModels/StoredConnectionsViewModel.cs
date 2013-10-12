@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
+using Neurotoxin.Contour.Modules.FtpBrowser.Interfaces;
 using Neurotoxin.Contour.Modules.FtpBrowser.Models;
+using Neurotoxin.Contour.Modules.FtpBrowser.Views.Dialogs;
 using Neurotoxin.Contour.Presentation.Extensions;
 using Neurotoxin.Contour.Presentation.Infrastructure;
 using Neurotoxin.Contour.Presentation.Infrastructure.Constants;
@@ -71,7 +73,11 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
 
             if (SelectedItem is NewConnectionPlaceholderViewModel)
             {
-                throw new NotImplementedException();
+                var dialog = new NewConnectionDialog(new FtpConnectionItemViewModel());
+                if (dialog.ShowDialog() == true)
+                {
+                    
+                }
             }
             else if (SelectedItem is FtpConnectionItemViewModel)
             {
@@ -80,7 +86,6 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
         }
 
         #endregion
-
 
         public StoredConnectionsViewModel(ModuleViewModelBase parent) : base(parent)
         {
@@ -102,7 +107,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
                                     Port = 21,
                                     Username = "xbox",
                                     Password = "hardcore21*",
-                                    Thumbnail = ApplicationExtensions.GetContentByteArray("/Resources/Connections/fat_elite.png")
+                                    ImageId = "fat_elite"
                                 },
                             new FtpConnection
                                 {
@@ -111,7 +116,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
                                     Port = 21,
                                     Username = "xbox",
                                     Password = "xbox",
-                                    Thumbnail = ApplicationExtensions.GetContentByteArray("/Resources/Connections/fat.png")
+                                    ImageId = "fat"
                                 },
                             new FtpConnection
                                 {
@@ -120,7 +125,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
                                     Port = 21,
                                     Username = "xbox",
                                     Password = "xbox",
-                                    Thumbnail = ApplicationExtensions.GetContentByteArray("/Resources/Connections/slim.png")
+                                    ImageId = "slim"
                                 }
                         };
                     foreach (var item in items.OrderBy(i => i.Name))

@@ -6,6 +6,6 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.Models
     public abstract class StoredConnectionBase
     {
         public string Name;
-        public byte[] Thumbnail;
+        public string ImageId;
     }
 }

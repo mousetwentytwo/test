@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Neurotoxin.Contour.Modules.FtpBrowser.Models;
 
-namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels.Helpers
+namespace Neurotoxin.Contour.Modules.FtpBrowser.Interfaces
 {
     public interface IFileManager
     {

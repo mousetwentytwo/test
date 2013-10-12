@@ -1,6 +1,6 @@
 ﻿using Neurotoxin.Contour.Modules.FtpBrowser.Models;
 
-namespace Neurotoxin.Contour.Modules.FtpBrowser.Views
+namespace Neurotoxin.Contour.Modules.FtpBrowser.Interfaces
 {
     public interface ITransferErrorDialog
     {

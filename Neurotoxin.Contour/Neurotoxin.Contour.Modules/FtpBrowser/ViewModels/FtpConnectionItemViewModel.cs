@@ -1,5 +1,9 @@
-﻿using System.Windows.Media;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.Windows.Media;
+using Neurotoxin.Contour.Modules.FtpBrowser.Interfaces;
 using Neurotoxin.Contour.Modules.FtpBrowser.Models;
+using Neurotoxin.Contour.Presentation.Attributes;
 using Neurotoxin.Contour.Presentation.Extensions;
 using Neurotoxin.Contour.Presentation.Infrastructure;
 
@@ -10,6 +14,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
         private readonly FtpConnection _model;
 
         private const string NAME = "Name";
+        [Required]
         public string Name
         {
             get { return _model.Name; }
@@ -20,10 +25,19 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
         private ImageSource _thumbnail;
         public ImageSource Thumbnail
         {
-            get { return _thumbnail ?? (_thumbnail = StfsPackageExtensions.GetBitmapFromByteArray(_model.Thumbnail)); }
+            get
+            {
+                if (_thumbnail == null)
+                {
+                    var png = ApplicationExtensions.GetContentByteArray(string.Format("/Resources/Connections/{0}.png", _model.ImageId));
+                    _thumbnail = StfsPackageExtensions.GetBitmapFromByteArray(png);
+                }
+                return _thumbnail;
+            }
         }
 
         private const string ADDRESS = "Address";
+        [Required]
         public string Address
         {
             get { return _model.Address; }
@@ -38,6 +52,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
         }
 
         private const string USERNAME = "Username";
+        [Required]
         public string Username
         {
             get { return _model.Username; }
@@ -45,15 +60,23 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
         }
 
         private const string PASSWORD = "Password";
+        [Required]
         public string Password
         {
             get { return _model.Password; }
             set { _model.Password = value; NotifyPropertyChanged(PASSWORD); }
         }
 
-        public FtpConnectionItemViewModel(FtpConnection model)
+        public FtpConnectionItemViewModel(FtpConnection model = null)
         {
+            if (model == null) model = new FtpConnection();
             _model = model;
+        }
+
+        public void SetImageId(string id)
+        {
+            _thumbnail = null;
+            _model.ImageId = id;
         }
     }
 }

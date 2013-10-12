@@ -46,6 +46,7 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Interactivity, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xaml" />
@@ -75,6 +76,7 @@
     <Compile Include="Converters\ScrollBarVisibilityConverter.cs" />
     <Compile Include="Converters\ViewIconConverter.cs" />
     <Compile Include="Events\ActivateModuleContextEvent.cs" />
+    <Compile Include="Events\ErrorCheckedEvent.cs" />
     <Compile Include="Events\ModuleOpenEvent.cs" />
     <Compile Include="Events\DataLoadEvents.cs" />
     <Compile Include="Events\ErrorEvent.cs" />
@@ -91,6 +93,7 @@
     <Compile Include="Infrastructure\AsyncResult.cs" />
     <Compile Include="Infrastructure\BindingProxy.cs" />
     <Compile Include="Infrastructure\Constants\LoadCommand.cs" />
+    <Compile Include="Infrastructure\MandatoryProperty.cs" />
     <Compile Include="Infrastructure\MapDataGridRowEditEndingEventToCommand.cs" />
     <Compile Include="Infrastructure\MapDataGridCellEditEndingEventToCommand.cs" />
     <Compile Include="Infrastructure\IAsyncCallArguments.cs" />

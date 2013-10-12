@@ -1,6 +1,6 @@
 ﻿using System.Windows.Media;
 
-namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
+namespace Neurotoxin.Contour.Modules.FtpBrowser.Interfaces
 {
     public interface IStoredConnectionViewModel
     {

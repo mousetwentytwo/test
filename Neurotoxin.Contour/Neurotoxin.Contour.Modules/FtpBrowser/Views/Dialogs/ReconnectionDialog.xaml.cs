@@ -1,12 +1,11 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 
-namespace Neurotoxin.Contour.Modules.FtpBrowser.Views
+namespace Neurotoxin.Contour.Modules.FtpBrowser.Views.Dialogs
 {
     public partial class ReconnectionDialog : Window
     {
-        public static readonly string WarningMessageFormat = "The connection with {0} has been lost.";
+        public const string WarningMessageFormat = "The connection with {0} has been lost.";
 
         public ReconnectionDialog()
         {

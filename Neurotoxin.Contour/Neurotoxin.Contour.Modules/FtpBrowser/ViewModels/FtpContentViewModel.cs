@@ -83,33 +83,34 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
             var remotePath = ftpItem.Path;
             var localPath = remotePath.Replace(CurrentFolder.Path, targetPath).Replace('/', '\\');
 
-            FileMode mode;
-            long remoteStartPosition = 0;
-            switch (action)
-            {
-                case CopyAction.CreateNew:
-                    mode = FileMode.CreateNew;
-                    break;
-                case CopyAction.Overwrite:
-                    mode = FileMode.Create;
-                    break;
-                case CopyAction.OverwriteOlder:
-                    var fileDate = File.GetLastWriteTime(localPath);
-                    if (fileDate > ftpItem.Date) return false;
-                    mode = FileMode.Create;
-                    break;
-                case CopyAction.Resume:
-                    mode = FileMode.Append;
-                    var fi = new FileInfo(localPath);
-                    remoteStartPosition = fi.Length;
-                    break;
-                default:
-                    throw new ArgumentException("Invalid Copy action: " + action);
-            }
-
             switch (ftpItem.Type)
             {
                 case ItemType.File:
+                    FileMode mode;
+                    long remoteStartPosition = 0;
+                    switch (action)
+                    {
+                        case CopyAction.CreateNew:
+                            if (FileManager.FileExists(localPath))
+                                throw new TransferException(TransferErrorType.WriteAccessError, remotePath, localPath, "Target already exists");
+                            mode = FileMode.CreateNew;
+                            break;
+                        case CopyAction.Overwrite:
+                            mode = FileMode.Create;
+                            break;
+                        case CopyAction.OverwriteOlder:
+                            var fileDate = File.GetLastWriteTime(localPath);
+                            if (fileDate > ftpItem.Date) return false;
+                            mode = FileMode.Create;
+                            break;
+                        case CopyAction.Resume:
+                            mode = FileMode.Append;
+                            var fi = new FileInfo(localPath);
+                            remoteStartPosition = fi.Length;
+                            break;
+                        default:
+                            throw new ArgumentException("Invalid Copy action: " + action);
+                    }
                     FileManager.DownloadFile(remotePath, localPath, mode, remoteStartPosition);
                     break;
                 case ItemType.Directory:
@@ -133,7 +134,7 @@ namespace Neurotoxin.Contour.Modules.FtpBrowser.ViewModels
                     {
                         case CopyAction.CreateNew:
                             if (FileManager.FileExists(remotePath))
-                                throw new TransferException(TransferErrorType.WriteAccessError, "Target already exists");
+                                throw new TransferException(TransferErrorType.WriteAccessError, localPath, remotePath, "Target already exists");
                             FileManager.UploadFile(remotePath, localPath);
                             break;
                         case CopyAction.Overwrite:

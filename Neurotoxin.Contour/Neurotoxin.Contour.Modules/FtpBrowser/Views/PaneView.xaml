@@ -141,7 +141,7 @@
                     <DataGridTextColumn.Binding>
                         <MultiBinding Converter="{StaticResource SizeConverter}">
                             <Binding Path="Type"/>
-                            <Binding Path="Subtype"/>
+                            <Binding Path="TitleType"/>
                             <Binding Path="Size"/>
                         </MultiBinding>
                     </DataGridTextColumn.Binding>
