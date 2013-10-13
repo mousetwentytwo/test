@@ -8,17 +8,9 @@ using Neurotoxin.Contour.Presentation.Infrastructure.Constants;
 
 namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 {
-    public class LocalFileSystemContentViewModel : FileListPaneViewModelBase<LocalFileSystemContent>
+    public class StfsPackageContentViewModel : FileListPaneViewModelBase<StfsPackageContent>
     {
-        private const string FREESPACE = "FreeSpace";
-        private string _freeSpace;
-        public string FreeSpace
-        {
-            get { return _freeSpace; }
-            set { _freeSpace = value; NotifyPropertyChanged(FREESPACE); }
-        }
-
-        public LocalFileSystemContentViewModel(FileManagerViewModel parent) : base(parent, new LocalFileSystemContent())
+        public StfsPackageContentViewModel(FileManagerViewModel parent, byte[] content) : base(parent, new StfsPackageContent(content))
         {
         }
 
@@ -35,9 +27,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
         protected override void ChangeDrive()
         {
-            var driveInfo = DriveInfo.GetDrives().First(d => d.Name == Drive.Path);
-            DriveLabel = string.Format("[{0}]", string.IsNullOrEmpty(driveInfo.VolumeLabel) ? "_NONE_" : driveInfo.VolumeLabel);
-            FreeSpace = String.Format("{0:#,0} of {1:#,0} bytes free", driveInfo.AvailableFreeSpace, driveInfo.TotalSize);
+            DriveLabel = FileManager.GetAccount().GamerTag;
             base.ChangeDrive();
         }
     }

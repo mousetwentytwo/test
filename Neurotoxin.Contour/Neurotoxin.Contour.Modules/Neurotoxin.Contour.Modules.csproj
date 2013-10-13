@@ -73,6 +73,8 @@
     <Compile Include="FileManager\Constants\CopyBehavior.cs" />
     <Compile Include="FileManager\Constants\TransferErrorType.cs" />
     <Compile Include="FileManager\Constants\TransferProgressDialogMode.cs" />
+    <Compile Include="FileManager\Constants\ConnectionImage.cs" />
+    <Compile Include="FileManager\ContentProviders\StfsPackageContent.cs" />
     <Compile Include="FileManager\Converters\TransferProgressDialogModeConverter.cs" />
     <Compile Include="FileManager\Converters\PaneHeaderBackgroundConverter.cs" />
     <Compile Include="FileManager\Converters\SizeAlignmentConverter.cs" />
@@ -93,6 +95,7 @@
     <Compile Include="FileManager\Models\StoredConnectionBase.cs" />
     <Compile Include="FileManager\Models\TransferErrorDialogResult.cs" />
     <Compile Include="FileManager\Interfaces\IPaneViewModel.cs" />
+    <Compile Include="FileManager\ViewModels\StfsPackageContentViewModel.cs" />
     <Compile Include="FileManager\ViewModels\NewConnectionPlaceholderViewModel.cs" />
     <Compile Include="FileManager\Interfaces\IStoredConnectionViewModel.cs" />
     <Compile Include="FileManager\ViewModels\FtpConnectionItemViewModel.cs" />
@@ -137,6 +140,7 @@
     <Compile Include="FileManager\Views\FileManagerView.xaml.cs">
       <DependentUpon>FileManagerView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="FileManager\Views\PaneTemplateSelector.cs" />
     <Compile Include="HexViewer\Controls\HexView.cs" />
     <Compile Include="HexViewer\ModuleInit.cs" />
     <Compile Include="HexViewer\ViewModels\HexViewerViewModel.cs" />
@@ -215,7 +219,9 @@
     </None>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resources\icon.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

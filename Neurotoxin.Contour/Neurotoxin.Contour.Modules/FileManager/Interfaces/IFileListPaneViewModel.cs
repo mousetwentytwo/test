@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using Neurotoxin.Contour.Modules.FileManager.ViewModels;
 
 namespace Neurotoxin.Contour.Modules.FileManager.Interfaces
@@ -12,6 +13,8 @@ namespace Neurotoxin.Contour.Modules.FileManager.Interfaces
         Queue<FileSystemItemViewModel> PopulateQueue();
         bool CreateFolder(string name);
         bool Delete(FileSystemItemViewModel item);
+
+        byte[] ReadFileContent(string itemPath); 
         FileSystemItemViewModel GetItemViewModel(string itemPath);
     }
 }

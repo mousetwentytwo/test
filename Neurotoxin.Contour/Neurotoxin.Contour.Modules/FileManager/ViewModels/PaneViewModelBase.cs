@@ -6,12 +6,13 @@ using System.Windows.Input;
 using Neurotoxin.Contour.Modules.FileManager.Events;
 using Neurotoxin.Contour.Modules.FileManager.Interfaces;
 using Neurotoxin.Contour.Presentation.Infrastructure;
+using Neurotoxin.Contour.Presentation.Infrastructure.Constants;
 
 namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 {
     public abstract class PaneViewModelBase : ViewModelBase, IPaneViewModel
     {
-        protected ModuleViewModelBase Parent { get; private set; }
+        protected FileManagerViewModel Parent { get; private set; }
 
         private const string ISACTIVE = "IsActive";
         private bool _isActive;
@@ -43,7 +44,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
         #endregion
 
-        protected PaneViewModelBase(ModuleViewModelBase parent)
+        protected PaneViewModelBase(FileManagerViewModel parent)
         {
             Parent = parent;
             SetActiveCommand = new DelegateCommand<EventInformation<MouseEventArgs>>(ExecuteSetActiveCommand);
@@ -57,5 +58,6 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
         }
 
         public abstract void Refresh();
+        public abstract void LoadDataAsync(LoadCommand cmd, object cmdParam, Action success = null, Action error = null);
     }
 }

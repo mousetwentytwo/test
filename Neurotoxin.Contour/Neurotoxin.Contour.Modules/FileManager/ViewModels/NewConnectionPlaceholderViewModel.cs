@@ -12,7 +12,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
         public NewConnectionPlaceholderViewModel()
         {
-            var thumbnail = ApplicationExtensions.GetContentByteArray("/Resources/Connections/add_connection.png");
+            var thumbnail = ApplicationExtensions.GetContentByteArray("/Resources/Connections/AddConnection.png");
             Thumbnail = StfsPackageExtensions.GetBitmapFromByteArray(thumbnail);
             Name = "New connection...";
         }

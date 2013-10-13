@@ -15,7 +15,6 @@ using Neurotoxin.Contour.Modules.FileManager.Interfaces;
 using Neurotoxin.Contour.Modules.FileManager.Models;
 using Neurotoxin.Contour.Presentation.Extensions;
 using Neurotoxin.Contour.Presentation.Infrastructure;
-using Neurotoxin.Contour.Presentation.Infrastructure.Constants;
 using Microsoft.Practices.Composite;
 using Microsoft.Practices.ObjectBuilder2;
 
@@ -133,12 +132,6 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
         {
             if (_isInEditMode || _isBusy) return false;
 
-            var item = cmdParam as FileSystemItemViewModel;
-            if (item != null)
-            {
-                return item.Type != ItemType.File;
-            }
-
             var mouseEvent = cmdParam as EventInformation<MouseEventArgs>;
             if (mouseEvent != null)
             {
@@ -155,24 +148,31 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
                 if (!(dataContext is FileSystemItemViewModel)) return false;
                 return e.Key == Key.Enter;
             }
-
-            return CurrentRow == null || CurrentRow.Type != ItemType.File;
+            return true;
         }
 
         private void ExecuteChangeDirectoryCommand(object cmdParam)
         {
-            _isBusy = true;
             var keyEvent = cmdParam as EventInformation<KeyEventArgs>;
             if (keyEvent != null) keyEvent.EventArgs.Handled = true;
 
             if (CurrentRow != null)
             {
+                if (CurrentRow.Type == ItemType.File)
+                {
+                    if (CurrentRow.TitleType == TitleType.Profile)
+                    {
+                        Parent.OpenStfsPackage(CurrentRow);
+                    }
+                    return;
+                }
                 if (CurrentRow.IsUpDirectory)
                     _previouslyFocusedRow = Stack.Pop();
                 else
                     Stack.Push(CurrentRow);
+                NotifyPropertyChanged(CURRENTFOLDER);
             }
-            NotifyPropertyChanged(CURRENTFOLDER);
+            _isBusy = true;
             WorkerThread.Run(ChangeDirectoryOuter, ChangeDirectoryCallback);
         }
 
@@ -195,15 +195,9 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             return content;
         }
 
-        private List<FileSystemItem> ChangeDirectory(string selectedPath = null)
+        private List<FileSystemItem> ChangeDirectory(string selectedPath = null, bool recognize = true)
         {
-            var recognize = false;
-            if (selectedPath == null)
-            {
-                recognize = true;
-                selectedPath = CurrentFolder.Path;
-            }
-
+            if (selectedPath == null) selectedPath = CurrentFolder.Path;
             var content = FileManager.GetList(selectedPath);
 
             foreach (var item in content)
@@ -526,7 +520,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
         #endregion
 
-        protected FileListPaneViewModelBase(ModuleViewModelBase parent, T fileManager) : base(parent)
+        protected FileListPaneViewModelBase(FileManagerViewModel parent, T fileManager) : base(parent)
         {
             FileManager = fileManager;
             _titleRecognizer = new TitleRecognizer(fileManager);
@@ -547,8 +541,6 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             if (!Directory.Exists("tmp")) Directory.CreateDirectory("tmp");
             Items = new ObservableCollection<FileSystemItemViewModel>();
         }
-
-        public abstract void LoadDataAsync(LoadCommand cmd, object cmdParam, Action success = null, Action error = null);
 
         public override void SetActive()
         {
@@ -622,7 +614,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
                 _stackCache.Add(Drive, Stack);
             }
             CurrentRow = null;
-            ChangeDirectoryCommand.Execute(Stack.Peek().Path);
+            ChangeDirectoryCommand.Execute(null);
         }
 
         public override void RaiseCanExecuteChanges()
@@ -637,7 +629,12 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
         public override void Refresh()
         {
-            ChangeDirectoryCommand.Execute(Stack.Peek().Path);
+            ChangeDirectoryCommand.Execute(null);
+        }
+
+        public byte[] ReadFileContent(string itemPath)
+        {
+            return FileManager.ReadFileContent(itemPath);
         }
 
         public FileSystemItemViewModel GetItemViewModel(string itemPath)
@@ -660,7 +657,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
                 if (item.Type == ItemType.Directory)
                 {
                     var start = queue.Count;
-                    PopulateQueue(queue, ChangeDirectory(item.Path).Select(c => new FileSystemItemViewModel(c)));
+                    PopulateQueue(queue, ChangeDirectory(item.Path, false).Select(c => new FileSystemItemViewModel(c)));
                     var end = queue.Count;
                     long size = 0;
                     for (var i = start; i < end; i++)

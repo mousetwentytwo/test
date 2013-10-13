@@ -29,7 +29,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
         #endregion
 
-        public FtpContentViewModel(ModuleViewModelBase parent) : base(parent, new FtpContent())
+        public FtpContentViewModel(FileManagerViewModel parent) : base(parent, new FtpContent())
         {
             DisconnectCommand = new DelegateCommand<EventInformation<EventArgs>>(ExecuteDisconnectCommand);
         }

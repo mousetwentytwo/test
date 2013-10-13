@@ -144,7 +144,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
                            Type = item.IsFolder ? ItemType.Directory : ItemType.File,
                            Date = item.ModifyDate,
                            Path = path,
-                           Size = item.Size
+                           Size = item.IsFolder ? null : item.Size
                        };
         }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
+using Neurotoxin.Contour.Modules.FileManager.Constants;
 using Neurotoxin.Contour.Modules.FileManager.Interfaces;
 using Neurotoxin.Contour.Modules.FileManager.Models;
 using Neurotoxin.Contour.Modules.FileManager.Views.Dialogs;
@@ -14,8 +15,6 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 {
     public class ConnectionsViewModel : PaneViewModelBase
     {
-        private bool _isBusy;
-
         #region Properties
 
         private const string ITEMS = "Items";
@@ -31,7 +30,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
         public IStoredConnectionViewModel SelectedItem
         {
             get { return _selectedItem; }
-            set { _selectedItem = value; NotifyPropertyChanged(SELECTEDITEM); RaiseCanExecuteChanges(); }
+            set { _selectedItem = value; NotifyPropertyChanged(SELECTEDITEM); }
         }
 
         #endregion
@@ -42,8 +41,6 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
         private bool CanExecuteConnectCommand(object cmdParam)
         {
-            if (_isBusy) return false;
-
             var mouseEvent = cmdParam as EventInformation<MouseEventArgs>;
             if (mouseEvent != null)
             {
@@ -66,33 +63,28 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
         private void ExecuteConnectCommand(object cmdParam)
         {
-            _isBusy = true;
             var keyEvent = cmdParam as EventInformation<KeyEventArgs>;
             if (keyEvent != null) keyEvent.EventArgs.Handled = true;
 
             if (SelectedItem is NewConnectionPlaceholderViewModel)
             {
-                var dialog = new NewConnectionDialog(new FtpConnectionItemViewModel());
-                if (dialog.ShowDialog().HasValue)
-                {
-                    _isBusy = false;
-                }
+                Edit();
             }
             else if (SelectedItem is FtpConnectionItemViewModel)
             {
-                ((FileManagerViewModel)Parent).FtpConnect(SelectedItem);
+                Parent.FtpConnect(SelectedItem);
             }
         }
 
         #endregion
 
-        public ConnectionsViewModel(ModuleViewModelBase parent) : base(parent)
+        public ConnectionsViewModel(FileManagerViewModel parent) : base(parent)
         {
             ConnectCommand = new DelegateCommand<object>(ExecuteConnectCommand, CanExecuteConnectCommand);
             Items = new ObservableCollection<IStoredConnectionViewModel>();
         }
 
-        public void LoadDataAsync(LoadCommand cmd, object cmdParam)
+        public override void LoadDataAsync(LoadCommand cmd, object cmdParam, Action success = null, Action error = null)
         {
             switch (cmd)
             {
@@ -106,7 +98,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
                                     Port = 21,
                                     Username = "xbox",
                                     Password = "hardcore21*",
-                                    ImageId = "fat_elite"
+                                    ConnectionImage = ConnectionImage.FatElite
                                 },
                             new FtpConnection
                                 {
@@ -115,7 +107,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
                                     Port = 21,
                                     Username = "xbox",
                                     Password = "xbox",
-                                    ImageId = "fat"
+                                    ConnectionImage = ConnectionImage.Fat
                                 },
                             new FtpConnection
                                 {
@@ -124,7 +116,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
                                     Port = 21,
                                     Username = "xbox",
                                     Password = "xbox",
-                                    ImageId = "slim"
+                                    ConnectionImage = ConnectionImage.Slim
                                 }
                         };
                     foreach (var item in items.OrderBy(i => i.Name))
@@ -140,6 +132,41 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
         public override void Refresh()
         {
             throw new NotImplementedException();
+        }
+
+        public override void RaiseCanExecuteChanges()
+        {
+            base.RaiseCanExecuteChanges();
+            Parent.EditCommand.RaiseCanExecuteChanged();
+        }
+
+        public void Edit()
+        {
+            FtpConnectionItemViewModel newItem;
+            bool edit;
+            if (SelectedItem is NewConnectionPlaceholderViewModel)
+            {
+                edit = false;
+                newItem = new FtpConnectionItemViewModel();
+            }
+            else if (SelectedItem is FtpConnectionItemViewModel)
+            {
+                edit = true;
+                newItem = ((FtpConnectionItemViewModel) SelectedItem).Clone();
+            }
+            else
+            {
+                throw new NotSupportedException();
+            }
+
+            var dialog = new NewConnectionDialog(newItem);
+            if (dialog.ShowDialog() != true) return;
+
+            if (edit) Items.Remove(SelectedItem);
+            var i = 0;
+            while (i < Items.Count - 1 && String.Compare(newItem.Name, Items[i].Name, StringComparison.InvariantCultureIgnoreCase) == 1) i++;
+            Items.Insert(i, newItem);
+            SelectedItem = newItem;
         }
     }
 }

@@ -35,6 +35,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="AvalonDock">
       <HintPath>..\..\Resources\AvalonDock\AvalonDock\bin\Debug\AvalonDock.dll</HintPath>
@@ -145,22 +148,23 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\Connections\add_connection.png">
+    <Resource Include="Resources\icon.ico" />
+    <Content Include="Resources\Connections\AddConnection.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Connections\fat.png">
+    <Content Include="Resources\Connections\Fat.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Connections\fat_elite.png">
+    <Content Include="Resources\Connections\FatElite.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Connections\harddrive.png">
+    <Content Include="Resources\Connections\HardDrive.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Connections\slim.png">
+    <Content Include="Resources\Connections\Slim.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Connections\usb_pendrive.png">
+    <Content Include="Resources\Connections\Pendrive.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\file.png">

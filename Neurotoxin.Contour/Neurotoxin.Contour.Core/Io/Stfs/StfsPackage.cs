@@ -261,22 +261,30 @@ namespace Neurotoxin.Contour.Core.Io.Stfs
                 BuildFileHierarchy(entries, entry);
         }
 
-        public FileEntry GetFileEntry(string path, bool allowNull = false)
+        public FileEntry GetFolderEntry(string path, bool allowNull = false)
         {
             var folder = FileStructure;
             var parts = path.Split(new[] { @"\" }, StringSplitOptions.RemoveEmptyEntries);
-            var i = parts[0] == "Root" ? 1 : 0;
+            var i = parts.Length > 0 && parts[0] == "Root" ? 1 : 0;
             while (i < parts.Length - 1)
             {
                 folder = folder.Folders.FirstOrDefault(f => f.Name == parts[i]);
-                if (folder == null)
-                    throw new DirectoryNotFoundException("Folder does not exists in the package: " + parts[i]);
+                if (folder == null) break;
                 i++;
             }
-            var file = folder.Files.FirstOrDefault(f => f.Name == parts[i]);
+            if (folder == null && !allowNull)
+                throw new DirectoryNotFoundException("Folder does not exists in the package: " + parts[i]);
+            return folder;
+        }
+
+        public FileEntry GetFileEntry(string path, bool allowNull = false)
+        {
+            var filename = path.Substring(path.LastIndexOf(@"\", StringComparison.Ordinal) + 1);
+            var folder = GetFolderEntry(path.Replace(filename, string.Empty), allowNull);
+            var file = folder.Files.FirstOrDefault(f => f.Name == filename);
             if (allowNull) return file;
             if (file == null)
-                throw new FileNotFoundException("File does not exists in the package: " + parts[i]);
+                throw new FileNotFoundException("File does not exists in the package: " + filename);
             return file;
         }
 

@@ -77,7 +77,7 @@ namespace Neurotoxin.Contour.Shell.Views
             tabController.ShellView = this;
             tabController.DefaultDocumentPane = Tabs;
 
-            var mli = ModuleLoadInfoCollection.FtpBrowser.Clone();
+            var mli = ModuleLoadInfoCollection.FileManager.Clone();
             tabController.AddItem(mli);
 
             // PROFILE EDITOR

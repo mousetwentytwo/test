@@ -4,8 +4,26 @@
                     xmlns:inf="clr-namespace:Neurotoxin.Contour.Presentation.Infrastructure;assembly=Neurotoxin.Contour.Presentation"
                     xmlns:views="clr-namespace:Neurotoxin.Contour.Modules.FileManager.Views"
                     xmlns:e="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-                    xmlns:co="clr-namespace:Neurotoxin.Contour.Presentation.Converters;assembly=Neurotoxin.Contour.Presentation"
                     MinHeight="300">
+    <inf:ModuleViewBase.Resources>
+        <views:PaneTemplateSelector x:Key="TemplateSelector">
+            <views:PaneTemplateSelector.DefaultTemplate>
+                <DataTemplate>
+                    <Grid/>
+                </DataTemplate>
+            </views:PaneTemplateSelector.DefaultTemplate>
+            <views:PaneTemplateSelector.FileListTemplate>
+                <DataTemplate>
+                    <views:FileListPane/>
+                </DataTemplate>
+            </views:PaneTemplateSelector.FileListTemplate>
+            <views:PaneTemplateSelector.ConnectionsTemplate>
+                <DataTemplate>
+                    <views:ConnectionsPane/>
+                </DataTemplate>
+            </views:PaneTemplateSelector.ConnectionsTemplate>
+        </views:PaneTemplateSelector>
+    </inf:ModuleViewBase.Resources>
     <Grid x:Name="LayoutRoot">
         <Grid x:Name="Content">
             <Grid.ColumnDefinitions>
@@ -17,13 +35,10 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            
-            <views:FileListPane Grid.Column="0" Grid.Row="0" DataContext="{Binding LocalFileSystem}"/>
+
+            <ContentControl Grid.Column="0" Grid.Row="0" Content="{Binding LeftPane}" ContentTemplateSelector="{StaticResource TemplateSelector}"/>
             <GridSplitter Grid.Column="1"/>
-            <views:ConnectionsPane Grid.Column="2" Grid.Row="0" DataContext="{Binding Connections}" 
-                                         Visibility="{Binding ElementName=Content, Path=DataContext.StoredConnectionsVisibility}"/>
-            <views:FileListPane Grid.Column="2" Grid.Row="0" DataContext="{Binding Ftp}"
-                            Visibility="{Binding ElementName=Content, Path=DataContext.FtpVisibility}"/>
+            <ContentControl Grid.Column="2" Grid.Row="0" Content="{Binding RightPane}" ContentTemplateSelector="{StaticResource TemplateSelector}"/>
             
             <Grid Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1">
                 <Grid.ColumnDefinitions>

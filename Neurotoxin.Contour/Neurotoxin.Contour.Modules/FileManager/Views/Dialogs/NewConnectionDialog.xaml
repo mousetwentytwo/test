@@ -3,8 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:validation="clr-namespace:Neurotoxin.Contour.Presentation.Validation;assembly=Neurotoxin.Contour.Presentation"
         xmlns:converters="clr-namespace:Neurotoxin.Contour.Presentation.Converters;assembly=Neurotoxin.Contour.Presentation"
-        Width="320" Topmost="True" SizeToContent="Height" WindowStartupLocation="CenterOwner" Title="New connection...">
+        Width="320" Topmost="True" SizeToContent="Height" WindowStartupLocation="CenterOwner" Title="Connection details" Icon="/Resources/icon.ico"
+        x:Name="this">
     <Window.Resources>
+        <converters:EnumConverter x:Key="EnumConverter"/>
         <Style TargetType="TextBox" x:Key="TextBoxStyle">
             <Style.Triggers>
                 <Trigger Property="Validation.HasError" Value="True">
@@ -91,11 +93,13 @@
         </TextBox>
 
         <TextBlock Grid.Column="0" Grid.Row="1" Text="Xbox version:" VerticalAlignment="Center" Margin="0,0,0,5"/>
-        <ComboBox Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="3" Margin="0,0,0,5" x:Name="Version">
-            <ComboBoxItem Content="Xbox 360 (Fat/White)" Tag="fat" IsSelected="True"/>
-            <ComboBoxItem Content="Xbox 360 Elite (Fat/Black)" Tag="fat_elite"/>
-            <ComboBoxItem Content="Xbox 360 S (Slim/Black)" Tag="slim"/>
-            <ComboBoxItem Content="Xbox 360 E (Slim E)" Tag="slim"/>
+        <ComboBox Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="3" Margin="0,0,0,5" x:Name="Version" 
+                  ItemsSource="{Binding ElementName=this, Path=ConnectionImages}" SelectedItem="{Binding ConnectionImage}">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Converter={StaticResource EnumConverter}}"/>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
         </ComboBox>
 
         <TextBlock Grid.Column="0" Grid.Row="2" Text="Address:" VerticalAlignment="Center" Margin="0,0,0,5"/>

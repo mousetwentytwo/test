@@ -30,9 +30,9 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
             new RecognitionInformation("^FFFE07D1$", "Profile Data", TitleType.SystemDir),
             new RecognitionInformation("^FFFE07DF$", "Avatar Editor", TitleType.SystemDir),
             new RecognitionInformation("^FFFE[0-9A-F]{4}$", "System Data", TitleType.SystemDir),
-            new RecognitionInformation("^[345][0-9A-F]{7}$", "Unknown Game", TitleType.Game),
+            new RecognitionInformation("^[1-9A-F][0-9A-F]{7}$", "Unknown Game", TitleType.Game),
             new RecognitionInformation("^[0-9A-F]{8}$", "Unknown Content", TitleType.Content),
-            new RecognitionInformation("^E00001[0-9A-F]{10}$", "Unknown Profile", TitleType.Profile),
+            new RecognitionInformation("^E0000[0-9A-F]{11}$", "Unknown Profile", TitleType.Profile),
         };
 
         public TitleRecognizer(IFileManager fileManager)
@@ -76,7 +76,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
                     {
                         case TitleType.Profile:
                             var profilePath = item.Type == ItemType.Directory
-                                                  ? string.Format("{1}/FFFE07D1/00010000/{0}", item.Name, item.Path)
+                                                  ? string.Format("{1}FFFE07D1/00010000/{0}", item.Name, item.Path)
                                                   : item.Path;
                             if (GetProfileData(item, profilePath)) SaveCache(item, tmpPath);
                             break;
@@ -181,12 +181,14 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
                     var htmlText = responseReader.ReadToEnd();
                     var regex = new Regex(string.Format("Title: .*?>(.*?)<.*?TitleID: {0}", item.Name), RegexOptions.IgnoreCase);
                     title = regex.Match(htmlText).Groups[1].Value;
-                    result = true;
+                    result = !string.IsNullOrEmpty(title.Trim());
                 }
             }
-            catch { }
-            item.Title = title;
-            //item.ContentType = ItemSubtype.Game;
+            catch
+            {
+                //TODO: ?
+            }
+            if (result) item.Title = title;
             item.Thumbnail = ApplicationExtensions.GetContentByteArray("/Resources/xbox_logo.png");
             return result;
         }

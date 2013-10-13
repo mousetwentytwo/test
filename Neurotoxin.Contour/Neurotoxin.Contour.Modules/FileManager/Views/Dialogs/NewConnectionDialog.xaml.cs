@@ -1,22 +1,26 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
+using Neurotoxin.Contour.Modules.FileManager.Constants;
 using Neurotoxin.Contour.Modules.FileManager.ViewModels;
+using System.Linq;
 
 namespace Neurotoxin.Contour.Modules.FileManager.Views.Dialogs
 {
     public partial class NewConnectionDialog : Window
     {
+        public ConnectionImage[] ConnectionImages { get; private set; }
+
         public NewConnectionDialog(FtpConnectionItemViewModel viewModel)
         {
             Owner = Application.Current.MainWindow;
+            ConnectionImages = Enum.GetValues(typeof(ConnectionImage)).Cast<ConnectionImage>().ToArray();
             InitializeComponent();
             DataContext = viewModel;
         }
 
         private void OkButtonClick(object sender, RoutedEventArgs e)
         {
-            var viewModel = (FtpConnectionItemViewModel) DataContext;
-            viewModel.SetImageId(((ComboBoxItem)Version.SelectedItem).Tag.ToString());
             if (HasError()) return;
             DialogResult = true;
             Close();

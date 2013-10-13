@@ -1,9 +1,7 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.Windows.Media;
+﻿using System.Windows.Media;
+using Neurotoxin.Contour.Modules.FileManager.Constants;
 using Neurotoxin.Contour.Modules.FileManager.Interfaces;
 using Neurotoxin.Contour.Modules.FileManager.Models;
-using Neurotoxin.Contour.Presentation.Attributes;
 using Neurotoxin.Contour.Presentation.Extensions;
 using Neurotoxin.Contour.Presentation.Infrastructure;
 
@@ -20,6 +18,18 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             set { _model.Name = value; NotifyPropertyChanged(NAME); }
         }
 
+        private const string XBOXVERSION = "XboxVersion";
+        public ConnectionImage ConnectionImage
+        {
+            get { return _model.ConnectionImage; }
+            set
+            {
+                _model.ConnectionImage = value;
+                _thumbnail = null;
+                NotifyPropertyChanged(XBOXVERSION);
+            }
+        }
+
         private const string THUMBNAIL = "THUMBNAIL";
         private ImageSource _thumbnail;
         public ImageSource Thumbnail
@@ -28,7 +38,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             {
                 if (_thumbnail == null)
                 {
-                    var png = ApplicationExtensions.GetContentByteArray(string.Format("/Resources/Connections/{0}.png", _model.ImageId));
+                    var png = ApplicationExtensions.GetContentByteArray(string.Format("/Resources/Connections/{0}.png", _model.ConnectionImage));
                     _thumbnail = StfsPackageExtensions.GetBitmapFromByteArray(png);
                 }
                 return _thumbnail;
@@ -69,10 +79,9 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             _model = model;
         }
 
-        public void SetImageId(string id)
+        public FtpConnectionItemViewModel Clone()
         {
-            _thumbnail = null;
-            _model.ImageId = id;
+            return new FtpConnectionItemViewModel(_model.Clone());
         }
     }
 }

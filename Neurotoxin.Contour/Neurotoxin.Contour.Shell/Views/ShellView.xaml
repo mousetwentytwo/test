@@ -6,6 +6,7 @@
         xmlns:ad="clr-namespace:AvalonDock;assembly=AvalonDock"
         xmlns:prismrgn="clr-namespace:Microsoft.Practices.Composite.Presentation.Regions;assembly=Microsoft.Practices.Composite.Presentation"
         Title="{Binding ApplicationTitle}" Height="720" Width="950"
+        Icon="/Resources/icon.ico"
         mc:Ignorable="d" d:DesignHeight="720" d:DesignWidth="950">
     <Window.Resources>
         <Style TargetType="{x:Type ad:DocumentPane}">

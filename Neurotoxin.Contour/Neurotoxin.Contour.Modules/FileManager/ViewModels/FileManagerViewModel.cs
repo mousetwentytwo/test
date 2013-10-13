@@ -7,7 +7,6 @@ using Neurotoxin.Contour.Modules.FileManager.Events;
 using Neurotoxin.Contour.Modules.FileManager.Exceptions;
 using Neurotoxin.Contour.Modules.FileManager.Interfaces;
 using Neurotoxin.Contour.Modules.FileManager.Models;
-using Neurotoxin.Contour.Modules.FileManager.Views;
 using Neurotoxin.Contour.Modules.FileManager.Views.Dialogs;
 using Neurotoxin.Contour.Presentation.Infrastructure;
 using Neurotoxin.Contour.Presentation.Infrastructure.Constants;
@@ -20,56 +19,37 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
     {
         private Queue<FileSystemItemViewModel> _queue;
         private CopyAction _rememberedCopyAction;
+        private ConnectionsViewModel _connectionsViewModel;
+        private LocalFileSystemContentViewModel _localFileSystemContentViewModel;
+        private FtpContentViewModel _ftpContentViewModel;
 
         #region Main window properties
 
-        private const string STOREDCONNECTIONS = "StoredConnections";
-        private ConnectionsViewModel _connections;
-        public ConnectionsViewModel Connections
+        private const string LEFTPANE = "LeftPane";
+        private IPaneViewModel _leftPane;
+        public IPaneViewModel LeftPane
         {
-            get { return _connections; }
-            set { _connections = value; NotifyPropertyChanged(STOREDCONNECTIONS); }
+            get { return _leftPane; }
+            set { _leftPane = value; NotifyPropertyChanged(LEFTPANE); }
         }
 
-        private const string STOREDCONNECTIONSVISIBILITY = "StoredConnectionsVisibility";
-        public Visibility StoredConnectionsVisibility
+        private const string RIGHTPANE = "RightPane";
+        private IPaneViewModel _rightPane;
+        public IPaneViewModel RightPane
         {
-            get { return Ftp != null ? Visibility.Collapsed : Visibility.Visible; }
-        }
-
-        private const string FTP = "Ftp";
-        private FtpContentViewModel _ftp;
-        public FtpContentViewModel Ftp
-        {
-            get { return _ftp; }
-            set { _ftp = value; NotifyPropertyChanged(FTP); }
-        }
-
-        private const string FTPVISIBILITY = "FtpVisibility";
-        public Visibility FtpVisibility
-        {
-            get { return Ftp != null ? Visibility.Visible : Visibility.Collapsed; }
-        }
-
-        private const string LOCALFILESYSTEM = "LocalFileSystem";
-        private LocalFileSystemContentViewModel _localFileSystem;
-        public LocalFileSystemContentViewModel LocalFileSystem
-        {
-            get { return _localFileSystem; }
-            set { _localFileSystem = value; NotifyPropertyChanged(LOCALFILESYSTEM); }
-        }
-
-        private IPaneViewModel RightPane
-        {
-            get { return Ftp != null ? (IPaneViewModel)Ftp : Connections; }
+            get { return _rightPane; }
+            set { _rightPane = value; NotifyPropertyChanged(RIGHTPANE); }
         }
 
         private IFileListPaneViewModel SourcePane
         {
             get
             {
-                var rightPane = RightPane as IFileListPaneViewModel;
-                return rightPane != null && rightPane.IsActive ? rightPane : (LocalFileSystem.IsActive ? LocalFileSystem : null);
+                var left = LeftPane as IFileListPaneViewModel;
+                var right = RightPane as IFileListPaneViewModel;
+                if (left != null && left.IsActive) return left;
+                if (right != null && right.IsActive) return right;
+                return null;
             }
         }
 
@@ -77,8 +57,11 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
         {
             get
             {
-                var rightPane = RightPane as IFileListPaneViewModel;
-                return rightPane != null && rightPane.IsActive ? LocalFileSystem : (LocalFileSystem.IsActive ? rightPane : null);
+                var left = LeftPane as IFileListPaneViewModel;
+                var right = RightPane as IFileListPaneViewModel;
+                if (left != null && !left.IsActive) return left;
+                if (right != null && !right.IsActive) return right;
+                return null;
             }
         }
 
@@ -184,10 +167,12 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             switch (cmd)
             {
                 case LoadCommand.Load:
-                    Connections = new ConnectionsViewModel(this);
-                    Connections.LoadDataAsync(cmd, cmdParam);
-                    LocalFileSystem = new LocalFileSystemContentViewModel(this);
-                    LocalFileSystem.LoadDataAsync(cmd, cmdParam);
+                    _localFileSystemContentViewModel = new LocalFileSystemContentViewModel(this);
+                    _localFileSystemContentViewModel.LoadDataAsync(cmd, cmdParam);
+                    LeftPane = _localFileSystemContentViewModel;
+                    _connectionsViewModel = new ConnectionsViewModel(this);
+                    _connectionsViewModel.LoadDataAsync(cmd, cmdParam);
+                    RightPane = _connectionsViewModel;
                     break;
             }
         }
@@ -240,12 +225,12 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
         private bool CanExecuteEditCommand()
         {
-            return false;
+            return _connectionsViewModel.IsActive && _connectionsViewModel.SelectedItem is FtpConnectionItemViewModel;
         }
         
         private void ExecuteEditCommand()
         {
-            MessageBox.Show("Not supported yet");
+            _connectionsViewModel.Edit();
         }
 
         #endregion
@@ -271,14 +256,14 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             if (_queue.Count > 0)
             {
                 var item = _queue.Peek();
-                SourceFile = item.Path.Replace(Ftp.CurrentFolder.Path, string.Empty);
-                if (SourcePane == Ftp)
+                SourceFile = item.Path.Replace(SourcePane.CurrentFolder.Path, string.Empty);
+                if (SourcePane == _ftpContentViewModel)
                 {
-                    WorkerThread.Run(() => Ftp.Download(item, TargetPane.CurrentFolder.Path, action ?? _rememberedCopyAction), CopySuccess, CopyError);
+                    WorkerThread.Run(() => _ftpContentViewModel.Download(item, TargetPane.CurrentFolder.Path, action ?? _rememberedCopyAction), CopySuccess, CopyError);
                 }
                 else
                 {
-                    WorkerThread.Run(() => Ftp.Upload(item, SourcePane.CurrentFolder.Path, action ?? _rememberedCopyAction), CopySuccess, CopyError);
+                    WorkerThread.Run(() => _ftpContentViewModel.Upload(item, SourcePane.CurrentFolder.Path, action ?? _rememberedCopyAction), CopySuccess, CopyError);
                 } 
             }
             else
@@ -328,14 +313,14 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             if (_queue.Count > 0)
             {
                 var item = _queue.Peek();
-                SourceFile = item.Path.Replace(Ftp.CurrentFolder.Path, string.Empty);
-                if (SourcePane == Ftp)
+                SourceFile = item.Path.Replace(SourcePane.CurrentFolder.Path, string.Empty);
+                if (SourcePane == _ftpContentViewModel)
                 {
-                    WorkerThread.Run(() => { Ftp.Download(item, TargetPane.CurrentFolder.Path, action ?? _rememberedCopyAction); Ftp.Delete(item); return true; }, MoveSuccess, MoveError);
+                    WorkerThread.Run(() => { _ftpContentViewModel.Download(item, TargetPane.CurrentFolder.Path, action ?? _rememberedCopyAction); SourcePane.Delete(item); return true; }, MoveSuccess, MoveError);
                 }
                 else
                 {
-                    WorkerThread.Run(() => { Ftp.Upload(item, SourcePane.CurrentFolder.Path, action ?? _rememberedCopyAction); LocalFileSystem.Delete(item); return true; }, MoveSuccess, MoveError);
+                    WorkerThread.Run(() => { _ftpContentViewModel.Upload(item, SourcePane.CurrentFolder.Path, action ?? _rememberedCopyAction); SourcePane.Delete(item); return true; }, MoveSuccess, MoveError);
                 }
             }
             else
@@ -405,7 +390,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             if (_queue.Count > 0)
             {
                 var item = _queue.Peek();
-                SourceFile = item.Path.Replace(Ftp.CurrentFolder.Path, string.Empty);
+                SourceFile = item.Path.Replace(SourcePane.CurrentFolder.Path, string.Empty);
                 WorkerThread.Run(() => SourcePane.Delete(item), DeleteSuccess, DeleteError);
             }
             else
@@ -478,17 +463,16 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
         internal void FtpConnect(IStoredConnectionViewModel connection)
         {
-            Ftp = new FtpContentViewModel(this);
-            Ftp.LoadDataAsync(LoadCommand.Load, connection, FtpConnectSuccess, FtpConnectError);
+            _ftpContentViewModel = new FtpContentViewModel(this);
+            _ftpContentViewModel.LoadDataAsync(LoadCommand.Load, connection, FtpConnectSuccess, FtpConnectError);
         }
 
         private void FtpConnectSuccess()
         {
-            Ftp.FileManager.FtpOperationStarted += FtpWrapperOnFtpOperationStarted;
-            Ftp.FileManager.FtpOperationFinished += FtpWrapperOnFtpOperationFinished;
-            Ftp.FileManager.FtpOperationProgressChanged += FtpWrapperOnFtpOperationProgressChanged;
-            NotifyPropertyChanged(FTPVISIBILITY);
-            NotifyPropertyChanged(STOREDCONNECTIONSVISIBILITY);
+            _ftpContentViewModel.FileManager.FtpOperationStarted += FtpWrapperOnFtpOperationStarted;
+            _ftpContentViewModel.FileManager.FtpOperationFinished += FtpWrapperOnFtpOperationFinished;
+            _ftpContentViewModel.FileManager.FtpOperationProgressChanged += FtpWrapperOnFtpOperationProgressChanged;
+            RightPane = _ftpContentViewModel;
         }
 
         private void FtpConnectError()
@@ -498,9 +482,8 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
         internal void FtpDisconnect()
         {
-            Ftp = null;
-            NotifyPropertyChanged(FTPVISIBILITY);
-            NotifyPropertyChanged(STOREDCONNECTIONSVISIBILITY);
+            _ftpContentViewModel = null;
+            RightPane = _connectionsViewModel;
         }
 
         private void InitializeTransfer(TransferProgressDialogMode mode)
@@ -544,7 +527,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
                         var reconnectionDialog = new ReconnectionDialog();
                         if (reconnectionDialog.ShowDialog() == true)
                         {
-                            Ftp.RestoreConnection();
+                            _ftpContentViewModel.RestoreConnection();
                         }
                         else
                         {
@@ -596,6 +579,15 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
         {
             IsInProgress = false;
             NotifyTransferFinished();
+        }
+
+        public void OpenStfsPackage(FileSystemItemViewModel item)
+        {
+            WorkerThread.Run(() => SourcePane.ReadFileContent(item.Path), (bytes) =>
+                                                                              {
+                                                                                  RightPane = new StfsPackageContentViewModel(this, bytes);
+                                                                                  RightPane.LoadDataAsync(LoadCommand.Load, null);
+                                                                              });
         }
     }
 }

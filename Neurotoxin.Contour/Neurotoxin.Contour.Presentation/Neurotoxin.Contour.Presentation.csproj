@@ -72,6 +72,7 @@
     </Compile>
     <Compile Include="Converters\BooleanOrConverter.cs" />
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
+    <Compile Include="Converters\EnumConverter.cs" />
     <Compile Include="Converters\NotNullOrEmptyConverter.cs" />
     <Compile Include="Converters\NowPrefixConverter.cs" />
     <Compile Include="Converters\ScrollBarVisibilityConverter.cs" />
@@ -143,10 +144,6 @@
       <SubType>Designer</SubType>
     </Page>
     <EmbeddedResource Include="Templates\TabContentTemplate.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Templates\Copy of TabContentTemplate.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

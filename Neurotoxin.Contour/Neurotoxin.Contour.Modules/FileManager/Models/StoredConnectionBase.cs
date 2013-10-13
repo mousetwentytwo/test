@@ -1,4 +1,5 @@
 ﻿using System;
+using Neurotoxin.Contour.Modules.FileManager.Constants;
 
 namespace Neurotoxin.Contour.Modules.FileManager.Models
 {
@@ -6,6 +7,6 @@ namespace Neurotoxin.Contour.Modules.FileManager.Models
     public abstract class StoredConnectionBase
     {
         public string Name;
-        public string ImageId;
+        public ConnectionImage ConnectionImage;
     }
 }
