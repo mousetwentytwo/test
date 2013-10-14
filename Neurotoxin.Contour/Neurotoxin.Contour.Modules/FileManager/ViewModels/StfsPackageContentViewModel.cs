@@ -1,24 +1,25 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using Microsoft.Practices.Unity;
 using Neurotoxin.Contour.Modules.FileManager.ContentProviders;
 using Neurotoxin.Contour.Presentation.Extensions;
-using Neurotoxin.Contour.Presentation.Infrastructure;
 using Neurotoxin.Contour.Presentation.Infrastructure.Constants;
 
 namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 {
     public class StfsPackageContentViewModel : FileListPaneViewModelBase<StfsPackageContent>
     {
-        public StfsPackageContentViewModel(FileManagerViewModel parent, byte[] content) : base(parent, new StfsPackageContent(content))
+        public StfsPackageContentViewModel(FileManagerViewModel parent, IUnityContainer container) : base(parent, container)
         {
         }
 
-        public override void LoadDataAsync(LoadCommand cmd, object cmdParam, Action success = null, Action error = null)
+        public override void LoadDataAsync(LoadCommand cmd, object cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase> error = null)
         {
             switch (cmd)
             {
                 case LoadCommand.Load:
+                    FileManager.LoadPackage((byte[])cmdParam);
                     Drives = FileManager.GetDrives().Select(d => new FileSystemItemViewModel(d)).ToObservableCollection();
                     Drive = Drives.First();
                     break;

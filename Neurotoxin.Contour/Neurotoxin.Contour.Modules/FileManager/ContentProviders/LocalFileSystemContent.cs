@@ -31,6 +31,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
                                                                            Type = ItemType.Directory, 
                                                                            Date = Directory.GetLastWriteTime(di), 
                                                                            Path = string.Format("{0}\\", di),
+                                                                           FullPath = string.Format("{0}\\", di)
                                                                        }).ToList();
             list.AddRange(Directory.GetFiles(path).Select(GetFileInfo));
 
@@ -45,6 +46,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
                 Type = ItemType.File,
                 Date = File.GetLastWriteTime(path),
                 Path = path,
+                FullPath = path,
                 Size = new FileInfo(path).Length,
             };
         }
@@ -125,6 +127,11 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
             {
                 throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
             }
+        }
+
+        public byte[] ReadFileContent(string path, string tmpPath)
+        {
+            return ReadFileContent(path);
         }
 
         public byte[] ReadFileHeader(string path)

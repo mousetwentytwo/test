@@ -9,22 +9,22 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 {
     public class FtpConnectionItemViewModel : ViewModelBase, IStoredConnectionViewModel
     {
-        private readonly FtpConnection _model;
+        public FtpConnection Model { get; private set; }
 
         private const string NAME = "Name";
         public string Name
         {
-            get { return _model.Name; }
-            set { _model.Name = value; NotifyPropertyChanged(NAME); }
+            get { return Model.Name; }
+            set { Model.Name = value ?? string.Empty; NotifyPropertyChanged(NAME); }
         }
 
         private const string XBOXVERSION = "XboxVersion";
         public ConnectionImage ConnectionImage
         {
-            get { return _model.ConnectionImage; }
+            get { return Model.ConnectionImage; }
             set
             {
-                _model.ConnectionImage = value;
+                Model.ConnectionImage = value;
                 _thumbnail = null;
                 NotifyPropertyChanged(XBOXVERSION);
             }
@@ -38,7 +38,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             {
                 if (_thumbnail == null)
                 {
-                    var png = ApplicationExtensions.GetContentByteArray(string.Format("/Resources/Connections/{0}.png", _model.ConnectionImage));
+                    var png = ApplicationExtensions.GetContentByteArray(string.Format("/Resources/Connections/{0}.png", Model.ConnectionImage));
                     _thumbnail = StfsPackageExtensions.GetBitmapFromByteArray(png);
                 }
                 return _thumbnail;
@@ -48,40 +48,40 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
         private const string ADDRESS = "Address";
         public string Address
         {
-            get { return _model.Address; }
-            set { _model.Address = value; NotifyPropertyChanged(ADDRESS); }
+            get { return Model.Address; }
+            set { Model.Address = value ?? string.Empty; NotifyPropertyChanged(ADDRESS); }
         }
 
         private const string PORT = "Port";
-        public int Port
+        public int? Port
         {
-            get { return _model.Port; }
-            set { _model.Port = value; NotifyPropertyChanged(PORT); }
+            get { return Model.Port; }
+            set { Model.Port = value ?? 0; NotifyPropertyChanged(PORT); }
         }
 
         private const string USERNAME = "Username";
         public string Username
         {
-            get { return _model.Username; }
-            set { _model.Username = value; NotifyPropertyChanged(USERNAME); }
+            get { return Model.Username; }
+            set { Model.Username = value ?? string.Empty; NotifyPropertyChanged(USERNAME); }
         }
 
         private const string PASSWORD = "Password";
         public string Password
         {
-            get { return _model.Password; }
-            set { _model.Password = value; NotifyPropertyChanged(PASSWORD); }
+            get { return Model.Password; }
+            set { Model.Password = value ?? string.Empty; NotifyPropertyChanged(PASSWORD); }
         }
 
         public FtpConnectionItemViewModel(FtpConnection model = null)
         {
             if (model == null) model = new FtpConnection();
-            _model = model;
+            Model = model;
         }
 
         public FtpConnectionItemViewModel Clone()
         {
-            return new FtpConnectionItemViewModel(_model.Clone());
+            return new FtpConnectionItemViewModel(Model.Clone());
         }
     }
 }

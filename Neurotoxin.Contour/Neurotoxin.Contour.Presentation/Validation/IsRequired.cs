@@ -11,7 +11,7 @@ namespace Neurotoxin.Contour.Presentation.Validation
     {
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
-            return new ValidationResult(value != null && value.ToString() != string.Empty, "You can't leave this field empty.");
+            return new ValidationResult(value == null || value.ToString() != string.Empty, "You can't leave this field empty.");
         }
     }
 }

@@ -58,6 +58,6 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
         }
 
         public abstract void Refresh();
-        public abstract void LoadDataAsync(LoadCommand cmd, object cmdParam, Action success = null, Action error = null);
+        public abstract void LoadDataAsync(LoadCommand cmd, object cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase> error = null);
     }
 }

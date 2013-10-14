@@ -2,6 +2,8 @@
 using Microsoft.Practices.Composite.Modularity;
 using Microsoft.Practices.Composite.Regions;
 using Microsoft.Practices.Unity;
+using Neurotoxin.Contour.Modules.FileManager.ContentProviders;
+using Neurotoxin.Contour.Modules.FileManager.ViewModels;
 using Neurotoxin.Contour.Modules.FileManager.Views;
 using Neurotoxin.Contour.Presentation.Infrastructure;
 
@@ -24,8 +26,21 @@ namespace Neurotoxin.Contour.Modules.FileManager
             // This class exposes IModulePresentation interface that can be resolved by the module name
             container.RegisterInstance<IModulePresentation>(ModuleDescription.Name, this);
 
-            // IView interface can be resolved by the view name and implemented by the ProfileEditorView class
-            container.RegisterType<FileManagerView>();
+            container.RegisterType<FtpContent>();
+            container.RegisterType<LocalFileSystemContent>();
+            container.RegisterType<StfsPackageContent>();
+            container.RegisterType<FileManagerView>(new ContainerControlledLifetimeManager());
+            container.RegisterType<FileManagerViewModel>(new ContainerControlledLifetimeManager());
+            container.RegisterType<ConnectionsViewModel>(new ContainerControlledLifetimeManager());
+            container.RegisterType<FtpContentViewModel>();
+            container.RegisterType<LocalFileSystemContentViewModel>();
+            container.RegisterType<StfsPackageContentViewModel>();
+            container.RegisterType<CacheManager>(new ContainerControlledLifetimeManager());
+
+            using (var cache = new CacheManager())
+            {
+                cache.InvalidateExpiredEntries();
+            }
         }
 
         #endregion IModule Members

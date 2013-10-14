@@ -1,4 +1,5 @@
 ﻿using System;
+using Neurotoxin.Contour.Modules.FileManager.ViewModels;
 using Neurotoxin.Contour.Presentation.Infrastructure.Constants;
 
 namespace Neurotoxin.Contour.Modules.FileManager.Interfaces
@@ -8,6 +9,6 @@ namespace Neurotoxin.Contour.Modules.FileManager.Interfaces
         bool IsActive { get; }
         void SetActive();
         void Refresh();
-        void LoadDataAsync(LoadCommand cmd, object cmdParam, Action success = null, Action error = null);
+        void LoadDataAsync(LoadCommand cmd, object cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase> error = null);
     }
 }

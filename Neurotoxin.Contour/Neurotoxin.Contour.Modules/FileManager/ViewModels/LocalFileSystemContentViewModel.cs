@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using Microsoft.Practices.Unity;
 using Neurotoxin.Contour.Modules.FileManager.ContentProviders;
 using Neurotoxin.Contour.Presentation.Extensions;
 using Neurotoxin.Contour.Presentation.Infrastructure;
@@ -18,11 +19,11 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             set { _freeSpace = value; NotifyPropertyChanged(FREESPACE); }
         }
 
-        public LocalFileSystemContentViewModel(FileManagerViewModel parent) : base(parent, new LocalFileSystemContent())
+        public LocalFileSystemContentViewModel(FileManagerViewModel parent, IUnityContainer container) : base(parent, container)
         {
         }
 
-        public override void LoadDataAsync(LoadCommand cmd, object cmdParam, Action success = null, Action error = null)
+        public override void LoadDataAsync(LoadCommand cmd, object cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase> error = null)
         {
             switch (cmd)
             {

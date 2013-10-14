@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Microsoft.Practices.Unity;
 using Neurotoxin.Contour.Core.Constants;
 using Neurotoxin.Contour.Modules.FileManager.Constants;
 using Neurotoxin.Contour.Modules.FileManager.ContentProviders;
@@ -28,6 +30,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
         private ListSortDirection _listSortDirection = ListSortDirection.Ascending;
         private readonly Dictionary<FileSystemItemViewModel, Stack<FileSystemItemViewModel>> _stackCache = new Dictionary<FileSystemItemViewModel, Stack<FileSystemItemViewModel>>();
         private readonly TitleRecognizer _titleRecognizer;
+        private readonly IUnityContainer _container;
         internal readonly T FileManager;
 
         #region Properties
@@ -200,11 +203,20 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             if (selectedPath == null) selectedPath = CurrentFolder.Path;
             var content = FileManager.GetList(selectedPath);
 
-            foreach (var item in content)
+            if (recognize)
             {
-                if (recognize && (CurrentFolder.ContentType != ContentType.Undefined || _titleRecognizer.IsXboxFolder(item)))
+                var items = CurrentFolder.ContentType != ContentType.Undefined
+                                ? content
+                                : content.Where(item => _titleRecognizer.IsXboxFolder(item));
+                if (items.Any())
                 {
-                    _titleRecognizer.RecognizeTitle(item);
+                    using (_titleRecognizer.BeginTransaction())
+                    {
+                        foreach (var item in items)
+                        {
+                            _titleRecognizer.RecognizeTitle(item);
+                        }
+                    }
                 }
             }
             return content;
@@ -441,7 +453,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
         private bool CanExecuteRefreshTitleCommand()
         {
-            return CurrentRow != null && _titleRecognizer.HasCache(CurrentRow.Model);
+            return CurrentRow != null;
         }
 
         private FileSystemItemViewModel RefreshTitle()
@@ -496,7 +508,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
         private bool CanExecuteRenameCommand(object cmdParam)
         {
-            return CurrentRow != null && _titleRecognizer.HasCache(CurrentRow.Model);
+            return CurrentRow != null;
         }
 
         private void ExecuteRenameCommand(object cmdParam)
@@ -514,16 +526,20 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
         {
             _isInEditMode = false;
             ChangeDirectoryCommand.RaiseCanExecuteChanged();
-            _titleRecognizer.SaveCache(CurrentRow.Model);
+            using (_titleRecognizer.BeginTransaction())
+            {
+                _titleRecognizer.UpdateCache(CurrentRow.Model);
+            }
             CurrentRow.PropertyChanged -= EndRename;
         }
 
         #endregion
 
-        protected FileListPaneViewModelBase(FileManagerViewModel parent, T fileManager) : base(parent)
+        protected FileListPaneViewModelBase(FileManagerViewModel parent, IUnityContainer container) : base(parent)
         {
-            FileManager = fileManager;
-            _titleRecognizer = new TitleRecognizer(fileManager);
+            _container = container;
+            FileManager = container.Resolve<T>();
+            _titleRecognizer = new TitleRecognizer(FileManager);
 
             ChangeDirectoryCommand = new DelegateCommand<object>(ExecuteChangeDirectoryCommand, CanExecuteChangeDirectoryCommand);
             CalculateSizeCommand = new DelegateCommand<bool>(ExecuteCalculateSizeCommand, CanExecuteCalculateSizeCommand);

@@ -14,6 +14,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.Models
         public TitleType TitleType;
         public ContentType ContentType;
         [NonSerialized] public string Path;
+        [NonSerialized] public string FullPath;
         [NonSerialized] public long? Size;
         [NonSerialized] public DateTime Date;
 
@@ -28,6 +29,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.Models
                     TitleType = TitleType,
                     ContentType = ContentType,
                     Path = Path,
+                    FullPath = FullPath,
                     Size = Size,
                     Date = Date
                 };

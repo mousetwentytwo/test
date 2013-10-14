@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Neurotoxin.Contour.Modules.FileManager.Models;
 
 namespace Neurotoxin.Contour.Modules.FileManager.Interfaces
@@ -22,6 +23,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.Interfaces
         void CreateFolder(string path);
 
         byte[] ReadFileContent(string path);
+        byte[] ReadFileContent(string path, string tmpPath);
         byte[] ReadFileHeader(string path);
     }
 }

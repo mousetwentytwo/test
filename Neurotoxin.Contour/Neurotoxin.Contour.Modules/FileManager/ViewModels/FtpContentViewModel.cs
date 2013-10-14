@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using Microsoft.Practices.Unity;
 using Neurotoxin.Contour.Modules.FileManager.Constants;
 using Neurotoxin.Contour.Modules.FileManager.ContentProviders;
 using Neurotoxin.Contour.Modules.FileManager.Exceptions;
@@ -29,12 +30,12 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
         #endregion
 
-        public FtpContentViewModel(FileManagerViewModel parent) : base(parent, new FtpContent())
+        public FtpContentViewModel(FileManagerViewModel parent, IUnityContainer container) : base(parent, container)
         {
             DisconnectCommand = new DelegateCommand<EventInformation<EventArgs>>(ExecuteDisconnectCommand);
         }
 
-        public override void LoadDataAsync(LoadCommand cmd, object cmdParam, Action success = null, Action error = null)
+        public override void LoadDataAsync(LoadCommand cmd, object cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase> error = null)
         {
             switch (cmd)
             {
@@ -42,8 +43,8 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
                     WorkerThread.Run(() => Connect((FtpConnectionItemViewModel)cmdParam), (r) =>
                         {
                             ConnectCallback(r);
-                            if (r && success != null) success.Invoke();
-                            if (!r && error != null) error.Invoke();
+                            if (r && success != null) success.Invoke(this);
+                            if (!r && error != null) error.Invoke(this);
                         });
                     break;
             }
@@ -51,7 +52,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
         private bool Connect(FtpConnectionItemViewModel connection)
         {
-            return FileManager.Connect(connection.Address, connection.Port, connection.Username, connection.Password);
+            return FileManager.Connect(connection.Model);
         }
 
         private void ConnectCallback(bool success)

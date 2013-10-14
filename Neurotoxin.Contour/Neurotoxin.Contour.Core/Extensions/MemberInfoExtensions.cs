@@ -26,6 +26,19 @@ namespace Neurotoxin.Contour.Core.Extensions
             return (T) Attribute.GetCustomAttribute(memberInfo, typeof (T), inherit);
         }
 
+
+        /// <summary>
+        /// Gets an attribute with the given type
+        /// </summary>
+        /// <typeparam name="T">The attribute type</typeparam>
+        /// <param name="assembly">The assembly</param>
+        /// <param name="inherit"></param>
+        /// <returns>The desired attribute or null</returns>
+        public static T GetAttribute<T>(this Assembly assembly, bool inherit = true) where T : Attribute
+        {
+            return (T)Attribute.GetCustomAttribute(assembly, typeof(T), inherit);
+        }
+
         /// <summary>
         /// Gets an attribute collection with the given type
         /// </summary>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
+using Microsoft.Practices.Unity;
 using Neurotoxin.Contour.Modules.FileManager.Constants;
 using Neurotoxin.Contour.Modules.FileManager.Events;
 using Neurotoxin.Contour.Modules.FileManager.Exceptions;
@@ -17,11 +18,9 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
     public class FileManagerViewModel : ModuleViewModelBase
     {
+        private readonly IUnityContainer _container;
         private Queue<FileSystemItemViewModel> _queue;
         private CopyAction _rememberedCopyAction;
-        private ConnectionsViewModel _connectionsViewModel;
-        private LocalFileSystemContentViewModel _localFileSystemContentViewModel;
-        private FtpContentViewModel _ftpContentViewModel;
 
         #region Main window properties
 
@@ -39,6 +38,16 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
         {
             get { return _rightPane; }
             set { _rightPane = value; NotifyPropertyChanged(RIGHTPANE); }
+        }
+
+        private IPaneViewModel ActivePane
+        {
+            get 
+            { 
+                if (LeftPane.IsActive) return LeftPane;
+                if (RightPane.IsActive) return RightPane;
+                return null;
+            }
         }
 
         private IFileListPaneViewModel SourcePane
@@ -167,12 +176,10 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             switch (cmd)
             {
                 case LoadCommand.Load:
-                    _localFileSystemContentViewModel = new LocalFileSystemContentViewModel(this);
-                    _localFileSystemContentViewModel.LoadDataAsync(cmd, cmdParam);
-                    LeftPane = _localFileSystemContentViewModel;
-                    _connectionsViewModel = new ConnectionsViewModel(this);
-                    _connectionsViewModel.LoadDataAsync(cmd, cmdParam);
-                    RightPane = _connectionsViewModel;
+                    LeftPane = _container.Resolve<LocalFileSystemContentViewModel>();
+                    LeftPane.LoadDataAsync(cmd, cmdParam);
+                    RightPane = _container.Resolve<ConnectionsViewModel>();
+                    RightPane.LoadDataAsync(cmd, cmdParam);
                     break;
             }
         }
@@ -225,12 +232,13 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
         private bool CanExecuteEditCommand()
         {
-            return _connectionsViewModel.IsActive && _connectionsViewModel.SelectedItem is FtpConnectionItemViewModel;
+            var pane = ActivePane as ConnectionsViewModel;
+            return pane != null && pane.SelectedItem is FtpConnectionItemViewModel;
         }
         
         private void ExecuteEditCommand()
         {
-            _connectionsViewModel.Edit();
+            ((ConnectionsViewModel)ActivePane).Edit();
         }
 
         #endregion
@@ -246,7 +254,12 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
         private void ExecuteCopyCommand()
         {
-            _queue = SourcePane.PopulateQueue();
+            WorkerThread.Run(SourcePane.PopulateQueue, CopyPrepare);
+        }
+
+        private void CopyPrepare(Queue<FileSystemItemViewModel> queue)
+        {
+            _queue = queue;
             InitializeTransfer(TransferProgressDialogMode.Copy);
             CopyStart();
         }
@@ -257,20 +270,22 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             {
                 var item = _queue.Peek();
                 SourceFile = item.Path.Replace(SourcePane.CurrentFolder.Path, string.Empty);
-                if (SourcePane == _ftpContentViewModel)
-                {
-                    WorkerThread.Run(() => _ftpContentViewModel.Download(item, TargetPane.CurrentFolder.Path, action ?? _rememberedCopyAction), CopySuccess, CopyError);
-                }
-                else
-                {
-                    WorkerThread.Run(() => _ftpContentViewModel.Upload(item, SourcePane.CurrentFolder.Path, action ?? _rememberedCopyAction), CopySuccess, CopyError);
-                } 
+                WorkerThread.Run(() => CopyInner(item, action), CopySuccess, CopyError);
             }
             else
             {
                 CopyFinish();
                 _queue = null;
             }            
+        }
+
+        private bool CopyInner(FileSystemItemViewModel item, CopyAction? action)
+        {
+            var sourcePane = SourcePane as FtpContentViewModel;
+            var targetPane = TargetPane as FtpContentViewModel;
+            return sourcePane != null
+                ? sourcePane.Download(item, TargetPane.CurrentFolder.Path, action ?? _rememberedCopyAction)
+                : targetPane.Upload(item, SourcePane.CurrentFolder.Path, action ?? _rememberedCopyAction);
         }
 
         private void CopySuccess(bool result)
@@ -303,7 +318,12 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
         private void ExecuteMoveCommand()
         {
-            _queue = SourcePane.PopulateQueue();
+            WorkerThread.Run(SourcePane.PopulateQueue, MovePrepare);
+        }
+
+        private void MovePrepare(Queue<FileSystemItemViewModel> queue)
+        {
+            _queue = queue;
             InitializeTransfer(TransferProgressDialogMode.Move);
             MoveStart();
         }
@@ -314,14 +334,12 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             {
                 var item = _queue.Peek();
                 SourceFile = item.Path.Replace(SourcePane.CurrentFolder.Path, string.Empty);
-                if (SourcePane == _ftpContentViewModel)
-                {
-                    WorkerThread.Run(() => { _ftpContentViewModel.Download(item, TargetPane.CurrentFolder.Path, action ?? _rememberedCopyAction); SourcePane.Delete(item); return true; }, MoveSuccess, MoveError);
-                }
-                else
-                {
-                    WorkerThread.Run(() => { _ftpContentViewModel.Upload(item, SourcePane.CurrentFolder.Path, action ?? _rememberedCopyAction); SourcePane.Delete(item); return true; }, MoveSuccess, MoveError);
-                }
+                WorkerThread.Run(() =>
+                    {
+                        CopyInner(item, action);
+                        SourcePane.Delete(item); 
+                        return true;
+                    }, MoveSuccess, MoveError);
             }
             else
             {
@@ -441,8 +459,9 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
         #endregion
 
-        public FileManagerViewModel()
+        public FileManagerViewModel(IUnityContainer container)
         {
+            _container = container;
             SwitchPaneCommand = new DelegateCommand<EventInformation<KeyEventArgs>>(ExecuteSwitchPaneCommand, CanExecuteSwitchPaneCommand);
             EditCommand = new DelegateCommand(ExecuteEditCommand, CanExecuteEditCommand);
             CopyCommand = new DelegateCommand(ExecuteCopyCommand, CanExecuteCopyCommand);
@@ -463,27 +482,27 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
         internal void FtpConnect(IStoredConnectionViewModel connection)
         {
-            _ftpContentViewModel = new FtpContentViewModel(this);
-            _ftpContentViewModel.LoadDataAsync(LoadCommand.Load, connection, FtpConnectSuccess, FtpConnectError);
+            var ftp = _container.Resolve<FtpContentViewModel>();
+            ftp.LoadDataAsync(LoadCommand.Load, connection, FtpConnectSuccess, FtpConnectError);
         }
 
-        private void FtpConnectSuccess()
+        private void FtpConnectSuccess(PaneViewModelBase viewModel)
         {
-            _ftpContentViewModel.FileManager.FtpOperationStarted += FtpWrapperOnFtpOperationStarted;
-            _ftpContentViewModel.FileManager.FtpOperationFinished += FtpWrapperOnFtpOperationFinished;
-            _ftpContentViewModel.FileManager.FtpOperationProgressChanged += FtpWrapperOnFtpOperationProgressChanged;
-            RightPane = _ftpContentViewModel;
+            var ftp = (FtpContentViewModel) viewModel;
+            ftp.FileManager.FtpOperationStarted += FtpWrapperOnFtpOperationStarted;
+            ftp.FileManager.FtpOperationFinished += FtpWrapperOnFtpOperationFinished;
+            ftp.FileManager.FtpOperationProgressChanged += FtpWrapperOnFtpOperationProgressChanged;
+            RightPane = ftp;
         }
 
-        private void FtpConnectError()
+        private void FtpConnectError(PaneViewModelBase viewModel)
         {
-            FtpDisconnect();
+            //TODO
         }
 
-        internal void FtpDisconnect()
+        public void FtpDisconnect()
         {
-            _ftpContentViewModel = null;
-            RightPane = _connectionsViewModel;
+            RightPane = _container.Resolve<ConnectionsViewModel>();            
         }
 
         private void InitializeTransfer(TransferProgressDialogMode mode)
@@ -527,7 +546,8 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
                         var reconnectionDialog = new ReconnectionDialog();
                         if (reconnectionDialog.ShowDialog() == true)
                         {
-                            _ftpContentViewModel.RestoreConnection();
+                            var ftp = LeftPane as FtpContentViewModel ?? RightPane as FtpContentViewModel;
+                            ftp.RestoreConnection();
                         }
                         else
                         {
@@ -583,11 +603,13 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
         public void OpenStfsPackage(FileSystemItemViewModel item)
         {
-            WorkerThread.Run(() => SourcePane.ReadFileContent(item.Path), (bytes) =>
-                                                                              {
-                                                                                  RightPane = new StfsPackageContentViewModel(this, bytes);
-                                                                                  RightPane.LoadDataAsync(LoadCommand.Load, null);
-                                                                              });
+            WorkerThread.Run(() => SourcePane.ReadFileContent(item.Path), OpenStfsPackageCallback);
+        }
+
+        private void OpenStfsPackageCallback(byte[] content)
+        {
+            RightPane = _container.Resolve<StfsPackageContentViewModel>();
+            RightPane.LoadDataAsync(LoadCommand.Load, content);
         }
     }
 }

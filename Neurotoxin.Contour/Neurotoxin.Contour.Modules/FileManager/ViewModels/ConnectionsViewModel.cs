@@ -84,7 +84,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             Items = new ObservableCollection<IStoredConnectionViewModel>();
         }
 
-        public override void LoadDataAsync(LoadCommand cmd, object cmdParam, Action success = null, Action error = null)
+        public override void LoadDataAsync(LoadCommand cmd, object cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase> error = null)
         {
             switch (cmd)
             {

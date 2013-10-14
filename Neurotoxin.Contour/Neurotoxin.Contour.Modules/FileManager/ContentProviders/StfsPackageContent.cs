@@ -11,21 +11,18 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
 {
     public class StfsPackageContent : IFileManager
     {
-        private readonly StfsPackage _stfs;
-
-        public StfsPackageContent(byte[] content)
-        {
-            _stfs = ModelFactory.GetModel<StfsPackage>(content);
-        }
+        private StfsPackage _stfs;
 
         public List<FileSystemItem> GetDrives()
         {
+            const string path = @"\Root\";
             return new List<FileSystemItem>
                        {
                            new FileSystemItem
                                {
                                    Name = _stfs.DisplayName,
-                                   Path = @"\Root\",
+                                   Path = path,
+                                   FullPath = string.Format(@"{0}:\{1}", _stfs.DisplayName, path),
                                    Type = ItemType.Drive
                                }
                        };
@@ -41,7 +38,8 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
                 //TODO: Date
                 Name = f.Name,
                 Type = ItemType.Directory,
-                Path = string.Format("{0}{1}\\", path, f.Name),
+                Path = string.Format(@"{0}{1}\", path, f.Name),
+                FullPath = string.Format(@"{0}:\{1}{2}\", _stfs.DisplayName, path, f.Name)
             }).ToList();
             list.AddRange(folder.Files.Select(f => new FileSystemItem
             {
@@ -49,6 +47,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
                 Name = f.Name,
                 Type = ItemType.File,
                 Path = string.Format("{0}{1}", path, f.Name),
+                FullPath = string.Format(@"{0}:\{1}{2}", _stfs.DisplayName, path, f.Name),
                 Size = f.FileSize
             }));
 
@@ -64,6 +63,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
                 Name = f.Name,
                 Type = ItemType.File,
                 Path = path,
+                FullPath = string.Format(@"{0}:\{1}", _stfs.DisplayName, path),
                 Size = f.FileSize,
             };
         }
@@ -108,6 +108,11 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
             throw new NotImplementedException();
         }
 
+        public byte[] ReadFileContent(string path, string tmpPath)
+        {
+            throw new NotImplementedException();
+        }
+
         public byte[] ReadFileHeader(string path)
         {
             throw new NotImplementedException();
@@ -117,6 +122,11 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
         {
             if (_stfs.Account == null) _stfs.ExtractAccount();
             return _stfs.Account;
+        }
+
+        public void LoadPackage(byte[] bytes)
+        {
+            _stfs = ModelFactory.GetModel<StfsPackage>(bytes);
         }
     }
 }

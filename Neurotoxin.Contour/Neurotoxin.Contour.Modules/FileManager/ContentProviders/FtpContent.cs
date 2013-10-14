@@ -17,32 +17,26 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
     {
         private Ftp _ftpClient;
         private bool _downloadHeaderOnly;
-        private string _address;
-        private int _port;
-        private string _username;
-        private string _password;
+        private FtpConnection _connection;
 
         public event FtpOperationStartedEventHandler FtpOperationStarted;
         public event FtpOperationFinishedEventHandler FtpOperationFinished;
         public event FtpOperationProgressChangedEventHandler FtpOperationProgressChanged;
 
-        internal bool Connect(string address, int port, string username, string password)
+        internal bool Connect(FtpConnection connection)
         {
             try
             {
-                _address = address;
-                _port = port;
-                _username = username;
-                _password = password;
                 _ftpClient = new Ftp();
-                _ftpClient.Connect(address, port);
-                _ftpClient.Login(username, password);
+                _ftpClient.Connect(connection.Address, connection.Port);
+                _ftpClient.Login(connection.Username, connection.Password);
 
                 //HACK: FSD FTP states that it supports SIZE command, but it throws a "not implemented" exception
                 var mi = _ftpClient.Extensions.GetType().GetMethod("method_4", BindingFlags.Instance | BindingFlags.NonPublic);
                 mi.Invoke(_ftpClient.Extensions, new object[] { false });
 
                 _ftpClient.Progress += FtpClientProgressChanged;
+                _connection = connection;
             }
             catch (FtpException ex)
             {
@@ -77,6 +71,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
                         Type = ItemType.Drive,
                         Date = di.ModifyDate,
                         Path = string.Format("/{0}/", di.Name),
+                        FullPath = string.Format("{0}://{1}/", _connection.Name, di.Name)
                     }).ToList();
                 _ftpClient.ChangeFolder(currentFolder);
                 NotifyFtpOperationFinished();
@@ -144,6 +139,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
                            Type = item.IsFolder ? ItemType.Directory : ItemType.File,
                            Date = item.ModifyDate,
                            Path = path,
+                           FullPath = string.Format("{0}:/{1}", _connection.Name, path),
                            Size = item.IsFolder ? null : item.Size
                        };
         }
@@ -204,6 +200,12 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
             return DownloadFile(path);
         }
 
+        public byte[] ReadFileContent(string path, string tmpPath)
+        {
+            DownloadFile(path, tmpPath, FileMode.Create);
+            return File.ReadAllBytes(tmpPath);
+        }
+
         public byte[] ReadFileHeader(string path)
         {
             return DownloadHeader(path);
@@ -233,7 +235,10 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
             {
                 var fs = new FileStream(localPath, mode);
                 _ftpClient.Download(LocateDirectory(remotePath), remoteStartPosition, fs);
-                NotifyFtpOperationFinished(fs.Length);
+                fs.Flush();
+                var length = fs.Length;
+                fs.Close();
+                NotifyFtpOperationFinished(length);
             }
             catch (Exception ex)
             {
@@ -368,7 +373,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
         public void RestoreConnection()
         {
             _ftpClient.Progress -= FtpClientProgressChanged;
-            Connect(_address, _port, _username, _password);
+            Connect(_connection);
         }
 
         private void NotifyFtpOperationStarted(bool binaryTransfer)
