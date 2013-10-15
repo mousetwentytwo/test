@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using Microsoft.Practices.Unity;
@@ -535,7 +536,9 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
                         break;
                     case TransferErrorType.WriteAccessError:
                         {
-                            var dialog = new WriteErrorDialog(transferException, SourcePane.GetItemViewModel(transferException.SourceFile), TargetPane.GetItemViewModel(transferException.TargetFile));
+                            var source = SourcePane.GetItemViewModel(transferException.SourceFile);
+                            var target = TargetPane.GetItemViewModel(transferException.TargetFile);
+                            var dialog = new WriteErrorDialog(transferException, source, target);
                             result = dialog.ShowDialog() == true
                                          ? dialog.Result
                                          : new TransferErrorDialogResult(CopyBehavior.Cancel);
@@ -603,7 +606,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
         public void OpenStfsPackage(FileSystemItemViewModel item)
         {
-            WorkerThread.Run(() => SourcePane.ReadFileContent(item.Path), OpenStfsPackageCallback);
+            WorkerThread.Run(() => SourcePane.ReadFileContent(item), OpenStfsPackageCallback);
         }
 
         private void OpenStfsPackageCallback(byte[] content)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Neurotoxin.Contour.Core.Io.Stfs;
 using Neurotoxin.Contour.Core.Models;
@@ -12,6 +13,8 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
     public class StfsPackageContent : IFileManager
     {
         private StfsPackage _stfs;
+
+        public string TempFilePath { get; set; }
 
         public List<FileSystemItem> GetDrives()
         {
@@ -103,12 +106,12 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
             throw new NotImplementedException();
         }
 
-        public byte[] ReadFileContent(string path)
+        public Stream GetFileStream(string path)
         {
             throw new NotImplementedException();
         }
 
-        public byte[] ReadFileContent(string path, string tmpPath)
+        public byte[] ReadFileContent(string path)
         {
             throw new NotImplementedException();
         }

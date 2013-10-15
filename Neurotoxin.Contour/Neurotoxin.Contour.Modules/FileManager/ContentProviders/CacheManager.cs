@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data.Common;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -14,15 +13,23 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
 
         public CacheManager()
         {
-            var connection = DbProviderFactories.GetFactory("System.Data.SqlServerCe.4.0").CreateConnection();
-            connection.ConnectionString = @"Data Source=|DataDirectory|\CacheDb.sdf;Persist Security Info=False;";
-            _context = new CacheDbContext(connection);           
+            _context = new CacheDbContext();
             _binaryFormatter = new BinaryFormatter();
         }
 
-        public bool HasEntry(string key)
+        public bool HasEntry(string key, long? size, DateTime date)
         {
-            return _context.CacheEntries.Any(e => e.CacheKey == key);
+            var item = _context.CacheEntries.FirstOrDefault(e => e.CacheKey == key);
+            if (item == null) return false;
+
+            if ((item.Expiration < DateTime.Now) ||
+                (size.HasValue && item.Size.HasValue && item.Size.Value < size) ||
+                (item.Date.HasValue && item.Date.Value < date))
+            {
+                ClearCache(e => e.CacheKey == key);
+                return false;
+            }
+            return true;
         }
 
         public T GetEntry<T>(string key)
@@ -37,14 +44,16 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
             return result;
         }
 
-        public void SaveEntry(string key, object content, DateTime? expiration = null, string tmpPath = null)
+        public void SaveEntry(string key, object content, DateTime? date = null, long? size = null, DateTime? expiration = null, string tmpPath = null)
         {
             _context.CacheEntries.Add(new CacheEntry
             {
                 CacheKey = key,
+                Date = date,
+                Size = size,
                 Expiration = expiration,
                 Content = SerializeContent(content),
-                AdditionalDataPath = tmpPath
+                TempFilePath = tmpPath
             });
         }
 
@@ -79,12 +88,17 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
             ClearCache(e => e.Expiration != null && e.Expiration < DateTime.Now);
         }
 
+        public void ClearCache(string key)
+        {
+            ClearCache(e => e.CacheKey == key);
+        }
+
         public void ClearCache(Func<CacheEntry, bool> where = null)
         {
             var items = where != null ? _context.CacheEntries.Where(where) : _context.CacheEntries;
             foreach (var item in items)
             {
-                if (!string.IsNullOrEmpty(item.AdditionalDataPath)) File.Delete(item.AdditionalDataPath);
+                if (!string.IsNullOrEmpty(item.TempFilePath)) File.Delete(item.TempFilePath);
                 _context.CacheEntries.Remove(item);
             }
         }

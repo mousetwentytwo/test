@@ -7,6 +7,8 @@ namespace Neurotoxin.Contour.Modules.FileManager.Interfaces
 {
     public interface IFileManager
     {
+        string TempFilePath { get; set; }
+
         List<FileSystemItem> GetDrives(); 
         List<FileSystemItem> GetList(string path = null);
 
@@ -23,7 +25,6 @@ namespace Neurotoxin.Contour.Modules.FileManager.Interfaces
         void CreateFolder(string path);
 
         byte[] ReadFileContent(string path);
-        byte[] ReadFileContent(string path, string tmpPath);
         byte[] ReadFileHeader(string path);
     }
 }

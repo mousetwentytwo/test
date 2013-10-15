@@ -1,7 +1,7 @@
 ﻿using System.Windows.Media;
 using Neurotoxin.Contour.Modules.FileManager.Constants;
+using Neurotoxin.Contour.Modules.FileManager.Database;
 using Neurotoxin.Contour.Modules.FileManager.Interfaces;
-using Neurotoxin.Contour.Modules.FileManager.Models;
 using Neurotoxin.Contour.Presentation.Extensions;
 using Neurotoxin.Contour.Presentation.Infrastructure;
 
@@ -18,15 +18,15 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             set { Model.Name = value ?? string.Empty; NotifyPropertyChanged(NAME); }
         }
 
-        private const string XBOXVERSION = "XboxVersion";
+        private const string CONNECTIONIMAGE = "ConnectionImage";
         public ConnectionImage ConnectionImage
         {
-            get { return Model.ConnectionImage; }
+            get { return (ConnectionImage)Model.ConnectionImage; }
             set
             {
-                Model.ConnectionImage = value;
+                Model.ConnectionImage = (int)value;
                 _thumbnail = null;
-                NotifyPropertyChanged(XBOXVERSION);
+                NotifyPropertyChanged(CONNECTIONIMAGE);
             }
         }
 
@@ -38,7 +38,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             {
                 if (_thumbnail == null)
                 {
-                    var png = ApplicationExtensions.GetContentByteArray(string.Format("/Resources/Connections/{0}.png", Model.ConnectionImage));
+                    var png = ApplicationExtensions.GetContentByteArray(string.Format("/Resources/Connections/{0}.png", ConnectionImage));
                     _thumbnail = StfsPackageExtensions.GetBitmapFromByteArray(png);
                 }
                 return _thumbnail;
@@ -73,9 +73,8 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             set { Model.Password = value ?? string.Empty; NotifyPropertyChanged(PASSWORD); }
         }
 
-        public FtpConnectionItemViewModel(FtpConnection model = null)
+        public FtpConnectionItemViewModel(FtpConnection model)
         {
-            if (model == null) model = new FtpConnection();
             Model = model;
         }
 

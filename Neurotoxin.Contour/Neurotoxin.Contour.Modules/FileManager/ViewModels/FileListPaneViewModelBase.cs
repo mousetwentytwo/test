@@ -28,6 +28,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
         private bool _isBusy;
         private string _sortMemberPath = "ComputedName";
         private ListSortDirection _listSortDirection = ListSortDirection.Ascending;
+        private Queue<FileSystemItem> _queue;
         private readonly Dictionary<FileSystemItemViewModel, Stack<FileSystemItemViewModel>> _stackCache = new Dictionary<FileSystemItemViewModel, Stack<FileSystemItemViewModel>>();
         private readonly TitleRecognizer _titleRecognizer;
         private readonly IUnityContainer _container;
@@ -176,17 +177,30 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
                 NotifyPropertyChanged(CURRENTFOLDER);
             }
             _isBusy = true;
-            WorkerThread.Run(ChangeDirectoryOuter, ChangeDirectoryCallback);
+            WorkerThread.Run(() => ChangeDirectory(), ChangeDirectoryCallback);
         }
 
-        //TODO: Refactor
-        private List<FileSystemItem> ChangeDirectoryOuter()
+        private List<FileSystemItem> ChangeDirectory(string selectedPath = null)
         {
-            var content = ChangeDirectory();
+            if (selectedPath == null) selectedPath = CurrentFolder.Path;
+            var list = FileManager.GetList(selectedPath);
+            list.ForEach(item => _titleRecognizer.RecognizeType(item));
+            return list;
+        }
+
+        private void ChangeDirectoryCallback(List<FileSystemItem> result)
+        {
+            _titleRecognizer.BeginTransaction();
+            _queue = new Queue<FileSystemItem>();
+            foreach (var item in result.Where(item => !_titleRecognizer.MergeWithCachedEntry(item)))
+            {
+                _queue.Enqueue(item);
+            }
+
             if (Stack.Count > 1)
             {
                 var parentFolder = Stack.Peek();
-                content.Insert(0, new FileSystemItem
+                result.Insert(0, new FileSystemItem
                 {
                     Title = "[..]",
                     Type = parentFolder.Type,
@@ -195,41 +209,62 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
                     Thumbnail = ApplicationExtensions.GetContentByteArray("/Resources/up.png")
                 });
             }
-            return content;
-        }
 
-        private List<FileSystemItem> ChangeDirectory(string selectedPath = null, bool recognize = true)
-        {
-            if (selectedPath == null) selectedPath = CurrentFolder.Path;
-            var content = FileManager.GetList(selectedPath);
-
-            if (recognize)
-            {
-                var items = CurrentFolder.ContentType != ContentType.Undefined
-                                ? content
-                                : content.Where(item => _titleRecognizer.IsXboxFolder(item));
-                if (items.Any())
-                {
-                    using (_titleRecognizer.BeginTransaction())
-                    {
-                        foreach (var item in items)
-                        {
-                            _titleRecognizer.RecognizeTitle(item);
-                        }
-                    }
-                }
-            }
-            return content;
-        }
-
-        protected virtual void ChangeDirectoryCallback(List<FileSystemItem> result)
-        {
             SortContent(result.Select(c => new FileSystemItemViewModel(c)));
             SetActiveCommand.Execute(null);
             NotifyPropertyChanged(SIZEINFO);
-            _isBusy = false;
+
+            if (_queue.Count > 0)
+            {
+                RecognitionStart();
+            }
+            else
+            {
+                RecognitionFinish(false);
+            }
         }
 
+        private void RecognitionStart()
+        {
+            if (_queue.Count > 0)
+            {
+                var item = _queue.Dequeue();
+                if (CurrentFolder.ContentType != ContentType.Undefined || _titleRecognizer.IsXboxFolder(item))
+                {
+                    WorkerThread.Run(() =>
+                        {
+                            var w = new Stopwatch();
+                            w.Start();
+                            _titleRecognizer.RecognizeTitle(item);
+                            w.Stop();
+                            Debug.WriteLine("{0} {1}", item.Title ?? item.Name, w.Elapsed);
+                            return item;
+                        }, RecognitionSuccess);
+                }
+                else
+                {
+                    RecognitionStart();
+                }
+            }
+            else
+            {
+                RecognitionFinish();
+                _queue = null;
+            }
+        }
+
+        private void RecognitionSuccess(FileSystemItem item)
+        {
+            Items.Single(i => i.Model == item).NotifyModelChanges();
+            RecognitionStart();
+        }
+
+        private void RecognitionFinish(bool sort = true)
+        {
+            _titleRecognizer.EndTransaction();
+            if (sort) SortContent();
+            _isBusy = false;
+        }
 
         #endregion
 
@@ -459,7 +494,10 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
         private FileSystemItemViewModel RefreshTitle()
         {
             var result = CurrentRow;
-            _titleRecognizer.RecognizeTitle(CurrentRow.Model, true);
+            using (_titleRecognizer.BeginTransaction())
+            {
+                _titleRecognizer.RecognizeTitle(CurrentRow.Model, true);
+            }
             return result;
         }
 
@@ -648,14 +686,20 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             ChangeDirectoryCommand.Execute(null);
         }
 
-        public byte[] ReadFileContent(string itemPath)
+        public byte[] ReadFileContent(FileSystemItemViewModel item)
         {
-            return FileManager.ReadFileContent(itemPath);
+            throw new NotImplementedException();
+            //return _titleRecognizer.ReadFileContent(item.Model);
         }
 
         public FileSystemItemViewModel GetItemViewModel(string itemPath)
         {
-            return new FileSystemItemViewModel(_titleRecognizer.RecognizeTitle(itemPath));
+            FileSystemItemViewModel vm;
+            using (_titleRecognizer.BeginTransaction())
+            {
+                vm = new FileSystemItemViewModel(_titleRecognizer.RecognizeTitle(itemPath));
+            }
+            return vm;
         }
 
         public Queue<FileSystemItemViewModel> PopulateQueue()
@@ -673,7 +717,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
                 if (item.Type == ItemType.Directory)
                 {
                     var start = queue.Count;
-                    PopulateQueue(queue, ChangeDirectory(item.Path, false).Select(c => new FileSystemItemViewModel(c)));
+                    PopulateQueue(queue, ChangeDirectory(item.Path).Select(c => new FileSystemItemViewModel(c)));
                     var end = queue.Count;
                     long size = 0;
                     for (var i = start; i < end; i++)

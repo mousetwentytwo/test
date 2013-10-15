@@ -95,6 +95,8 @@
     <Compile Include="FileManager\Converters\NameConverter.cs" />
     <Compile Include="FileManager\Database\CacheDbContext.cs" />
     <Compile Include="FileManager\Database\CacheEntry.cs" />
+    <Compile Include="FileManager\Database\ConfigDbContext.cs" />
+    <Compile Include="FileManager\Database\DbConnectionFactory.cs" />
     <Compile Include="FileManager\Events\ActivePaneChangedEvent.cs" />
     <Compile Include="FileManager\Events\TransferFinishedEvent.cs" />
     <Compile Include="FileManager\Events\TransferStartedEvent.cs" />
@@ -104,9 +106,9 @@
     <Compile Include="FileManager\Events\FtpOperationProgressChangedEventHandler.cs" />
     <Compile Include="FileManager\Events\FtpOperationFinishedEventHandler.cs" />
     <Compile Include="FileManager\Events\FtpOperationStartedEventHandler.cs" />
-    <Compile Include="FileManager\Models\FtpConnection.cs" />
+    <Compile Include="FileManager\Database\FtpConnection.cs" />
+    <Compile Include="FileManager\Interfaces\IStoredConnection.cs" />
     <Compile Include="FileManager\Models\RecognitionInformation.cs" />
-    <Compile Include="FileManager\Models\StoredConnectionBase.cs" />
     <Compile Include="FileManager\Models\TransferErrorDialogResult.cs" />
     <Compile Include="FileManager\Interfaces\IPaneViewModel.cs" />
     <Compile Include="FileManager\ViewModels\StfsPackageContentViewModel.cs" />

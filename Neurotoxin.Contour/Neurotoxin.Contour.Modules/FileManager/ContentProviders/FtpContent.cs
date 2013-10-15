@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Windows;
 using Limilabs.FTP.Client;
 using Neurotoxin.Contour.Modules.FileManager.Constants;
+using Neurotoxin.Contour.Modules.FileManager.Database;
 using Neurotoxin.Contour.Modules.FileManager.Events;
 using Neurotoxin.Contour.Modules.FileManager.Exceptions;
 using Neurotoxin.Contour.Modules.FileManager.Interfaces;
@@ -18,6 +19,8 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
         private Ftp _ftpClient;
         private bool _downloadHeaderOnly;
         private FtpConnection _connection;
+
+        public string TempFilePath { get; set; }
 
         public event FtpOperationStartedEventHandler FtpOperationStarted;
         public event FtpOperationFinishedEventHandler FtpOperationFinished;
@@ -195,15 +198,18 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
             return result;
         }
 
-        public byte[] ReadFileContent(string path)
+        public Stream GetFileStream(string path)
         {
-            return DownloadFile(path);
+            TempFilePath = string.Format(@"{0}\{1}", AppDomain.CurrentDomain.GetData("DataDirectory"), Guid.NewGuid());
+            DownloadFile(path, TempFilePath, FileMode.Create);
+            return new FileStream(TempFilePath, FileMode.Open);
         }
 
-        public byte[] ReadFileContent(string path, string tmpPath)
+        public byte[] ReadFileContent(string path)
         {
-            DownloadFile(path, tmpPath, FileMode.Create);
-            return File.ReadAllBytes(tmpPath);
+            TempFilePath = string.Format(@"{0}\{1}", AppDomain.CurrentDomain.GetData("DataDirectory"), Guid.NewGuid());
+            DownloadFile(path, TempFilePath, FileMode.Create);
+            return File.ReadAllBytes(TempFilePath);
         }
 
         public byte[] ReadFileHeader(string path)

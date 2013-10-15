@@ -10,6 +10,12 @@ namespace Neurotoxin.Contour.Modules.FileManager.Database
         [Column("CacheKey")]
         public string CacheKey { get; set; }
 
+        [Column("Date")]
+        public DateTime? Date { get; set; }
+
+        [Column("Size")]
+        public long? Size { get; set; }
+
         [Column("Expiration")]
         public DateTime? Expiration { get; set; }
 
@@ -17,7 +23,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.Database
         [MaxLength]
         public byte[] Content { get; set; }
 
-        [Column("AdditionalDataPath")]
-        public string AdditionalDataPath { get; set; }
+        [Column("TempFilePath")]
+        public string TempFilePath { get; set; }
     }
 }

@@ -16,6 +16,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 {
     public class FtpContentViewModel : FileListPaneViewModelBase<FtpContent>
     {
+        private readonly Dictionary<string, string> _driveLabelCache = new Dictionary<string, string>();
 
         #region DisconnectCommand
 
@@ -25,7 +26,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
         {
             FileManager.Disconnect();
             //TODO: via event aggregator
-            ((FileManagerViewModel)Parent).FtpDisconnect();
+            Parent.FtpDisconnect();
         }
 
         #endregion
@@ -64,17 +65,18 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
         protected override void ChangeDrive()
         {
-            //TODO: cache
-            var path = string.Format("{0}name.txt", Drive.Path);
-            if (FileManager.FileExists(path))
+            if (!_driveLabelCache.ContainsKey(Drive.Path))
             {
-                var bytes = FileManager.DownloadFile(path);
-                DriveLabel = string.Format("[{0}]", System.Text.Encoding.BigEndianUnicode.GetString(bytes));
+                var path = string.Format("{0}name.txt", Drive.Path);
+                string label = null;
+                if (FileManager.FileExists(path))
+                {
+                    var bytes = FileManager.DownloadFile(path);
+                    label = string.Format("[{0}]", System.Text.Encoding.BigEndianUnicode.GetString(bytes));
+                }
+                _driveLabelCache.Add(Drive.Path, label);
             }
-            else
-            {
-                DriveLabel = null;
-            }
+            DriveLabel = _driveLabelCache[Drive.Path];
             base.ChangeDrive();
         }
 

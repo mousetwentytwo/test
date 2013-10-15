@@ -8,11 +8,11 @@ namespace Neurotoxin.Contour.Modules.FileManager.Models
     public class FileSystemItem
     {
         public string Title;
-        public string Name;
         public byte[] Thumbnail;
         public ItemType Type;
         public TitleType TitleType;
         public ContentType ContentType;
+        [NonSerialized] public string Name;
         [NonSerialized] public string Path;
         [NonSerialized] public string FullPath;
         [NonSerialized] public long? Size;

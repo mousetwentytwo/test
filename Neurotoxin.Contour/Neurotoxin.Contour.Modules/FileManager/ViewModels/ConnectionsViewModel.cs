@@ -4,8 +4,8 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
 using Neurotoxin.Contour.Modules.FileManager.Constants;
+using Neurotoxin.Contour.Modules.FileManager.Database;
 using Neurotoxin.Contour.Modules.FileManager.Interfaces;
-using Neurotoxin.Contour.Modules.FileManager.Models;
 using Neurotoxin.Contour.Modules.FileManager.Views.Dialogs;
 using Neurotoxin.Contour.Presentation.Infrastructure;
 using Neurotoxin.Contour.Presentation.Infrastructure.Constants;
@@ -89,39 +89,12 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             switch (cmd)
             {
                 case LoadCommand.Load:
-                    var items = new List<FtpConnection>
-                        {
-                            new FtpConnection
-                                {
-                                    Name = "Localhost (test)",
-                                    Address = "127.0.0.1",
-                                    Port = 21,
-                                    Username = "xbox",
-                                    Password = "hardcore21*",
-                                    ConnectionImage = ConnectionImage.FatElite
-                                },
-                            new FtpConnection
-                                {
-                                    Name = "Ivory",
-                                    Address = "192.168.1.110",
-                                    Port = 21,
-                                    Username = "xbox",
-                                    Password = "xbox",
-                                    ConnectionImage = ConnectionImage.Fat
-                                },
-                            new FtpConnection
-                                {
-                                    Name = "Ebony",
-                                    Address = "192.168.1.111",
-                                    Port = 21,
-                                    Username = "xbox",
-                                    Password = "xbox",
-                                    ConnectionImage = ConnectionImage.Slim
-                                }
-                        };
-                    foreach (var item in items.OrderBy(i => i.Name))
+                    using (var context = new ConfigDbContext())
                     {
-                        Items.Add(new FtpConnectionItemViewModel(item));
+                        foreach (var ftpconn in context.FtpConnections.OrderBy(i => i.Name))
+                        {
+                            Items.Add(new FtpConnectionItemViewModel(ftpconn));
+                        }
                     }
                     var add = new NewConnectionPlaceholderViewModel();
                     Items.Add(add);
@@ -142,17 +115,24 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
         public void Edit()
         {
-            FtpConnectionItemViewModel newItem;
             bool edit;
-            if (SelectedItem is NewConnectionPlaceholderViewModel)
-            {
-                edit = false;
-                newItem = new FtpConnectionItemViewModel();
-            }
-            else if (SelectedItem is FtpConnectionItemViewModel)
+            FtpConnectionItemViewModel newItem;
+            var ftpconn = SelectedItem as FtpConnectionItemViewModel;
+            if (ftpconn != null)
             {
                 edit = true;
-                newItem = ((FtpConnectionItemViewModel) SelectedItem).Clone();
+                newItem = ftpconn.Clone();
+            } 
+            else if (SelectedItem is NewConnectionPlaceholderViewModel)
+            {
+                edit = false;
+                newItem = new FtpConnectionItemViewModel(new FtpConnection
+                    {
+                        Port = 21,
+                        Username = "xbox",
+                        Password = "xbox",
+                        ConnectionImage = (int)ConnectionImage.Fat,
+                    });
             }
             else
             {
@@ -162,11 +142,22 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             var dialog = new NewConnectionDialog(newItem);
             if (dialog.ShowDialog() != true) return;
 
-            if (edit) Items.Remove(SelectedItem);
-            var i = 0;
-            while (i < Items.Count - 1 && String.Compare(newItem.Name, Items[i].Name, StringComparison.InvariantCultureIgnoreCase) == 1) i++;
-            Items.Insert(i, newItem);
-            SelectedItem = newItem;
+            using (var context = new ConfigDbContext())
+            {
+                if (edit)
+                {
+                    Items.Remove(SelectedItem);
+                    var oldentry = context.FtpConnections.Single(e => e.Id == ftpconn.Model.Id);
+                    context.FtpConnections.Remove(oldentry);
+                }
+                var i = 0;
+                while (i < Items.Count - 1 && String.Compare(newItem.Name, Items[i].Name, StringComparison.InvariantCultureIgnoreCase) == 1) i++;
+                Items.Insert(i, newItem);
+                context.FtpConnections.Add(newItem.Model);
+                SelectedItem = newItem;
+                context.SaveChanges();
+            }
+
         }
     }
 }

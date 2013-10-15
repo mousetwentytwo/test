@@ -11,6 +11,8 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
 {
     public class LocalFileSystemContent : IFileManager
     {
+        public string TempFilePath { get; set; }
+
         public List<FileSystemItem> GetDrives()
         {
             return DriveInfo.GetDrives().Select(drive => new FileSystemItem
@@ -117,6 +119,18 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
             }
         }
 
+        public Stream GetFileStream(string path)
+        {
+            try
+            {
+                return new FileStream(path, FileMode.Open);
+            }
+            catch (IOException ex)
+            {
+                throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
+            }
+        }
+
         public byte[] ReadFileContent(string path)
         {
             try
@@ -127,11 +141,6 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
             {
                 throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
             }
-        }
-
-        public byte[] ReadFileContent(string path, string tmpPath)
-        {
-            return ReadFileContent(path);
         }
 
         public byte[] ReadFileHeader(string path)

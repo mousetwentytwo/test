@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using Neurotoxin.Contour.Core.Constants;
@@ -44,18 +43,19 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
             return !string.IsNullOrEmpty(item.Name) && _recognitionKeywords.Any(r => new Regex(r.Pattern).IsMatch(item.Name));
         }
 
-        public FileSystemItem RecognizeTitle(string itemPath)
+        public bool RecognizeType(FileSystemItem item)
         {
-            var item = _fileManager.GetFileInfo(itemPath);
-            RecognizeTitle(item);
-            return item;
+            var recognition = _recognitionKeywords.FirstOrDefault(r => new Regex(r.Pattern).IsMatch(item.Name));
+            if (recognition == null) return false;
+            item.Title = recognition.Title;
+            item.TitleType = recognition.Type;
+            return true;
         }
 
-        public void RecognizeTitle(FileSystemItem item, bool refresh = false)
+        public bool MergeWithCachedEntry(FileSystemItem item)
         {
             var cacheKey = GetCacheKey(item);
-            var hasCache = !refresh && _cacheManager.HasEntry(cacheKey);
-            if (hasCache)
+            if (_cacheManager.HasEntry(cacheKey, item.Size, item.Date))
             {
                 var cachedItem = _cacheManager.GetEntry<FileSystemItem>(cacheKey);
                 if (cachedItem != null)
@@ -65,59 +65,71 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
                     item.ContentType = cachedItem.ContentType;
                     item.Thumbnail = cachedItem.Thumbnail;
                 }
+                return true;
             }
-            else
+            return false;
+        }
+
+        public FileSystemItem RecognizeTitle(string itemPath)
+        {
+            var item = _fileManager.GetFileInfo(itemPath);
+            RecognizeTitle(item);
+            return item;
+        }
+
+        public void RecognizeTitle(FileSystemItem item, bool overwrite = false)
+        {
+            var cacheKey = GetCacheKey(item);
+            var hasCached = !overwrite && MergeWithCachedEntry(item);
+            if (overwrite) _cacheManager.ClearCache(cacheKey);
+            if (hasCached) return;
+
+            switch (item.TitleType)
             {
-                var recognition = _recognitionKeywords.FirstOrDefault(r => new Regex(r.Pattern).IsMatch(item.Name));
-                if (recognition != null)
-                {
-                    item.Title = recognition.Title;
-                    item.TitleType = recognition.Type;
-                    switch (recognition.Type)
+                case TitleType.Profile:
+                    var profilePath = item.Type == ItemType.Directory
+                                            ? string.Format("{1}FFFE07D1/00010000/{0}", item.Name, item.Path)
+                                            : item.Path;
+                    if (GetProfileData(item, profilePath))
+                        _cacheManager.SaveEntry(cacheKey, item, item.Date, item.Size, DateTime.Now.AddDays(14), _fileManager.TempFilePath);
+                    break;
+                case TitleType.Game:
+                    if (GetGameData(item) || GetGameDataFromJqe360(item))
+                        _cacheManager.SaveEntry(cacheKey, item, item.Date, item.Size);
+                    else
+                        _cacheManager.SaveEntry(cacheKey, null, null, null, DateTime.Now.AddDays(7));
+                    break;
+                case TitleType.Content:
+                    var content = BitConverter.ToInt32(item.Name.FromHex(), 0);
+                    if (Enum.IsDefined(typeof (ContentType), content))
                     {
-                        case TitleType.Profile:
-                            var profilePath = item.Type == ItemType.Directory
-                                                  ? string.Format("{1}FFFE07D1/00010000/{0}", item.Name, item.Path)
-                                                  : item.Path;
-                            var md5 = MD5.Create();
-                            var hash = md5.ComputeHash(Encoding.ASCII.GetBytes(profilePath));
-                            var tmpPath = string.Format(@"{0}\{1}", AppDomain.CurrentDomain.GetData("DataDirectory"), hash.ToHex());
-                            
-                            if (GetProfileData(item, profilePath, tmpPath))
-                                _cacheManager.SaveEntry(cacheKey, item, DateTime.Now.AddDays(14), tmpPath);
-                            break;
-                        case TitleType.Game:
-                            if (GetGameData(item) || GetGameDataFromJqe360(item))
-                                _cacheManager.SaveEntry(cacheKey, item);
-                            else
-                                _cacheManager.SaveEntry(cacheKey, null, DateTime.Now.AddDays(7));
-                            break;
-                        case TitleType.Content:
-                            var content = BitConverter.ToInt32(item.Name.FromHex(), 0);
-                            if (Enum.IsDefined(typeof(ContentType), content))
-                            {
-                                item.ContentType = (ContentType) content;
-                                item.Title = string.Format("{0}s", EnumHelper.GetStringValue(item.ContentType));
-                            }
-                            break;
-                    }
-                } 
-                else if (item.Type == ItemType.File)
-                {
-                    var header = _fileManager.ReadFileHeader(item.Path);
-                    var svod = ModelFactory.GetModel<SvodPackage>(header);
-                    if (svod.IsValid)
-                    {
-                        item.Title = svod.DisplayName;
-                        item.Thumbnail = svod.ThumbnailImage;
-                        item.ContentType = svod.ContentType;
-                        _cacheManager.SaveEntry(cacheKey, item, DateTime.Now.AddDays(14));
+                        item.ContentType = (ContentType) content;
+                        item.Title = string.Format("{0}s", EnumHelper.GetStringValue(item.ContentType));
                     }
                     else
                     {
-                        _cacheManager.SaveEntry(cacheKey, null);
+                        //TODO: log unknown entry
                     }
-                }    
+                    _cacheManager.SaveEntry(cacheKey, item, item.Date, item.Size);
+                    break;
+                case TitleType.Undefined:
+                    if (item.Type == ItemType.File)
+                    {
+                        var header = _fileManager.ReadFileHeader(item.Path);
+                        var svod = ModelFactory.GetModel<SvodPackage>(header);
+                        if (svod.IsValid)
+                        {
+                            item.Title = svod.DisplayName;
+                            item.Thumbnail = svod.ThumbnailImage;
+                            item.ContentType = svod.ContentType;
+                            _cacheManager.SaveEntry(cacheKey, item, item.Date, item.Size, DateTime.Now.AddDays(14));
+                        }
+                        else
+                        {
+                            _cacheManager.SaveEntry(cacheKey, null);
+                        }
+                    }
+                    break;
             }
         }
 
@@ -125,6 +137,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
         {
             switch (item.TitleType)
             {
+                case TitleType.Content:
                 case TitleType.Game:
                     return item.Name;
                 default:
@@ -132,12 +145,12 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
             }            
         }
 
-        private bool GetProfileData(FileSystemItem item, string profilePath, string tmpPath)
+        private bool GetProfileData(FileSystemItem item, string profilePath)
         {
             if (!_fileManager.FileExists(profilePath)) return false;
 
-            _fileManager.ReadFileContent(profilePath, tmpPath);
-            var stfs = ModelFactory.GetModel<StfsPackage>(tmpPath);
+            var bytes = _fileManager.ReadFileContent(profilePath);
+            var stfs = ModelFactory.GetModel<StfsPackage>(bytes);
             stfs.ExtractAccount();
             item.Title = stfs.Account.GamerTag;
             item.Thumbnail = stfs.ThumbnailImage;
@@ -216,6 +229,11 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
         {
             _cacheManager = new CacheManager();
             return _cacheManager;
+        }
+
+        public void EndTransaction()
+        {
+            _cacheManager.Dispose();
         }
     }
 }
