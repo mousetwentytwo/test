@@ -19,17 +19,23 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
 
         public bool HasEntry(string key, long? size, DateTime date)
         {
-            var item = _context.CacheEntries.FirstOrDefault(e => e.CacheKey == key);
-            if (item == null) return false;
+            return GetEntry(key, size, date) != null;
+        }
 
-            if ((item.Expiration < DateTime.Now) ||
+        public CacheEntry GetEntry(string key, long? size, DateTime date)
+        {
+            var item = _context.CacheEntries.FirstOrDefault(e => e.CacheKey == key);
+            if (item == null) return null;
+
+            if ((item.Expiration.HasValue && item.Expiration < DateTime.Now) ||
                 (size.HasValue && item.Size.HasValue && item.Size.Value < size) ||
-                (item.Date.HasValue && item.Date.Value < date))
+                (item.Date.HasValue && (date - item.Date.Value).TotalSeconds > 1))
             {
                 ClearCache(e => e.CacheKey == key);
-                return false;
+                return null;
             }
-            return true;
+
+            return item;
         }
 
         public T GetEntry<T>(string key)

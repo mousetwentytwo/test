@@ -536,9 +536,9 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
                         break;
                     case TransferErrorType.WriteAccessError:
                         {
-                            var source = SourcePane.GetItemViewModel(transferException.SourceFile);
-                            var target = TargetPane.GetItemViewModel(transferException.TargetFile);
-                            var dialog = new WriteErrorDialog(transferException, source, target);
+                            var dialog = new WriteErrorDialog(transferException, eventAggregator);
+                            SourcePane.GetItemViewModel(transferException.SourceFile);
+                            TargetPane.GetItemViewModel(transferException.TargetFile);
                             result = dialog.ShowDialog() == true
                                          ? dialog.Result
                                          : new TransferErrorDialogResult(CopyBehavior.Cancel);
@@ -604,12 +604,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             NotifyTransferFinished();
         }
 
-        public void OpenStfsPackage(FileSystemItemViewModel item)
-        {
-            WorkerThread.Run(() => SourcePane.ReadFileContent(item), OpenStfsPackageCallback);
-        }
-
-        private void OpenStfsPackageCallback(byte[] content)
+        public void OpenStfsPackage(byte[] content)
         {
             RightPane = _container.Resolve<StfsPackageContentViewModel>();
             RightPane.LoadDataAsync(LoadCommand.Load, content);

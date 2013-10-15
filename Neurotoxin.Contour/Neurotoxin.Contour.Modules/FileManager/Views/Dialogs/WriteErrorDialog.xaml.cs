@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using Microsoft.Practices.Composite.Events;
 using Neurotoxin.Contour.Modules.FileManager.Constants;
+using Neurotoxin.Contour.Modules.FileManager.Events;
 using Neurotoxin.Contour.Modules.FileManager.Exceptions;
 using Neurotoxin.Contour.Modules.FileManager.Interfaces;
 using Neurotoxin.Contour.Modules.FileManager.Models;
@@ -11,14 +13,25 @@ namespace Neurotoxin.Contour.Modules.FileManager.Views.Dialogs
 {
     public partial class WriteErrorDialog : Window, ITransferErrorDialog
     {
+        private readonly TransferException _exception;
+        private readonly IEventAggregator _eventAggregator;
         public TransferErrorDialogResult Result { get; private set; }
 
-        public WriteErrorDialog(TransferException exception, FileSystemItemViewModel sourceFile, FileSystemItemViewModel targetFile)
+        public WriteErrorDialog(TransferException exception, IEventAggregator eventAggregator)
         {
+            _exception = exception;
+            _eventAggregator = eventAggregator;
             Owner = Application.Current.MainWindow;
             InitializeComponent();
-            SourceFile.DataContext = sourceFile;
-            TargetFile.DataContext = targetFile;
+            _eventAggregator.GetEvent<ViewModelGeneratedEvent>().Subscribe(ViewModelGenerated);
+        }
+
+        private void ViewModelGenerated(ViewModelGeneratedEventArgs args)
+        {
+            var vm = args.ViewModel as FileSystemItemViewModel;
+            if (vm == null) return;
+            if (vm.Path == _exception.SourceFile) SourceFile.DataContext = vm;
+            if (vm.Path == _exception.TargetFile) TargetFile.DataContext = vm;
         }
 
         private void ButtonClick(object sender, RoutedEventArgs e)
@@ -55,6 +68,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.Views.Dialogs
             }
             DialogResult = true;
             Close();
+            _eventAggregator.GetEvent<ViewModelGeneratedEvent>().Unsubscribe(ViewModelGenerated);
         }
     }
 }

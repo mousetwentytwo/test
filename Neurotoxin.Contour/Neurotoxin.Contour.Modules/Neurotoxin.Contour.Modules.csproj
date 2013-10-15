@@ -98,6 +98,7 @@
     <Compile Include="FileManager\Database\ConfigDbContext.cs" />
     <Compile Include="FileManager\Database\DbConnectionFactory.cs" />
     <Compile Include="FileManager\Events\ActivePaneChangedEvent.cs" />
+    <Compile Include="FileManager\Events\ViewModelGeneratedEvent.cs" />
     <Compile Include="FileManager\Events\TransferFinishedEvent.cs" />
     <Compile Include="FileManager\Events\TransferStartedEvent.cs" />
     <Compile Include="FileManager\Exceptions\TransferException.cs" />
@@ -119,7 +120,7 @@
     <Compile Include="FileManager\ViewModels\ConnectionsViewModel.cs" />
     <Compile Include="FileManager\Interfaces\IFileManager.cs" />
     <Compile Include="FileManager\ContentProviders\LocalFileSystemContent.cs" />
-    <Compile Include="FileManager\ContentProviders\TitleManager.cs" />
+    <Compile Include="FileManager\ContentProviders\TitleRecognizer.cs" />
     <Compile Include="FileManager\ContentProviders\FtpContent.cs" />
     <Compile Include="FileManager\Interfaces\IFileListPaneViewModel.cs" />
     <Compile Include="FileManager\ViewModels\LocalFileSystemContentViewModel.cs" />

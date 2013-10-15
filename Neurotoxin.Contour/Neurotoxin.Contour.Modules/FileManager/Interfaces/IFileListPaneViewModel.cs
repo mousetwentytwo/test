@@ -14,7 +14,6 @@ namespace Neurotoxin.Contour.Modules.FileManager.Interfaces
         bool CreateFolder(string name);
         bool Delete(FileSystemItemViewModel item);
 
-        byte[] ReadFileContent(FileSystemItemViewModel item); 
-        FileSystemItemViewModel GetItemViewModel(string itemPath);
+        void GetItemViewModel(string itemPath);
     }
 }

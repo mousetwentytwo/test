@@ -166,7 +166,8 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
                 {
                     if (CurrentRow.TitleType == TitleType.Profile)
                     {
-                        Parent.OpenStfsPackage(CurrentRow);
+                        _isBusy = true;
+                        WorkerThread.Run(() => ReadFileContent(CurrentRow), OpenStfsPackageCallback);
                     }
                     return;
                 }
@@ -178,6 +179,11 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             }
             _isBusy = true;
             WorkerThread.Run(() => ChangeDirectory(), ChangeDirectoryCallback);
+        }
+
+        private void OpenStfsPackageCallback(byte[] content)
+        {
+            Parent.OpenStfsPackage(content);
         }
 
         private List<FileSystemItem> ChangeDirectory(string selectedPath = null)
@@ -194,6 +200,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             _queue = new Queue<FileSystemItem>();
             foreach (var item in result.Where(item => !_titleRecognizer.MergeWithCachedEntry(item)))
             {
+                if (CurrentFolder.ContentType == ContentType.Undefined && !_titleRecognizer.IsXboxFolder(item)) continue;
                 _queue.Enqueue(item);
             }
 
@@ -220,7 +227,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             }
             else
             {
-                RecognitionFinish(false);
+                RecognitionFinish();
             }
         }
 
@@ -229,28 +236,21 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             if (_queue.Count > 0)
             {
                 var item = _queue.Dequeue();
-                if (CurrentFolder.ContentType != ContentType.Undefined || _titleRecognizer.IsXboxFolder(item))
-                {
-                    WorkerThread.Run(() =>
-                        {
-                            var w = new Stopwatch();
-                            w.Start();
-                            _titleRecognizer.RecognizeTitle(item);
-                            w.Stop();
-                            Debug.WriteLine("{0} {1}", item.Title ?? item.Name, w.Elapsed);
-                            return item;
-                        }, RecognitionSuccess);
-                }
-                else
-                {
-                    RecognitionStart();
-                }
+                RecognitionInner(item, RecognitionSuccess);
             }
             else
             {
                 RecognitionFinish();
-                _queue = null;
             }
+        }
+
+        private void RecognitionInner(FileSystemItem item, Action<FileSystemItem> callback)
+        {
+            WorkerThread.Run(() =>
+            {
+                _titleRecognizer.RecognizeTitle(item);
+                return item;
+            }, callback);
         }
 
         private void RecognitionSuccess(FileSystemItem item)
@@ -259,10 +259,11 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             RecognitionStart();
         }
 
-        private void RecognitionFinish(bool sort = true)
+        private void RecognitionFinish()
         {
+            _queue = null;
             _titleRecognizer.EndTransaction();
-            if (sort) SortContent();
+            SortContent();
             _isBusy = false;
         }
 
@@ -686,20 +687,45 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             ChangeDirectoryCommand.Execute(null);
         }
 
-        public byte[] ReadFileContent(FileSystemItemViewModel item)
+        private byte[] ReadFileContent(FileSystemItemViewModel item)
         {
-            throw new NotImplementedException();
-            //return _titleRecognizer.ReadFileContent(item.Model);
-        }
-
-        public FileSystemItemViewModel GetItemViewModel(string itemPath)
-        {
-            FileSystemItemViewModel vm;
+            byte[] result;
             using (_titleRecognizer.BeginTransaction())
             {
-                vm = new FileSystemItemViewModel(_titleRecognizer.RecognizeTitle(itemPath));
+                result = _titleRecognizer.ReadFileContent(item.Model);
             }
-            return vm;
+            return result;
+        }
+
+        public void GetItemViewModel(string itemPath)
+        {
+            var listedItem = Items.FirstOrDefault(item => item.Path == itemPath);
+            if (listedItem != null)
+            {
+                PublishItemViewModel(listedItem);
+                return;
+            }
+
+            WorkerThread.Run(() => FileManager.GetFileInfo(itemPath), (item) =>
+                {
+                    var vm = new FileSystemItemViewModel(item);
+                    if (!_titleRecognizer.IsXboxFolder(item))
+                    {
+                        PublishItemViewModel(vm);
+                        return;
+                    }
+                    _titleRecognizer.BeginTransaction();
+                    RecognitionInner(item, i =>
+                        {
+                            PublishItemViewModel(vm);
+                            _titleRecognizer.EndTransaction();
+                        });
+                });
+        }
+
+        private void PublishItemViewModel(ViewModelBase vm)
+        {
+            eventAggregator.GetEvent<ViewModelGeneratedEvent>().Publish(new ViewModelGeneratedEventArgs(vm));
         }
 
         public Queue<FileSystemItemViewModel> PopulateQueue()
