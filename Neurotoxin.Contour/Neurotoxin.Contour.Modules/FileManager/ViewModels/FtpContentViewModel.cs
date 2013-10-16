@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
-using Microsoft.Practices.Unity;
+using System.Text.RegularExpressions;
 using Neurotoxin.Contour.Modules.FileManager.Constants;
 using Neurotoxin.Contour.Modules.FileManager.ContentProviders;
 using Neurotoxin.Contour.Modules.FileManager.Exceptions;
@@ -16,6 +14,8 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 {
     public class FtpContentViewModel : FileListPaneViewModelBase<FtpContent>
     {
+        private const string RenameFromPattern = @"([\/]){0}$";
+        private const string RenameToPattern = @"$1{0}";
         private readonly Dictionary<string, string> _driveLabelCache = new Dictionary<string, string>();
 
         #region DisconnectCommand
@@ -31,7 +31,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
         #endregion
 
-        public FtpContentViewModel(FileManagerViewModel parent, IUnityContainer container) : base(parent, container)
+        public FtpContentViewModel(FileManagerViewModel parent) : base(parent)
         {
             DisconnectCommand = new DelegateCommand<EventInformation<EventArgs>>(ExecuteDisconnectCommand);
         }
@@ -80,7 +80,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             base.ChangeDrive();
         }
 
-        public bool Download(FileSystemItemViewModel ftpItem, string targetPath, CopyAction action)
+        public bool Download(FileSystemItemViewModel ftpItem, string targetPath, CopyAction action, string rename)
         {
             var remotePath = ftpItem.Path;
             var localPath = remotePath.Replace(CurrentFolder.Path, targetPath).Replace('/', '\\');
@@ -110,6 +110,11 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
                             var fi = new FileInfo(localPath);
                             remoteStartPosition = fi.Length;
                             break;
+                        case CopyAction.Rename:
+                            mode = FileMode.CreateNew;
+                            var r = new Regex(string.Format(RenameFromPattern, ftpItem.Name), RegexOptions.IgnoreCase);
+                            localPath = r.Replace(localPath, string.Format(RenameToPattern, rename));
+                            break;
                         default:
                             throw new ArgumentException("Invalid Copy action: " + action);
                     }
@@ -124,7 +129,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             return true;
         }
 
-        public bool Upload(FileSystemItemViewModel localItem, string sourcePath, CopyAction action)
+        public bool Upload(FileSystemItemViewModel localItem, string sourcePath, CopyAction action, string rename)
         {
             var localPath = localItem.Path;
             var remotePath = localPath.Replace(sourcePath, CurrentFolder.Path).Replace('\\', '/');
@@ -132,6 +137,13 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             switch (localItem.Type)
             {
                 case ItemType.File:
+                    if (action == CopyAction.Rename)
+                    {
+                        var r = new Regex(string.Format(RenameFromPattern, localItem.Name), RegexOptions.IgnoreCase);
+                        remotePath = r.Replace(remotePath, string.Format(RenameToPattern, rename));
+                        action = CopyAction.CreateNew;
+                    }
+
                     switch (action)
                     {
                         case CopyAction.CreateNew:
@@ -140,7 +152,6 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
                             FileManager.UploadFile(remotePath, localPath);
                             break;
                         case CopyAction.Overwrite:
-                            //TODO: assumption only!
                             FileManager.UploadFile(remotePath, localPath);
                             break;
                         case CopyAction.OverwriteOlder:

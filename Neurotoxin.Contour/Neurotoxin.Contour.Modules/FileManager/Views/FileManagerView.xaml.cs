@@ -31,7 +31,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.Views
 
         private void ViewModelOnTransferFinished()
         {
-            _transferProgressDialog.Hide();
+            if (_transferProgressDialog != null) _transferProgressDialog.Hide();
         }
     }
 }

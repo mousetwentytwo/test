@@ -1,8 +1,9 @@
 ﻿namespace Neurotoxin.Contour.Modules.FileManager.Constants
 {
-    public enum CopyBehavior
+    public enum ErrorResolutionBehavior
     {
         Retry,
+        Rename,
         Skip,
         Cancel
     }

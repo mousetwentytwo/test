@@ -4,6 +4,5 @@
     {
         Current,
         All,
-        AllOlder
     }
 }

@@ -24,13 +24,13 @@
         <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="{Binding SourceFile}" Margin="0,0,0,5" TextTrimming="CharacterEllipsis" />
         <DockPanel Grid.Row="1" Grid.ColumnSpan="2" Margin="0,2,0,2" Visibility="{Binding TransferProgressDialogMode, Converter={StaticResource TransferProgressDialogModeConverter}}">
             <TextBlock DockPanel.Dock="Right" Text="%" Margin="2,0,0,0" />
-            <TextBlock DockPanel.Dock="Right" Text="{Binding CurrentFileProgress}" Margin="5,0,0,0" Width="30" HorizontalAlignment="Right" />
-            <ProgressBar Minimum="0" Maximum="100" Value="{Binding CurrentFileProgress}"/>
+            <TextBlock DockPanel.Dock="Right" Text="{Binding CurrentFileProgress}" Margin="5,0,0,0" Width="30" TextAlignment="Right" />
+            <ProgressBar Minimum="0" Maximum="100" Value="{Binding CurrentFileProgress, Mode=OneWay}"/>
         </DockPanel>
         <DockPanel Grid.Row="2" Grid.ColumnSpan="2" Margin="0,2,0,2">
             <TextBlock DockPanel.Dock="Right" Text="%" Margin="2,0,0,0" />
-            <TextBlock DockPanel.Dock="Right" Text="{Binding TotalProgress}" Margin="5,0,0,0" Width="30" HorizontalAlignment="Right" />
-            <ProgressBar Minimum="0" Maximum="100" Value="{Binding TotalProgress}"/>
+            <TextBlock DockPanel.Dock="Right" Text="{Binding TotalProgress}" Margin="5,0,0,0" Width="30" TextAlignment="Right" />
+            <ProgressBar Minimum="0" Maximum="100" Value="{Binding TotalProgress, Mode=OneWay}"/>
         </DockPanel>
         <StackPanel Grid.Row="3" Grid.Column="0" Orientation="Horizontal" Margin="0,0,0,5">
             <TextBlock Text="{Binding FilesTransfered}"/>

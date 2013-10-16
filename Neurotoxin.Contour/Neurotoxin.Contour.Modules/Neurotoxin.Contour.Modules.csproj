@@ -81,7 +81,7 @@
     <Compile Include="FileManager\Constants\CopyActionScope.cs" />
     <Compile Include="FileManager\Constants\TitleType.cs" />
     <Compile Include="FileManager\Constants\ToggleSelectionMode.cs" />
-    <Compile Include="FileManager\Constants\CopyBehavior.cs" />
+    <Compile Include="FileManager\Constants\ErrorResolutionBehavior.cs" />
     <Compile Include="FileManager\Constants\TransferErrorType.cs" />
     <Compile Include="FileManager\Constants\TransferProgressDialogMode.cs" />
     <Compile Include="FileManager\Constants\ConnectionImage.cs" />
@@ -98,15 +98,15 @@
     <Compile Include="FileManager\Database\ConfigDbContext.cs" />
     <Compile Include="FileManager\Database\DbConnectionFactory.cs" />
     <Compile Include="FileManager\Events\ActivePaneChangedEvent.cs" />
+    <Compile Include="FileManager\Events\FtpOperationProgressChangedEvent.cs" />
     <Compile Include="FileManager\Events\ViewModelGeneratedEvent.cs" />
     <Compile Include="FileManager\Events\TransferFinishedEvent.cs" />
     <Compile Include="FileManager\Events\TransferStartedEvent.cs" />
     <Compile Include="FileManager\Exceptions\TransferException.cs" />
     <Compile Include="FileManager\Models\FileSystemItem.cs" />
     <Compile Include="FileManager\Constants\ItemType.cs" />
-    <Compile Include="FileManager\Events\FtpOperationProgressChangedEventHandler.cs" />
-    <Compile Include="FileManager\Events\FtpOperationFinishedEventHandler.cs" />
-    <Compile Include="FileManager\Events\FtpOperationStartedEventHandler.cs" />
+    <Compile Include="FileManager\Events\FtpOperationFinishedEvent.cs" />
+    <Compile Include="FileManager\Events\FtpOperationStartedEvent.cs" />
     <Compile Include="FileManager\Database\FtpConnection.cs" />
     <Compile Include="FileManager\Interfaces\IStoredConnection.cs" />
     <Compile Include="FileManager\Models\RecognitionInformation.cs" />
@@ -129,6 +129,15 @@
     <Compile Include="FileManager\ViewModels\FileSystemItemViewModel.cs" />
     <Compile Include="FileManager\ModuleInit.cs" />
     <Compile Include="FileManager\ViewModels\FileManagerViewModel.cs" />
+    <Compile Include="FileManager\Views\Dialogs\ConfirmationDialog.xaml.cs">
+      <DependentUpon>ConfirmationDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="FileManager\Views\Dialogs\InputDialog.xaml.cs">
+      <DependentUpon>InputDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="FileManager\Views\Dialogs\NewFolderDialog.xaml.cs">
+      <DependentUpon>NewFolderDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="FileManager\Views\FileDetailsBox.xaml.cs">
       <DependentUpon>FileDetailsBox.xaml</DependentUpon>
     </Compile>
@@ -182,6 +191,18 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="FileManager\Views\Dialogs\ConfirmationDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="FileManager\Views\Dialogs\InputDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="FileManager\Views\Dialogs\NewFolderDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="FileManager\Views\FileDetailsBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

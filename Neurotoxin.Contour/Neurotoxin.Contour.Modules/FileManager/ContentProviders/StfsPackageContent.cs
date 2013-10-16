@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Neurotoxin.Contour.Core.Extensions;
 using Neurotoxin.Contour.Core.Io.Stfs;
 using Neurotoxin.Contour.Core.Models;
 using Neurotoxin.Contour.Modules.FileManager.Constants;
@@ -38,19 +39,19 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
             var folder = _stfs.GetFolderEntry(path);
             var list = folder.Folders.Select(f => new FileSystemItem
             {
-                //TODO: Date
                 Name = f.Name,
                 Type = ItemType.Directory,
                 Path = string.Format(@"{0}{1}\", path, f.Name),
-                FullPath = string.Format(@"{0}:\{1}{2}\", _stfs.DisplayName, path, f.Name)
+                FullPath = string.Format(@"{0}:\{1}{2}\", _stfs.DisplayName, path, f.Name),
+                Date = DateTimeExtensions.FromFatFileTime(f.AccessTimeStamp)
             }).ToList();
             list.AddRange(folder.Files.Select(f => new FileSystemItem
             {
-                //TODO: Date
                 Name = f.Name,
                 Type = ItemType.File,
                 Path = string.Format("{0}{1}", path, f.Name),
                 FullPath = string.Format(@"{0}:\{1}{2}", _stfs.DisplayName, path, f.Name),
+                Date = DateTimeExtensions.FromFatFileTime(f.AccessTimeStamp),
                 Size = f.FileSize
             }));
 
@@ -60,20 +61,21 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
         public FileSystemItem GetFileInfo(string path)
         {
             var f = _stfs.GetFileEntry(path);
-            //TODO: Date
             return new FileSystemItem
             {
                 Name = f.Name,
                 Type = ItemType.File,
                 Path = path,
                 FullPath = string.Format(@"{0}:\{1}", _stfs.DisplayName, path),
+                Date = DateTimeExtensions.FromFatFileTime(f.AccessTimeStamp),
                 Size = f.FileSize,
             };
         }
 
         public DateTime GetFileModificationTime(string path)
         {
-            throw new NotImplementedException();
+            var f = _stfs.GetFileEntry(path);
+            return DateTimeExtensions.FromFatFileTime(f.AccessTimeStamp);
         }
 
         public bool DriveIsReady(string drive)
@@ -98,7 +100,8 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
 
         public void DeleteFile(string path)
         {
-            throw new NotImplementedException();
+            var f = _stfs.GetFileEntry(path);
+            _stfs.RemoveFile(f);
         }
 
         public void CreateFolder(string path)
@@ -106,19 +109,15 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
             throw new NotImplementedException();
         }
 
-        public Stream GetFileStream(string path)
-        {
-            throw new NotImplementedException();
-        }
-
         public byte[] ReadFileContent(string path)
         {
-            throw new NotImplementedException();
+            return _stfs.ExtractFile(path);
         }
 
         public byte[] ReadFileHeader(string path)
         {
-            throw new NotImplementedException();
+            //TODO: add buffer length to limit extraction
+            return _stfs.ExtractFile(path);
         }
 
         public Account GetAccount()

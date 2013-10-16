@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Neurotoxin.Contour.Core.Extensions
 {
@@ -17,6 +14,17 @@ namespace Neurotoxin.Contour.Core.Extensions
             y |= (time.Minute & 0x3F) << 5;
             y |= time.Second & 0x1F;
             return y;
+        }
+
+        public static DateTime FromFatFileTime(int time)
+        {
+            var year = (int)((time & 0xFE000000) >> 25) + 1980;
+            var month = (time & 0x1E00000) >> 21;
+            var day = (time & 0x1F0000) >> 16;
+            var hour = (time & 0xF800) >> 11;
+            var minute = (time & 0x7E0) >> 5;
+            var second = time & 0x1F;
+            return new DateTime(year, month, day, hour, minute, second);
         }
     }
 }

@@ -98,20 +98,20 @@ namespace Neurotoxin.Contour.Shell.Controllers
                         // TODO rerdelyi 100705: some action should be taken, e.g. throw exception
                     }
 
-                    string statusBarRegionName = regionName + STATUSBAR;
-                    string statusBarViewName = viewName + STATUSBAR;
+                    //string statusBarRegionName = regionName + STATUSBAR;
+                    //string statusBarViewName = viewName + STATUSBAR;
 
-                    if (regionManager.Regions.ContainsRegionWithName(statusBarRegionName))
-                    {
-                        IRegion statusBarRegion = regionManager.Regions[statusBarRegionName];
-                        if (statusBarRegion != null && statusBarRegion.GetView(statusBarViewName) == null)
-                        {
-                            var statusBar = module.GetStatusBar(viewName);
-                            statusBar.DataContext = currentView.ViewModel;
-                            statusBarRegion.Add(statusBar, statusBarViewName);
-                            statusBarRegion.Activate(statusBar);
-                        }
-                    }
+                    //if (regionManager.Regions.ContainsRegionWithName(statusBarRegionName))
+                    //{
+                    //    IRegion statusBarRegion = regionManager.Regions[statusBarRegionName];
+                    //    if (statusBarRegion != null && statusBarRegion.GetView(statusBarViewName) == null)
+                    //    {
+                    //        var statusBar = module.GetStatusBar(viewName);
+                    //        statusBar.DataContext = currentView.ViewModel;
+                    //        statusBarRegion.Add(statusBar, statusBarViewName);
+                    //        statusBarRegion.Activate(statusBar);
+                    //    }
+                    //}
                 }
                 else
                 {

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using Microsoft.Practices.Unity;
 using Neurotoxin.Contour.Modules.FileManager.ContentProviders;
 using Neurotoxin.Contour.Presentation.Extensions;
 using Neurotoxin.Contour.Presentation.Infrastructure.Constants;
@@ -10,7 +9,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 {
     public class StfsPackageContentViewModel : FileListPaneViewModelBase<StfsPackageContent>
     {
-        public StfsPackageContentViewModel(FileManagerViewModel parent, IUnityContainer container) : base(parent, container)
+        public StfsPackageContentViewModel(FileManagerViewModel parent) : base(parent)
         {
         }
 

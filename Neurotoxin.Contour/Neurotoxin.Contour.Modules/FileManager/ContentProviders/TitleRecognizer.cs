@@ -74,6 +74,8 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
 
         public void RecognizeTitle(FileSystemItem item, bool overwrite = false)
         {
+            if (item.TitleType == TitleType.SystemDir) return;
+
             var cacheKey = GetCacheKey(item);
             var hasCached = !overwrite && MergeWithCachedEntry(item);
             if (overwrite) _cacheManager.ClearCache(cacheKey);
@@ -83,15 +85,15 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
             {
                 case TitleType.Profile:
                     var profilePath = item.Type == ItemType.Directory
-                                          ? string.Format("{1}FFFE07D1/00010000/{0}", item.Name, item.Path)
-                                          : item.Path;
+                               ? string.Format("{1}FFFE07D1/00010000/{0}", item.Name, item.Path)
+                               : item.Path;
                     if (GetProfileData(item, profilePath))
                         _cacheManager.SaveEntry(cacheKey, item, item.Date, item.Size, DateTime.Now.AddDays(14),
                                                 _fileManager.TempFilePath);
                     break;
                 case TitleType.Game:
                     if (GetGameData(item) || GetGameDataFromJqe360(item))
-                        _cacheManager.SaveEntry(cacheKey, item, item.Date, item.Size);
+                        _cacheManager.SaveEntry(cacheKey, item);
                     else
                         _cacheManager.SaveEntry(cacheKey, null, null, null, DateTime.Now.AddDays(7));
                     break;
@@ -106,10 +108,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
                     {
                         //TODO: log unknown entry
                     }
-                    _cacheManager.SaveEntry(cacheKey, item, item.Date, item.Size);
-                    break;
-                case TitleType.SystemDir:
-                    _cacheManager.SaveEntry(cacheKey, null);
+                    _cacheManager.SaveEntry(cacheKey, item);
                     break;
                 case TitleType.Undefined:
                     if (item.Type == ItemType.File)
@@ -140,6 +139,10 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
                 case TitleType.Content:
                 case TitleType.Game:
                     return item.Name;
+                case TitleType.Profile:
+                    return item.Type == ItemType.Directory
+                               ? string.Format("{1}FFFE07D1/00010000/{0}", item.Name, item.FullPath)
+                               : item.FullPath;
                 default:
                     return item.FullPath;
             }
@@ -164,11 +167,19 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
 
             var systemdir = item.Name.StartsWith("5841") ? "000D0000" : "00007000";
 
-            //TODO
-            var drive = "Hdd1";
+            var gamePath = string.Format("{0}{1}", item.Path, systemdir);
+            var exists = _fileManager.FolderExists(gamePath);
+            if (!exists)
+            {
+                var r = new Regex(@"(?<content>Content[\/])E0000[0-9A-F]{11}", RegexOptions.IgnoreCase);
+                if (r.IsMatch(gamePath))
+                {
+                    gamePath = r.Replace(gamePath, "${content}0000000000000000");
+                    exists = _fileManager.FolderExists(gamePath);
+                }
+            }
 
-            var gamePath = string.Format("/{1}/Content/0000000000000000/{0}/{2}/", item.Name, drive, systemdir);
-            if (_fileManager.FolderExists(gamePath))
+            if (exists)
             {
                 var file = _fileManager.GetList(gamePath).FirstOrDefault(i => i.Type == ItemType.File);
                 if (file != null)
@@ -236,7 +247,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
         {
             var cacheKey = GetCacheKey(item);
             var cacheEntry = _cacheManager.GetEntry(cacheKey, item.Size, item.Date);
-            return cacheEntry != null 
+            return cacheEntry != null && !string.IsNullOrEmpty(cacheEntry.TempFilePath)
                 ? File.ReadAllBytes(cacheEntry.TempFilePath) 
                 : _fileManager.ReadFileContent(item.Path);
         }

@@ -19,7 +19,6 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
     public class FileManagerViewModel : ModuleViewModelBase
     {
-        private readonly IUnityContainer _container;
         private Queue<FileSystemItemViewModel> _queue;
         private CopyAction _rememberedCopyAction;
 
@@ -123,7 +122,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
         public int FilesTransfered
         {
             get { return _filesTransfered; }
-            set { _filesTransfered = value; NotifyPropertyChanged(FILESTRANSFERED); }
+            set { _filesTransfered = value; NotifyPropertyChanged(FILESTRANSFERED); NotifyPropertyChanged(TOTALPROGRESS); }
         }
 
         private const string FILECOUNT = "FileCount";
@@ -139,12 +138,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
         public long BytesTransfered
         {
             get { return _bytesTransfered; }
-            set
-            {
-                _bytesTransfered = value;
-                NotifyPropertyChanged(BYTESTRANSFERED);
-                NotifyPropertyChanged(TOTALPROGRESS);
-            }
+            set { _bytesTransfered = value; NotifyPropertyChanged(BYTESTRANSFERED); }
         }
 
         private const string TOTALBYTES = "TotalBytes";
@@ -177,37 +171,12 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             switch (cmd)
             {
                 case LoadCommand.Load:
-                    LeftPane = _container.Resolve<LocalFileSystemContentViewModel>();
+                    LeftPane = container.Resolve<LocalFileSystemContentViewModel>();
                     LeftPane.LoadDataAsync(cmd, cmdParam);
-                    RightPane = _container.Resolve<ConnectionsViewModel>();
+                    RightPane = container.Resolve<ConnectionsViewModel>();
                     RightPane.LoadDataAsync(cmd, cmdParam);
                     break;
             }
-        }
-
-        private void FtpWrapperOnFtpOperationStarted(object sender, FtpOperationStartedEventArgs args)
-        {
-            UIThread.Run(() =>
-            {
-                IsInProgress = true;
-                //TODO: support indetermine progressbar
-                LoadingQueueLength = args.BinaryTransfer ? 100 : 1;
-                LoadingProgress = 0;
-            });
-        }
-
-        private void FtpWrapperOnFtpOperationFinished(object sender, FtpOperationFinishedEventArgs args)
-        {
-            UIThread.Run(() => IsInProgress = false);
-        }
-
-        private void FtpWrapperOnFtpOperationProgressChanged(object sender, FtpOperationProgressChangedEventArgs args)
-        {
-            UIThread.Run(() =>
-                {
-                    LoadingProgress = args.Percentage;
-                    CurrentFileProgress = args.Percentage;
-                });
         }
 
         #region SwitchPaneCommand
@@ -255,7 +224,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
         private void ExecuteCopyCommand()
         {
-            WorkerThread.Run(SourcePane.PopulateQueue, CopyPrepare);
+            WorkerThread.Run(SourcePane.PopulateQueue, CopyPrepare, CopyError);
         }
 
         private void CopyPrepare(Queue<FileSystemItemViewModel> queue)
@@ -265,13 +234,13 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             CopyStart();
         }
 
-        private void CopyStart(CopyAction? action = null)
+        private void CopyStart(CopyAction? action = null, string rename = null)
         {
             if (_queue.Count > 0)
             {
                 var item = _queue.Peek();
                 SourceFile = item.Path.Replace(SourcePane.CurrentFolder.Path, string.Empty);
-                WorkerThread.Run(() => CopyInner(item, action), CopySuccess, CopyError);
+                WorkerThread.Run(() => CopyInner(item, action, rename), CopySuccess, CopyError);
             }
             else
             {
@@ -280,13 +249,13 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             }            
         }
 
-        private bool CopyInner(FileSystemItemViewModel item, CopyAction? action)
+        private bool CopyInner(FileSystemItemViewModel item, CopyAction? action, string rename)
         {
             var sourcePane = SourcePane as FtpContentViewModel;
             var targetPane = TargetPane as FtpContentViewModel;
             return sourcePane != null
-                ? sourcePane.Download(item, TargetPane.CurrentFolder.Path, action ?? _rememberedCopyAction)
-                : targetPane.Upload(item, SourcePane.CurrentFolder.Path, action ?? _rememberedCopyAction);
+                ? sourcePane.Download(item, TargetPane.CurrentFolder.Path, action ?? _rememberedCopyAction, rename)
+                : targetPane.Upload(item, SourcePane.CurrentFolder.Path, action ?? _rememberedCopyAction, rename);
         }
 
         private void CopySuccess(bool result)
@@ -297,7 +266,22 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
         private void CopyError(Exception exception)
         {
-            ShowTransferErrorDialog(exception, CopyStart, CopySuccess, CopyFinish);
+            var result = ShowCorrespondingErrorDialog(exception);
+            switch (result.Behavior)
+            {
+                case ErrorResolutionBehavior.Retry:
+                    CopyStart(result.Action);
+                    break;
+                case ErrorResolutionBehavior.Rename:
+                    RenameExistingFile((TransferException)exception, CopyAction.Rename, CopyStart, CopyError);
+                    break;
+                case ErrorResolutionBehavior.Skip:
+                    CopySuccess(false);
+                    break;
+                case ErrorResolutionBehavior.Cancel:
+                    CopyFinish();
+                    break;
+            }
         }
 
         private void CopyFinish()
@@ -319,7 +303,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
         private void ExecuteMoveCommand()
         {
-            WorkerThread.Run(SourcePane.PopulateQueue, MovePrepare);
+            WorkerThread.Run(SourcePane.PopulateQueue, MovePrepare, MoveError);
         }
 
         private void MovePrepare(Queue<FileSystemItemViewModel> queue)
@@ -329,7 +313,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             MoveStart();
         }
 
-        private void MoveStart(CopyAction? action = null)
+        private void MoveStart(CopyAction? action = null, string rename = null)
         {
             if (_queue.Count > 0)
             {
@@ -337,7 +321,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
                 SourceFile = item.Path.Replace(SourcePane.CurrentFolder.Path, string.Empty);
                 WorkerThread.Run(() =>
                     {
-                        CopyInner(item, action);
+                        CopyInner(item, action, rename);
                         SourcePane.Delete(item); 
                         return true;
                     }, MoveSuccess, MoveError);
@@ -357,7 +341,22 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
         private void MoveError(Exception exception)
         {
-            ShowTransferErrorDialog(exception, MoveStart, MoveSuccess, MoveFinish);
+            var result = ShowCorrespondingErrorDialog(exception);
+            switch (result.Behavior)
+            {
+                case ErrorResolutionBehavior.Retry:
+                    MoveStart(result.Action);
+                    break;
+                case ErrorResolutionBehavior.Rename:
+                    RenameExistingFile((TransferException)exception, CopyAction.Rename, MoveStart, MoveError);
+                    break;
+                case ErrorResolutionBehavior.Skip:
+                    MoveSuccess(false);
+                    break;
+                case ErrorResolutionBehavior.Cancel:
+                    MoveFinish();
+                    break;
+            }
         }
 
         private void MoveFinish()
@@ -380,10 +379,20 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
         private void ExecuteNewFolderCommand()
         {
-            //UNDONE: pop up a pane dependent input dialog
-            var name = "";
-            SourcePane.CreateFolder(name);
+            var dialog = new NewFolderDialog();
+            if (dialog.ShowDialog() != true) return;
+            var name = dialog.Name.Text;
+            WorkerThread.Run(() => SourcePane.CreateFolder(name), NewFolderSuccess, NewFolderError);
+        }
+
+        private void NewFolderSuccess(bool success)
+        {
             SourcePane.Refresh();
+        }
+
+        private void NewFolderError(Exception ex)
+        {
+            ShowCorrespondingErrorDialog(ex);
         }
 
         #endregion
@@ -400,6 +409,26 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
         private void ExecuteDeleteCommand()
         {
             _queue = new Queue<FileSystemItemViewModel>(SourcePane.SelectedItems.Any() ? SourcePane.SelectedItems : new[] { SourcePane.CurrentRow });
+
+            string naming;
+            if (_queue.Count == 1)
+            {
+                naming = _queue.Peek().Type.ToString().ToLower();
+            }
+            else if (_queue.All(i => i.Type == ItemType.File))
+            {
+                naming = "files";
+            }
+            else if (_queue.All(i => i.Type == ItemType.Directory))
+            {
+                naming = "directories";
+            }
+            else
+            {
+                naming = "files/directories";
+            }
+            var message = string.Format("Do you really want to delete the selected {0}?", naming);
+            if (new ConfirmationDialog(message).ShowDialog() != true) return;
             InitializeTransfer(TransferProgressDialogMode.Delete);
             DeleteStart();
         }
@@ -422,14 +451,24 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
         private void DeleteSuccess(bool result)
         {
             UpdateTransfer(result);
-            var item = _queue.Dequeue();
-            if (result) item.IsSelected = false;
             DeleteStart();
         }
 
         private void DeleteError(Exception exception)
         {
-            ShowTransferErrorDialog(exception, DeleteStart, DeleteSuccess, DeleteFinish);
+            var result = ShowCorrespondingErrorDialog(exception);
+            switch (result.Behavior)
+            {
+                case ErrorResolutionBehavior.Retry:
+                    DeleteStart(result.Action);
+                    break;
+                case ErrorResolutionBehavior.Skip:
+                    DeleteSuccess(false);
+                    break;
+                case ErrorResolutionBehavior.Cancel:
+                    DeleteFinish();
+                    break;
+            }
         }
 
         private void DeleteFinish()
@@ -460,15 +499,16 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
         #endregion
 
-        public FileManagerViewModel(IUnityContainer container)
+        public FileManagerViewModel()
         {
-            _container = container;
             SwitchPaneCommand = new DelegateCommand<EventInformation<KeyEventArgs>>(ExecuteSwitchPaneCommand, CanExecuteSwitchPaneCommand);
             EditCommand = new DelegateCommand(ExecuteEditCommand, CanExecuteEditCommand);
             CopyCommand = new DelegateCommand(ExecuteCopyCommand, CanExecuteCopyCommand);
             MoveCommand = new DelegateCommand(ExecuteMoveCommand, CanExecuteMoveCommand);
             NewFolderCommand = new DelegateCommand(ExecuteNewFolderCommand, CanExecuteNewFolderCommand);
             DeleteCommand = new DelegateCommand(ExecuteDeleteCommand, CanExecuteDeleteCommand);
+
+            eventAggregator.GetEvent<FtpOperationProgressChangedEvent>().Subscribe(OnFtpOperationProgressChanged);
         }
 
         public override void RaiseCanExecuteChanges()
@@ -483,27 +523,30 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
         internal void FtpConnect(IStoredConnectionViewModel connection)
         {
-            var ftp = _container.Resolve<FtpContentViewModel>();
+            var ftp = container.Resolve<FtpContentViewModel>();
             ftp.LoadDataAsync(LoadCommand.Load, connection, FtpConnectSuccess, FtpConnectError);
         }
 
         private void FtpConnectSuccess(PaneViewModelBase viewModel)
         {
             var ftp = (FtpContentViewModel) viewModel;
-            ftp.FileManager.FtpOperationStarted += FtpWrapperOnFtpOperationStarted;
-            ftp.FileManager.FtpOperationFinished += FtpWrapperOnFtpOperationFinished;
-            ftp.FileManager.FtpOperationProgressChanged += FtpWrapperOnFtpOperationProgressChanged;
             RightPane = ftp;
         }
 
         private void FtpConnectError(PaneViewModelBase viewModel)
         {
             //TODO
+            throw new NotImplementedException();
         }
 
         public void FtpDisconnect()
         {
-            RightPane = _container.Resolve<ConnectionsViewModel>();            
+            RightPane = container.Resolve<ConnectionsViewModel>();            
+        }
+
+        private void OnFtpOperationProgressChanged(FtpOperationProgressChangedEventArgs args)
+        {
+            UIThread.Run(() => CurrentFileProgress = args.Percentage > 0 ? args.Percentage : 0);
         }
 
         private void InitializeTransfer(TransferProgressDialogMode mode)
@@ -518,20 +561,18 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             NotifyTransferStarted();
         }
 
-        private void ShowTransferErrorDialog(Exception exception, Action<CopyAction?> retry, Action<bool> skip, Action cancel)
+        internal TransferErrorDialogResult ShowCorrespondingErrorDialog(Exception exception)
         {
             var transferException = exception as TransferException;
+            var result = new TransferErrorDialogResult(ErrorResolutionBehavior.Cancel);
             if (transferException != null)
             {
-                TransferErrorDialogResult result;
                 switch (transferException.Type)
                 {
                     case TransferErrorType.ReadAccessError:
                         {
                             var dialog = new ReadErrorDialog(exception);
-                            result = dialog.ShowDialog() == true
-                                         ? dialog.Result
-                                         : new TransferErrorDialogResult(CopyBehavior.Cancel);
+                            if (dialog.ShowDialog() == true) result = dialog.Result;
                         }
                         break;
                     case TransferErrorType.WriteAccessError:
@@ -539,14 +580,12 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
                             var dialog = new WriteErrorDialog(transferException, eventAggregator);
                             SourcePane.GetItemViewModel(transferException.SourceFile);
                             TargetPane.GetItemViewModel(transferException.TargetFile);
-                            result = dialog.ShowDialog() == true
-                                         ? dialog.Result
-                                         : new TransferErrorDialogResult(CopyBehavior.Cancel);
+                            if (dialog.ShowDialog() == true) result = dialog.Result;
                         }
                         break;
                     case TransferErrorType.LostConnection:
-                        result = new TransferErrorDialogResult(CopyBehavior.Cancel);
-                        var reconnectionDialog = new ReconnectionDialog();
+                        result = new TransferErrorDialogResult(ErrorResolutionBehavior.Cancel);
+                        var reconnectionDialog = new ReconnectionDialog(exception);
                         if (reconnectionDialog.ShowDialog() == true)
                         {
                             var ftp = LeftPane as FtpContentViewModel ?? RightPane as FtpContentViewModel;
@@ -565,36 +604,25 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
                 {
                     _rememberedCopyAction = result.Action.Value;
                 }
-
-                switch (result.Behavior)
-                {
-                    case CopyBehavior.Retry:
-                        retry.Invoke(result.Action);
-                        break;
-                    case CopyBehavior.Skip:
-                        skip.Invoke(false);
-                        break;
-                    case CopyBehavior.Cancel:
-                        cancel.Invoke();
-                        break;
-                }
             }
             else
             {
-                MessageBox.Show("Uknown error occured: " + exception.Message);
+                MessageBox.Show("Unknown error occured: " + exception.Message);
             }
+            return result;
         }
 
         private void UpdateTransfer(bool result)
         {
             var item = _queue.Dequeue();
-            FilesTransfered++;
             if (item.Type == ItemType.File) BytesTransfered += item.Size ?? 0;
+            FilesTransfered++;
             if (result) item.IsSelected = false;
         }
 
         internal void AbortTransfer()
         {
+            //TODO
             throw new NotImplementedException();
         }
 
@@ -606,8 +634,21 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
         public void OpenStfsPackage(byte[] content)
         {
-            RightPane = _container.Resolve<StfsPackageContentViewModel>();
+            RightPane = container.Resolve<StfsPackageContentViewModel>();
             RightPane.LoadDataAsync(LoadCommand.Load, content);
+        }
+
+        private void RenameExistingFile(TransferException exception, CopyAction? action, Action<CopyAction?, string> rename, Action<Exception> chooseDifferentOption)
+        {
+            var dialog = new InputDialog("Rename", "New name:", Path.GetFileName(exception.TargetFile));
+            if (dialog.ShowDialog() == true)
+            {
+                rename.Invoke(action, dialog.Input.Text);
+            }
+            else
+            {
+                chooseDifferentOption.Invoke(exception);
+            }
         }
     }
 }

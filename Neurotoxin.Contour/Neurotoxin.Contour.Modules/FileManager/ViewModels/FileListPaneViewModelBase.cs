@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -13,6 +12,7 @@ using Neurotoxin.Contour.Core.Constants;
 using Neurotoxin.Contour.Modules.FileManager.Constants;
 using Neurotoxin.Contour.Modules.FileManager.ContentProviders;
 using Neurotoxin.Contour.Modules.FileManager.Events;
+using Neurotoxin.Contour.Modules.FileManager.Exceptions;
 using Neurotoxin.Contour.Modules.FileManager.Interfaces;
 using Neurotoxin.Contour.Modules.FileManager.Models;
 using Neurotoxin.Contour.Presentation.Extensions;
@@ -25,16 +25,30 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
     public abstract class FileListPaneViewModelBase<T> : PaneViewModelBase, IFileListPaneViewModel where T : IFileManager
     {
         private bool _isInEditMode;
-        private bool _isBusy;
         private string _sortMemberPath = "ComputedName";
         private ListSortDirection _listSortDirection = ListSortDirection.Ascending;
         private Queue<FileSystemItem> _queue;
         private readonly Dictionary<FileSystemItemViewModel, Stack<FileSystemItemViewModel>> _stackCache = new Dictionary<FileSystemItemViewModel, Stack<FileSystemItemViewModel>>();
         private readonly TitleRecognizer _titleRecognizer;
-        private readonly IUnityContainer _container;
-        internal readonly T FileManager;
+        protected readonly T FileManager;
 
         #region Properties
+
+        private const string ISBUSY = "IsBusy";
+        private bool _isBusy;
+        public bool IsBusy
+        {
+            get { return _isBusy; }
+            set { _isBusy = value; NotifyPropertyChanged(ISBUSY); }
+        }
+
+        private const string PROGRESSMESSAGE = "ProgressMessage";
+        private string _progressMessage;
+        public string ProgressMessage
+        {
+            get { return _progressMessage; }
+            set { _progressMessage = value; NotifyPropertyChanged(PROGRESSMESSAGE); }
+        }
 
         private const string DRIVES = "Drives";
         private ObservableCollection<FileSystemItemViewModel> _drives;
@@ -134,7 +148,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
         private bool CanExecuteChangeDirectoryCommand(object cmdParam)
         {
-            if (_isInEditMode || _isBusy) return false;
+            if (_isInEditMode || IsBusy) return false;
 
             var mouseEvent = cmdParam as EventInformation<MouseEventArgs>;
             if (mouseEvent != null)
@@ -160,14 +174,15 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             var keyEvent = cmdParam as EventInformation<KeyEventArgs>;
             if (keyEvent != null) keyEvent.EventArgs.Handled = true;
 
-            if (CurrentRow != null)
+            if (cmdParam != null && CurrentRow != null)
             {
                 if (CurrentRow.Type == ItemType.File)
                 {
                     if (CurrentRow.TitleType == TitleType.Profile)
                     {
-                        _isBusy = true;
-                        WorkerThread.Run(() => ReadFileContent(CurrentRow), OpenStfsPackageCallback);
+                        ProgressMessage = string.Format("Opening profile {0}...", CurrentRow.ComputedName);
+                        IsBusy = true;
+                        WorkerThread.Run(() => ReadFileContent(CurrentRow), content => Parent.OpenStfsPackage(content), AsyncErrorCallback);
                     }
                     return;
                 }
@@ -177,13 +192,10 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
                     Stack.Push(CurrentRow);
                 NotifyPropertyChanged(CURRENTFOLDER);
             }
-            _isBusy = true;
-            WorkerThread.Run(() => ChangeDirectory(), ChangeDirectoryCallback);
-        }
 
-        private void OpenStfsPackageCallback(byte[] content)
-        {
-            Parent.OpenStfsPackage(content);
+            ProgressMessage = "Changing directory...";
+            IsBusy = true;
+            WorkerThread.Run(() => ChangeDirectory(), ChangeDirectoryCallback, AsyncErrorCallback);
         }
 
         private List<FileSystemItem> ChangeDirectory(string selectedPath = null)
@@ -196,6 +208,8 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
         private void ChangeDirectoryCallback(List<FileSystemItem> result)
         {
+            IsBusy = false;
+
             _titleRecognizer.BeginTransaction();
             _queue = new Queue<FileSystemItem>();
             foreach (var item in result.Where(item => !_titleRecognizer.MergeWithCachedEntry(item)))
@@ -223,48 +237,13 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
             if (_queue.Count > 0)
             {
+                IsBusy = true;
                 RecognitionStart();
             }
             else
             {
                 RecognitionFinish();
             }
-        }
-
-        private void RecognitionStart()
-        {
-            if (_queue.Count > 0)
-            {
-                var item = _queue.Dequeue();
-                RecognitionInner(item, RecognitionSuccess);
-            }
-            else
-            {
-                RecognitionFinish();
-            }
-        }
-
-        private void RecognitionInner(FileSystemItem item, Action<FileSystemItem> callback)
-        {
-            WorkerThread.Run(() =>
-            {
-                _titleRecognizer.RecognizeTitle(item);
-                return item;
-            }, callback);
-        }
-
-        private void RecognitionSuccess(FileSystemItem item)
-        {
-            Items.Single(i => i.Model == item).NotifyModelChanges();
-            RecognitionStart();
-        }
-
-        private void RecognitionFinish()
-        {
-            _queue = null;
-            _titleRecognizer.EndTransaction();
-            SortContent();
-            _isBusy = false;
         }
 
         #endregion
@@ -287,7 +266,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             }
             if (_calculationQueue != null && _calculationQueue.Count > 0)
             {
-                WorkerThread.Run(CalculateSize, CalculateSizeCallback);
+                WorkerThread.Run(CalculateSize, CalculateSizeCallback, AsyncErrorCallback);
             }
         }
 
@@ -313,7 +292,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             _calculationQueue.Dequeue().Size = size;
             if (_calculationQueue.Count > 0)
             {
-                WorkerThread.Run(CalculateSize, CalculateSizeCallback);
+                WorkerThread.Run(CalculateSize, CalculateSizeCallback, AsyncErrorCallback);
             } 
             NotifyPropertyChanged(SIZEINFO);
         }
@@ -484,7 +463,9 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
         private void ExecuteRefreshTitleCommand()
         {
-            WorkerThread.Run(RefreshTitle, RefreshTitleCallback);
+            IsBusy = true;
+            ProgressMessage = string.Format("Recognizing item {0}...", CurrentRow.Name);
+            WorkerThread.Run(RefreshTitle, RefreshTitleCallback, AsyncErrorCallback);
         }
 
         private bool CanExecuteRefreshTitleCommand()
@@ -502,8 +483,9 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             return result;
         }
 
-        private static void RefreshTitleCallback(FileSystemItemViewModel item)
+        private void RefreshTitleCallback(FileSystemItemViewModel item)
         {
+            IsBusy = false;
             item.NotifyModelChanges();
         }
 
@@ -574,9 +556,8 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
         #endregion
 
-        protected FileListPaneViewModelBase(FileManagerViewModel parent, IUnityContainer container) : base(parent)
+        protected FileListPaneViewModelBase(FileManagerViewModel parent) : base(parent)
         {
-            _container = container;
             FileManager = container.Resolve<T>();
             _titleRecognizer = new TitleRecognizer(FileManager);
 
@@ -626,8 +607,6 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
         public bool Delete(FileSystemItemViewModel item)
         {
-            //TODO: handle errors
-
             if (item.Type == ItemType.Directory)
             {
                 FileManager.DeleteFolder(item.Path);
@@ -642,16 +621,29 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
         public bool CreateFolder(string name)
         {
             var path = string.Format("{0}{1}", CurrentFolder.Path, name);
+            if (FileManager.FolderExists(path))
+            {
+                MessageBox.Show(string.Format("Error: directory [{0}] already exists! Please specify a different name.", name));
+                return false;
+            }
             FileManager.CreateFolder(path);
             return true;
         }
 
         private bool IsDriveAccessible(FileSystemItemViewModel drive)
         {
-            var result = FileManager.DriveIsReady(drive.Path);
-            if (!result)
+            var result = false;
+            try
             {
-                MessageBox.Show(string.Format("{0} is not accessible.", drive.Title));
+                result = FileManager.DriveIsReady(drive.Path);
+                if (!result)
+                {
+                    MessageBox.Show(string.Format("{0} is not accessible.", drive.Title));
+                }
+            }
+            catch (TransferException ex)
+            {
+                Parent.ShowCorrespondingErrorDialog(ex);
             }
             return result;
         }
@@ -709,11 +701,6 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             WorkerThread.Run(() => FileManager.GetFileInfo(itemPath), (item) =>
                 {
                     var vm = new FileSystemItemViewModel(item);
-                    if (!_titleRecognizer.IsXboxFolder(item))
-                    {
-                        PublishItemViewModel(vm);
-                        return;
-                    }
                     _titleRecognizer.BeginTransaction();
                     RecognitionInner(item, i =>
                         {
@@ -721,6 +708,43 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
                             _titleRecognizer.EndTransaction();
                         });
                 });
+        }
+
+        private void RecognitionStart()
+        {
+            if (_queue.Count > 0)
+            {
+                var item = _queue.Dequeue();
+                ProgressMessage = string.Format("Recognizing item {0}... ({1} left)", item.Name, _queue.Count);
+                RecognitionInner(item, RecognitionSuccess);
+            }
+            else
+            {
+                RecognitionFinish();
+            }
+        }
+
+        private void RecognitionInner(FileSystemItem item, Action<FileSystemItem> callback)
+        {
+            WorkerThread.Run(() =>
+            {
+                _titleRecognizer.RecognizeTitle(item);
+                return item;
+            }, callback);
+        }
+
+        private void RecognitionSuccess(FileSystemItem item)
+        {
+            Items.Single(i => i.Model == item).NotifyModelChanges();
+            RecognitionStart();
+        }
+
+        private void RecognitionFinish()
+        {
+            _queue = null;
+            _titleRecognizer.EndTransaction();
+            SortContent();
+            IsBusy = false;
         }
 
         private void PublishItemViewModel(ViewModelBase vm)
@@ -753,6 +777,12 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
                     item.Size = size;
                 }
             }
+        }
+
+        private void AsyncErrorCallback(Exception ex)
+        {
+            IsBusy = false;
+            Parent.ShowCorrespondingErrorDialog(ex);
         }
 
     }

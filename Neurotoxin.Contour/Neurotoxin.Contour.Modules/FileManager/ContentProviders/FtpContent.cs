@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using Limilabs.FTP.Client;
+using Microsoft.Practices.Composite.Events;
 using Neurotoxin.Contour.Modules.FileManager.Constants;
 using Neurotoxin.Contour.Modules.FileManager.Database;
 using Neurotoxin.Contour.Modules.FileManager.Events;
@@ -16,15 +17,18 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
 {
     public class FtpContent : IFileManager
     {
+        private string _connectionLostMessage;
+        private IEventAggregator _eventAggregator;
         private Ftp _ftpClient;
         private bool _downloadHeaderOnly;
         private FtpConnection _connection;
 
         public string TempFilePath { get; set; }
 
-        public event FtpOperationStartedEventHandler FtpOperationStarted;
-        public event FtpOperationFinishedEventHandler FtpOperationFinished;
-        public event FtpOperationProgressChangedEventHandler FtpOperationProgressChanged;
+        public FtpContent(IEventAggregator eventAggregator)
+        {
+            _eventAggregator = eventAggregator;
+        }
 
         internal bool Connect(FtpConnection connection)
         {
@@ -40,6 +44,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
 
                 _ftpClient.Progress += FtpClientProgressChanged;
                 _connection = connection;
+                _connectionLostMessage = string.Format("The connection with {0} has been lost.", connection.Name);
             }
             catch (FtpException ex)
             {
@@ -84,7 +89,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
             {
                 NotifyFtpOperationFinished();
                 if (_ftpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
-                throw new TransferException(TransferErrorType.LostConnection, ex.Message);
+                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
             } 
         }
 
@@ -104,7 +109,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
             {
                 NotifyFtpOperationFinished();
                 if (_ftpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
-                throw new TransferException(TransferErrorType.LostConnection, ex.Message);
+                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
             }          
         }
 
@@ -130,7 +135,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
             {
                 NotifyFtpOperationFinished();
                 if (_ftpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
-                throw new TransferException(TransferErrorType.LostConnection, ex.Message);
+                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
             }
         }
 
@@ -157,7 +162,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
             {
                 NotifyFtpOperationFinished();
                 if (_ftpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
-                throw new TransferException(TransferErrorType.LostConnection, ex.Message);
+                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
             }
         }
 
@@ -168,8 +173,9 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
                 _ftpClient.ChangeFolder(drive);
                 return true;
             }
-            catch
+            catch (FtpException ex)
             {
+                if (!_ftpClient.Connected) throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
                 return false;
             }
         }
@@ -230,7 +236,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
             {
                 NotifyFtpOperationFinished();
                 if (_ftpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
-                throw new TransferException(TransferErrorType.LostConnection, ex.Message);
+                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
             }
         }
 
@@ -250,7 +256,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
             {
                 NotifyFtpOperationFinished();
                 if (_ftpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
-                throw new TransferException(TransferErrorType.LostConnection, ex.Message);
+                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
             }
         }
 
@@ -291,7 +297,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
             {
                 NotifyFtpOperationFinished();
                 if (_ftpClient.Connected) throw new TransferException(TransferErrorType.WriteAccessError, ex.Message);
-                throw new TransferException(TransferErrorType.LostConnection, ex.Message);
+                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
             }
         }
 
@@ -318,7 +324,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
             {
                 NotifyFtpOperationFinished();
                 if (_ftpClient.Connected) throw new TransferException(TransferErrorType.WriteAccessError, ex.Message);
-                throw new TransferException(TransferErrorType.LostConnection, ex.Message);
+                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
             }
         }
 
@@ -344,7 +350,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
             {
                 //TODO: not read
                 if (_ftpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
-                throw new TransferException(TransferErrorType.LostConnection, ex.Message);
+                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
             }
         }
 
@@ -358,7 +364,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
             {
                 //TODO: not read
                 if (_ftpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
-                throw new TransferException(TransferErrorType.LostConnection, ex.Message);
+                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
             }
         }
 
@@ -372,7 +378,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
             {
                 //TODO: not read
                 if (_ftpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
-                throw new TransferException(TransferErrorType.LostConnection, ex.Message);
+                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
             }
         }
 
@@ -384,20 +390,17 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
 
         private void NotifyFtpOperationStarted(bool binaryTransfer)
         {
-            var handler = FtpOperationStarted;
-            if (handler != null) handler.Invoke(this, new FtpOperationStartedEventArgs(binaryTransfer));
+            _eventAggregator.GetEvent<FtpOperationStartedEvent>().Publish(new FtpOperationStartedEventArgs(binaryTransfer));
         }
 
         private void NotifyFtpOperationFinished(long? streamLength = null)
         {
-            var handler = FtpOperationFinished;
-            if (handler != null) handler.Invoke(this, new FtpOperationFinishedEventArgs(streamLength));
+            _eventAggregator.GetEvent<FtpOperationFinishedEvent>().Publish(new FtpOperationFinishedEventArgs(streamLength));
         }
 
         private void NotifyFtpOperationProgressChanged(int percentage)
         {
-            var handler = FtpOperationProgressChanged;
-            if (handler != null) handler.Invoke(this, new FtpOperationProgressChangedEventArgs(percentage));
+            _eventAggregator.GetEvent<FtpOperationProgressChangedEvent>().Publish(new FtpOperationProgressChangedEventArgs(percentage));
         }
     }
 }

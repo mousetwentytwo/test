@@ -1,6 +1,8 @@
-﻿namespace Neurotoxin.Contour.Modules.FileManager.Events
+﻿using Microsoft.Practices.Composite.Presentation.Events;
+
+namespace Neurotoxin.Contour.Modules.FileManager.Events
 {
-    public delegate void FtpOperationStartedEventHandler(object sender, FtpOperationStartedEventArgs args);
+    public class FtpOperationStartedEvent : CompositePresentationEvent<FtpOperationStartedEventArgs> { }
 
     public class FtpOperationStartedEventArgs
     {

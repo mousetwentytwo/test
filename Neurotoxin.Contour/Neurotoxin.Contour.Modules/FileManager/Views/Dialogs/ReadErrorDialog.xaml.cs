@@ -24,16 +24,16 @@ namespace Neurotoxin.Contour.Modules.FileManager.Views.Dialogs
             switch (button.Name)
             {
                 case "Retry":
-                    Result = new TransferErrorDialogResult(CopyBehavior.Retry);
+                    Result = new TransferErrorDialogResult(ErrorResolutionBehavior.Retry);
                     break;
                 case "Skip":
-                    Result = new TransferErrorDialogResult(CopyBehavior.Skip);
+                    Result = new TransferErrorDialogResult(ErrorResolutionBehavior.Skip);
                     break;
                 case "SkipAll":
-                    Result = new TransferErrorDialogResult(CopyBehavior.Skip, CopyActionScope.All);
+                    Result = new TransferErrorDialogResult(ErrorResolutionBehavior.Skip, CopyActionScope.All);
                     break;
                 case "Cancel":
-                    Result = new TransferErrorDialogResult(CopyBehavior.Cancel);
+                    Result = new TransferErrorDialogResult(ErrorResolutionBehavior.Cancel);
                     break;
             }
             DialogResult = true;
