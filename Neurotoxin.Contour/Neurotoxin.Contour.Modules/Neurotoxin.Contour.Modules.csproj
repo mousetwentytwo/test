@@ -12,6 +12,7 @@
     <AssemblyName>Neurotoxin.Contour.Modules</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,9 +32,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EntityFramework">
-      <HintPath>..\packages\EntityFramework.4.3.1\lib\net40\EntityFramework.dll</HintPath>
-    </Reference>
     <Reference Include="Ftp">
       <HintPath>..\packages\Ftp.dll.2.0.13217.1550\lib\Ftp.dll</HintPath>
     </Reference>
@@ -54,19 +52,14 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Entity" />
-    <Reference Include="System.Data.SqlServerCe, Version=4.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\Microsoft.SqlServer.Compact.4.0.8876.1\lib\net40\System.Data.SqlServerCe.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.SqlServerCe.Entity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\EntityFramework.SqlServerCompact.4.3.6\lib\net40\System.Data.SqlServerCe.Entity.dll</HintPath>
-    </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Windows.Interactivity, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Resources\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -86,6 +79,7 @@
     <Compile Include="FileManager\Constants\TransferProgressDialogMode.cs" />
     <Compile Include="FileManager\Constants\ConnectionImage.cs" />
     <Compile Include="FileManager\ContentProviders\CacheManager.cs" />
+    <Compile Include="FileManager\ContentProviders\ObjectBinder.cs" />
     <Compile Include="FileManager\ContentProviders\StfsPackageContent.cs" />
     <Compile Include="FileManager\Converters\TransferProgressDialogModeConverter.cs" />
     <Compile Include="FileManager\Converters\PaneHeaderBackgroundConverter.cs" />
@@ -93,21 +87,18 @@
     <Compile Include="FileManager\Converters\SizeConverter.cs" />
     <Compile Include="FileManager\Converters\TitleConverter.cs" />
     <Compile Include="FileManager\Converters\NameConverter.cs" />
-    <Compile Include="FileManager\Database\CacheDbContext.cs" />
-    <Compile Include="FileManager\Database\CacheEntry.cs" />
-    <Compile Include="FileManager\Database\ConfigDbContext.cs" />
-    <Compile Include="FileManager\Database\DbConnectionFactory.cs" />
     <Compile Include="FileManager\Events\ActivePaneChangedEvent.cs" />
     <Compile Include="FileManager\Events\FtpOperationProgressChangedEvent.cs" />
     <Compile Include="FileManager\Events\ViewModelGeneratedEvent.cs" />
     <Compile Include="FileManager\Events\TransferFinishedEvent.cs" />
     <Compile Include="FileManager\Events\TransferStartedEvent.cs" />
     <Compile Include="FileManager\Exceptions\TransferException.cs" />
+    <Compile Include="FileManager\Models\CacheEntry.cs" />
     <Compile Include="FileManager\Models\FileSystemItem.cs" />
     <Compile Include="FileManager\Constants\ItemType.cs" />
     <Compile Include="FileManager\Events\FtpOperationFinishedEvent.cs" />
     <Compile Include="FileManager\Events\FtpOperationStartedEvent.cs" />
-    <Compile Include="FileManager\Database\FtpConnection.cs" />
+    <Compile Include="FileManager\Models\FtpConnection.cs" />
     <Compile Include="FileManager\Interfaces\IStoredConnection.cs" />
     <Compile Include="FileManager\Models\RecognitionInformation.cs" />
     <Compile Include="FileManager\Models\TransferErrorDialogResult.cs" />
@@ -261,13 +252,11 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
-    if not exist "$(TargetDir)x86" md "$(TargetDir)x86"
-    xcopy /s /y "$(SolutionDir)packages\Microsoft.SqlServer.Compact.4.0.8876.1\NativeBinaries\x86\*.*" "$(TargetDir)x86"
-    if not exist "$(TargetDir)amd64" md "$(TargetDir)amd64"
-    xcopy /s /y "$(SolutionDir)packages\Microsoft.SqlServer.Compact.4.0.8876.1\NativeBinaries\amd64\*.*" "$(TargetDir)amd64"</PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

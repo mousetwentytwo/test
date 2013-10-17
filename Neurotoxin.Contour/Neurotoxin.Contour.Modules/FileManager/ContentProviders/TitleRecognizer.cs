@@ -19,7 +19,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
     internal class TitleRecognizer
     {
         private readonly IFileManager _fileManager;
-        private CacheManager _cacheManager;
+        private readonly CacheManager _cacheManager;
 
         private readonly List<RecognitionInformation> _recognitionKeywords = new List<RecognitionInformation>
             {
@@ -34,8 +34,9 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
                 new RecognitionInformation("^E0000[0-9A-F]{11}$", "Unknown Profile", TitleType.Profile),
             };
 
-        public TitleRecognizer(IFileManager fileManager)
+        public TitleRecognizer(IFileManager fileManager, CacheManager cacheManager)
         {
+            _cacheManager = cacheManager;
             _fileManager = fileManager;
         }
 
@@ -59,13 +60,13 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
             var cacheKey = GetCacheKey(item);
             if (_cacheManager.HasEntry(cacheKey, item.Size, item.Date))
             {
-                var cachedItem = _cacheManager.GetEntry<FileSystemItem>(cacheKey);
+                var cachedItem = _cacheManager.GetEntry(cacheKey);
                 if (cachedItem != null)
                 {
-                    item.Title = cachedItem.Title;
-                    item.TitleType = cachedItem.TitleType;
-                    item.ContentType = cachedItem.ContentType;
-                    item.Thumbnail = cachedItem.Thumbnail;
+                    item.Title = cachedItem.Content.Title;
+                    item.TitleType = cachedItem.Content.TitleType;
+                    item.ContentType = cachedItem.Content.ContentType;
+                    item.Thumbnail = cachedItem.Content.Thumbnail;
                 }
                 return true;
             }
@@ -84,18 +85,31 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
             switch (item.TitleType)
             {
                 case TitleType.Profile:
-                    var profilePath = item.Type == ItemType.Directory
-                               ? string.Format("{1}FFFE07D1/00010000/{0}", item.Name, item.Path)
-                               : item.Path;
+                    string profilePath;
+                    DateTime date;
+                    long? size;
+                    if (item.Type == ItemType.Directory)
+                    {
+                        profilePath = string.Format("{1}FFFE07D1/00010000/{0}", item.Name, item.Path);
+                        if (!_fileManager.FileExists(profilePath)) break;
+                        var fileItem = _fileManager.GetFileInfo(profilePath);
+                        date = fileItem.Date;
+                        size = fileItem.Size;
+                    }
+                    else
+                    {
+                        profilePath = item.Path;
+                        date = item.Date;
+                        size = item.Size;
+                    }
                     if (GetProfileData(item, profilePath))
-                        _cacheManager.SaveEntry(cacheKey, item, item.Date, item.Size, DateTime.Now.AddDays(14),
-                                                _fileManager.TempFilePath);
+                        _cacheManager.SaveEntry(cacheKey, item, DateTime.Now.AddDays(14), date, size, _fileManager.TempFilePath);
                     break;
                 case TitleType.Game:
                     if (GetGameData(item) || GetGameDataFromJqe360(item))
                         _cacheManager.SaveEntry(cacheKey, item);
                     else
-                        _cacheManager.SaveEntry(cacheKey, null, null, null, DateTime.Now.AddDays(7));
+                        _cacheManager.SaveEntry(cacheKey, null, DateTime.Now.AddDays(7));
                     break;
                 case TitleType.Content:
                     var content = BitConverter.ToInt32(item.Name.FromHex(), 0);
@@ -120,7 +134,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
                             item.Title = svod.DisplayName;
                             item.Thumbnail = svod.ThumbnailImage;
                             item.ContentType = svod.ContentType;
-                            _cacheManager.SaveEntry(cacheKey, item, item.Date, item.Size, DateTime.Now.AddDays(14));
+                            _cacheManager.SaveEntry(cacheKey, item, DateTime.Now.AddDays(14), item.Date, item.Size);
                         }
                         else
                         {
@@ -140,8 +154,9 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
                 case TitleType.Game:
                     return item.Name;
                 case TitleType.Profile:
+                    var slash = item.FullPath.Contains("/") ? "/" : "\\";
                     return item.Type == ItemType.Directory
-                               ? string.Format("{1}FFFE07D1/00010000/{0}", item.Name, item.FullPath)
+                               ? string.Format("{1}FFFE07D1{2}00010000{2}{0}", item.Name, item.FullPath, slash)
                                : item.FullPath;
                 default:
                     return item.FullPath;
@@ -150,15 +165,20 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
 
         private bool GetProfileData(FileSystemItem item, string profilePath)
         {
-            if (!_fileManager.FileExists(profilePath)) return false;
-
-            var bytes = _fileManager.ReadFileContent(profilePath);
-            var stfs = ModelFactory.GetModel<StfsPackage>(bytes);
-            stfs.ExtractAccount();
-            item.Title = stfs.Account.GamerTag;
-            item.Thumbnail = stfs.ThumbnailImage;
-            item.ContentType = stfs.ContentType;
-            return true;
+            try
+            {
+                var bytes = _fileManager.ReadFileContent(profilePath);
+                var stfs = ModelFactory.GetModel<StfsPackage>(bytes);
+                stfs.ExtractAccount();
+                item.Title = stfs.Account.GamerTag;
+                item.Thumbnail = stfs.ThumbnailImage;
+                item.ContentType = stfs.ContentType;
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         private bool GetGameData(FileSystemItem item)
@@ -171,7 +191,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
             var exists = _fileManager.FolderExists(gamePath);
             if (!exists)
             {
-                var r = new Regex(@"(?<content>Content[\/])E0000[0-9A-F]{11}", RegexOptions.IgnoreCase);
+                var r = new Regex(@"(?<content>Content[\\/])E0000[0-9A-F]{11}", RegexOptions.IgnoreCase);
                 if (r.IsMatch(gamePath))
                 {
                     gamePath = r.Replace(gamePath, "${content}0000000000000000");
@@ -230,17 +250,6 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
         {
             var cacheKey = GetCacheKey(item);
             _cacheManager.UpdateEntry(cacheKey, item);
-        }
-
-        public IDisposable BeginTransaction()
-        {
-            _cacheManager = new CacheManager();
-            return _cacheManager;
-        }
-
-        public void EndTransaction()
-        {
-            _cacheManager.Dispose();
         }
 
         public byte[] ReadFileContent(FileSystemItem item)

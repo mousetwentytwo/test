@@ -7,7 +7,6 @@ using System.Windows;
 using Limilabs.FTP.Client;
 using Microsoft.Practices.Composite.Events;
 using Neurotoxin.Contour.Modules.FileManager.Constants;
-using Neurotoxin.Contour.Modules.FileManager.Database;
 using Neurotoxin.Contour.Modules.FileManager.Events;
 using Neurotoxin.Contour.Modules.FileManager.Exceptions;
 using Neurotoxin.Contour.Modules.FileManager.Interfaces;

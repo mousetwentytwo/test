@@ -36,11 +36,6 @@ namespace Neurotoxin.Contour.Modules.FileManager
             container.RegisterType<LocalFileSystemContentViewModel>();
             container.RegisterType<StfsPackageContentViewModel>();
             container.RegisterType<CacheManager>(new ContainerControlledLifetimeManager());
-
-            using (var cache = new CacheManager())
-            {
-                cache.InvalidateExpiredEntries();
-            }
         }
 
         #endregion IModule Members

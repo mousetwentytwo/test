@@ -1,112 +1,74 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
-using Neurotoxin.Contour.Modules.FileManager.Database;
+using System.Security.Cryptography;
+using System.Text;
+using Neurotoxin.Contour.Core.Caching;
+using Neurotoxin.Contour.Core.Extensions;
+using Neurotoxin.Contour.Modules.FileManager.Models;
 
 namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
 {
-    public class CacheManager : IDisposable
+    public class CacheManager
     {
-        private readonly BinaryFormatter _binaryFormatter;
-        private readonly CacheDbContext _context;
-
-        public CacheManager()
-        {
-            _context = new CacheDbContext();
-            _binaryFormatter = new BinaryFormatter();
-        }
+        private readonly EsentPersistentDictionary _cacheStore = EsentPersistentDictionary.Instance;
 
         public bool HasEntry(string key, long? size, DateTime date)
         {
             return GetEntry(key, size, date) != null;
         }
 
-        public CacheEntry GetEntry(string key, long? size, DateTime date)
+        public CacheEntry<FileSystemItem> GetEntry(string key, long? size = null, DateTime? date = null)
         {
-            var item = _context.CacheEntries.FirstOrDefault(e => e.CacheKey == key);
-            if (item == null) return null;
+            CacheEntry<FileSystemItem> item;
+            var hashKey = HashKey(key);
+            if (!_cacheStore.TryGet(hashKey, out item)) return null;
 
             if ((item.Expiration.HasValue && item.Expiration < DateTime.Now) ||
                 (size.HasValue && item.Size.HasValue && item.Size.Value < size) ||
-                (item.Date.HasValue && (date - item.Date.Value).TotalSeconds > 1))
+                (date.HasValue && item.Date.HasValue && (date.Value - item.Date.Value).TotalSeconds > 1))
             {
-                ClearCache(e => e.CacheKey == key);
+                ClearCache(key);
                 return null;
             }
 
             return item;
         }
 
-        public T GetEntry<T>(string key)
+        public void SaveEntry(string key, FileSystemItem content, DateTime? expiration = null, DateTime? date = null, long? size = null, string tmpPath = null)
         {
-            var result = default(T);
-            var entry = _context.CacheEntries.First(e => e.CacheKey == key);
-            if (entry.Content != null)
-            {
-                var ms = new MemoryStream(entry.Content.ToArray());
-                result = (T)_binaryFormatter.Deserialize(ms);
-            }
-            return result;
+            var entry = new CacheEntry<FileSystemItem>
+                {
+                    Expiration = expiration,
+                    Date = date,
+                    Size = size,
+                    Content = content,
+                    TempFilePath = tmpPath
+                };
+            _cacheStore.Put(HashKey(key), entry);
         }
 
-        public void SaveEntry(string key, object content, DateTime? date = null, long? size = null, DateTime? expiration = null, string tmpPath = null)
+        public void UpdateEntry(string key, FileSystemItem content)
         {
-            _context.CacheEntries.Add(new CacheEntry
-            {
-                CacheKey = key,
-                Date = date,
-                Size = size,
-                Expiration = expiration,
-                Content = SerializeContent(content),
-                TempFilePath = tmpPath
-            });
-        }
-
-        public void UpdateEntry(string key, object content)
-        {
-            var entry = _context.CacheEntries.First(e => e.CacheKey == key);
-            entry.Content = SerializeContent(content);
-            entry.Expiration = null;
-        }
-
-        private byte[] SerializeContent(object content)
-        {
-            byte[] binary = null;
-            if (content != null)
-            {
-                var ms = new MemoryStream();
-                _binaryFormatter.Serialize(ms, content);
-                ms.Flush();
-                binary = ms.ToArray();
-            }
-            return binary;
-        }
-
-        public void Dispose()
-        {
-            _context.SaveChanges();
-            _context.Dispose();
-        }
-
-        public void InvalidateExpiredEntries()
-        {
-            ClearCache(e => e.Expiration != null && e.Expiration < DateTime.Now);
+            var hashKey = HashKey(key);
+            var item = _cacheStore.Get<CacheEntry<FileSystemItem>>(hashKey);
+            item.Content = content;
+            item.Expiration = null;
+            _cacheStore.Update(hashKey, item);
         }
 
         public void ClearCache(string key)
         {
-            ClearCache(e => e.CacheKey == key);
+            var hashKey = HashKey(key);
+            var item = _cacheStore.Get<CacheEntry<FileSystemItem>>(hashKey);
+            if (!string.IsNullOrEmpty(item.TempFilePath)) File.Delete(item.TempFilePath);
+            _cacheStore.Remove(hashKey);
         }
 
-        public void ClearCache(Func<CacheEntry, bool> where = null)
+        private static string HashKey(string s)
         {
-            var items = where != null ? _context.CacheEntries.Where(where) : _context.CacheEntries;
-            foreach (var item in items)
-            {
-                if (!string.IsNullOrEmpty(item.TempFilePath)) File.Delete(item.TempFilePath);
-                _context.CacheEntries.Remove(item);
-            }
+            var shA1Managed = new SHA1Managed();
+            return string.Format("CacheEntry_{0}", shA1Managed.ComputeHash(Encoding.UTF8.GetBytes(s)).ToHex());
         }
+
     }
 }

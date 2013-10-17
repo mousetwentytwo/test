@@ -50,6 +50,11 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             }
         }
 
+        private IPaneViewModel OtherPane
+        {
+            get { return LeftPane.IsActive ? RightPane : LeftPane; }
+        }
+
         private IFileListPaneViewModel SourcePane
         {
             get
@@ -190,7 +195,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
         private void ExecuteSwitchPaneCommand(EventInformation<KeyEventArgs> eventInformation)
         {
-            TargetPane.SetActive();
+            OtherPane.SetActive();
             eventInformation.EventArgs.Handled = true;
         }
 

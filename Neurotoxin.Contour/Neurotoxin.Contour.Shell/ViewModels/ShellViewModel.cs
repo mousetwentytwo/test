@@ -58,11 +58,10 @@ namespace Neurotoxin.Contour.Shell.ViewModels
 
         #endregion
 
-        public ShellViewModel(IRegionManager regionManager, TabController tabController, IEventAggregator eventAggregator)
+        public ShellViewModel(IRegionManager regionManager, TabController tabController)
         {
             this.regionManager = regionManager;
             this.tabController = tabController;
-            this.eventAggregator = eventAggregator;
 
             Assembly assembly = Assembly.GetAssembly(typeof(ShellViewModel));
             AssemblyName assemblyName = assembly.GetName();

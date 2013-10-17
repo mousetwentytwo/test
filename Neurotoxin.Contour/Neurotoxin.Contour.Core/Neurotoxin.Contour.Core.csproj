@@ -12,6 +12,7 @@
     <AssemblyName>Neurotoxin.Contour.Core</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -34,6 +35,15 @@
     <Reference Include="Castle.Core">
       <HintPath>..\..\packages\Castle.Core.3.1.0\lib\net40-client\Castle.Core.dll</HintPath>
     </Reference>
+    <Reference Include="Esent.Collections">
+      <HintPath>..\packages\ManagedEsent.1.6\lib\net20\Esent.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="Esent.Interop">
+      <HintPath>..\packages\ManagedEsent.1.6\lib\net20\Esent.Interop.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Text">
+      <HintPath>..\packages\ServiceStack.Text.3.9.67\lib\net35\ServiceStack.Text.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -45,6 +55,7 @@
   <ItemGroup>
     <Compile Include="Attributes\DeclaredOnlyAttribute.cs" />
     <Compile Include="Attributes\StringValueAttribute.cs" />
+    <Compile Include="Caching\EsentPersistentDictionary.cs" />
     <Compile Include="Constants\AchievementLockFlags.cs" />
     <Compile Include="Constants\AssetSubcategory.cs" />
     <Compile Include="Constants\BlockStatus.cs" />
@@ -74,13 +85,13 @@
     <Compile Include="Exceptions\ModelFactoryException.cs" />
     <Compile Include="Extensions\ByteArrayExtensions.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
+    <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\EnumHelper.cs" />
     <Compile Include="Extensions\ExtensionHelper.cs" />
     <Compile Include="Extensions\MemberInfoExtensions.cs" />
     <Compile Include="Extensions\MethodInfoExtensions.cs" />
     <Compile Include="Extensions\StreamExtensions.cs" />
     <Compile Include="Extensions\LongExtensions.cs" />
-    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\ToBigEndian.cs" />
     <Compile Include="Extensions\ToByteArray.cs" />
     <Compile Include="Extensions\VersionExtensions.cs" />
@@ -142,6 +153,8 @@
     <Compile Include="Security\RC4.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="README.rtf" />
     <None Include="Resources\KV_D.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

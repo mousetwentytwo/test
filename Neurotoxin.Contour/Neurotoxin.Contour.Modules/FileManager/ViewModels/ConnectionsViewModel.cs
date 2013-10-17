@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
+using Neurotoxin.Contour.Core.Caching;
 using Neurotoxin.Contour.Modules.FileManager.Constants;
-using Neurotoxin.Contour.Modules.FileManager.Database;
 using Neurotoxin.Contour.Modules.FileManager.Interfaces;
+using Neurotoxin.Contour.Modules.FileManager.Models;
 using Neurotoxin.Contour.Modules.FileManager.Views.Dialogs;
 using Neurotoxin.Contour.Presentation.Infrastructure;
 using Neurotoxin.Contour.Presentation.Infrastructure.Constants;
@@ -15,6 +16,9 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 {
     public class ConnectionsViewModel : PaneViewModelBase
     {
+        private const string CacheStoreKeyPrefix = "FtpConnection_";
+        private readonly EsentPersistentDictionary _cacheStore = EsentPersistentDictionary.Instance;
+
         #region Properties
 
         private const string ITEMS = "Items";
@@ -89,12 +93,11 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             switch (cmd)
             {
                 case LoadCommand.Load:
-                    using (var context = new ConfigDbContext())
+                    foreach (var ftpconn in _cacheStore.Keys.Where(key => key.StartsWith(CacheStoreKeyPrefix))
+                                                            .Select(key => _cacheStore.Get<FtpConnection>(key))
+                                                            .OrderBy(i => i.Name))
                     {
-                        foreach (var ftpconn in context.FtpConnections.OrderBy(i => i.Name))
-                        {
-                            Items.Add(new FtpConnectionItemViewModel(ftpconn));
-                        }
+                        Items.Add(new FtpConnectionItemViewModel(ftpconn));
                     }
                     var add = new NewConnectionPlaceholderViewModel();
                     Items.Add(add);
@@ -142,22 +145,16 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             var dialog = new NewConnectionDialog(newItem);
             if (dialog.ShowDialog() != true) return;
 
-            using (var context = new ConfigDbContext())
+            if (edit)
             {
-                if (edit)
-                {
-                    Items.Remove(SelectedItem);
-                    var oldentry = context.FtpConnections.Single(e => e.Id == ftpconn.Model.Id);
-                    context.FtpConnections.Remove(oldentry);
-                }
-                var i = 0;
-                while (i < Items.Count - 1 && String.Compare(newItem.Name, Items[i].Name, StringComparison.InvariantCultureIgnoreCase) == 1) i++;
-                Items.Insert(i, newItem);
-                context.FtpConnections.Add(newItem.Model);
-                SelectedItem = newItem;
-                context.SaveChanges();
+                Items.Remove(SelectedItem);
+                _cacheStore.Remove(string.Format("{0}{1}", CacheStoreKeyPrefix, ftpconn.Name));
             }
-
+            var i = 0;
+            while (i < Items.Count - 1 && String.Compare(newItem.Name, Items[i].Name, StringComparison.InvariantCultureIgnoreCase) == 1) i++;
+            Items.Insert(i, newItem);
+            _cacheStore.Put(string.Format("{0}{1}", CacheStoreKeyPrefix, newItem.Name), newItem.Model);
+            SelectedItem = newItem;
         }
     }
 }

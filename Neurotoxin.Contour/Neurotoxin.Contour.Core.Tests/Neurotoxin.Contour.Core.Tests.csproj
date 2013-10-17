@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BinaryAssert.cs" />
+    <Compile Include="CachingTests.cs" />
     <Compile Include="StfsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

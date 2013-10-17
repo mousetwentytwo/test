@@ -210,7 +210,6 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
         {
             IsBusy = false;
 
-            _titleRecognizer.BeginTransaction();
             _queue = new Queue<FileSystemItem>();
             foreach (var item in result.Where(item => !_titleRecognizer.MergeWithCachedEntry(item)))
             {
@@ -232,7 +231,6 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             }
 
             SortContent(result.Select(c => new FileSystemItemViewModel(c)));
-            SetActiveCommand.Execute(null);
             NotifyPropertyChanged(SIZEINFO);
 
             if (_queue.Count > 0)
@@ -333,8 +331,11 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
                 list.Insert(0, up);
             }
 
+            var currentRow = CurrentRow;
             Items.Clear();
             Items.AddRange(list);
+            CurrentRow = currentRow;
+            SetActive();
         }
 
         #endregion
@@ -476,10 +477,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
         private FileSystemItemViewModel RefreshTitle()
         {
             var result = CurrentRow;
-            using (_titleRecognizer.BeginTransaction())
-            {
-                _titleRecognizer.RecognizeTitle(CurrentRow.Model, true);
-            }
+            _titleRecognizer.RecognizeTitle(CurrentRow.Model, true);
             return result;
         }
 
@@ -547,10 +545,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
         {
             _isInEditMode = false;
             ChangeDirectoryCommand.RaiseCanExecuteChanged();
-            using (_titleRecognizer.BeginTransaction())
-            {
-                _titleRecognizer.UpdateCache(CurrentRow.Model);
-            }
+            _titleRecognizer.UpdateCache(CurrentRow.Model);
             CurrentRow.PropertyChanged -= EndRename;
         }
 
@@ -559,7 +554,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
         protected FileListPaneViewModelBase(FileManagerViewModel parent) : base(parent)
         {
             FileManager = container.Resolve<T>();
-            _titleRecognizer = new TitleRecognizer(FileManager);
+            _titleRecognizer = new TitleRecognizer(FileManager, container.Resolve<CacheManager>());
 
             ChangeDirectoryCommand = new DelegateCommand<object>(ExecuteChangeDirectoryCommand, CanExecuteChangeDirectoryCommand);
             CalculateSizeCommand = new DelegateCommand<bool>(ExecuteCalculateSizeCommand, CanExecuteCalculateSizeCommand);
@@ -583,7 +578,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             base.SetActive();
             if (CurrentRow != null)
             {
-                CurrentRow = CurrentRow; //surely need to notify?!
+                CurrentRow = Items.FirstOrDefault(item => item.Path == CurrentRow.Path);
                 return;
             }
             if (_previouslyFocusedRow != null)
@@ -601,6 +596,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
         protected override void OnActivePaneChanged(ActivePaneChangedEventArgs e)
         {
             base.OnActivePaneChanged(e);
+            if (e.ActivePane == this) return;
             _previouslyFocusedRow = CurrentRow;
             CurrentRow = null;
         }
@@ -681,12 +677,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
         private byte[] ReadFileContent(FileSystemItemViewModel item)
         {
-            byte[] result;
-            using (_titleRecognizer.BeginTransaction())
-            {
-                result = _titleRecognizer.ReadFileContent(item.Model);
-            }
-            return result;
+            return _titleRecognizer.ReadFileContent(item.Model);
         }
 
         public void GetItemViewModel(string itemPath)
@@ -701,12 +692,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             WorkerThread.Run(() => FileManager.GetFileInfo(itemPath), (item) =>
                 {
                     var vm = new FileSystemItemViewModel(item);
-                    _titleRecognizer.BeginTransaction();
-                    RecognitionInner(item, i =>
-                        {
-                            PublishItemViewModel(vm);
-                            _titleRecognizer.EndTransaction();
-                        });
+                    RecognitionInner(item, i => PublishItemViewModel(vm));
                 });
         }
 
@@ -742,7 +728,6 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
         private void RecognitionFinish()
         {
             _queue = null;
-            _titleRecognizer.EndTransaction();
             SortContent();
             IsBusy = false;
         }

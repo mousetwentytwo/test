@@ -1,7 +1,7 @@
 ﻿using System.Windows.Media;
 using Neurotoxin.Contour.Modules.FileManager.Constants;
-using Neurotoxin.Contour.Modules.FileManager.Database;
 using Neurotoxin.Contour.Modules.FileManager.Interfaces;
+using Neurotoxin.Contour.Modules.FileManager.Models;
 using Neurotoxin.Contour.Presentation.Extensions;
 using Neurotoxin.Contour.Presentation.Infrastructure;
 
