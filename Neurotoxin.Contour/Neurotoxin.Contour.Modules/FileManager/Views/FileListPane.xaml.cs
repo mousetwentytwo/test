@@ -17,6 +17,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.Views
             Grid.ItemContainerGenerator.StatusChanged += ItemContainerGeneratorStatusChanged;
             Grid.Sorting += GridOnSorting;
             Grid.Loaded += GridOnLoaded;
+            Grid.SelectionChanged += GridOnSelectionChanged;
         }
 
         private void GridOnLoaded(object sender, RoutedEventArgs routedEventArgs)
@@ -31,7 +32,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.Views
             e.Handled = true;
         }
 
-        private void Grid_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void GridOnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var currentRow = e.AddedItems.Count > 0 ? e.AddedItems[0] : null;
             if (currentRow == null) return;

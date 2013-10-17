@@ -2,7 +2,6 @@
 using Castle.DynamicProxy;
 using Neurotoxin.Contour.Core.Attributes;
 using Neurotoxin.Contour.Core.Extensions;
-using Neurotoxin.Contour.Core.Models.Commands;
 
 namespace Neurotoxin.Contour.Core.Models
 {

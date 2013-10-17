@@ -51,7 +51,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <ComboBox Grid.Column="0" ItemsSource="{Binding Drives}" SelectedItem="{Binding Drive}" Margin="0,0,3,0">
+            <ComboBox Grid.Column="0" ItemsSource="{Binding Drives}" SelectedItem="{Binding Drive}" Margin="0,0,3,0" x:Name="DriveDropdown">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding Name}"/>
@@ -86,7 +86,7 @@
                   CanUserResizeColumns="True"
                   CanUserSortColumns="True"
                   SelectionUnit="FullRow"
-                  SelectionChanged="Grid_OnSelectionChanged" Focusable="False">
+                  Focusable="False">
             <DataGrid.Resources>
                 <Style TargetType="{x:Type TextBlock}" x:Key="CellText">
                     <Style.Triggers>

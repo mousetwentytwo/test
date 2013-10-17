@@ -9,7 +9,6 @@ using Neurotoxin.Contour.Core.Constants;
 using Neurotoxin.Contour.Core.Extensions;
 using System.Linq;
 using Neurotoxin.Contour.Core.Io.Stfs;
-using Neurotoxin.Contour.Core.Models.Commands;
 
 namespace Neurotoxin.Contour.Core.Models
 {

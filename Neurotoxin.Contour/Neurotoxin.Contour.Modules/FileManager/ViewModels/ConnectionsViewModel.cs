@@ -16,6 +16,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 {
     public class ConnectionsViewModel : PaneViewModelBase
     {
+        private IStoredConnectionViewModel _previouslyFocusedItem;
         private const string CacheStoreKeyPrefix = "FtpConnection_";
         private readonly EsentPersistentDictionary _cacheStore = EsentPersistentDictionary.Instance;
 
@@ -108,6 +109,20 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
         public override void Refresh()
         {
             throw new NotImplementedException();
+        }
+
+        public override void SetActive()
+        {
+            base.SetActive();
+            SelectedItem = SelectedItem ?? _previouslyFocusedItem ?? Items.FirstOrDefault();
+        }
+
+        protected override void OnActivePaneChanged(Events.ActivePaneChangedEventArgs e)
+        {
+            base.OnActivePaneChanged(e);
+            if (e.ActivePane == this) return;
+            _previouslyFocusedItem = SelectedItem;
+            SelectedItem = null;
         }
 
         public override void RaiseCanExecuteChanges()

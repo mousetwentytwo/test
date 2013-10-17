@@ -89,6 +89,7 @@
     <Compile Include="FileManager\Converters\NameConverter.cs" />
     <Compile Include="FileManager\Events\ActivePaneChangedEvent.cs" />
     <Compile Include="FileManager\Events\FtpOperationProgressChangedEvent.cs" />
+    <Compile Include="FileManager\Views\Commands\OpenDriveDropdownCommand.cs" />
     <Compile Include="FileManager\Events\ViewModelGeneratedEvent.cs" />
     <Compile Include="FileManager\Events\TransferFinishedEvent.cs" />
     <Compile Include="FileManager\Events\TransferStartedEvent.cs" />
@@ -120,6 +121,7 @@
     <Compile Include="FileManager\ViewModels\FileSystemItemViewModel.cs" />
     <Compile Include="FileManager\ModuleInit.cs" />
     <Compile Include="FileManager\ViewModels\FileManagerViewModel.cs" />
+    <Compile Include="FileManager\Views\Commands\FileManagerCommands.cs" />
     <Compile Include="FileManager\Views\Dialogs\ConfirmationDialog.xaml.cs">
       <DependentUpon>ConfirmationDialog.xaml</DependentUpon>
     </Compile>

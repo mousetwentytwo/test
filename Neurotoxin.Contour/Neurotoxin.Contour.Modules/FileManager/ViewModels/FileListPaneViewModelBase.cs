@@ -250,22 +250,28 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
         public DelegateCommand<bool> CalculateSizeCommand { get; private set; }
         private Queue<FileSystemItemViewModel> _calculationQueue;
+        private bool _calculationIsRunning = false;
 
         private void ExecuteCalculateSizeCommand(bool calculateAll)
         {
             if (calculateAll)
             {
-                _calculationQueue = new Queue<FileSystemItemViewModel>(SelectedItems.Where(item => item.Type == ItemType.Directory));
+                if (_calculationQueue == null) _calculationQueue = new Queue<FileSystemItemViewModel>();
+                foreach (var item in SelectedItems.Where(item => item.Type == ItemType.Directory && !_calculationQueue.Contains(item)))
+                {
+                    _calculationQueue.Enqueue(item);
+                }
             } 
             else if (CurrentRow.Type == ItemType.Directory)
             {
-                _calculationQueue = new Queue<FileSystemItemViewModel>();
-                _calculationQueue.Enqueue(CurrentRow);
+                if (_calculationQueue == null) _calculationQueue = new Queue<FileSystemItemViewModel>();
+                if (!_calculationQueue.Contains(CurrentRow)) _calculationQueue.Enqueue(CurrentRow);
             }
-            if (_calculationQueue != null && _calculationQueue.Count > 0)
-            {
-                WorkerThread.Run(CalculateSize, CalculateSizeCallback, AsyncErrorCallback);
-            }
+
+            if (_calculationQueue == null || _calculationQueue.Count <= 0 || _calculationIsRunning) return;
+
+            _calculationIsRunning = true;
+            WorkerThread.Run(CalculateSize, CalculateSizeCallback, AsyncErrorCallback);
         }
 
         private bool CanExecuteCalculateSizeCommand(bool calculateAll)
@@ -292,6 +298,11 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
             {
                 WorkerThread.Run(CalculateSize, CalculateSizeCallback, AsyncErrorCallback);
             } 
+            else
+            {
+                _calculationQueue = null;
+                _calculationIsRunning = false;
+            }
             NotifyPropertyChanged(SIZEINFO);
         }
 
@@ -766,6 +777,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
 
         private void AsyncErrorCallback(Exception ex)
         {
+            _calculationIsRunning = false;
             IsBusy = false;
             Parent.ShowCorrespondingErrorDialog(ex);
         }
