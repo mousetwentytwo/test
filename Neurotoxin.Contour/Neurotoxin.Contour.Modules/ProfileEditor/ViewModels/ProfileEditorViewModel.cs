@@ -425,9 +425,6 @@ namespace Neurotoxin.Contour.Modules.ProfileEditor.ViewModels
             CalculatedGamerscore = _profile.ProfileInfo.TitlesPlayed.Sum(t => t.GamerscoreUnlocked);
         }
 
-        private DashboardFile pi = null;
-
-
         private void Initialize()
         {
             TitleId = _profile.TitleId.ToHex();

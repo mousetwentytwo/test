@@ -28,7 +28,6 @@ namespace Neurotoxin.Contour.Shell.ViewModels
 
         private readonly IRegionManager regionManager;
         private readonly TabController tabController;
-        private readonly IEventAggregator eventAggregator;
         //private List<MenuItem> menuItems;
 
         #endregion

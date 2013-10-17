@@ -5,7 +5,7 @@
                     xmlns:inf="clr-namespace:Neurotoxin.Contour.Presentation.Infrastructure;assembly=Neurotoxin.Contour.Presentation">
 	<Grid>
         <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" SnapsToDevicePixels="True">
-            <Grid x:Name="Content">
+            <Grid>
                 <xv:HexView Data="{Binding Binary}" 
                             Map="{Binding Map}" 
                             Percentage="{Binding Percentage, Mode=TwoWay}"

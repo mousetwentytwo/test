@@ -172,7 +172,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ContentProviders
                 _ftpClient.ChangeFolder(drive);
                 return true;
             }
-            catch (FtpException ex)
+            catch (FtpException)
             {
                 if (!_ftpClient.Connected) throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
                 return false;

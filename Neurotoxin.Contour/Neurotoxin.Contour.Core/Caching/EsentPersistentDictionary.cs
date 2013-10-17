@@ -1,8 +1,5 @@
-using System.Security.Cryptography;
-using System.Text;
 using Microsoft.Isam.Esent.Collections.Generic;
 using System;
-using Neurotoxin.Contour.Core.Extensions;
 using ServiceStack.Text;
 
 namespace Neurotoxin.Contour.Core.Caching

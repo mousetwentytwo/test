@@ -180,7 +180,6 @@ namespace Neurotoxin.Contour.Core.Io.Gpd
 
         private int _rebuildAddress;
         private int _rebuildIndex;
-        private ulong _syncId;
 
         public void Rebuild()
         {
@@ -188,7 +187,6 @@ namespace Neurotoxin.Contour.Core.Io.Gpd
 
             _rebuildAddress = 0;
             _rebuildIndex = 0;
-            _syncId = 0;
             RewriteEntryList(Achievements, AchievementComparer.Instance);
             RewriteEntryList(Images);
             RewriteEntryList(Settings);

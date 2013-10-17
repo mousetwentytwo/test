@@ -25,7 +25,7 @@
         </views:PaneTemplateSelector>
     </inf:ModuleViewBase.Resources>
     <Grid x:Name="LayoutRoot">
-        <Grid x:Name="Content">
+        <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="3"/>

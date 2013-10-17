@@ -11,7 +11,7 @@
     </inf:ModuleViewBase.Resources>
     
     <Grid x:Name="LayoutRoot">
-        <Grid x:Name="Content" Visibility="{Binding IsNotInProgress, Converter={StaticResource BoolToVis}}">
+        <Grid Visibility="{Binding IsNotInProgress, Converter={StaticResource BoolToVis}}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>

@@ -386,7 +386,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.ViewModels
         {
             var dialog = new NewFolderDialog();
             if (dialog.ShowDialog() != true) return;
-            var name = dialog.Name.Text;
+            var name = dialog.FolderName.Text;
             WorkerThread.Run(() => SourcePane.CreateFolder(name), NewFolderSuccess, NewFolderError);
         }
 

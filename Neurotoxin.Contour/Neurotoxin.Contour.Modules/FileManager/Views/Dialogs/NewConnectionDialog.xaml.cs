@@ -29,7 +29,7 @@ namespace Neurotoxin.Contour.Modules.FileManager.Views.Dialogs
         private bool HasError()
         {
             var result = false;
-            var controls = new[] {Name, Address, Port, Username, Password};
+            var controls = new[] {ConnectionName, Address, Port, Username, Password};
             foreach (var control in controls)
             {
                 control.GetBindingExpression(TextBox.TextProperty).UpdateSource();
