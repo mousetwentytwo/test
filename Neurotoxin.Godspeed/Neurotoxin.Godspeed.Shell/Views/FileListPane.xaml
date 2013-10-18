@@ -8,7 +8,7 @@
                     xmlns:co="clr-namespace:Neurotoxin.Godspeed.Presentation.Converters;assembly=Neurotoxin.Godspeed.Presentation"
                     xmlns:constants="clr-namespace:Neurotoxin.Godspeed.Shell.Constants"
                     xmlns:system="clr-namespace:System;assembly=mscorlib"
-                    MinHeight="300">
+                    MinHeight="300" Background="Transparent">
     <UserControl.Resources>
         <co:BoolToVisibilityConverter x:Key="BoolToVis"/>
         <co:NotNullOrEmptyConverter x:Key="NotNullOrEmptyConverter"/>
@@ -16,7 +16,9 @@
         <converters:SizeAlignmentConverter x:Key="SizeAlignmentConverter"/>
         <converters:TitleConverter x:Key="TitleConverter"/>
         <converters:NameConverter x:Key="NameConverter"/>
-        <converters:PaneHeaderBackgroundConverter x:Key="PaneHeaderBackgroundConverter"/>
+        <converters:PaneHeaderBackgroundConverter x:Key="PaneHeaderBackgroundConverter"
+                                                  ActivePaneBrush="{StaticResource DefaultedBorderBrush}"
+                                                  InactivePaneBrush="{StaticResource NormalBorderBrush}"/>
 
         <inf:BindingProxy x:Key="ViewModel" Data="{Binding}"/>
         <constants:ToggleSelectionMode x:Key="Insert">Insert</constants:ToggleSelectionMode>
@@ -37,6 +39,9 @@
     </e:Interaction.Triggers>
 
     <Grid x:Name="LayoutRoot">
+        <Grid.Resources>
+            <ResourceDictionary Source="/Themes/WhistlerBlue.xaml"/>
+        </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -54,7 +59,7 @@
             <ComboBox Grid.Column="0" ItemsSource="{Binding Drives}" SelectedItem="{Binding Drive}" Margin="0,0,3,0" x:Name="DriveDropdown">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
-                        <DockPanel Margin="0,2,0,2">
+                        <DockPanel>
                             <Image DockPanel.Dock="Left" Width="16" Height="16" Source="{Binding Thumbnail}"/>
                             <TextBlock Text="{Binding Name}" Margin="3,0,0,0"/>
                         </DockPanel>
@@ -67,12 +72,11 @@
             <Button Grid.Column="2" HorizontalAlignment="Right" Content="Disconnect" Command="{Binding DisconnectCommand}" Margin="0,0,3,0" Width="75"
                     Visibility="{Binding DisconnectCommand, Converter={StaticResource NotNullOrEmptyConverter}, FallbackValue=Collapsed}"/>
         </Grid>
-        
-        <TextBlock Text="{Binding CurrentFolder.Path}" 
-                   Background="{Binding Path=IsActive, Converter={StaticResource PaneHeaderBackgroundConverter}}" 
-                   Padding="2" 
-                   FontWeight="Bold"
-                   Grid.Row="1"/>
+
+        <Border Grid.Row="1" Background="{Binding Path=IsActive, Converter={StaticResource PaneHeaderBackgroundConverter}}"
+                BorderBrush="#FF9B9999" BorderThickness="1,1,1,0" SnapsToDevicePixels="True">
+            <TextBlock Text="{Binding CurrentFolder.Path}" Padding="2" FontWeight="Bold"/>
+        </Border>
         
         <DataGrid x:Name="Grid"
                   Grid.Row="2" 
@@ -89,7 +93,8 @@
                   CanUserResizeColumns="True"
                   CanUserSortColumns="True"
                   SelectionUnit="FullRow"
-                  Focusable="False">
+                  Focusable="False"
+                  BorderBrush="#FF9B9999">
             <DataGrid.Resources>
                 <Style TargetType="{x:Type TextBlock}" x:Key="CellText">
                     <Style.Triggers>

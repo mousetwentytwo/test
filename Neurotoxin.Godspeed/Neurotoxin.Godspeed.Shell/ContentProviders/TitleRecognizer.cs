@@ -98,7 +98,8 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                     if (Enum.IsDefined(typeof (ContentType), content))
                     {
                         item.ContentType = (ContentType) content;
-                        item.Title = string.Format("{0}s", EnumHelper.GetStringValue(item.ContentType));
+                        var title = EnumHelper.GetStringValue(item.ContentType);
+                        item.Title = string.Format("{0}{1}", title, title.EndsWith("data", StringComparison.InvariantCultureIgnoreCase) ? string.Empty : "s");
                     }
                     else
                     {

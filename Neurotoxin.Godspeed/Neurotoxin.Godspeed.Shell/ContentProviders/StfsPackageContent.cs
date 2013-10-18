@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Core.Io.Stfs;
@@ -96,18 +95,17 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public void DeleteFolder(string path)
         {
-            throw new NotImplementedException();
+            _stfs.RemoveFolder(path);
         }
 
         public void DeleteFile(string path)
         {
-            var f = _stfs.GetFileEntry(path);
-            _stfs.RemoveFile(f);
+            _stfs.RemoveFile(path);
         }
 
         public void CreateFolder(string path)
         {
-            throw new NotImplementedException();
+            _stfs.AddFolder(path);
         }
 
         public byte[] ReadFileContent(string path)
@@ -117,8 +115,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public byte[] ReadFileHeader(string path)
         {
-            //TODO: add buffer length to limit extraction
-            return _stfs.ExtractFile(path);
+            return _stfs.ExtractFile(path, 0x971A);
         }
 
         public Account GetAccount()

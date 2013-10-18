@@ -397,10 +397,10 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
             }
         }
 
-        public byte[] ExtractFile(string pathInPackage)
+        public byte[] ExtractFile(string pathInPackage, int? limit = null)
         {
             var entry = GetFileEntry(pathInPackage);
-            return ExtractFile(entry);
+            return ExtractFile(entry, limit);
         }
 
         public void ExtractFile(FileEntry entry, string dir)
@@ -408,14 +408,13 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
             File.WriteAllBytes(Path.Combine(dir, entry.Name), ExtractFile(entry));
         }
 
-        private byte[] ExtractFile(FileEntry entry)
+        private byte[] ExtractFile(FileEntry entry, int? limit = null)
         {
-            var fileSize = entry.FileSize;
+            var fileSize = limit ?? entry.FileSize;
             var output = new byte[fileSize];
             var outpos = 0;
             var block = entry.StartingBlockNum;
             var remaining = fileSize;
-            var i = 0;
             entry.BlockList = new List<int>();
             do
             {
@@ -427,12 +426,10 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
                 remaining -= readBlock;
                 var pos = GetRealAddressOfBlock(block);
                 Binary.ReadBytes(pos, output, outpos, readBlock);
-                //BinMap.Add(pos, 0x1000, entry.Name, "File part #" + i, block);
                 outpos += readBlock;
 
                 var he = GetHashEntry(block);
                 block = he.NextBlock;
-                i++;
             } while (remaining != 0);
 
             return output;
@@ -735,10 +732,7 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
 
         public FileEntry AddFile(FileEntry parent, string name, byte[] content)
         {
-            int? previous;
-            int block;
-
-            var newEntry = AllocateNewFileEntry(out block, out previous);
+            var newEntry = AllocateNewFileEntry();
             newEntry.CacheEnabled = false;
 
             newEntry.Name = name;
@@ -751,10 +745,9 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
             return newEntry;
         }
 
-        private FileEntry AllocateNewFileEntry(out int block, out int? previous)
+        private FileEntry AllocateNewFileEntry()
         {
-            previous = null;
-            block = VolumeDescriptor.FileTableBlockNum;
+            var block = VolumeDescriptor.FileTableBlockNum;
             for (var x = 0; x < VolumeDescriptor.FileTableBlockCount; x++)
             {
                 var currentAddr = GetRealAddressOfBlock(block);
@@ -763,23 +756,30 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
                     var addr = currentAddr + i * 0x40;
                     var fe = ModelFactory.GetModel<FileEntry>(Binary, addr);
 
-                    if (fe.Name == String.Empty)
-                    {
-                        fe.FileEntryAddress = addr;
-                        fe.EntryIndex = (x * 0x40) + i;
-                        fe.CreatedTimeStamp = DateTime.Now.ToFatFileTime();
-                        fe.AccessTimeStamp = DateTime.Now.ToFatFileTime();
-                        return fe;
-                    }
+                    if (fe.Name != String.Empty) continue;
+
+                    var date = DateTime.Now.ToFatFileTime();
+                    fe.FileEntryAddress = addr;
+                    fe.EntryIndex = (x * 0x40) + i;
+                    fe.CreatedTimeStamp = date;
+                    fe.AccessTimeStamp = date;
+                    return fe;
                 }
                 var he = GetHashEntry(block);
-                previous = block;
                 block = he.NextBlock;
             }
             throw new Exception("Dafuq! No space left for a new file!");
         }
 
-        public void RemoveFile(FileEntry fileEntry)
+        public void RemoveFile(string path)
+        {
+            var name = Path.GetFileName(path);
+            var parent = GetFolderEntry(path.Replace(name, string.Empty));
+            var fileEntry = parent.Files.First(f => f.Name == name);
+            RemoveFile(parent, fileEntry);
+        }
+
+        private void RemoveFile(FileEntry parent, FileEntry fileEntry)
         {
             var block = fileEntry.StartingBlockNum;
             for (var i = 0; i < fileEntry.BlocksForFile; i++)
@@ -792,6 +792,44 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
                 block = he.NextBlock;
             }
             fileEntry.BlocksForFile = 0;
+            fileEntry.Name = string.Empty;
+            parent.Files.Remove(fileEntry);
+        }
+
+        public FileEntry AddFolder(string path)
+        {
+            var name = Path.GetFileName(path);
+            var parent = GetFolderEntry(path.Replace(name, string.Empty));
+            return AddFolder(parent, name);
+        }
+
+        public FileEntry AddFolder(FileEntry parent, string name)
+        {
+            var newEntry = AllocateNewFileEntry();
+            newEntry.CacheEnabled = false;
+
+            newEntry.Name = name;
+            newEntry.Flags = FileEntryFlags.IsDirectory;
+            newEntry.PathIndicator = (ushort)parent.EntryIndex;
+            newEntry.BlocksForFile = 0;
+            parent.Folders.Add(newEntry);
+            return newEntry;
+        }
+
+        public void RemoveFolder(string path)
+        {
+            var name = Path.GetFileName(path);
+            var parent = GetFolderEntry(path.Replace(name, string.Empty));
+            var folderEntry = parent.Files.First(f => f.Name == name);
+            RemoveFolder(parent, folderEntry);
+        }
+
+        public void RemoveFolder(FileEntry parent, FileEntry folder)
+        {
+            folder.Folders.ForEach(f => RemoveFolder(folder, f));
+            folder.Files.ForEach(f => RemoveFile(folder, f));
+            folder.Name = string.Empty;
+            parent.Folders.Remove(folder);
         }
 
         #endregion

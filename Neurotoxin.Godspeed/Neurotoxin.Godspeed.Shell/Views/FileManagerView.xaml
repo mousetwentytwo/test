@@ -26,8 +26,8 @@
             </views:PaneTemplateSelector.ConnectionsTemplate>
         </views:PaneTemplateSelector>
     </Window.Resources>
-    <Grid x:Name="LayoutRoot">
-        <Grid>
+    <Grid x:Name="LayoutRoot" Background="{StaticResource ControlBackgroundBrush}">
+        <Grid Margin="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="3"/>
@@ -42,7 +42,7 @@
             <GridSplitter Grid.Column="1"/>
             <ContentControl Grid.Column="2" Grid.Row="0" Content="{Binding RightPane}" ContentTemplateSelector="{StaticResource TemplateSelector}" x:Name="RightPane"/>
             
-            <Grid Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1">
+            <Grid Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" Margin="0,3,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
@@ -51,10 +51,10 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
 
-                <Button Grid.Column="0" Content="F4 Edit" Command="{Binding EditCommand}"/>
-                <Button Grid.Column="1" Content="F5 Copy" Command="{Binding CopyCommand}"/>
-                <Button Grid.Column="2" Content="F6 Move" Command="{Binding MoveCommand}"/>
-                <Button Grid.Column="3" Content="F7 New Folder" Command="{Binding NewFolderCommand}"/>
+                <Button Grid.Column="0" Content="F4 Edit" Command="{Binding EditCommand}" Margin="0,0,2,0"/>
+                <Button Grid.Column="1" Content="F5 Copy" Command="{Binding CopyCommand}" Margin="0,0,2,0"/>
+                <Button Grid.Column="2" Content="F6 Move" Command="{Binding MoveCommand}" Margin="0,0,2,0"/>
+                <Button Grid.Column="3" Content="F7 New Folder" Command="{Binding NewFolderCommand}" Margin="0,0,2,0"/>
                 <Button Grid.Column="4" Content="F8 Delete" Command="{Binding DeleteCommand}"/>
             </Grid>
         </Grid>
@@ -69,6 +69,7 @@
             <KeyBinding Command="{Binding MoveCommand}" Key="F6"/>
             <KeyBinding Command="{Binding NewFolderCommand}" Key="F7"/>
             <KeyBinding Command="{Binding DeleteCommand}" Key="F8"/>
+            <KeyBinding Command="{Binding DeleteCommand}" Key="Delete"/>
             <KeyBinding Command="{x:Static commands:FileManagerCommands.OpenDriveDropdownCommand}" CommandParameter="{Binding ElementName=LeftPane}" Key="F1" Modifiers="Alt"/>
             <KeyBinding Command="{x:Static commands:FileManagerCommands.OpenDriveDropdownCommand}" CommandParameter="{Binding ElementName=RightPane}" Key="F2" Modifiers="Alt"/>
         </Grid.InputBindings>

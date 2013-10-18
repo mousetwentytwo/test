@@ -2,12 +2,13 @@
                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:inf="clr-namespace:Neurotoxin.Godspeed.Presentation.Infrastructure;assembly=Neurotoxin.Godspeed.Presentation"
-                    xmlns:views="clr-namespace:Neurotoxin.Godspeed.Shell.Views"
                     xmlns:e="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                     xmlns:converters="clr-namespace:Neurotoxin.Godspeed.Shell.Converters"
                     MinHeight="300">
     <UserControl.Resources>
-        <converters:PaneHeaderBackgroundConverter x:Key="PaneHeaderBackgroundConverter"/>        
+        <converters:PaneHeaderBackgroundConverter x:Key="PaneHeaderBackgroundConverter"
+                                                  ActivePaneBrush="{StaticResource DefaultedBorderBrush}"
+                                                  InactivePaneBrush="{StaticResource NormalBorderBrush}"/>
     </UserControl.Resources>
     
     <e:Interaction.Triggers>
@@ -18,27 +19,22 @@
     
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="29"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Margin="2,2,0,5">
-            <ComboBox Visibility="Hidden"/>
-        </Grid>
-
-        <TextBlock Text="Connections" 
-                   Background="{Binding Path=IsActive, Converter={StaticResource PaneHeaderBackgroundConverter}}" 
-                   Padding="2" 
-                   FontWeight="Bold"
-                   Grid.Row="1"/>
+        <Border Grid.Row="1" Background="{Binding Path=IsActive, Converter={StaticResource PaneHeaderBackgroundConverter}}"
+                BorderBrush="#FF9B9999" BorderThickness="1,1,1,0" SnapsToDevicePixels="True">
+            <TextBlock Text="Connections" Padding="2" FontWeight="Bold"/>
+        </Border>
 
         <ListBox Grid.Row="2" ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" x:Name="ConnectionList"
-                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderThickness="1">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <WrapPanel IsItemsHost="True"/>
+                    <WrapPanel IsItemsHost="True" Background="White"/>
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
             <ListBox.ItemContainerStyle>

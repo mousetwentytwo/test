@@ -536,12 +536,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void InitializeTransfer(TransferProgressDialogMode mode)
         {
+            TransferProgressDialogMode = mode;
             _rememberedCopyAction = CopyAction.CreateNew;
             FileCount = _queue.Count;
             TotalBytes = _queue.Where(item => item.Type == ItemType.File).Sum(item => item.Size ?? 0);
             FilesTransfered = 0;
             BytesTransfered = 0;
-            TransferProgressDialogMode = mode;
             NotifyTransferStarted();
         }
 
