@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -15,12 +16,16 @@ namespace Neurotoxin.Godspeed.Shell.Views
 
         public FileManagerView(FileManagerViewModel viewModel)
         {
+            var assembly = Assembly.GetAssembly(typeof(FileManagerView));
+            var assemblyName = assembly.GetName();
+            var version = assemblyName.Version;
+            Title = String.Format("GODspeed v{0}", version);
+
             InitializeComponent();
             DataContext = viewModel;
             viewModel.TransferStarted += ViewModelOnTransferStarted;
             viewModel.TransferFinished += ViewModelOnTransferFinished;
             CommandBindings.Add(new CommandBinding(FileManagerCommands.OpenDriveDropdownCommand, ExecutedOpenDriveDropdownCommand));
-
         }
 
         private void ExecutedOpenDriveDropdownCommand(object sender, ExecutedRoutedEventArgs e)

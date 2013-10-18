@@ -27,7 +27,8 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                                    Name = _stfs.DisplayName,
                                    Path = path,
                                    FullPath = string.Format(@"{0}:\{1}", _stfs.DisplayName, path),
-                                   Type = ItemType.Drive
+                                   Type = ItemType.Drive,
+                                   Thumbnail = _stfs.ThumbnailImage
                                }
                        };
         }

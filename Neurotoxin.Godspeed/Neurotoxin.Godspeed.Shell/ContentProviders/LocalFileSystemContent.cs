@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Mime;
+using System.Windows;
+using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Exceptions;
 using Neurotoxin.Godspeed.Shell.Interfaces;
@@ -15,12 +18,31 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public List<FileSystemItem> GetDrives()
         {
-            return DriveInfo.GetDrives().Select(drive => new FileSystemItem
-            {
-                Path = drive.Name,
-                Name = drive.Name.TrimEnd('\\'),
-                Type = ItemType.Drive
-            }).ToList();
+            return DriveInfo.GetDrives().Select(drive =>
+                {
+                    string icon;
+                    switch (drive.DriveType)
+                    {
+                        case DriveType.CDRom:
+                            icon = "drive_cd";
+                            break;
+                        case DriveType.Network:
+                            icon = "drive_network";
+                            break;
+                        default:
+                            icon = "drive";
+                            break;
+                    }
+                    var item = new FileSystemItem
+                        {
+                            Path = drive.Name,
+                            FullPath = drive.Name,
+                            Name = drive.Name.TrimEnd('\\'),
+                            Type = ItemType.Drive,
+                            Thumbnail = ApplicationExtensions.GetContentByteArray(string.Format("/Resources/{0}.png", icon))
+                        };
+                    return item;
+                }).ToList();
         }
 
         public List<FileSystemItem> GetList(string path = null)

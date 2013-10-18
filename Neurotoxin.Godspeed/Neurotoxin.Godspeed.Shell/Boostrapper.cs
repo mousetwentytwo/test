@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
 using System.Windows;
 using Microsoft.Practices.Composite.Modularity;
 using Microsoft.Practices.Composite.UnityExtensions;
@@ -11,9 +13,6 @@ using Neurotoxin.Godspeed.Shell.Views;
 
 namespace Neurotoxin.Godspeed.Shell
 {
-    /// <summary>
-    /// The bootstrapper of this Prism-based app.
-    /// </summary>
     public class Bootstrapper : UnityBootstrapper
     {
         protected override void ConfigureContainer()

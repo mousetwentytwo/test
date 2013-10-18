@@ -5,6 +5,7 @@
                     xmlns:views="clr-namespace:Neurotoxin.Godspeed.Shell.Views"
                     xmlns:e="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                     xmlns:commands="clr-namespace:Neurotoxin.Godspeed.Shell.Commands"
+                    Icon="/Resources/icon.ico"
                     Width="950" Height="600">
     <Window.Resources>
         <views:PaneTemplateSelector x:Key="TemplateSelector">

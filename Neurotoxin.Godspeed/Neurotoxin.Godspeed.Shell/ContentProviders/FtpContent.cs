@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Windows;
 using Limilabs.FTP.Client;
 using Microsoft.Practices.Composite.Events;
+using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Exceptions;
@@ -72,13 +73,15 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             {
                 var currentFolder = _ftpClient.GetCurrentFolder();
                 _ftpClient.ChangeFolder("/");
+
                 var result = _ftpClient.GetList().Select(di => new FileSystemItem
                     {
                         Name = di.Name,
                         Type = ItemType.Drive,
                         Date = di.ModifyDate,
                         Path = string.Format("/{0}/", di.Name),
-                        FullPath = string.Format("{0}://{1}/", _connection.Name, di.Name)
+                        FullPath = string.Format("{0}://{1}/", _connection.Name, di.Name),
+                        Thumbnail = ApplicationExtensions.GetContentByteArray("/Resources/drive.png")
                     }).ToList();
                 _ftpClient.ChangeFolder(currentFolder);
                 NotifyFtpOperationFinished();
