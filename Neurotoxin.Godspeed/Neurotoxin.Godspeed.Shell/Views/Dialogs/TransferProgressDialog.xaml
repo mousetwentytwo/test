@@ -1,4 +1,4 @@
-﻿<controls:BorderlessWindow x:Class="Neurotoxin.Godspeed.Shell.Views.Dialogs.TransferProgressDialog"
+﻿<controls:DialogBase x:Class="Neurotoxin.Godspeed.Shell.Views.Dialogs.TransferProgressDialog"
                            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                            xmlns:converters="clr-namespace:Neurotoxin.Godspeed.Shell.Converters"
@@ -7,9 +7,10 @@
                            Title="{Binding TransferProgressDialogMode}"
                            Width="400" Topmost="True" SizeToContent="Height" WindowStartupLocation="CenterOwner"
                            Style="{StaticResource Dialog}">
-    <controls:BorderlessWindow.Resources>
+    <controls:DialogBase.Resources>
         <converters:TransferProgressDialogModeConverter x:Key="TransferProgressDialogModeConverter"/>
-    </controls:BorderlessWindow.Resources>
+    </controls:DialogBase.Resources>
+    
     <Grid x:Name="LayoutRoot" Margin="10">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -47,4 +48,4 @@
         </StackPanel>
         <Button Grid.Row="4" Grid.ColumnSpan="2" HorizontalAlignment="Right" Width="75" Content="Cancel" Click="CancelButtonClick"/>
     </Grid>
-</controls:BorderlessWindow>
+</controls:DialogBase>

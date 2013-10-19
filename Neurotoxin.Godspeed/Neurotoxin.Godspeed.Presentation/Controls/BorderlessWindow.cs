@@ -10,7 +10,7 @@ namespace Neurotoxin.Godspeed.Presentation.Controls
     {
         static BorderlessWindow()
         {
-            //DefaultStyleKeyProperty.OverrideMetadata(typeof(BorderlessWindow), new FrameworkPropertyMetadata(typeof(BorderlessWindow)));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(BorderlessWindow), new FrameworkPropertyMetadata(typeof(BorderlessWindow)));
         }
     }
 }

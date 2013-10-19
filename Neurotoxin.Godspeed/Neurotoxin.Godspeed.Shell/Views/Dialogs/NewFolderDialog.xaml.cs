@@ -1,6 +1,4 @@
-﻿using System;
-using System.Windows;
-using System.Windows.Controls;
+﻿using System.Windows;
 
 namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
 {
@@ -10,18 +8,13 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
         {
             Owner = Application.Current.MainWindow;
             InitializeComponent();
+            Loaded += OnLoaded;
         }
 
-        private void OkButtonClick(object sender, RoutedEventArgs e)
+        private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            DialogResult = true;
-            Close();
+            FolderName.Focus();
         }
 
-        private void CancelButtonClick(object sender, RoutedEventArgs e)
-        {
-            DialogResult = false;
-            Close();
-        }
     }
 }

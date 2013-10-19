@@ -17,13 +17,18 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
             ConnectionImages = Enum.GetValues(typeof(ConnectionImage)).Cast<ConnectionImage>().ToArray();
             InitializeComponent();
             DataContext = viewModel;
+            Loaded += OnLoaded;
         }
 
-        private void OkButtonClick(object sender, RoutedEventArgs e)
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            ConnectionName.Focus();
+        }
+
+        protected override void OkButtonClick(object sender, RoutedEventArgs e)
         {
             if (HasError()) return;
-            DialogResult = true;
-            Close();
+            base.OkButtonClick(sender, e);
         }
 
         private bool HasError()
@@ -36,12 +41,6 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
                 if (Validation.GetHasError(control)) result = true;
             }
             return result;
-        }
-
-        private void CancelButtonClick(object sender, RoutedEventArgs e)
-        {
-            DialogResult = false;
-            Close();
         }
     }
 }

@@ -19,7 +19,7 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
             DataContext = viewModel;
         }
 
-        private void CancelButtonClick(object sender, RoutedEventArgs e)
+        protected override void CancelButtonClick(object sender, RoutedEventArgs e)
         {
             ViewModel.AbortTransfer();
         }

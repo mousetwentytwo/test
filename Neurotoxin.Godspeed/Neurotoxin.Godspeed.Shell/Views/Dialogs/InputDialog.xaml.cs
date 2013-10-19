@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 
 namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
 {
@@ -11,18 +12,12 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
             Title = title;
             Message.Text = message;
             Input.Text = defaultValue;
+            Loaded += OnLoaded;
         }
 
-        private void OkButtonClick(object sender, RoutedEventArgs e)
+        private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            DialogResult = true;
-            Close();
-        }
-
-        private void CancelButtonClick(object sender, RoutedEventArgs e)
-        {
-            DialogResult = false;
-            Close();
+            Input.Focus();
         }
     }
 }
