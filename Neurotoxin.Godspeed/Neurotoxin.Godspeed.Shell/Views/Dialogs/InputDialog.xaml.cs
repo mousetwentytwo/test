@@ -2,7 +2,7 @@
 
 namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
 {
-    public partial class InputDialog : Window
+    public partial class InputDialog
     {
         public InputDialog(string title, string message, string defaultValue)
         {

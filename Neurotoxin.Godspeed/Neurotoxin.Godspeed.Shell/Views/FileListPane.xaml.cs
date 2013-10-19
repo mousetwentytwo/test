@@ -3,7 +3,12 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
+using Microsoft.Practices.Composite.Events;
+using Microsoft.Practices.Unity;
 using Neurotoxin.Godspeed.Presentation.Extensions;
+using Neurotoxin.Godspeed.Presentation.Infrastructure;
+using Neurotoxin.Godspeed.Shell.Events;
 
 namespace Neurotoxin.Godspeed.Shell.Views
 {
@@ -14,10 +19,19 @@ namespace Neurotoxin.Godspeed.Shell.Views
         public FileListPane()
         {
             InitializeComponent();
+            var eventAggregator = UnityInstance.Container.Resolve<IEventAggregator>();
+            eventAggregator.GetEvent<ActivePaneChangedEvent>().Subscribe(ActivePaneChanged);
+
             Grid.ItemContainerGenerator.StatusChanged += ItemContainerGeneratorStatusChanged;
             Grid.Sorting += GridOnSorting;
             Grid.Loaded += GridOnLoaded;
             Grid.SelectionChanged += GridOnSelectionChanged;
+        }
+
+        private void ActivePaneChanged(ActivePaneChangedEventArgs e)
+        {
+            if (DataContext != e.ActivePane) return;
+            SetFocusToTheFirstCellOfCurrentRow();
         }
 
         private void GridOnLoaded(object sender, RoutedEventArgs routedEventArgs)
@@ -54,6 +68,14 @@ namespace Neurotoxin.Godspeed.Shell.Views
             var generator = (ItemContainerGenerator)sender;
             if (generator.Status != GeneratorStatus.ContainersGenerated) return;
             SetFocusToTheFirstCellOfCurrentRow();
+        }
+
+        private void TitleEditBox_Loaded(object sender, RoutedEventArgs e)
+        {
+            var box = (TextBox) sender;
+            box.SelectAll();
+            box.Focus();
+            box.ScrollToVerticalOffset(10);
         }
     }
 }

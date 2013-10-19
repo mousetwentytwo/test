@@ -24,7 +24,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
     public abstract class FileListPaneViewModelBase<T> : PaneViewModelBase, IFileListPaneViewModel where T : IFileManager
     {
-        private bool _isInEditMode;
         private string _sortMemberPath = "ComputedName";
         private ListSortDirection _listSortDirection = ListSortDirection.Ascending;
         private Queue<FileSystemItem> _queue;
@@ -40,6 +39,14 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             get { return _isBusy; }
             set { _isBusy = value; NotifyPropertyChanged(ISBUSY); }
+        }
+
+        private const string ISINEDITMODE = "IsInEditMode";
+        private bool _isInEditMode;
+        public bool IsInEditMode
+        {
+            get { return _isInEditMode; }
+            set { _isInEditMode = value; NotifyPropertyChanged(ISINEDITMODE); }
         }
 
         private const string PROGRESSMESSAGE = "ProgressMessage";
@@ -109,7 +116,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             get { return Items.Where(item => item.IsSelected); }
         }
 
-        private FileSystemItemViewModel _previouslyFocusedRow;
+        //private FileSystemItemViewModel _previouslyFocusedRow;
 
         private const string CURRENTROW = "CurrentRow";
         private FileSystemItemViewModel _currentRow;
@@ -148,7 +155,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private bool CanExecuteChangeDirectoryCommand(object cmdParam)
         {
-            if (_isInEditMode || IsBusy) return false;
+            if (IsInEditMode || IsBusy) return false;
 
             var mouseEvent = cmdParam as EventInformation<MouseEventArgs>;
             if (mouseEvent != null)
@@ -187,7 +194,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     return;
                 }
                 if (CurrentRow.IsUpDirectory)
-                    _previouslyFocusedRow = Stack.Pop();
+                    Stack.Pop();
                 else
                     Stack.Push(CurrentRow);
                 NotifyPropertyChanged(CURRENTFOLDER);
@@ -538,7 +545,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private bool CanExecuteRenameCommand(object cmdParam)
         {
-            return CurrentRow != null;
+            return CurrentRow != null && _titleRecognizer.IsCached(CurrentRow.Model);
         }
 
         private void ExecuteRenameCommand(object cmdParam)
@@ -546,15 +553,21 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             var grid = cmdParam as DataGrid;
             var row = grid != null ? grid.FindRowByValue(CurrentRow) : cmdParam as DataGridRow;
             if (row == null) return;
-            row.FirstCell().IsEditing = true;
-            _isInEditMode = true;
+            var cell = row.FirstCell();
+            grid.CellEditEnding += GridOnCellEditEnding;
+            cell.IsEditing = true;
+            IsInEditMode = true;
             ChangeDirectoryCommand.RaiseCanExecuteChanged();
             CurrentRow.PropertyChanged += EndRename;
         }
 
+        private void GridOnCellEditEnding(object sender, DataGridCellEditEndingEventArgs dataGridCellEditEndingEventArgs)
+        {
+            IsInEditMode = false;
+        }
+
         private void EndRename(object sender, PropertyChangedEventArgs e)
         {
-            _isInEditMode = false;
             ChangeDirectoryCommand.RaiseCanExecuteChanged();
             _titleRecognizer.UpdateCache(CurrentRow.Model);
             CurrentRow.PropertyChanged -= EndRename;
@@ -592,24 +605,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 CurrentRow = Items.FirstOrDefault(item => item.Path == CurrentRow.Path);
                 return;
             }
-            if (_previouslyFocusedRow != null)
-            {
-                var previous = Items.FirstOrDefault(item => item.Path == _previouslyFocusedRow.Path);
-                if (previous != null)
-                {
-                    CurrentRow = previous;
-                    return;
-                }
-            }
             CurrentRow = Items.FirstOrDefault();
-        }
-
-        protected override void OnActivePaneChanged(ActivePaneChangedEventArgs e)
-        {
-            base.OnActivePaneChanged(e);
-            if (e.ActivePane == this) return;
-            _previouslyFocusedRow = CurrentRow;
-            CurrentRow = null;
         }
 
         public bool Delete(FileSystemItemViewModel item)

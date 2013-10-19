@@ -4,13 +4,14 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using Neurotoxin.Godspeed.Presentation.Controls;
 using Neurotoxin.Godspeed.Shell.Commands;
 using Neurotoxin.Godspeed.Shell.ViewModels;
 using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 
 namespace Neurotoxin.Godspeed.Shell.Views
 {
-    public partial class FileManagerView : Window
+    public partial class FileManagerView
     {
         private TransferProgressDialog _transferProgressDialog;
 
@@ -26,6 +27,16 @@ namespace Neurotoxin.Godspeed.Shell.Views
             viewModel.TransferStarted += ViewModelOnTransferStarted;
             viewModel.TransferFinished += ViewModelOnTransferFinished;
             CommandBindings.Add(new CommandBinding(FileManagerCommands.OpenDriveDropdownCommand, ExecutedOpenDriveDropdownCommand));
+
+            LayoutRoot.PreviewKeyDown += LayoutRootOnPreviewKeyDown;
+        }
+
+        //HACK: Temporary solution. KeyBinding doesn't work with Key.Delete (requires investigation)
+        private void LayoutRootOnPreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key != Key.Delete) return;
+            e.Handled = true;
+            ((FileManagerViewModel) DataContext).DeleteCommand.Execute();
         }
 
         private void ExecutedOpenDriveDropdownCommand(object sender, ExecutedRoutedEventArgs e)

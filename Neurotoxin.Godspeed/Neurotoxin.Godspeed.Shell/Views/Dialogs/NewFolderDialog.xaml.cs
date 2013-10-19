@@ -4,7 +4,7 @@ using System.Windows.Controls;
 
 namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
 {
-    public partial class NewFolderDialog : Window
+    public partial class NewFolderDialog
     {
         public NewFolderDialog()
         {

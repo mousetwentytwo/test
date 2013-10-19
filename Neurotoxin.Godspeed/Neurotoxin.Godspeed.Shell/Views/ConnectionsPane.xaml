@@ -6,9 +6,16 @@
                     xmlns:converters="clr-namespace:Neurotoxin.Godspeed.Shell.Converters"
                     MinHeight="300">
     <UserControl.Resources>
-        <converters:PaneHeaderBackgroundConverter x:Key="PaneHeaderBackgroundConverter"
-                                                  ActivePaneBrush="{StaticResource DefaultedBorderBrush}"
-                                                  InactivePaneBrush="{StaticResource NormalBorderBrush}"/>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Themes/WhistlerBlue.xaml"/>
+                <ResourceDictionary>
+                    <converters:PaneHeaderBackgroundConverter x:Key="PaneHeaderBackgroundConverter"
+                                                              ActivePaneBrush="{StaticResource DefaultedBorderBrush}"
+                                                              InactivePaneBrush="{StaticResource NormalBorderBrush}"/>
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </UserControl.Resources>
     
     <e:Interaction.Triggers>

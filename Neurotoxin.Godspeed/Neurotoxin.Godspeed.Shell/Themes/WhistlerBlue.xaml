@@ -1136,7 +1136,7 @@
             <Setter Property="ScrollViewer.CanContentScroll" Value="True"/>
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="BorderBrush" Value="{StaticResource btnPressStroke2}"/>
+            <Setter Property="BorderBrush" Value="#FF9B9999"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="1"/>
             <Setter Property="Foreground" Value="{StaticResource OutsideFontColor}"/>
@@ -1144,11 +1144,9 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ListBox}">
                         <Grid>
-                            <Border BorderThickness="{TemplateBinding BorderThickness}" Background="#FFFFFFFF" BorderBrush="{TemplateBinding BorderBrush}" CornerRadius="2">
-                                <ScrollViewer Margin="1"   Focusable="false" Background="{TemplateBinding Background}">
-
-                                    <StackPanel Margin="2" IsItemsHost="true"/>
-
+                            <Border BorderThickness="{TemplateBinding BorderThickness}" Background="#FFFFFFFF" BorderBrush="{TemplateBinding BorderBrush}">
+                                <ScrollViewer Margin="1" Focusable="false" Background="{TemplateBinding Background}">
+                                    <ItemsPresenter Margin="2" />
                                 </ScrollViewer>
                             </Border>
                         </Grid>

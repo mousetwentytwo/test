@@ -1,9 +1,10 @@
-﻿<Window x:Class="Neurotoxin.Godspeed.Shell.Views.Dialogs.ReadErrorDialog"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Width="450" Topmost="True" SizeToContent="Height" WindowStartupLocation="CenterOwner" Icon="/Resources/icon.ico">
-    
-    <Grid x:Name="LayoutRoot" Margin="5">
+﻿<controls:BorderlessWindow x:Class="Neurotoxin.Godspeed.Shell.Views.Dialogs.ReadErrorDialog"
+                           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                           xmlns:controls="clr-namespace:Neurotoxin.Godspeed.Presentation.Controls;assembly=Neurotoxin.Godspeed.Presentation"
+                           Width="450" Topmost="True" SizeToContent="Height" WindowStartupLocation="CenterOwner"
+                           Style="{StaticResource Dialog}">
+    <Grid x:Name="LayoutRoot">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
@@ -27,4 +28,4 @@
         <Button Grid.Column="3" Grid.Row="2" Content="Cancel" Margin="5" x:Name="Cancel" Click="ButtonClick"/>
 
     </Grid>
-</Window>
+</controls:BorderlessWindow>

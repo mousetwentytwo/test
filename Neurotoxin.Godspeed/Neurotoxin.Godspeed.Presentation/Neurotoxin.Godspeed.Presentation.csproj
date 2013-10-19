@@ -57,6 +57,10 @@
   <ItemGroup>
     <Compile Include="Attributes\ModelPropertyAttribute.cs" />
     <Compile Include="Controls\BindableSelectedItemBehavior.cs" />
+    <Compile Include="Controls\BorderlessWindow.cs" />
+    <Compile Include="Controls\CaptionButtons.xaml.cs">
+      <DependentUpon>CaptionButtons.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ProgressIndicator.xaml.cs">
       <DependentUpon>ProgressIndicator.xaml</DependentUpon>
     </Compile>
@@ -126,6 +130,10 @@
     <Compile Include="ViewModels\TreeView.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Controls\CaptionButtons.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\ProgressIndicator.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -142,10 +150,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <Page Include="Themes\generic.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

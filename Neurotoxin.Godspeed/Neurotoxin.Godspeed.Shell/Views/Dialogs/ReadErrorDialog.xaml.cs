@@ -7,7 +7,7 @@ using Neurotoxin.Godspeed.Shell.Models;
 
 namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
 {
-    public partial class ReadErrorDialog : Window, ITransferErrorDialog
+    public partial class ReadErrorDialog : ITransferErrorDialog
     {
         public TransferErrorDialogResult Result { get; private set; }
 

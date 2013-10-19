@@ -1,32 +1,40 @@
-﻿<Window x:Class="Neurotoxin.Godspeed.Shell.Views.FileManagerView"
-                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:inf="clr-namespace:Neurotoxin.Godspeed.Presentation.Infrastructure;assembly=Neurotoxin.Godspeed.Presentation"
-                    xmlns:views="clr-namespace:Neurotoxin.Godspeed.Shell.Views"
-                    xmlns:e="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-                    xmlns:commands="clr-namespace:Neurotoxin.Godspeed.Shell.Commands"
-                    Icon="/Resources/icon.ico"
-                    Width="950" Height="600">
-    <Window.Resources>
-        <views:PaneTemplateSelector x:Key="TemplateSelector">
-            <views:PaneTemplateSelector.DefaultTemplate>
-                <DataTemplate>
-                    <Grid/>
-                </DataTemplate>
-            </views:PaneTemplateSelector.DefaultTemplate>
-            <views:PaneTemplateSelector.FileListTemplate>
-                <DataTemplate>
-                    <views:FileListPane/>
-                </DataTemplate>
-            </views:PaneTemplateSelector.FileListTemplate>
-            <views:PaneTemplateSelector.ConnectionsTemplate>
-                <DataTemplate>
-                    <views:ConnectionsPane/>
-                </DataTemplate>
-            </views:PaneTemplateSelector.ConnectionsTemplate>
-        </views:PaneTemplateSelector>
-    </Window.Resources>
-    <Grid x:Name="LayoutRoot" Background="{StaticResource ControlBackgroundBrush}">
+﻿<controls:BorderlessWindow x:Class="Neurotoxin.Godspeed.Shell.Views.FileManagerView"
+                           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                           xmlns:inf="clr-namespace:Neurotoxin.Godspeed.Presentation.Infrastructure;assembly=Neurotoxin.Godspeed.Presentation"
+                           xmlns:controls="clr-namespace:Neurotoxin.Godspeed.Presentation.Controls;assembly=Neurotoxin.Godspeed.Presentation"
+                           xmlns:views="clr-namespace:Neurotoxin.Godspeed.Shell.Views"
+                           xmlns:e="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+                           xmlns:commands="clr-namespace:Neurotoxin.Godspeed.Shell.Commands"
+                           Style="{StaticResource Window}" Width="950" Height="600">
+    <controls:BorderlessWindow.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Themes/ExpressionLight.xaml"/>
+                <ResourceDictionary>
+                    <views:PaneTemplateSelector x:Key="TemplateSelector">
+                        <views:PaneTemplateSelector.DefaultTemplate>
+                            <DataTemplate>
+                                <Grid/>
+                            </DataTemplate>
+                        </views:PaneTemplateSelector.DefaultTemplate>
+                        <views:PaneTemplateSelector.FileListTemplate>
+                            <DataTemplate>
+                                <views:FileListPane/>
+                            </DataTemplate>
+                        </views:PaneTemplateSelector.FileListTemplate>
+                        <views:PaneTemplateSelector.ConnectionsTemplate>
+                            <DataTemplate>
+                                <views:ConnectionsPane/>
+                            </DataTemplate>
+                        </views:PaneTemplateSelector.ConnectionsTemplate>
+                    </views:PaneTemplateSelector>
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </controls:BorderlessWindow.Resources>
+
+    <Grid x:Name="LayoutRoot">
         <Grid Margin="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
@@ -69,9 +77,8 @@
             <KeyBinding Command="{Binding MoveCommand}" Key="F6"/>
             <KeyBinding Command="{Binding NewFolderCommand}" Key="F7"/>
             <KeyBinding Command="{Binding DeleteCommand}" Key="F8"/>
-            <KeyBinding Command="{Binding DeleteCommand}" Key="Delete"/>
             <KeyBinding Command="{x:Static commands:FileManagerCommands.OpenDriveDropdownCommand}" CommandParameter="{Binding ElementName=LeftPane}" Key="F1" Modifiers="Alt"/>
             <KeyBinding Command="{x:Static commands:FileManagerCommands.OpenDriveDropdownCommand}" CommandParameter="{Binding ElementName=RightPane}" Key="F2" Modifiers="Alt"/>
         </Grid.InputBindings>
     </Grid>
-</Window>
+</controls:BorderlessWindow>

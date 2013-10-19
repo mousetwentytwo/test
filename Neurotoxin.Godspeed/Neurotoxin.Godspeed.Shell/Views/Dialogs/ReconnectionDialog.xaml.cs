@@ -4,7 +4,7 @@ using System.Windows.Controls;
 
 namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
 {
-    public partial class ReconnectionDialog : Window
+    public partial class ReconnectionDialog
     {
         public ReconnectionDialog(Exception exception)
         {

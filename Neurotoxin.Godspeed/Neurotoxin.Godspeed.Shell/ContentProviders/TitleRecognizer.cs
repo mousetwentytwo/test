@@ -13,6 +13,7 @@ using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
 using Neurotoxin.Godspeed.Presentation.Extensions;
+using Neurotoxin.Godspeed.Shell.ViewModels;
 
 namespace Neurotoxin.Godspeed.Shell.ContentProviders
 {
@@ -75,9 +76,9 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         public void RecognizeTitle(FileSystemItem item, bool overwrite = false)
         {
             if (item.TitleType == TitleType.SystemDir) return;
-            if (!overwrite && MergeWithCachedEntry(item)) return;
-
             var cacheItem = GetCacheItem(item);
+            if (!overwrite && MergeWithCachedEntry(item, cacheItem)) return;
+
             var cacheKey = GetCacheKey(cacheItem);
             if (overwrite) _cacheManager.ClearCache(cacheKey);
 
@@ -253,6 +254,13 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             return cacheEntry != null && !string.IsNullOrEmpty(cacheEntry.TempFilePath)
                 ? File.ReadAllBytes(cacheEntry.TempFilePath) 
                 : _fileManager.ReadFileContent(item.Path);
+        }
+
+        public bool IsCached(FileSystemItem item)
+        {
+            var cacheItem = GetCacheItem(item);
+            var cacheKey = GetCacheKey(cacheItem);
+            return cacheKey != null && _cacheManager.HasEntry(cacheKey);
         }
     }
 }

@@ -1,7 +1,97 @@
 ﻿<Application x:Class="Neurotoxin.Godspeed.Shell.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:Neurotoxin.Godspeed.Presentation.Controls;assembly=Neurotoxin.Godspeed.Presentation"
+             xmlns:shell="clr-namespace:Microsoft.Windows.Shell;assembly=Microsoft.Windows.Shell">
     <Application.Resources>
-        <ResourceDictionary Source="/Themes/ExpressionLight.xaml"/>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Themes/WhistlerBlue.xaml"/>
+                <ResourceDictionary>
+
+                    <SolidColorBrush x:Key="ControlBackgroundBrush" Color="#FFD6D6D6" />
+                    <SolidColorBrush x:Key="NormalBrush" Color="#FF808080" />
+                    <SolidColorBrush x:Key="NormalBorderBrush" Color="#FF9B9999" />
+                    <SolidColorBrush x:Key="DefaultedBorderBrush" Color="#FF9BB1C5" />
+
+                    <!-- Window -->
+                    <Style TargetType="{x:Type controls:BorderlessWindow}" x:Key="Window">
+                        <Setter Property="shell:WindowChrome.WindowChrome">
+                            <Setter.Value>
+                                <shell:WindowChrome ResizeBorderThickness="6" CaptionHeight="24" CornerRadius="0" GlassFrameThickness="0,0,0,1"/>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type controls:BorderlessWindow}">
+                                    <Border Background="{StaticResource ControlBackgroundBrush}">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="24" />
+                                                <RowDefinition Height="*"/>
+                                            </Grid.RowDefinitions>
+                                            
+                                            <Image Source="/Resources/icon.ico" Width="16" Height="16" Margin="7,3,5,3" DockPanel.Dock="Left"/>
+                                            <TextBlock Text="{TemplateBinding Title}" Grid.Column="1" VerticalAlignment="Center" Foreground="White" FontWeight="Bold"/>
+                                            <TextBlock Text="{TemplateBinding Title}" Grid.Column="1" VerticalAlignment="Center" Margin="-1,-1,1,1" Foreground="{StaticResource NormalBrush}" FontWeight="Bold"/>
+
+                                            <controls:CaptionButtons Margin="0,0,5,0" Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right" Type="Full"
+                                                                     Foreground="{DynamicResource CaptionButtonColor}" FontSize="14" MarginButton="0,0,5,0"
+                                                                     VerticalAlignment="Center" shell:WindowChrome.IsHitTestVisibleInChrome="True"/>
+
+                                            <ContentPresenter Margin="5" Grid.Row="1" Grid.ColumnSpan="3" Content="{TemplateBinding Content}"/>
+                                        </Grid>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+
+                    <!-- Dialog -->
+                    <!--<Style TargetType="{x:Type controls:BorderlessWindow}" x:Key="Dialog">
+                        <Setter Property="shell:WindowChrome.WindowChrome">
+                            <Setter.Value>
+                                <shell:WindowChrome ResizeBorderThickness="6" CaptionHeight="24" CornerRadius="0" GlassFrameThickness="0,0,0,1"/>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type controls:BorderlessWindow}">
+                                    <Border Background="{StaticResource ControlBackgroundBrush}">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="24" />
+                                                <RowDefinition Height="*"/>
+                                            </Grid.RowDefinitions>
+
+                                            <Image Source="/Resources/icon.ico" Width="16" Height="16" Margin="7,3,5,3" DockPanel.Dock="Left"/>
+                                            <TextBlock Text="{TemplateBinding Title}" Grid.Column="1" VerticalAlignment="Center" Foreground="White" FontWeight="Bold"/>
+                                            <TextBlock Text="{TemplateBinding Title}" Grid.Column="1" VerticalAlignment="Center" Margin="-1,-1,1,1" Foreground="{StaticResource NormalBrush}" FontWeight="Bold"/>
+
+                                            <controls:CaptionButtons Margin="0,0,5,0" Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right" Type="Close"
+                                                                     Foreground="{DynamicResource CaptionButtonColor}" FontSize="14" MarginButton="0,0,5,0"
+                                                                     VerticalAlignment="Center" shell:WindowChrome.IsHitTestVisibleInChrome="True"/>
+
+                                            <ContentPresenter Margin="5" Grid.Row="1" Grid.ColumnSpan="3" Content="{TemplateBinding Content}"/>
+                                        </Grid>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>-->
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>        
+        
     </Application.Resources>
 </Application>

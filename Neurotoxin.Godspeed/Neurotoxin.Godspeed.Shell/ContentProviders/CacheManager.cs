@@ -12,9 +12,9 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
     {
         private readonly EsentPersistentDictionary _cacheStore = EsentPersistentDictionary.Instance;
 
-        public bool HasEntry(string key, long? size, DateTime date)
+        public bool HasEntry(string key)
         {
-            return GetEntry(key, size, date) != null;
+            return GetEntry(key) != null;
         }
 
         public CacheEntry<FileSystemItem> GetEntry(string key, long? size = null, DateTime? date = null)

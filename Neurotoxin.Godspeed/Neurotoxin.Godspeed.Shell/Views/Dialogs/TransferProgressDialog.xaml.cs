@@ -3,7 +3,7 @@ using Neurotoxin.Godspeed.Shell.ViewModels;
 
 namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
 {
-    public partial class TransferProgressDialog : Window
+    public partial class TransferProgressDialog
     {
         public const string BytesFormat = "{0:#,0}";
 

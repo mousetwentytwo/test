@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
 {
-    public partial class NewConnectionDialog : Window
+    public partial class NewConnectionDialog
     {
         public ConnectionImage[] ConnectionImages { get; private set; }
 

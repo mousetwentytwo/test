@@ -11,7 +11,7 @@ using Neurotoxin.Godspeed.Shell.ViewModels;
 
 namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
 {
-    public partial class WriteErrorDialog : Window, ITransferErrorDialog
+    public partial class WriteErrorDialog : ITransferErrorDialog
     {
         private readonly TransferException _exception;
         private readonly IEventAggregator _eventAggregator;
