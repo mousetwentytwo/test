@@ -95,7 +95,8 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 if (path != null) _ftpClient.ChangeFolder(path);
                 var currentPath = _ftpClient.GetCurrentFolder();
 
-                var result = _ftpClient.GetList().Select(item => GetFileInfo(item, string.Format("{0}/{1}{2}", currentPath, item.Name, item.IsFolder ? "/" : string.Empty))).ToList();
+                var items = _ftpClient.GetList();
+                var result = items.Select(item => GetFileInfo(item, string.Format("{0}/{1}{2}", currentPath, item.Name, item.IsFolder ? "/" : string.Empty))).ToList();
                 NotifyFtpOperationFinished();
                 return result;
             }

@@ -107,7 +107,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public FileSystemItemViewModel CurrentRow
         {
             get { return _currentRow; }
-            set { _currentRow = value; NotifyPropertyChanged(CURRENTROW); RaiseCanExecuteChanges(); }
+            set 
+            {
+                if (_currentRow == value) return;
+                _currentRow = value; 
+                NotifyPropertyChanged(CURRENTROW);
+            }
         }
 
         private const string SIZEINFO = "SizeInfo";
@@ -189,9 +194,13 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             WorkerThread.Run(() => ChangeDirectory(), ChangeDirectoryCallback, AsyncErrorCallback);
         }
 
+        private List<Tuple<DateTime, string>> _invokeLog = new List<Tuple<DateTime, string>>();
+
         private List<FileSystemItem> ChangeDirectory(string selectedPath = null)
         {
             if (selectedPath == null) selectedPath = CurrentFolder.Path;
+            _invokeLog.Add(new Tuple<DateTime, string>(DateTime.Now, selectedPath));
+
             var list = FileManager.GetList(selectedPath);
             list.ForEach(item => _titleRecognizer.RecognizeType(item));
             return list;
@@ -529,7 +538,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private bool CanExecuteRenameCommand(object cmdParam)
         {
-            return CurrentRow != null && _titleRecognizer.IsCached(CurrentRow.Model);
+            return CurrentRow != null && CurrentRow.IsCached;
         }
 
         private void ExecuteRenameCommand(object cmdParam)

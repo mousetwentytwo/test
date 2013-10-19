@@ -9,23 +9,20 @@ using Neurotoxin.Godspeed.Shell.Exceptions;
 using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
-using Neurotoxin.Godspeed.Shell.Interfaces;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
-    public class FtpContentViewModel : FileListPaneViewModelBase<FtpContent>, IDisposablePane
+    public class FtpContentViewModel : FileListPaneViewModelBase<FtpContent>
     {
         private const string RenameFromPattern = @"([\/]){0}$";
         private const string RenameToPattern = @"$1{0}";
         private readonly Dictionary<string, string> _driveLabelCache = new Dictionary<string, string>();
 
-        #region CloseCommand
+        #region DisconnectCommand
 
-        public string CloseButtonText { get; private set; }
+        public DelegateCommand<EventInformation<EventArgs>> DisconnectCommand { get; private set; }
 
-        public DelegateCommand<EventInformation<EventArgs>> CloseCommand { get; private set; }
-
-        private void ExecuteCloseCommand(EventInformation<EventArgs> cmdParam)
+        private void ExecuteDisconnectCommand(EventInformation<EventArgs> cmdParam)
         {
             FileManager.Disconnect();
             //TODO: via event aggregator
@@ -36,8 +33,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public FtpContentViewModel(FileManagerViewModel parent) : base(parent)
         {
-            CloseButtonText = "Disconnect";
-            CloseCommand = new DelegateCommand<EventInformation<EventArgs>>(ExecuteCloseCommand);
+            DisconnectCommand = new DelegateCommand<EventInformation<EventArgs>>(ExecuteDisconnectCommand);
         }
 
         public override void LoadDataAsync(LoadCommand cmd, object cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase, Exception> error = null)

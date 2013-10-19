@@ -120,6 +120,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             set { if (value) Title = UPDIRECTORY; }
         }
 
+        public bool IsCached
+        {
+            get { return _model.IsCached; }
+        }
+
         public FileSystemItemViewModel(FileSystemItem model)
         {
             _model = model;

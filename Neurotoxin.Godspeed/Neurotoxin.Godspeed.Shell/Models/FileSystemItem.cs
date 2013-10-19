@@ -19,6 +19,8 @@ namespace Neurotoxin.Godspeed.Shell.Models
         public long? Size;
         public DateTime Date;
 
+        public bool IsCached;
+
         public FileSystemItem Clone()
         {
             return new FileSystemItem

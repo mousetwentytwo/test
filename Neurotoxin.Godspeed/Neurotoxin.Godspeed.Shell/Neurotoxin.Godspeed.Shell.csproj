@@ -123,7 +123,6 @@
     <Compile Include="Events\TransferStartedEvent.cs" />
     <Compile Include="Events\ViewModelGeneratedEvent.cs" />
     <Compile Include="Exceptions\TransferException.cs" />
-    <Compile Include="Interfaces\IDisposablePane.cs" />
     <Compile Include="Interfaces\IFileListPaneViewModel.cs" />
     <Compile Include="Interfaces\IFileManager.cs" />
     <Compile Include="Interfaces\IPaneViewModel.cs" />
@@ -186,7 +185,8 @@
     <Compile Include="Views\FileManagerView.xaml.cs">
       <DependentUpon>FileManagerView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PaneTemplateSelector.cs" />
+    <Compile Include="Views\TemplateSelectors\CloseButtonsTemplateSelector.cs" />
+    <Compile Include="Views\TemplateSelectors\PaneTemplateSelector.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>

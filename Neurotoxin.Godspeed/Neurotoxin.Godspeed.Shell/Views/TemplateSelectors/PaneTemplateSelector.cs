@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.ViewModels;
 
-namespace Neurotoxin.Godspeed.Shell.Views
+namespace Neurotoxin.Godspeed.Shell.Views.TemplateSelectors
 {
     public class PaneTemplateSelector : DataTemplateSelector
     {

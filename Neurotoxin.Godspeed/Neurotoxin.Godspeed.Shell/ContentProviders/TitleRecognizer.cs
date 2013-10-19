@@ -64,10 +64,14 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             var cachedItem = _cacheManager.GetEntry(cacheKey, cacheItem.Size, cacheItem.Date);
             if (cachedItem != null)
             {
-                item.Title = cachedItem.Content.Title;
-                item.TitleType = cachedItem.Content.TitleType;
-                item.ContentType = cachedItem.Content.ContentType;
-                item.Thumbnail = cachedItem.Content.Thumbnail;
+                if (cachedItem.Content != null)
+                {
+                    item.Title = cachedItem.Content.Title;
+                    item.TitleType = cachedItem.Content.TitleType;
+                    item.ContentType = cachedItem.Content.ContentType;
+                    item.Thumbnail = cachedItem.Content.Thumbnail;
+                }
+                item.IsCached = true;
                 return true;
             }
             return false;
@@ -85,14 +89,16 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             switch (item.TitleType)
             {
                 case TitleType.Profile:
-                    if (GetProfileData(item, cacheItem.Path))
-                        _cacheManager.SaveEntry(cacheKey, item, DateTime.Now.AddDays(14), cacheItem.Date, cacheItem.Size, _fileManager.TempFilePath);
+                    GetProfileData(item, cacheItem.Path);
+                    _cacheManager.SaveEntry(cacheKey, item, DateTime.Now.AddDays(14), cacheItem.Date, cacheItem.Size, _fileManager.TempFilePath);
+                    item.IsCached = true;
                     break;
                 case TitleType.Game:
                     if (GetGameData(item) || GetGameDataFromJqe360(item))
                         _cacheManager.SaveEntry(cacheKey, item);
                     else
                         _cacheManager.SaveEntry(cacheKey, null, DateTime.Now.AddDays(7));
+                    item.IsCached = true;
                     break;
                 case TitleType.Content:
                     var content = BitConverter.ToInt32(item.Name.FromHex(), 0);
@@ -107,6 +113,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                         //TODO: log unknown entry
                     }
                     _cacheManager.SaveEntry(cacheKey, item);
+                    item.IsCached = true;
                     break;
                 case TitleType.Undefined:
                     if (item.Type == ItemType.File)
@@ -124,6 +131,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                         {
                             _cacheManager.SaveEntry(cacheKey, null);
                         }
+                        item.IsCached = true;
                     }
                     break;
             }
@@ -255,11 +263,11 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 : _fileManager.ReadFileContent(item.Path);
         }
 
-        public bool IsCached(FileSystemItem item)
-        {
-            var cacheItem = GetCacheItem(item);
-            var cacheKey = GetCacheKey(cacheItem);
-            return cacheKey != null && _cacheManager.HasEntry(cacheKey);
-        }
+        //public bool IsCached(FileSystemItem item)
+        //{
+        //    var cacheItem = GetCacheItem(item);
+        //    var cacheKey = GetCacheKey(cacheItem);
+        //    return cacheKey != null && _cacheManager.HasEntry(cacheKey);
+        //}
     }
 }

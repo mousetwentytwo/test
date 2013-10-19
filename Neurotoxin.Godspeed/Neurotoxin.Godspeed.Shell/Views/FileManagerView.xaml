@@ -6,29 +6,30 @@
                            xmlns:views="clr-namespace:Neurotoxin.Godspeed.Shell.Views"
                            xmlns:e="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                            xmlns:commands="clr-namespace:Neurotoxin.Godspeed.Shell.Commands"
+                           xmlns:ts="clr-namespace:Neurotoxin.Godspeed.Shell.Views.TemplateSelectors"
                            Style="{StaticResource Window}" Width="950" Height="600">
     <controls:BorderlessWindow.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Themes/ExpressionLight.xaml"/>
                 <ResourceDictionary>
-                    <views:PaneTemplateSelector x:Key="TemplateSelector">
-                        <views:PaneTemplateSelector.DefaultTemplate>
+                    <ts:PaneTemplateSelector x:Key="TemplateSelector">
+                        <ts:PaneTemplateSelector.DefaultTemplate>
                             <DataTemplate>
                                 <Grid/>
                             </DataTemplate>
-                        </views:PaneTemplateSelector.DefaultTemplate>
-                        <views:PaneTemplateSelector.FileListTemplate>
+                        </ts:PaneTemplateSelector.DefaultTemplate>
+                        <ts:PaneTemplateSelector.FileListTemplate>
                             <DataTemplate>
                                 <views:FileListPane/>
                             </DataTemplate>
-                        </views:PaneTemplateSelector.FileListTemplate>
-                        <views:PaneTemplateSelector.ConnectionsTemplate>
+                        </ts:PaneTemplateSelector.FileListTemplate>
+                        <ts:PaneTemplateSelector.ConnectionsTemplate>
                             <DataTemplate>
                                 <views:ConnectionsPane/>
                             </DataTemplate>
-                        </views:PaneTemplateSelector.ConnectionsTemplate>
-                    </views:PaneTemplateSelector>
+                        </ts:PaneTemplateSelector.ConnectionsTemplate>
+                    </ts:PaneTemplateSelector>
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
