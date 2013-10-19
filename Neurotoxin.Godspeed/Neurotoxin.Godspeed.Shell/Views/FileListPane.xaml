@@ -3,34 +3,14 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:e="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                     xmlns:inf="clr-namespace:Neurotoxin.Godspeed.Presentation.Infrastructure;assembly=Neurotoxin.Godspeed.Presentation"
-                    xmlns:converters="clr-namespace:Neurotoxin.Godspeed.Shell.Converters"
                     xmlns:views="clr-namespace:Neurotoxin.Godspeed.Shell.Views"
-                    xmlns:co="clr-namespace:Neurotoxin.Godspeed.Presentation.Converters;assembly=Neurotoxin.Godspeed.Presentation"
-                    xmlns:constants="clr-namespace:Neurotoxin.Godspeed.Shell.Constants"
-                    xmlns:system="clr-namespace:System;assembly=mscorlib"
-                    Background="Transparent">
+             xmlns:vc="clr-namespace:Neurotoxin.Godspeed.Shell.Views.Controls" Background="Transparent">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Themes/WhistlerBlue.xaml"/>                
                 <ResourceDictionary>
-                    <co:BoolToVisibilityConverter x:Key="BoolToVis"/>
-                    <co:NotNullOrEmptyConverter x:Key="NotNullOrEmptyConverter"/>
-                    <converters:SizeConverter x:Key="SizeConverter"/>
-                    <converters:SizeAlignmentConverter x:Key="SizeAlignmentConverter"/>
-                    <converters:TitleConverter x:Key="TitleConverter"/>
-                    <converters:NameConverter x:Key="NameConverter"/>
-                    <converters:PaneHeaderBackgroundConverter x:Key="PaneHeaderBackgroundConverter"
-                                                  ActivePaneBrush="{StaticResource DefaultedBorderBrush}"
-                                                  InactivePaneBrush="{StaticResource NormalBorderBrush}"/>
-
                     <inf:BindingProxy x:Key="ViewModel" Data="{Binding}"/>
-                    <constants:ToggleSelectionMode x:Key="Insert">Insert</constants:ToggleSelectionMode>
-                    <constants:ToggleSelectionMode x:Key="Space">Space</constants:ToggleSelectionMode>
-                    <constants:ToggleSelectionMode x:Key="ShiftDown">ShiftDown</constants:ToggleSelectionMode>
-                    <constants:ToggleSelectionMode x:Key="ShiftUp">ShiftUp</constants:ToggleSelectionMode>
-                    <system:Boolean x:Key="False">False</system:Boolean>
-                    <system:Boolean x:Key="True">True</system:Boolean>
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
@@ -73,8 +53,8 @@
             <TextBlock Grid.Column="1" Text="{Binding DriveLabel}" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,5,0"/>
             <TextBlock Grid.Column="2" Text="{Binding FreeSpace}" VerticalAlignment="Center" 
                        Visibility="{Binding FreeSpace, Converter={StaticResource NotNullOrEmptyConverter}, FallbackValue=Collapsed}"/>
-            <Button Grid.Column="2" HorizontalAlignment="Right" Content="Disconnect" Command="{Binding DisconnectCommand}" Margin="0,0,3,0" Width="75"
-                    Visibility="{Binding DisconnectCommand, Converter={StaticResource NotNullOrEmptyConverter}, FallbackValue=Collapsed}"/>
+            <Button Grid.Column="2" HorizontalAlignment="Right" Content="{Binding CloseButtonText}" Command="{Binding CloseCommand}" Margin="0,0,3,0" Width="75"
+                    Visibility="{Binding CloseCommand, Converter={StaticResource NotNullOrEmptyConverter}, FallbackValue=Collapsed}"/>
         </Grid>
 
         <Border Grid.Row="1" Background="{Binding Path=IsActive, Converter={StaticResource PaneHeaderBackgroundConverter}}"
@@ -288,13 +268,9 @@
                 <KeyBinding Command="{Binding RenameCommand}" CommandParameter="{Binding ElementName=Grid}" Key="F6" Modifiers="Shift"/>
             </DataGrid.InputBindings>
         </DataGrid>
-        
-        <Border Grid.Row="2" Background="#f4f4f4" BorderBrush="LightGray" BorderThickness="0,1,1,0" 
-                CornerRadius="0,3,0,0" Height="Auto" Width="Auto" HorizontalAlignment="Left" VerticalAlignment="Bottom"
-                Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}" Margin="1,0,0,1">
-            <TextBlock Text="{Binding ProgressMessage}" Foreground="#a0a0a0" Margin="2,1,3,1"/>
-        </Border>
 
+        <vc:ProgressNotificationBar Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
+        
         <TextBlock Text="{Binding SizeInfo}" Padding="2" Grid.Row="3"/>
     </Grid>
 </UserControl>

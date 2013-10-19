@@ -28,6 +28,22 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
         }
 
+        private const string ISBUSY = "IsBusy";
+        private bool _isBusy;
+        public bool IsBusy
+        {
+            get { return _isBusy; }
+            set { _isBusy = value; NotifyPropertyChanged(ISBUSY); }
+        }
+
+        private const string PROGRESSMESSAGE = "ProgressMessage";
+        private string _progressMessage;
+        public string ProgressMessage
+        {
+            get { return _progressMessage; }
+            set { _progressMessage = value; NotifyPropertyChanged(PROGRESSMESSAGE); }
+        }
+
         #region SetActiveCommand
 
         public DelegateCommand<EventInformation<MouseEventArgs>> SetActiveCommand { get; private set; }
@@ -58,6 +74,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         }
 
         public abstract void Refresh();
-        public abstract void LoadDataAsync(LoadCommand cmd, object cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase> error = null);
+        public abstract void LoadDataAsync(LoadCommand cmd, object cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase, Exception> error = null);
     }
 }

@@ -226,8 +226,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 {
                     var responseReader = new StreamReader(stream);
                     var htmlText = responseReader.ReadToEnd();
-                    var regex = new Regex(string.Format("Title: .*?>(.*?)<.*?TitleID: {0}", item.Name),
-                                          RegexOptions.IgnoreCase);
+                    var regex = new Regex(string.Format("Title: .*?>(.*?)<.*?TitleID: {0}", item.Name), RegexOptions.IgnoreCase);
                     title = regex.Match(htmlText).Groups[1].Value;
                     result = !string.IsNullOrEmpty(title.Trim());
                 }

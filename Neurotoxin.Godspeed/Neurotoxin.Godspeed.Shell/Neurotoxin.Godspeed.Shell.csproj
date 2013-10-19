@@ -123,6 +123,7 @@
     <Compile Include="Events\TransferStartedEvent.cs" />
     <Compile Include="Events\ViewModelGeneratedEvent.cs" />
     <Compile Include="Exceptions\TransferException.cs" />
+    <Compile Include="Interfaces\IDisposablePane.cs" />
     <Compile Include="Interfaces\IFileListPaneViewModel.cs" />
     <Compile Include="Interfaces\IFileManager.cs" />
     <Compile Include="Interfaces\IPaneViewModel.cs" />
@@ -148,6 +149,9 @@
     <Compile Include="Commands\OpenDriveDropdownCommand.cs" />
     <Compile Include="Views\ConnectionsPane.xaml.cs">
       <DependentUpon>ConnectionsPane.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Controls\ProgressNotificationBar.xaml.cs">
+      <DependentUpon>ProgressNotificationBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Dialogs\ConfirmationDialog.xaml.cs">
       <DependentUpon>ConfirmationDialog.xaml</DependentUpon>
@@ -219,6 +223,10 @@
     <Page Include="Views\ConnectionsPane.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Controls\ProgressNotificationBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Dialogs\ConfirmationDialog.xaml">
       <Generator>MSBuild:Compile</Generator>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
+using Microsoft.Practices.Unity;
 using Neurotoxin.Godspeed.Core.Caching;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Interfaces;
@@ -77,7 +78,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
             else if (SelectedItem is FtpConnectionItemViewModel)
             {
-                Parent.FtpConnect(SelectedItem);
+                FtpConnect(SelectedItem);
             }
         }
 
@@ -89,7 +90,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             Items = new ObservableCollection<IStoredConnectionViewModel>();
         }
 
-        public override void LoadDataAsync(LoadCommand cmd, object cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase> error = null)
+        public override void LoadDataAsync(LoadCommand cmd, object cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase, Exception> error = null)
         {
             switch (cmd)
             {
@@ -171,5 +172,27 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             _cacheStore.Put(string.Format("{0}{1}", CacheStoreKeyPrefix, newItem.Name), newItem.Model);
             SelectedItem = newItem;
         }
+
+        private void FtpConnect(IStoredConnectionViewModel connection)
+        {
+            IsBusy = true;
+            ProgressMessage = string.Format("Connecting to {0}...", connection.Name);
+            var ftp = container.Resolve<FtpContentViewModel>();
+            ftp.LoadDataAsync(LoadCommand.Load, connection, FtpConnectSuccess, FtpConnectError);
+        }
+
+        private void FtpConnectSuccess(PaneViewModelBase viewModel)
+        {
+            IsBusy = false;
+            //TODO: publish event instead
+            Parent.RightPane = viewModel;
+        }
+
+        private void FtpConnectError(PaneViewModelBase viewModel, Exception exception)
+        {
+            IsBusy = false;
+            MessageBox.Show(string.Format("Can't connect to {0}", SelectedItem.Name));
+        }
+
     }
 }

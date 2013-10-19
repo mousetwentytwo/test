@@ -3,19 +3,9 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:inf="clr-namespace:Neurotoxin.Godspeed.Presentation.Infrastructure;assembly=Neurotoxin.Godspeed.Presentation"
                     xmlns:e="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-                    xmlns:converters="clr-namespace:Neurotoxin.Godspeed.Shell.Converters"
-                    MinHeight="300">
+             xmlns:vc="clr-namespace:Neurotoxin.Godspeed.Shell.Views.Controls" MinHeight="300">
     <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Themes/WhistlerBlue.xaml"/>
-                <ResourceDictionary>
-                    <converters:PaneHeaderBackgroundConverter x:Key="PaneHeaderBackgroundConverter"
-                                                              ActivePaneBrush="{StaticResource DefaultedBorderBrush}"
-                                                              InactivePaneBrush="{StaticResource NormalBorderBrush}"/>
-                </ResourceDictionary>
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
+        <ResourceDictionary Source="/Themes/WhistlerBlue.xaml"/>
     </UserControl.Resources>
     
     <e:Interaction.Triggers>
@@ -70,6 +60,8 @@
                 </e:EventTrigger>
             </e:Interaction.Triggers>
         </ListBox>
+
+        <vc:ProgressNotificationBar Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
 
         <TextBlock Text="" Padding="2" Grid.Row="3"/>
     </Grid>

@@ -33,28 +33,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #region Properties
 
-        private const string ISBUSY = "IsBusy";
-        private bool _isBusy;
-        public bool IsBusy
-        {
-            get { return _isBusy; }
-            set { _isBusy = value; NotifyPropertyChanged(ISBUSY); }
-        }
-
         private const string ISINEDITMODE = "IsInEditMode";
         private bool _isInEditMode;
         public bool IsInEditMode
         {
             get { return _isInEditMode; }
             set { _isInEditMode = value; NotifyPropertyChanged(ISINEDITMODE); }
-        }
-
-        private const string PROGRESSMESSAGE = "ProgressMessage";
-        private string _progressMessage;
-        public string ProgressMessage
-        {
-            get { return _progressMessage; }
-            set { _progressMessage = value; NotifyPropertyChanged(PROGRESSMESSAGE); }
         }
 
         private const string DRIVES = "Drives";

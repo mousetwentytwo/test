@@ -9,20 +9,23 @@ using Neurotoxin.Godspeed.Shell.Exceptions;
 using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
+using Neurotoxin.Godspeed.Shell.Interfaces;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
-    public class FtpContentViewModel : FileListPaneViewModelBase<FtpContent>
+    public class FtpContentViewModel : FileListPaneViewModelBase<FtpContent>, IDisposablePane
     {
         private const string RenameFromPattern = @"([\/]){0}$";
         private const string RenameToPattern = @"$1{0}";
         private readonly Dictionary<string, string> _driveLabelCache = new Dictionary<string, string>();
 
-        #region DisconnectCommand
+        #region CloseCommand
 
-        public DelegateCommand<EventInformation<EventArgs>> DisconnectCommand { get; private set; }
+        public string CloseButtonText { get; private set; }
 
-        private void ExecuteDisconnectCommand(EventInformation<EventArgs> cmdParam)
+        public DelegateCommand<EventInformation<EventArgs>> CloseCommand { get; private set; }
+
+        private void ExecuteCloseCommand(EventInformation<EventArgs> cmdParam)
         {
             FileManager.Disconnect();
             //TODO: via event aggregator
@@ -33,34 +36,39 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public FtpContentViewModel(FileManagerViewModel parent) : base(parent)
         {
-            DisconnectCommand = new DelegateCommand<EventInformation<EventArgs>>(ExecuteDisconnectCommand);
+            CloseButtonText = "Disconnect";
+            CloseCommand = new DelegateCommand<EventInformation<EventArgs>>(ExecuteCloseCommand);
         }
 
-        public override void LoadDataAsync(LoadCommand cmd, object cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase> error = null)
+        public override void LoadDataAsync(LoadCommand cmd, object cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase, Exception> error = null)
         {
             switch (cmd)
             {
                 case LoadCommand.Load:
-                    WorkerThread.Run(() => Connect((FtpConnectionItemViewModel)cmdParam), (r) =>
+                    WorkerThread.Run(() => Connect((FtpConnectionItemViewModel)cmdParam), 
+                        result =>
                         {
-                            ConnectCallback(r);
-                            if (r && success != null) success.Invoke(this);
-                            if (!r && error != null) error.Invoke(this);
+                            ConnectCallback();
+                            if (success != null) success.Invoke(this);
+                        }, 
+                        exception =>
+                        {
+                            if (error != null) error.Invoke(this, exception);
                         });
                     break;
             }
         }
 
-        private bool Connect(FtpConnectionItemViewModel connection)
+        private FtpConnectionItemViewModel Connect(FtpConnectionItemViewModel connection)
         {
-            return FileManager.Connect(connection.Model);
+            FileManager.Connect(connection.Model);
+            return connection;
         }
 
-        private void ConnectCallback(bool success)
+        private void ConnectCallback()
         {
-            if (!success) return;
             Drives = FileManager.GetDrives().Select(d => new FileSystemItemViewModel(d)).ToObservableCollection();
-            Drive = Drives.First();
+            Drive = Drives.SingleOrDefault(d => d.Name == "Hdd1") ?? Drives.First();
         }
 
         protected override void ChangeDrive()
@@ -178,6 +186,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public void RestoreConnection()
         {
             FileManager.RestoreConnection();
+        }
+
+        public void Abort()
+        {
+            FileManager.Abort();
         }
     }
 }

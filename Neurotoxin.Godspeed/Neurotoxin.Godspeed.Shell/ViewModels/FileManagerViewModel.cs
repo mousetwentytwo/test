@@ -180,7 +180,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private bool CanExecuteEditCommand()
         {
             var pane = ActivePane as ConnectionsViewModel;
-            return pane != null && pane.SelectedItem is FtpConnectionItemViewModel;
+            return pane != null && pane.SelectedItem is FtpConnectionItemViewModel && !pane.IsBusy;
         }
         
         private void ExecuteEditCommand()
@@ -196,7 +196,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private bool CanExecuteCopyCommand()
         {
-            return TargetPane != null && SourcePane != null && SourcePane.CurrentRow != null;
+            return TargetPane != null && SourcePane != null && SourcePane.CurrentRow != null && !SourcePane.IsBusy && !TargetPane.IsBusy;
         }
 
         private void ExecuteCopyCommand()
@@ -275,7 +275,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private bool CanExecuteMoveCommand()
         {
-            return TargetPane != null && SourcePane != null && SourcePane.CurrentRow != null;
+            return TargetPane != null && SourcePane != null && SourcePane.CurrentRow != null && !SourcePane.IsBusy && !TargetPane.IsBusy;
         }
 
         private void ExecuteMoveCommand()
@@ -351,7 +351,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private bool CanExecuteNewFolderCommand()
         {
-            return SourcePane != null;
+            return SourcePane != null && !SourcePane.IsBusy;
         }
 
         private void ExecuteNewFolderCommand()
@@ -380,7 +380,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private bool CanExecuteDeleteCommand()
         {
-            return SourcePane != null && SourcePane.CurrentRow != null;
+            return SourcePane != null && SourcePane.CurrentRow != null && !SourcePane.IsBusy;
         }
 
         private void ExecuteDeleteCommand()
@@ -506,27 +506,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             DeleteCommand.RaiseCanExecuteChanged();
         }
 
-        internal void FtpConnect(IStoredConnectionViewModel connection)
-        {
-            var ftp = container.Resolve<FtpContentViewModel>();
-            ftp.LoadDataAsync(LoadCommand.Load, connection, FtpConnectSuccess, FtpConnectError);
-        }
-
-        private void FtpConnectSuccess(PaneViewModelBase viewModel)
-        {
-            var ftp = (FtpContentViewModel) viewModel;
-            RightPane = ftp;
-        }
-
-        private void FtpConnectError(PaneViewModelBase viewModel)
-        {
-            //TODO
-            throw new NotImplementedException();
-        }
-
         public void FtpDisconnect()
         {
-            RightPane = container.Resolve<ConnectionsViewModel>();            
+            RightPane = container.Resolve<ConnectionsViewModel>();
         }
 
         private void OnFtpOperationProgressChanged(FtpOperationProgressChangedEventArgs args)
@@ -606,8 +588,20 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         internal void AbortTransfer()
         {
-            //TODO
-            throw new NotImplementedException();
+            var ftp = LeftPane as FtpContentViewModel ?? RightPane as FtpContentViewModel;
+            if (ftp != null)
+            {
+                ftp.Abort();
+            } 
+            else
+            {
+                lock (_queue)
+                {
+                    var actualItem = _queue.Peek();
+                    _queue.Clear();
+                    _queue.Enqueue(actualItem);
+                }
+            }
         }
 
         private void FinishTransfer()

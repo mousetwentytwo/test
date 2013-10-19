@@ -128,5 +128,11 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         {
             _stfs = ModelFactory.GetModel<StfsPackage>(bytes);
         }
+
+        public void Save()
+        {
+            //TODO: non-trivial, if ftp overwrite tmp file first, then reconnect and upload automatically
+            //_stfs.Save();
+        }
     }
 }

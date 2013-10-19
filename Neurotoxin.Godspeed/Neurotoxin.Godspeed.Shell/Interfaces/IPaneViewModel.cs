@@ -6,9 +6,11 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
 {
     public interface IPaneViewModel
     {
+        bool IsBusy { get; }
+        string ProgressMessage { get; }
         bool IsActive { get; }
         void SetActive();
         void Refresh();
-        void LoadDataAsync(LoadCommand cmd, object cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase> error = null);
+        void LoadDataAsync(LoadCommand cmd, object cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase, Exception> error = null);
     }
 }
