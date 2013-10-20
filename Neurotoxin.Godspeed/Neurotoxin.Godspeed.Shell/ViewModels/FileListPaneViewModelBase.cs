@@ -607,6 +607,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             Items = new ObservableCollection<FileSystemItemViewModel>();
         }
 
+        public abstract string GetTargetPath(string path);
+        protected abstract void SaveToFileStream(string path, FileStream fs, long remoteStartPosition);
+        protected abstract void CreateFile(string targetPath, string sourcePath);
+        protected abstract void OverwriteFile(string targetPath, string sourcePath);
+        protected abstract void ResumeFile(string targetPath, string sourcePath);
+
         public override void SetActive()
         {
             base.SetActive();
@@ -631,14 +637,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             return true;
         }
 
-        public bool CreateFolder(string name)
+        public bool CreateFolder(string path)
         {
-            var path = string.Format("{0}{1}", CurrentFolder.Path, name);
-            if (FileManager.FolderExists(path))
-            {
-                MessageBox.Show(string.Format("Error: directory [{0}] already exists! Please specify a different name.", name));
-                return false;
-            }
+            if (FileManager.FolderExists(path)) return false;
             FileManager.CreateFolder(path);
             return true;
         }
@@ -795,6 +796,69 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             _calculationIsRunning = false;
             IsBusy = false;
             Parent.ShowCorrespondingErrorDialog(ex);
+        }
+
+        public bool Export(FileSystemItemViewModel item, string savePath, CopyAction action)
+        {
+            if (item.Type != ItemType.File) throw new NotSupportedException();
+            FileMode mode;
+            long remoteStartPosition = 0;
+            switch (action)
+            {
+                case CopyAction.CreateNew:
+                    if (FileManager.FileExists(savePath))
+                        throw new TransferException(TransferErrorType.WriteAccessError, item.Path, savePath, "Target already exists");
+                    mode = FileMode.CreateNew;
+                    break;
+                case CopyAction.Overwrite:
+                    mode = FileMode.Create;
+                    break;
+                case CopyAction.OverwriteOlder:
+                    var fileDate = File.GetLastWriteTime(savePath);
+                    if (fileDate > item.Date) return false;
+                    mode = FileMode.Create;
+                    break;
+                case CopyAction.Resume:
+                    mode = FileMode.Append;
+                    var fi = new FileInfo(savePath);
+                    remoteStartPosition = fi.Length;
+                    break;
+                default:
+                    throw new ArgumentException("Invalid Copy action: " + action);
+            }
+            var fs = new FileStream(savePath, mode);
+            SaveToFileStream(item.Path, fs, remoteStartPosition);
+            fs.Flush();
+            fs.Close();
+            return true;
+        }
+
+        public bool Import(FileSystemItemViewModel item, string savePath, CopyAction action)
+        {
+            if (item.Type != ItemType.File) throw new NotSupportedException();
+            var itemPath = item.Path;
+            switch (action)
+            {
+                case CopyAction.CreateNew:
+                    if (FileManager.FileExists(savePath))
+                        throw new TransferException(TransferErrorType.WriteAccessError, itemPath, savePath, "Target already exists");
+                    CreateFile(savePath, itemPath);
+                    break;
+                case CopyAction.Overwrite:
+                    OverwriteFile(savePath, itemPath);
+                    break;
+                case CopyAction.OverwriteOlder:
+                    var fileDate = FileManager.GetFileModificationTime(savePath);
+                    if (fileDate > item.Date) return false;
+                    OverwriteFile(savePath, itemPath);
+                    break;
+                case CopyAction.Resume:
+                    ResumeFile(savePath, itemPath);
+                    break;
+                default:
+                    throw new ArgumentException("Invalid Copy action: " + action);
+            }
+            return true;
         }
 
     }

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Security.Cryptography;
-using System.Text;
 using Neurotoxin.Godspeed.Core.Caching;
 using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Shell.Models;
@@ -66,8 +64,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         private static string HashKey(string s)
         {
-            var shA1Managed = new SHA1Managed();
-            return string.Format("CacheEntry_{0}", shA1Managed.ComputeHash(Encoding.UTF8.GetBytes(s)).ToHex());
+            return string.Format("CacheEntry_{0}", s.Hash());
         }
 
     }

@@ -26,6 +26,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             get { return _model.Path; }
         }
 
+        public string FullPath
+        {
+            get { return _model.FullPath; }
+        }
+
         private const string TITLE = "Title";
         public string Title
         {
@@ -139,6 +144,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             NotifyPropertyChanged(THUMBNAIL);
             NotifyPropertyChanged(TITLETYPE);
             NotifyPropertyChanged(CONTENTTYPE);
+        }
+
+        public string GetRelativePath(string parent)
+        {
+            return Path.Replace(parent, string.Empty);
         }
     }
 }

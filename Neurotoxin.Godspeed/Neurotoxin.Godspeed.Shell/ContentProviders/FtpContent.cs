@@ -235,16 +235,21 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             }
         }
 
-        internal void DownloadFile(string remotePath, string localPath, FileMode mode, long remoteStartPosition = 0)
+        private void DownloadFile(string remotePath, string localPath, FileMode mode, long remoteStartPosition = 0)
+        {
+            var fs = new FileStream(localPath, mode);
+            DownloadFile(remotePath, fs, remoteStartPosition);
+            fs.Flush();
+            fs.Close();
+        }
+
+        internal void DownloadFile(string remotePath, FileStream fs, long remoteStartPosition = 0)
         {
             NotifyFtpOperationStarted(true);
             try
             {
-                var fs = new FileStream(localPath, mode);
                 _ftpClient.Download(LocateDirectory(remotePath), remoteStartPosition, fs);
-                fs.Flush();
                 var length = fs.Length;
-                fs.Close();
                 NotifyFtpOperationFinished(length);
             }
             catch (Exception ex)

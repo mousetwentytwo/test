@@ -84,6 +84,7 @@
     <Compile Include="Extensions\MethodInfoExtensions.cs" />
     <Compile Include="Extensions\StreamExtensions.cs" />
     <Compile Include="Extensions\LongExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\ToBigEndian.cs" />
     <Compile Include="Extensions\ToByteArray.cs" />
     <Compile Include="Extensions\VersionExtensions.cs" />

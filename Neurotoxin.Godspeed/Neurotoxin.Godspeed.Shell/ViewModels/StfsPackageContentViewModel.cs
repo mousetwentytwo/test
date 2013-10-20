@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
+using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
 using Neurotoxin.Godspeed.Shell.Events;
+using Neurotoxin.Godspeed.Shell.Interfaces;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
@@ -71,6 +75,31 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             DriveLabel = FileManager.GetAccount().GamerTag;
             base.ChangeDrive();
+        }
+
+        public override string GetTargetPath(string path)
+        {
+            return string.Format("{0}{1}", CurrentFolder.Path, path.Replace('\\', '/'));
+        }
+
+        protected override void SaveToFileStream(string path, FileStream fs, long remoteStartPosition)
+        {
+            FileManager.ExtractFile(path, fs, remoteStartPosition);
+        }
+
+        protected override void CreateFile(string targetPath, string sourcePath)
+        {
+            FileManager.AddFile(targetPath, sourcePath);
+        }
+
+        protected override void OverwriteFile(string targetPath, string sourcePath)
+        {
+            FileManager.ReplaceFile(targetPath, sourcePath);
+        }
+
+        protected override void ResumeFile(string targetPath, string sourcePath)
+        {
+            FileManager.ReplaceFile(targetPath, sourcePath);
         }
     }
 }

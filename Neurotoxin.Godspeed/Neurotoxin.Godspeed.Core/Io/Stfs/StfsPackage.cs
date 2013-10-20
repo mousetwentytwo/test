@@ -397,9 +397,9 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
             }
         }
 
-        public byte[] ExtractFile(string pathInPackage, int? limit = null)
+        public byte[] ExtractFile(string path, int? limit = null)
         {
-            var entry = GetFileEntry(pathInPackage);
+            var entry = GetFileEntry(path);
             return ExtractFile(entry, limit);
         }
 
@@ -735,9 +735,11 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
             fileEntry.BlocksAreConsecutive = consecutive;
         }
 
-        public FileEntry AddFile(string name, byte[] content)
+        public FileEntry AddFile(string path, byte[] content)
         {
-            return AddFile(FileStructure, name, content);
+            var name = Path.GetFileName(path);
+            var parent = GetFolderEntry(path.Replace(name, string.Empty));
+            return AddFile(parent, name, content);
         }
 
         public FileEntry AddFile(FileEntry parent, string name, byte[] content)

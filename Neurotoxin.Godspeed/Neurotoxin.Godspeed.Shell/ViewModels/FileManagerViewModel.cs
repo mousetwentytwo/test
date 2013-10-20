@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 using Microsoft.Practices.Unity;
+using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Exceptions;
@@ -21,6 +23,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
     {
         private Queue<FileSystemItemViewModel> _queue;
         private CopyAction _rememberedCopyAction;
+        private const string RenameFromPattern = @"([\/]){0}$";
+        private const string RenameToPattern = @"$1{0}";
 
         #region Main window properties
 
@@ -232,11 +236,36 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private bool CopyInner(FileSystemItemViewModel item, CopyAction? action, string rename)
         {
-            var sourcePane = SourcePane as FtpContentViewModel;
-            var targetPane = TargetPane as FtpContentViewModel;
-            return sourcePane != null
-                ? sourcePane.Download(item, TargetPane.CurrentFolder.Path, action ?? _rememberedCopyAction, rename)
-                : targetPane.Upload(item, SourcePane.CurrentFolder.Path, action ?? _rememberedCopyAction, rename);
+            var sourcePath = item.GetRelativePath(SourcePane.CurrentFolder.Path);
+            var targetPath = TargetPane.GetTargetPath(sourcePath);
+
+            switch (item.Type)
+            {
+                case ItemType.Directory:
+                    TargetPane.CreateFolder(targetPath);
+                    return true;
+                case ItemType.File:
+                    if (action == CopyAction.Rename && !string.IsNullOrEmpty(rename))
+                    {
+                        var r = new Regex(string.Format(RenameFromPattern, item.Name), RegexOptions.IgnoreCase);
+                        targetPath = r.Replace(targetPath, string.Format(RenameToPattern, rename));
+                        action = CopyAction.CreateNew;
+                    }
+
+                    var a = action ?? _rememberedCopyAction;
+
+                    if (TargetPane is LocalFileSystemContentViewModel) return SourcePane.Export(item, targetPath, a);
+                    if (SourcePane is LocalFileSystemContentViewModel) return TargetPane.Import(item, targetPath, a);
+                    var tempFile = string.Format("{0}\\temp\\{1}", AppDomain.CurrentDomain.GetData("DataDirectory"), item.FullPath.Hash());
+                    var tempItem = item.Model.Clone();
+                    tempItem.Path = tempFile;
+                    var result = SourcePane.Export(item, tempFile, CopyAction.Overwrite) &&
+                                 TargetPane.Import(new FileSystemItemViewModel(tempItem), targetPath, action ?? _rememberedCopyAction);
+                    File.Delete(tempFile);
+                    return result;
+                default:
+                    throw new NotSupportedException();
+            }
         }
 
         private void CopySuccess(bool result)
@@ -363,11 +392,17 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             var dialog = new NewFolderDialog();
             if (dialog.ShowDialog() != true) return;
             var name = dialog.FolderName.Text;
-            WorkerThread.Run(() => SourcePane.CreateFolder(name), NewFolderSuccess, NewFolderError);
+            var path = string.Format("{0}{1}", SourcePane.CurrentFolder.Path, name);
+            WorkerThread.Run(() => SourcePane.CreateFolder(path), success => NewFolderSuccess(success, name), NewFolderError);
         }
 
-        private void NewFolderSuccess(bool success)
+        private void NewFolderSuccess(bool success, string name)
         {
+            if (!success)
+            {
+                MessageBox.Show(string.Format("Error: directory [{0}] already exists! Please specify a different name.", name));
+                return;
+            }
             SourcePane.Refresh();
         }
 
@@ -604,7 +639,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             var item = _queue.Dequeue();
             if (item.Type == ItemType.File) BytesTransfered += item.Size ?? 0;
             FilesTransfered++;
-            if (result) item.IsSelected = false;
+            if (result && !_queue.Any(q => q.Path.StartsWith(item.Path))) item.IsSelected = false;
         }
 
         internal void AbortTransfer()

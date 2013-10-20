@@ -10,14 +10,18 @@ using Neurotoxin.Godspeed.Shell.Exceptions;
 using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
+using Neurotoxin.Godspeed.Shell.Interfaces;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
     public class FtpContentViewModel : FileListPaneViewModelBase<FtpContent>
     {
-        private const string RenameFromPattern = @"([\/]){0}$";
-        private const string RenameToPattern = @"$1{0}";
         private readonly Dictionary<string, string> _driveLabelCache = new Dictionary<string, string>();
+
+        public bool SupportsDirectCopy
+        {
+            get { return false; }
+        }
 
         #region DisconnectCommand
 
@@ -92,6 +96,16 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             Drive = Drives.SingleOrDefault(d => d.Name == "Hdd1") ?? Drives.First();
         }
 
+        public void RestoreConnection()
+        {
+            FileManager.RestoreConnection();
+        }
+
+        public void Abort()
+        {
+            FileManager.Abort();
+        }
+
         protected override void ChangeDrive()
         {
             if (!_driveLabelCache.ContainsKey(Drive.Path))
@@ -109,109 +123,29 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             base.ChangeDrive();
         }
 
-        public bool Download(FileSystemItemViewModel ftpItem, string targetPath, CopyAction action, string rename)
+        public override string GetTargetPath(string path)
         {
-            var remotePath = ftpItem.Path;
-            var localPath = remotePath.Replace(CurrentFolder.Path, targetPath).Replace('/', '\\');
-
-            switch (ftpItem.Type)
-            {
-                case ItemType.File:
-                    FileMode mode;
-                    long remoteStartPosition = 0;
-                    switch (action)
-                    {
-                        case CopyAction.CreateNew:
-                            if (FileManager.FileExists(localPath))
-                                throw new TransferException(TransferErrorType.WriteAccessError, remotePath, localPath, "Target already exists");
-                            mode = FileMode.CreateNew;
-                            break;
-                        case CopyAction.Overwrite:
-                            mode = FileMode.Create;
-                            break;
-                        case CopyAction.OverwriteOlder:
-                            var fileDate = File.GetLastWriteTime(localPath);
-                            if (fileDate > ftpItem.Date) return false;
-                            mode = FileMode.Create;
-                            break;
-                        case CopyAction.Resume:
-                            mode = FileMode.Append;
-                            var fi = new FileInfo(localPath);
-                            remoteStartPosition = fi.Length;
-                            break;
-                        case CopyAction.Rename:
-                            mode = FileMode.CreateNew;
-                            var r = new Regex(string.Format(RenameFromPattern, ftpItem.Name), RegexOptions.IgnoreCase);
-                            localPath = r.Replace(localPath, string.Format(RenameToPattern, rename));
-                            break;
-                        default:
-                            throw new ArgumentException("Invalid Copy action: " + action);
-                    }
-                    FileManager.DownloadFile(remotePath, localPath, mode, remoteStartPosition);
-                    break;
-                case ItemType.Directory:
-                    if (!Directory.Exists(localPath)) Directory.CreateDirectory(localPath);
-                    break;
-                default:
-                    throw new NotSupportedException();
-            }
-            return true;
+            return string.Format("{0}{1}", CurrentFolder.Path, path.Replace('\\', '/'));
         }
 
-        public bool Upload(FileSystemItemViewModel localItem, string sourcePath, CopyAction action, string rename)
+        protected override void SaveToFileStream(string path, FileStream fs, long remoteStartPosition)
         {
-            var localPath = localItem.Path;
-            var remotePath = localPath.Replace(sourcePath, CurrentFolder.Path).Replace('\\', '/');
-
-            switch (localItem.Type)
-            {
-                case ItemType.File:
-                    if (action == CopyAction.Rename)
-                    {
-                        var r = new Regex(string.Format(RenameFromPattern, localItem.Name), RegexOptions.IgnoreCase);
-                        remotePath = r.Replace(remotePath, string.Format(RenameToPattern, rename));
-                        action = CopyAction.CreateNew;
-                    }
-
-                    switch (action)
-                    {
-                        case CopyAction.CreateNew:
-                            if (FileManager.FileExists(remotePath))
-                                throw new TransferException(TransferErrorType.WriteAccessError, localPath, remotePath, "Target already exists");
-                            FileManager.UploadFile(remotePath, localPath);
-                            break;
-                        case CopyAction.Overwrite:
-                            FileManager.UploadFile(remotePath, localPath);
-                            break;
-                        case CopyAction.OverwriteOlder:
-                            var fileDate = FileManager.GetFileModificationTime(remotePath);
-                            if (fileDate > localItem.Date) return false;
-                            FileManager.UploadFile(remotePath, localPath);
-                            break;
-                        case CopyAction.Resume:
-                            FileManager.AppendFile(remotePath, localPath);
-                            break;
-                        default:
-                            throw new ArgumentException("Invalid Copy action: " + action);
-                    }
-                    break;
-                case ItemType.Directory:
-                    if (!FileManager.FolderExists(remotePath)) FileManager.CreateFolder(remotePath);
-                    break;
-                default:
-                    throw new NotSupportedException();
-            }
-            return true;
+            FileManager.DownloadFile(path, fs, remoteStartPosition);
         }
 
-        public void RestoreConnection()
+        protected override void CreateFile(string targetPath, string sourcePath)
         {
-            FileManager.RestoreConnection();
+            FileManager.UploadFile(targetPath, sourcePath);
         }
 
-        public void Abort()
+        protected override void OverwriteFile(string targetPath, string sourcePath)
         {
-            FileManager.Abort();
+            FileManager.UploadFile(targetPath, sourcePath);
+        }
+
+        protected override void ResumeFile(string targetPath, string sourcePath)
+        {
+            FileManager.AppendFile(targetPath, sourcePath);
         }
     }
 }

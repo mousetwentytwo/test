@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Core.Io.Stfs;
@@ -116,6 +117,26 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         public byte[] ReadFileHeader(string path)
         {
             return _stfs.ExtractFile(path, 0x971A);
+        }
+
+        public void ExtractFile(string remotePath, FileStream fs, long remoteStartPosition)
+        {
+            var bytes = ReadFileContent(remotePath);
+            var offset = (int)remoteStartPosition;
+            fs.Write(bytes, offset, bytes.Length - offset);
+        }
+
+        public void AddFile(string targetPath, string sourcePath)
+        {
+            var content = File.ReadAllBytes(sourcePath);
+            _stfs.AddFile(targetPath, content);
+        }
+
+        public void ReplaceFile(string targetPath, string sourcePath)
+        {
+            var content = File.ReadAllBytes(sourcePath);
+            var fileEntry = _stfs.GetFileEntry(targetPath);
+            _stfs.ReplaceFile(fileEntry, content);
         }
 
         public Account GetAccount()

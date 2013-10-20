@@ -30,6 +30,8 @@ namespace Neurotoxin.Godspeed.Shell
             var appDir = string.Format(@"{0}\{1}\{2}\{3}", appData, company, product, version);
             if (!Directory.Exists(appDir)) Directory.CreateDirectory(appDir);
             AppDomain.CurrentDomain.SetData("DataDirectory", appDir);
+            var tempDir = Path.Combine(appDir, "temp");
+            if (!Directory.Exists(tempDir)) Directory.CreateDirectory(tempDir);
             Dispatcher.CurrentDispatcher.UnhandledException += UnhandledThreadingException;
 #if (DEBUG)
             RunInDebugMode();
