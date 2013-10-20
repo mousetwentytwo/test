@@ -116,6 +116,8 @@
     <Compile Include="Converters\TitleConverter.cs" />
     <Compile Include="Converters\TransferProgressDialogModeConverter.cs" />
     <Compile Include="Events\ActivePaneChangedEvent.cs" />
+    <Compile Include="Events\CloseNestedPaneEvent.cs" />
+    <Compile Include="Events\OpenNestedPaneEvent.cs" />
     <Compile Include="Events\FtpOperationFinishedEvent.cs" />
     <Compile Include="Events\FtpOperationProgressChangedEvent.cs" />
     <Compile Include="Events\FtpOperationStartedEvent.cs" />

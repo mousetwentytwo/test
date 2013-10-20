@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
+using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Exceptions;
 using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
@@ -20,20 +21,19 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #region DisconnectCommand
 
-        public DelegateCommand<EventInformation<EventArgs>> DisconnectCommand { get; private set; }
+        public DelegateCommand DisconnectCommand { get; private set; }
 
-        private void ExecuteDisconnectCommand(EventInformation<EventArgs> cmdParam)
+        private void ExecuteDisconnectCommand()
         {
             FileManager.Disconnect();
-            //TODO: via event aggregator
-            Parent.FtpDisconnect();
+            eventAggregator.GetEvent<CloseNestedPaneEvent>().Publish(new CloseNestedPaneEventArgs(this, null));
         }
 
         #endregion
 
         public FtpContentViewModel(FileManagerViewModel parent) : base(parent)
         {
-            DisconnectCommand = new DelegateCommand<EventInformation<EventArgs>>(ExecuteDisconnectCommand);
+            DisconnectCommand = new DelegateCommand(ExecuteDisconnectCommand);
         }
 
         public override void LoadDataAsync(LoadCommand cmd, object cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase, Exception> error = null)
@@ -41,16 +41,41 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             switch (cmd)
             {
                 case LoadCommand.Load:
-                    WorkerThread.Run(() => Connect((FtpConnectionItemViewModel)cmdParam), 
+                    WorkerThread.Run(
+                        () =>
+                            {
+                                return Connect((FtpConnectionItemViewModel) cmdParam);
+                            },
                         result =>
-                        {
-                            ConnectCallback();
-                            if (success != null) success.Invoke(this);
-                        }, 
+                            {
+                                ConnectCallback();
+                                if (success != null) success.Invoke(this);
+                            },
                         exception =>
-                        {
-                            if (error != null) error.Invoke(this, exception);
-                        });
+                            {
+                                if (error != null) error.Invoke(this, exception);
+                            });
+                    break;
+                case LoadCommand.Restore:
+                    var payload = cmdParam as byte[];
+                    if (payload == null) return;
+                    WorkerThread.Run(
+                        () =>
+                            {
+                                File.WriteAllBytes(CurrentRow.TempFilePath, payload);
+                                FileManager.RestoreConnection();
+                                FileManager.UploadFile(CurrentRow.Path, CurrentRow.TempFilePath);
+                                return true;
+                            },
+                        result =>
+                            {
+                                if (success != null) success.Invoke(this);
+                            },
+                        exception =>
+                            {
+                                DisconnectCommand.Execute();
+                                if (error != null) error.Invoke(this, exception);
+                            });
                     break;
             }
         }

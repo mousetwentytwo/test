@@ -4,6 +4,7 @@
     {
         New,
         Load,
-        MergeWith
+        MergeWith,
+        Restore
     }
 }

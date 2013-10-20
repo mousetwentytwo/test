@@ -4,6 +4,7 @@ using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
+using Neurotoxin.Godspeed.Shell.Events;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
@@ -12,24 +13,33 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #region SaveAndCloseCommand
 
-        public string CloseButtonText { get; private set; }
+        public DelegateCommand SaveAndCloseCommand { get; private set; }
 
-        public DelegateCommand<EventInformation<EventArgs>> SaveAndCloseCommand { get; private set; }
-
-        private void ExecuteSaveAndCloseCommand(EventInformation<EventArgs> cmdParam)
+        private void ExecuteSaveAndCloseCommand()
         {
-            FileManager.Save();
-            //TODO: via event aggregator
-            //UNDONE: stack panes, dispose this, and pop previous
-            Parent.FtpDisconnect();
+            var bytes = FileManager.Save();
+            FileManager.Dispose();
+            eventAggregator.GetEvent<CloseNestedPaneEvent>().Publish(new CloseNestedPaneEventArgs(this, bytes));
+        }
+
+        #endregion
+
+        #region CloseCommand
+
+        public DelegateCommand CloseCommand { get; private set; }
+
+        private void ExecuteCloseCommand()
+        {
+            FileManager.Dispose();
+            eventAggregator.GetEvent<CloseNestedPaneEvent>().Publish(new CloseNestedPaneEventArgs(this, null));
         }
 
         #endregion
 
         public StfsPackageContentViewModel(FileManagerViewModel parent) : base(parent)
         {
-            CloseButtonText = "Save & Close";
-            SaveAndCloseCommand = new DelegateCommand<EventInformation<EventArgs>>(ExecuteSaveAndCloseCommand);
+            SaveAndCloseCommand = new DelegateCommand(ExecuteSaveAndCloseCommand);
+            CloseCommand = new DelegateCommand(ExecuteCloseCommand);
         }
 
         public override void LoadDataAsync(LoadCommand cmd, object cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase, Exception> error = null)
@@ -37,9 +47,22 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             switch (cmd)
             {
                 case LoadCommand.Load:
-                    FileManager.LoadPackage((byte[])cmdParam);
-                    Drives = FileManager.GetDrives().Select(d => new FileSystemItemViewModel(d)).ToObservableCollection();
-                    Drive = Drives.First();
+                    WorkerThread.Run(
+                        () =>
+                            {
+                                FileManager.LoadPackage((byte[])cmdParam);
+                                return true;
+                            },
+                        result =>
+                            {
+                                Drives = FileManager.GetDrives().Select(d => new FileSystemItemViewModel(d)).ToObservableCollection();
+                                Drive = Drives.First();
+                                if (success != null) success.Invoke(this);
+                            },
+                        exception =>
+                            {
+                                if (error != null) error.Invoke(this, exception);
+                            });
                     break;
             }
         }

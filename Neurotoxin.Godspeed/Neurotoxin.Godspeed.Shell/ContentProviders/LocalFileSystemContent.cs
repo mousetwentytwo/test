@@ -107,7 +107,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         {
             try
             {
-                Directory.Delete(path, true);
+                Directory.Delete(path);
             }
             catch (IOException ex)
             {

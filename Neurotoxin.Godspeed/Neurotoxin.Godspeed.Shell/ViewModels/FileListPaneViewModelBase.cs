@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Microsoft.Practices.Unity;
 using Neurotoxin.Godspeed.Core.Constants;
+using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Shell.Events;
@@ -174,12 +175,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             {
                 if (CurrentRow.Type == ItemType.File)
                 {
-                    if (CurrentRow.TitleType == TitleType.Profile)
-                    {
-                        ProgressMessage = string.Format("Opening profile {0}...", CurrentRow.ComputedName);
-                        IsBusy = true;
-                        WorkerThread.Run(() => ReadFileContent(CurrentRow), content => Parent.OpenStfsPackage(content), AsyncErrorCallback);
-                    }
+                    if (CurrentRow.TitleType == TitleType.Profile) OpenStfsPackage();
                     return;
                 }
                 if (CurrentRow.IsUpDirectory)
@@ -194,13 +190,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             WorkerThread.Run(() => ChangeDirectory(), ChangeDirectoryCallback, AsyncErrorCallback);
         }
 
-        private List<Tuple<DateTime, string>> _invokeLog = new List<Tuple<DateTime, string>>();
-
         private List<FileSystemItem> ChangeDirectory(string selectedPath = null)
         {
             if (selectedPath == null) selectedPath = CurrentFolder.Path;
-            _invokeLog.Add(new Tuple<DateTime, string>(DateTime.Now, selectedPath));
-
             var list = FileManager.GetList(selectedPath);
             list.ForEach(item => _titleRecognizer.RecognizeType(item));
             return list;
@@ -242,6 +234,31 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             {
                 RecognitionFinish();
             }
+        }
+
+        private void OpenStfsPackage()
+        {
+            ProgressMessage = string.Format("Opening profile {0}...", CurrentRow.ComputedName);
+            IsBusy = true;
+            WorkerThread.Run(() => ReadFileContent(CurrentRow), OpenStfsPackageCallback, AsyncErrorCallback);
+        }
+
+        private void OpenStfsPackageCallback(byte[] content)
+        {
+            var stfs = container.Resolve<StfsPackageContentViewModel>();
+            stfs.LoadDataAsync(LoadCommand.Load, content, OpenStfsPackageSuccess, OpenStfsPackageError);
+        }
+
+        private void OpenStfsPackageSuccess(PaneViewModelBase pane)
+        {
+            IsBusy = false;
+            eventAggregator.GetEvent<OpenNestedPaneEvent>().Publish(new OpenNestedPaneEventArgs(this, pane));
+        }
+
+        private void OpenStfsPackageError(PaneViewModelBase pane, Exception exception)
+        {
+            IsBusy = false;
+            MessageBox.Show(string.Format("Can't open {0}: {1}", CurrentRow.ComputedName, exception.Message));
         }
 
         #endregion
@@ -677,7 +694,10 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private byte[] ReadFileContent(FileSystemItemViewModel item)
         {
-            return _titleRecognizer.ReadFileContent(item.Model);
+            item.TempFilePath = _titleRecognizer.GetTempFilePath(item.Model);
+            return item.TempFilePath != null
+                ? File.ReadAllBytes(item.TempFilePath) 
+                : FileManager.ReadFileContent(item.Path);
         }
 
         public void GetItemViewModel(string itemPath)
@@ -739,20 +759,25 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public Queue<FileSystemItemViewModel> PopulateQueue()
         {
+            return PopulateQueue(false);
+        }
+
+        public Queue<FileSystemItemViewModel> PopulateQueue(bool bottomToTop)
+        {
             var queue = new Queue<FileSystemItemViewModel>();
-            PopulateQueue(queue, SelectedItems.Any() ? SelectedItems : new[] { CurrentRow });
+            PopulateQueue(queue, SelectedItems.Any() ? SelectedItems : new[] { CurrentRow }, bottomToTop);
             return queue;
         }
 
-        private void PopulateQueue(Queue<FileSystemItemViewModel> queue, IEnumerable<FileSystemItemViewModel> items)
+        private void PopulateQueue(Queue<FileSystemItemViewModel> queue, IEnumerable<FileSystemItemViewModel> items, bool bottomToTop)
         {
             foreach (var item in items)
             {
-                queue.Enqueue(item);
+                if (!bottomToTop) queue.Enqueue(item);
                 if (item.Type == ItemType.Directory)
                 {
                     var start = queue.Count;
-                    PopulateQueue(queue, ChangeDirectory(item.Path).Select(c => new FileSystemItemViewModel(c)));
+                    PopulateQueue(queue, ChangeDirectory(item.Path).Select(c => new FileSystemItemViewModel(c)), bottomToTop);
                     var end = queue.Count;
                     long size = 0;
                     for (var i = start; i < end; i++)
@@ -761,6 +786,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     }
                     item.Size = size;
                 }
+                if (bottomToTop) queue.Enqueue(item);
             }
         }
 

@@ -125,6 +125,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             get { return _model.IsCached; }
         }
 
+        public string TempFilePath { get; set; }
+
         public FileSystemItemViewModel(FileSystemItem model)
         {
             _model = model;

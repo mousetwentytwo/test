@@ -339,7 +339,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         {
             try
             {
-                _ftpClient.DeleteFolderRecursively(path);
+                _ftpClient.DeleteFolder(path);
             }
             catch (FtpException ex)
             {

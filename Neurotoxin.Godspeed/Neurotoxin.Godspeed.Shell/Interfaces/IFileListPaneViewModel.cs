@@ -11,6 +11,7 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
         FileSystemItemViewModel CurrentRow { get; set; }
 
         Queue<FileSystemItemViewModel> PopulateQueue();
+        Queue<FileSystemItemViewModel> PopulateQueue(bool bottomToTop);
         bool CreateFolder(string name);
         bool Delete(FileSystemItemViewModel item);
 

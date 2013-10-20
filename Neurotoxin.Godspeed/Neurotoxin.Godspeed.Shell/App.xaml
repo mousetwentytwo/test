@@ -38,7 +38,7 @@
                     <Style TargetType="{x:Type controls:BorderlessWindow}" x:Key="Window">
                         <Setter Property="shell:WindowChrome.WindowChrome">
                             <Setter.Value>
-                                <shell:WindowChrome ResizeBorderThickness="6" CaptionHeight="24" CornerRadius="0" GlassFrameThickness="0,0,0,1"/>
+                                <shell:WindowChrome ResizeBorderThickness="6" CaptionHeight="27" CornerRadius="0" GlassFrameThickness="0,0,0,1"/>
                             </Setter.Value>
                         </Setter>
                         <Setter Property="Icon" Value="/Resources/icon.ico"/>
@@ -46,18 +46,18 @@
                             <Setter.Value>
                                 <ControlTemplate TargetType="{x:Type controls:BorderlessWindow}">
                                     <Border Background="{StaticResource ControlBackgroundBrush}">
-                                        <Grid>
+                                        <Grid x:Name="Head">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto"/>
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="Auto"/>
                                             </Grid.ColumnDefinitions>
                                             <Grid.RowDefinitions>
-                                                <RowDefinition Height="24" />
+                                                <RowDefinition Height="27" />
                                                 <RowDefinition Height="*"/>
                                             </Grid.RowDefinitions>
 
-                                            <Image Source="{TemplateBinding Icon}" Width="16" Height="16" Margin="7,3,5,3" DockPanel.Dock="Left"/>
+                                            <Image Source="{TemplateBinding Icon}" Width="16" Height="16" Margin="10,3,5,3" DockPanel.Dock="Left"/>
                                             <TextBlock Text="{TemplateBinding Title}" Grid.Column="1" VerticalAlignment="Center" Foreground="White" FontWeight="Bold"/>
                                             <TextBlock Text="{TemplateBinding Title}" Grid.Column="1" VerticalAlignment="Center" Margin="-1,-1,1,1" Foreground="{StaticResource NormalBrush}" FontWeight="Bold"/>
 
@@ -65,9 +65,14 @@
                                                                      Foreground="{DynamicResource CaptionButtonColor}" FontSize="14" MarginButton="0,0,5,0"
                                                                      VerticalAlignment="Center" shell:WindowChrome.IsHitTestVisibleInChrome="True"/>
 
-                                            <ContentPresenter Margin="5" Grid.Row="1" Grid.ColumnSpan="3" Content="{TemplateBinding Content}"/>
+                                            <ContentPresenter Margin="7,2,7,7" Grid.Row="1" Grid.ColumnSpan="3" Content="{TemplateBinding Content}"/>
                                         </Grid>
                                     </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="WindowState" Value="Maximized">
+                                            <Setter TargetName="Head" Property="Margin" Value="0,6,2,0"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
                                 </ControlTemplate>
                             </Setter.Value>
                         </Setter>

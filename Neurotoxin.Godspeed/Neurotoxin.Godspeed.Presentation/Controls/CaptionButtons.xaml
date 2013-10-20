@@ -180,18 +180,9 @@
                 </EventTrigger>
             </Style.Triggers>
         </Style>
-
-        <Style x:Key="CaptionButtonStyle" TargetType="{x:Type StackPanel}">
-            <Style.Triggers>       
-                <DataTrigger Binding="{Binding WindowState, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" Value="Maximized">
-                    <Setter Property="Margin" Value="0,10,8,0"/>
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
-        
     </UserControl.Resources>
 
-    <StackPanel Orientation="Horizontal" Style="{StaticResource CaptionButtonStyle}">
+    <StackPanel Orientation="Horizontal">
         <Button	Style="{StaticResource ReduceChromeButtonStyle}" Click="MinimizeButtonClick" ContentTemplate="{DynamicResource DefaultButtonControlTemplate}" Content="0" />
         <Button Style="{StaticResource MaximizeChromeButtonStyle}" Click="RestoreButtonClick" ContentTemplate="{DynamicResource MaximizeButtonControlTemplate}"/>
         <Button	Style="{StaticResource CloseChromeButtonStyle}" Click="CloseButtonClick" ContentTemplate="{DynamicResource DefaultButtonControlTemplate}" Content="r" />

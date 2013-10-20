@@ -439,7 +439,19 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
 
         #region Write
 
+        public byte[] Save()
+        {
+            BeforeSaving();
+            return Binary.ReadBytes(0, Binary.Length);
+        }
+
         public void Save(string path)
+        {
+            BeforeSaving();
+            Binary.Save(path);
+        }
+
+        private void BeforeSaving()
         {
             //HACK Horizon
             VolumeDescriptor.AllocatedBlockCount += 4;
@@ -448,8 +460,6 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
 
             Rehash();
             Resign();
-
-            Binary.Save(path);
         }
 
         private int[] AllocateBlocks(int count)

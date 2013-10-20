@@ -24,6 +24,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #region Main window properties
 
+        private Stack<IPaneViewModel> _leftPaneStack = new Stack<IPaneViewModel>();
+
         private const string LEFTPANE = "LeftPane";
         private IPaneViewModel _leftPane;
         public IPaneViewModel LeftPane
@@ -31,6 +33,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             get { return _leftPane; }
             set { _leftPane = value; NotifyPropertyChanged(LEFTPANE); }
         }
+
+        private Stack<IPaneViewModel> _rightPaneStack = new Stack<IPaneViewModel>();
 
         private const string RIGHTPANE = "RightPane";
         private IPaneViewModel _rightPane;
@@ -385,26 +389,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void ExecuteDeleteCommand()
         {
-            _queue = new Queue<FileSystemItemViewModel>(SourcePane.SelectedItems.Any() ? SourcePane.SelectedItems : new[] { SourcePane.CurrentRow });
+            WorkerThread.Run(() => SourcePane.PopulateQueue(true), DeletePrepare, DeleteError);
+        }
 
-            string naming;
-            if (_queue.Count == 1)
-            {
-                naming = _queue.Peek().Type.ToString().ToLower();
-            }
-            else if (_queue.All(i => i.Type == ItemType.File))
-            {
-                naming = "files";
-            }
-            else if (_queue.All(i => i.Type == ItemType.Directory))
-            {
-                naming = "directories";
-            }
-            else
-            {
-                naming = "files/directories";
-            }
-            var message = string.Format("Do you really want to delete the selected {0}?", naming);
+        private void DeletePrepare(Queue<FileSystemItemViewModel> queue)
+        {
+            var message = string.Format("Do you really want to delete the selected items?");
             if (new ConfirmationDialog(message).ShowDialog() != true) return;
             InitializeTransfer(TransferProgressDialogMode.Delete);
             DeleteStart();
@@ -486,6 +476,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             DeleteCommand = new DelegateCommand(ExecuteDeleteCommand, CanExecuteDeleteCommand);
 
             eventAggregator.GetEvent<FtpOperationProgressChangedEvent>().Subscribe(OnFtpOperationProgressChanged);
+            eventAggregator.GetEvent<OpenNestedPaneEvent>().Subscribe(OnOpenNestedPane);
+            eventAggregator.GetEvent<CloseNestedPaneEvent>().Subscribe(OnCloseNestedPane);
         }
 
         public void InitializePanes()
@@ -514,6 +506,35 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void OnFtpOperationProgressChanged(FtpOperationProgressChangedEventArgs args)
         {
             UIThread.Run(() => CurrentFileProgress = args.Percentage > 0 ? args.Percentage : 0);
+        }
+
+        private void OnOpenNestedPane(OpenNestedPaneEventArgs args)
+        {
+            if (LeftPane == args.Opener)
+            {
+                _leftPaneStack.Push(LeftPane);
+                LeftPane = args.Openee;
+            }
+            else if (RightPane == args.Opener)
+            {
+                _rightPaneStack.Push(RightPane);
+                RightPane = args.Openee;
+            }
+        }
+
+        private void OnCloseNestedPane(CloseNestedPaneEventArgs args)
+        {
+            if (LeftPane == args.Pane)
+            {
+                LeftPane = _leftPaneStack.Pop();
+                LeftPane.LoadDataAsync(LoadCommand.Restore, args.Payload);
+                
+            }
+            else if (RightPane == args.Pane)
+            {
+                RightPane = _rightPaneStack.Pop();
+                RightPane.LoadDataAsync(LoadCommand.Restore, args.Payload);
+            }
         }
 
         private void InitializeTransfer(TransferProgressDialogMode mode)
@@ -607,12 +628,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void FinishTransfer()
         {
             NotifyTransferFinished();
-        }
-
-        public void OpenStfsPackage(byte[] content)
-        {
-            RightPane = container.Resolve<StfsPackageContentViewModel>();
-            RightPane.LoadDataAsync(LoadCommand.Load, content);
         }
 
         private void RenameExistingFile(TransferException exception, CopyAction? action, Action<CopyAction?, string> rename, Action<Exception> chooseDifferentOption)

@@ -254,20 +254,11 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             _cacheManager.UpdateEntry(cacheKey, item);
         }
 
-        public byte[] ReadFileContent(FileSystemItem item)
+        public string GetTempFilePath(FileSystemItem item)
         {
             var cacheKey = GetCacheKey(item);
             var cacheEntry = _cacheManager.GetEntry(cacheKey, item.Size, item.Date);
-            return cacheEntry != null && !string.IsNullOrEmpty(cacheEntry.TempFilePath)
-                ? File.ReadAllBytes(cacheEntry.TempFilePath) 
-                : _fileManager.ReadFileContent(item.Path);
+            return cacheEntry != null && !string.IsNullOrEmpty(cacheEntry.TempFilePath) ? cacheEntry.TempFilePath : null;
         }
-
-        //public bool IsCached(FileSystemItem item)
-        //{
-        //    var cacheItem = GetCacheItem(item);
-        //    var cacheKey = GetCacheKey(cacheItem);
-        //    return cacheKey != null && _cacheManager.HasEntry(cacheKey);
-        //}
     }
 }

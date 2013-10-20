@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
@@ -28,6 +29,24 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 case LoadCommand.Load:
                     Drives = FileManager.GetDrives().Select(d => new FileSystemItemViewModel(d)).ToObservableCollection();
                     Drive = Drives.First();
+                    break;
+                case LoadCommand.Restore:
+                    var payload = cmdParam as byte[];
+                    if (payload == null) return;
+                    WorkerThread.Run(
+                        () =>
+                        {
+                            File.WriteAllBytes(CurrentRow.Path, payload);
+                            return true;
+                        },
+                        result =>
+                        {
+                            if (success != null) success.Invoke(this);
+                        },
+                        exception =>
+                        {
+                            if (error != null) error.Invoke(this, exception);
+                        });
                     break;
             }
         }

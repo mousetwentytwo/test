@@ -10,7 +10,7 @@ using Neurotoxin.Godspeed.Shell.Models;
 
 namespace Neurotoxin.Godspeed.Shell.ContentProviders
 {
-    public class StfsPackageContent : IFileManager
+    public class StfsPackageContent : IFileManager, IDisposable
     {
         private StfsPackage _stfs;
 
@@ -129,10 +129,16 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             _stfs = ModelFactory.GetModel<StfsPackage>(bytes);
         }
 
-        public void Save()
+        public byte[] Save()
         {
-            //TODO: non-trivial, if ftp overwrite tmp file first, then reconnect and upload automatically
-            //_stfs.Save();
+            return _stfs.Save();
+        }
+
+
+        public void Dispose()
+        {
+            _stfs = null;
+            GC.Collect();
         }
     }
 }

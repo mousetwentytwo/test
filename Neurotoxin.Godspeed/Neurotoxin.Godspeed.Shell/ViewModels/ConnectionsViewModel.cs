@@ -6,6 +6,7 @@ using System.Windows.Input;
 using Microsoft.Practices.Unity;
 using Neurotoxin.Godspeed.Core.Caching;
 using Neurotoxin.Godspeed.Shell.Constants;
+using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
 using Neurotoxin.Godspeed.Shell.Views.Dialogs;
@@ -181,14 +182,13 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             ftp.LoadDataAsync(LoadCommand.Load, connection, FtpConnectSuccess, FtpConnectError);
         }
 
-        private void FtpConnectSuccess(PaneViewModelBase viewModel)
+        private void FtpConnectSuccess(PaneViewModelBase pane)
         {
             IsBusy = false;
-            //TODO: publish event instead
-            Parent.RightPane = viewModel;
+            eventAggregator.GetEvent<OpenNestedPaneEvent>().Publish(new OpenNestedPaneEventArgs(this, pane));
         }
 
-        private void FtpConnectError(PaneViewModelBase viewModel, Exception exception)
+        private void FtpConnectError(PaneViewModelBase pane, Exception exception)
         {
             IsBusy = false;
             MessageBox.Show(string.Format("Can't connect to {0}", SelectedItem.Name));
