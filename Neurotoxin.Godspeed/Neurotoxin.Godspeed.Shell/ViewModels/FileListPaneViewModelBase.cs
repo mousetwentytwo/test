@@ -301,7 +301,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public DelegateCommand<bool> CalculateSizeCommand { get; private set; }
         private Queue<FileSystemItemViewModel> _calculationQueue;
-        private bool _calculationIsRunning = false;
+        private bool _calculationIsRunning;
 
         private void ExecuteCalculateSizeCommand(bool calculateAll)
         {
@@ -526,7 +526,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private bool CanExecuteRefreshTitleCommand()
         {
-            return CurrentRow != null;
+            return HasValidSelection();
         }
 
         private void ExecuteRefreshTitleCommand()
@@ -546,7 +546,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private bool CanExecuteRecognizeFromProfileCommand()
         {
-            return CurrentRow != null && CurrentRow.IsProfile;
+            return CurrentRow != null && !CurrentRow.IsUpDirectory && CurrentRow.IsProfile;
         }
 
         private void ExecuteRecognizeFromProfileCommand()
@@ -599,7 +599,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private bool CanExecuteCopyTitleIdToClipboardCommand()
         {
-            return CurrentRow != null && CurrentRow.TitleType == TitleType.Game;
+            return CurrentRow != null && !CurrentRow.IsUpDirectory && CurrentRow.TitleType == TitleType.Game;
         }
 
         private void ExecuteCopyTitleIdToClipboardCommand()
@@ -615,7 +615,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private bool CanExecuteSearchGoogleCommand()
         {
-            return CurrentRow != null && CurrentRow.TitleType == TitleType.Game;
+            return CurrentRow != null && !CurrentRow.IsUpDirectory && CurrentRow.TitleType == TitleType.Game;
         }
 
         private void ExecuteSearchGoogleCommand()
@@ -631,7 +631,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private bool CanExecuteRenameCommand(object cmdParam)
         {
-            return CurrentRow != null && CurrentRow.IsCached;
+            return CurrentRow != null && !CurrentRow.IsUpDirectory && CurrentRow.IsCached;
         }
 
         private void ExecuteRenameCommand(object cmdParam)
@@ -941,5 +941,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             return true;
         }
 
+        public bool HasValidSelection()
+        {
+            return SelectedItems.Any() || CurrentRow != null && !CurrentRow.IsUpDirectory;
+        }
     }
 }

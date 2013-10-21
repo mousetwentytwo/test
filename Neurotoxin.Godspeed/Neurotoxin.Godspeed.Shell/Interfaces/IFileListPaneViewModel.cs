@@ -24,5 +24,6 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
 
         bool Export(FileSystemItem item, string savePath, CopyAction action);
         bool Import(FileSystemItem item, string savePath, CopyAction action);
+        bool HasValidSelection();
     }
 }

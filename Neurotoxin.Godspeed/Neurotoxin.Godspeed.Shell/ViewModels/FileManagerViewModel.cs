@@ -29,7 +29,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #region Main window properties
 
-        private Stack<IPaneViewModel> _leftPaneStack = new Stack<IPaneViewModel>();
+        private readonly Stack<IPaneViewModel> _leftPaneStack = new Stack<IPaneViewModel>();
 
         private const string LEFTPANE = "LeftPane";
         private IPaneViewModel _leftPane;
@@ -39,7 +39,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             set { _leftPane = value; NotifyPropertyChanged(LEFTPANE); }
         }
 
-        private Stack<IPaneViewModel> _rightPaneStack = new Stack<IPaneViewModel>();
+        private readonly Stack<IPaneViewModel> _rightPaneStack = new Stack<IPaneViewModel>();
 
         private const string RIGHTPANE = "RightPane";
         private IPaneViewModel _rightPane;
@@ -205,7 +205,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private bool CanExecuteCopyCommand()
         {
-            return TargetPane != null && SourcePane != null && SourcePane.CurrentRow != null && !SourcePane.IsBusy && !TargetPane.IsBusy;
+            return TargetPane != null && SourcePane != null && SourcePane.HasValidSelection() && !SourcePane.IsBusy && !TargetPane.IsBusy;
         }
 
         private void ExecuteCopyCommand()
@@ -311,7 +311,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private bool CanExecuteMoveCommand()
         {
-            return TargetPane != null && SourcePane != null && SourcePane.CurrentRow != null && !SourcePane.IsBusy && !TargetPane.IsBusy;
+            return TargetPane != null && SourcePane != null && SourcePane.HasValidSelection() && !SourcePane.IsBusy && !TargetPane.IsBusy;
         }
 
         private void ExecuteMoveCommand()
@@ -427,7 +427,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private bool CanExecuteDeleteCommand()
         {
-            return SourcePane != null && SourcePane.CurrentRow != null && !SourcePane.IsBusy;
+            return SourcePane != null && SourcePane.HasValidSelection() && !SourcePane.IsBusy;
         }
 
         private void ExecuteDeleteCommand()
