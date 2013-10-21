@@ -41,7 +41,7 @@
                                 <shell:WindowChrome ResizeBorderThickness="6" CaptionHeight="27" CornerRadius="0" GlassFrameThickness="0,0,0,1"/>
                             </Setter.Value>
                         </Setter>
-                        <Setter Property="Icon" Value="/Resources/icon.ico"/>
+                        <Setter Property="Icon" Value="pack://application:,,,/Neurotoxin.Godspeed.Shell;component/Resources/icon.ico"/>
                         <Setter Property="SnapsToDevicePixels" Value="True"/>
                         <Setter Property="Template">
                             <Setter.Value>
@@ -86,7 +86,7 @@
                                 <shell:WindowChrome ResizeBorderThickness="6" CaptionHeight="24" CornerRadius="0" GlassFrameThickness="0,0,0,1"/>
                             </Setter.Value>
                         </Setter>
-                        <Setter Property="Icon" Value="/Resources/icon.ico"/>
+                        <Setter Property="Icon" Value="pack://application:,,,/Neurotoxin.Godspeed.Shell;component/Resources/icon.ico"/>
                         <Setter Property="SnapsToDevicePixels" Value="True"/>
                         <Setter Property="AllowsTransparency" Value="True"/>
                         <Setter Property="WindowStyle" Value="None"/>

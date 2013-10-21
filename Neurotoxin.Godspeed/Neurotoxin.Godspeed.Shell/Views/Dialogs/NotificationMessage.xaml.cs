@@ -16,7 +16,7 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
 
         public NotificationMessage(string title, string message, bool isCloseable = true)
         {
-            Owner = Application.Current.MainWindow;
+            if (Application.Current.MainWindow.IsVisible) Owner = Application.Current.MainWindow;
             InitializeComponent();
             Message.Text = message;
             Title = title;

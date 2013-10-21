@@ -15,7 +15,7 @@ namespace Neurotoxin.Godspeed.Presentation.Extensions
         {
             if (Cache.ContainsKey(path)) return Cache[path];
 
-            var contentInfo = Application.GetContentStream(new Uri(path, UriKind.Relative));
+            var contentInfo = Application.GetResourceStream(new Uri(path, UriKind.Relative));
             if (contentInfo == null) throw new ArgumentException(string.Format("Content not found: {0}", path));
             var ms = new MemoryStream();
             contentInfo.Stream.CopyTo(ms);

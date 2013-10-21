@@ -314,60 +314,72 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\icon.ico" />
-    <Resource Include="Resources\clipboard_sign.png" />
-    <Resource Include="Resources\cog.png" />
-    <Content Include="Resources\Connections\AddConnection.png">
+    <Resource Include="Resources\icon.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Connections\Fat.png">
+    </Resource>
+    <Resource Include="Resources\clipboard_sign.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Connections\FatElite.png">
+    </Resource>
+    <Resource Include="Resources\cog.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Connections\HardDrive.png">
+    </Resource>
+    <Resource Include="Resources\Connections\AddConnection.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Connections\Slim.png">
+    </Resource>
+    <Resource Include="Resources\Connections\Fat.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Connections\Pendrive.png">
+    </Resource>
+    <Resource Include="Resources\Connections\FatElite.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\drive.png">
+    </Resource>
+    <Resource Include="Resources\Connections\HardDrive.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\drive_cd.png">
+    </Resource>
+    <Resource Include="Resources\Connections\Slim.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\drive_cd_empty.png">
+    </Resource>
+    <Resource Include="Resources\Connections\Pendrive.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\drive_error.png">
+    </Resource>
+    <Resource Include="Resources\drive.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\drive_network.png">
+    </Resource>
+    <Resource Include="Resources\drive_cd.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\file.png">
+    </Resource>
+    <Resource Include="Resources\drive_cd_empty.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\folder.png">
+    </Resource>
+    <Resource Include="Resources\drive_error.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\hidden_achivement.png">
+    </Resource>
+    <Resource Include="Resources\drive_network.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Resource Include="Resources\refresh.png" />
-    <Resource Include="Resources\rename.png" />
-    <Resource Include="Resources\search.png" />
-    <Content Include="Resources\up.png">
+    </Resource>
+    <Resource Include="Resources\file.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\xbox_logo.png">
+    </Resource>
+    <Resource Include="Resources\folder.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </Resource>
+    <Resource Include="Resources\hidden_achivement.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\refresh.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\rename.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\search.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\up.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\xbox_logo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">

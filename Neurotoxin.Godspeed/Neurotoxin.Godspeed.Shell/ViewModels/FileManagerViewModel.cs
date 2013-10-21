@@ -53,8 +53,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             get 
             { 
-                if (LeftPane.IsActive) return LeftPane;
-                if (RightPane.IsActive) return RightPane;
+                if (LeftPane != null && LeftPane.IsActive) return LeftPane;
+                if (RightPane != null && RightPane.IsActive) return RightPane;
                 return null;
             }
         }

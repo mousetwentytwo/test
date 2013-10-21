@@ -8,6 +8,7 @@ using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Composite.UnityExtensions;
 using Neurotoxin.Godspeed.Presentation.Events;
 using Neurotoxin.Godspeed.Core.Extensions;
+using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 
 namespace Neurotoxin.Godspeed.Shell
 {
@@ -33,12 +34,13 @@ namespace Neurotoxin.Godspeed.Shell
             var tempDir = Path.Combine(appDir, "temp");
             if (!Directory.Exists(tempDir)) Directory.CreateDirectory(tempDir);
             Dispatcher.CurrentDispatcher.UnhandledException += UnhandledThreadingException;
+            ShutdownMode = ShutdownMode.OnMainWindowClose;
+
 #if (DEBUG)
             RunInDebugMode();
 #else
               RunInReleaseMode();
 #endif
-            this.ShutdownMode = ShutdownMode.OnMainWindowClose;
         }
 
         private void RunInDebugMode()
@@ -73,10 +75,13 @@ namespace Neurotoxin.Godspeed.Shell
 
         public void HandleException(Exception ex)
         {
-            if (eventAggregator == null) eventAggregator = bootstrapper.Container.Resolve<IEventAggregator>();
+            //if (eventAggregator == null) eventAggregator = bootstrapper.Container.Resolve<IEventAggregator>();
 
-            Exception raisedex = ex is TargetInvocationException ? ex.InnerException : ex;
-            eventAggregator.GetEvent<ExceptionEvent>().Publish(raisedex);
+            var raisedex = ex is TargetInvocationException ? ex.InnerException : ex;
+            NotificationMessage.Show("Error", raisedex.Message);
+            Shutdown();
+
+            //eventAggregator.GetEvent<ExceptionEvent>().Publish(raisedex);
         }
 
     }

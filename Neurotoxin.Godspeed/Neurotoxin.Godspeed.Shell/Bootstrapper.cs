@@ -10,6 +10,7 @@ using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Shell.Controllers;
 using Neurotoxin.Godspeed.Shell.ViewModels;
 using Neurotoxin.Godspeed.Shell.Views;
+using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 
 namespace Neurotoxin.Godspeed.Shell
 {
@@ -32,9 +33,6 @@ namespace Neurotoxin.Godspeed.Shell
             Container.RegisterType<LocalFileSystemContentViewModel>();
             Container.RegisterType<StfsPackageContentViewModel>();
             Container.RegisterType<CacheManager>(new ContainerControlledLifetimeManager());
-
-            //var cm = Container.Resolve<CacheManager>();
-            //cm.ClearCache();
         }
 
         protected override IModuleCatalog GetModuleCatalog()
@@ -56,7 +54,7 @@ namespace Neurotoxin.Godspeed.Shell
         protected override DependencyObject CreateShell()
         {
             var view = InitializeShell();
-            ((FileManagerViewModel)view.DataContext).InitializePanes();
+            ((FileManagerViewModel) view.DataContext).InitializePanes();
             Application.Current.MainWindow = view;
             UIThread.Run(view.Show);
             return view;

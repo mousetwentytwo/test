@@ -28,6 +28,8 @@
 	</ItemGroup>
 	<Import Project="$(MSBuildExtensionsPath32)\InstallShield\2012SpringLimited\InstallShield.targets"/>
 	<ItemGroup>
+	</ItemGroup>
+	<ItemGroup>
 		<ProjectReference Include="..\Neurotoxin.Godspeed.Shell\Neurotoxin.Godspeed.Shell.csproj">
 			<Name>Neurotoxin.Godspeed.Shell</Name>
 			<Project>{B80F4FF9-D93B-474B-A86E-6B6EB70E92F7}</Project>
