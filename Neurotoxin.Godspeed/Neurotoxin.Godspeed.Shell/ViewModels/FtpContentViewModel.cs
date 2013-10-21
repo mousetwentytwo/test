@@ -2,26 +2,18 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
-using Neurotoxin.Godspeed.Shell.Constants;
+using System.Text;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Shell.Events;
-using Neurotoxin.Godspeed.Shell.Exceptions;
 using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
-using Neurotoxin.Godspeed.Shell.Interfaces;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
     public class FtpContentViewModel : FileListPaneViewModelBase<FtpContent>
     {
         private readonly Dictionary<string, string> _driveLabelCache = new Dictionary<string, string>();
-
-        public bool SupportsDirectCopy
-        {
-            get { return false; }
-        }
 
         #region DisconnectCommand
 
@@ -110,12 +102,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             if (!_driveLabelCache.ContainsKey(Drive.Path))
             {
-                var path = string.Format("{0}name.txt", Drive.Path);
+                var path = String.Format("{0}name.txt", Drive.Path);
                 string label = null;
                 if (FileManager.FileExists(path))
                 {
                     var bytes = FileManager.DownloadFile(path);
-                    label = string.Format("[{0}]", System.Text.Encoding.BigEndianUnicode.GetString(bytes));
+                    label = String.Format("[{0}]", Encoding.BigEndianUnicode.GetString(bytes));
                 }
                 _driveLabelCache.Add(Drive.Path, label);
             }
@@ -125,7 +117,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public override string GetTargetPath(string path)
         {
-            return string.Format("{0}{1}", CurrentFolder.Path, path.Replace('\\', '/'));
+            return String.Format("{0}{1}", CurrentFolder.Path, path.Replace('\\', '/'));
         }
 
         protected override void SaveToFileStream(string path, FileStream fs, long remoteStartPosition)

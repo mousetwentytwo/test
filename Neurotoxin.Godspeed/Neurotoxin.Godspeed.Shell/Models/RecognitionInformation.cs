@@ -11,12 +11,14 @@ namespace Neurotoxin.Godspeed.Shell.Models
         public string Pattern { get; private set; }
         public string Title { get; private set; }
         public TitleType Type { get; private set; }
+        public bool IsDirectoryOnly { get; private set; }
 
-        public RecognitionInformation(string pattern, string title, TitleType type = TitleType.Undefined)
+        public RecognitionInformation(string pattern, string title, TitleType type = TitleType.Undefined, bool isDirectoryOnly = true)
         {
             Pattern = pattern;
             Title = title;
             Type = type;
+            IsDirectoryOnly = isDirectoryOnly;
         }
     }
 }

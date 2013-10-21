@@ -37,5 +37,10 @@ namespace Neurotoxin.Godspeed.Shell.Models
                     Date = Date
                 };
         }
+
+        public string GetRelativePath(string parent)
+        {
+            return Path.Replace(parent, string.Empty);
+        }
     }
 }

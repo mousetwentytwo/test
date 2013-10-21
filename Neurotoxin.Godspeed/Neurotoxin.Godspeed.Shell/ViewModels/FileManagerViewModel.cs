@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 using Microsoft.Practices.Unity;
@@ -21,7 +22,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
     public class FileManagerViewModel : ViewModelBase
     {
-        private Queue<FileSystemItemViewModel> _queue;
+        private Queue<FileSystemItem> _queue;
         private CopyAction _rememberedCopyAction;
         private const string RenameFromPattern = @"([\/]){0}$";
         private const string RenameToPattern = @"$1{0}";
@@ -209,10 +210,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void ExecuteCopyCommand()
         {
-            WorkerThread.Run(SourcePane.PopulateQueue, CopyPrepare, CopyError);
+            var message = string.Format("Do you really want to copy the selected items?");
+            if (new ConfirmationDialog("Copy", message).ShowDialog() != true) return;
+            AsyncJob(SourcePane.PopulateQueue, CopyPrepare, CopyError);
         }
 
-        private void CopyPrepare(Queue<FileSystemItemViewModel> queue)
+        private void CopyPrepare(Queue<FileSystemItem> queue)
         {
             _queue = queue;
             InitializeTransfer(TransferProgressDialogMode.Copy);
@@ -234,7 +237,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }            
         }
 
-        private bool CopyInner(FileSystemItemViewModel item, CopyAction? action, string rename)
+        private bool CopyInner(FileSystemItem item, CopyAction? action, string rename)
         {
             var sourcePath = item.GetRelativePath(SourcePane.CurrentFolder.Path);
             var targetPath = TargetPane.GetTargetPath(sourcePath);
@@ -257,10 +260,10 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     if (TargetPane is LocalFileSystemContentViewModel) return SourcePane.Export(item, targetPath, a);
                     if (SourcePane is LocalFileSystemContentViewModel) return TargetPane.Import(item, targetPath, a);
                     var tempFile = string.Format("{0}\\temp\\{1}", AppDomain.CurrentDomain.GetData("DataDirectory"), item.FullPath.Hash());
-                    var tempItem = item.Model.Clone();
+                    var tempItem = item.Clone();
                     tempItem.Path = tempFile;
                     var result = SourcePane.Export(item, tempFile, CopyAction.Overwrite) &&
-                                 TargetPane.Import(new FileSystemItemViewModel(tempItem), targetPath, action ?? _rememberedCopyAction);
+                                 TargetPane.Import(tempItem, targetPath, action ?? _rememberedCopyAction);
                     File.Delete(tempFile);
                     return result;
                 default:
@@ -313,10 +316,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void ExecuteMoveCommand()
         {
-            WorkerThread.Run(SourcePane.PopulateQueue, MovePrepare, MoveError);
+            var message = string.Format("Do you really want to move the selected items?");
+            if (new ConfirmationDialog("Move", message).ShowDialog() != true) return;
+            AsyncJob(SourcePane.PopulateQueue, MovePrepare, MoveError);
         }
 
-        private void MovePrepare(Queue<FileSystemItemViewModel> queue)
+        private void MovePrepare(Queue<FileSystemItem> queue)
         {
             _queue = queue;
             InitializeTransfer(TransferProgressDialogMode.Move);
@@ -424,18 +429,19 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void ExecuteDeleteCommand()
         {
-            WorkerThread.Run(() => SourcePane.PopulateQueue(true), DeletePrepare, DeleteError);
+            var message = string.Format("Do you really want to delete the selected items?");
+            if (new ConfirmationDialog("Delete", message).ShowDialog() != true) return;
+            AsyncJob(() => SourcePane.PopulateQueue(true), DeletePrepare, DeleteError);
         }
 
-        private void DeletePrepare(Queue<FileSystemItemViewModel> queue)
+        private void DeletePrepare(Queue<FileSystemItem> queue)
         {
-            var message = string.Format("Do you really want to delete the selected items?");
-            if (new ConfirmationDialog(message).ShowDialog() != true) return;
+            _queue = queue;
             InitializeTransfer(TransferProgressDialogMode.Delete);
             DeleteStart();
         }
 
-        private void DeleteStart(CopyAction? action = null)
+        private void DeleteStart()
         {
             if (_queue.Count > 0)
             {
@@ -462,7 +468,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             switch (result.Behavior)
             {
                 case ErrorResolutionBehavior.Retry:
-                    DeleteStart(result.Action);
+                    DeleteStart();
                     break;
                 case ErrorResolutionBehavior.Skip:
                     DeleteSuccess(false);
@@ -639,7 +645,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             var item = _queue.Dequeue();
             if (item.Type == ItemType.File) BytesTransfered += item.Size ?? 0;
             FilesTransfered++;
-            if (result && !_queue.Any(q => q.Path.StartsWith(item.Path))) item.IsSelected = false;
+            if (!result) return;
+
+            var vm = SourcePane.SelectedItems.FirstOrDefault();
+            if (vm != null && !_queue.Any(q => q.Path.StartsWith(vm.Path))) 
+                vm.IsSelected = false;
         }
 
         internal void AbortTransfer()
@@ -676,6 +686,45 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             {
                 chooseDifferentOption.Invoke(exception);
             }
+        }
+
+        private void AsyncJob<T>(Func<T> work, Action<T> success, Action<Exception> error = null)
+        {
+            var finished = false;
+            NotificationMessage notificationMessage = null;
+            WorkerThread.Run(
+                () =>
+                    {
+                        Thread.Sleep(3000); 
+                        return true;
+                    }, 
+                b =>
+                    {
+                        if (finished) return;
+                        notificationMessage = new NotificationMessage("Application is busy", "Populating. Please wait...", false);
+                        notificationMessage.ShowDialog();
+                    });
+            WorkerThread.Run(work, 
+                b =>
+                    {
+                        if (notificationMessage != null)
+                        {
+                            notificationMessage.Close();
+                            notificationMessage = null;
+                        }
+                        finished = true;
+                        success.Invoke(b);
+                    }, 
+                e =>
+                    {
+                        if (notificationMessage != null)
+                        {
+                            notificationMessage.Close();
+                            notificationMessage = null;
+                        }
+                        finished = true;
+                        if (error != null) error.Invoke(e);
+                    });
         }
     }
 }

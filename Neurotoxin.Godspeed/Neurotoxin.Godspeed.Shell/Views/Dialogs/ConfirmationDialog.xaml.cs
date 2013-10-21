@@ -5,8 +5,9 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
 {
     public partial class ConfirmationDialog
     {
-        public ConfirmationDialog(string message)
+        public ConfirmationDialog(string title, string message)
         {
+            Title = title;
             Owner = Application.Current.MainWindow;
             InitializeComponent();
             Message.Text = message;

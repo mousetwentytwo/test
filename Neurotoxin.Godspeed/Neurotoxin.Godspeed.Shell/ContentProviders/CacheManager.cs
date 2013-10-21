@@ -3,6 +3,8 @@ using System.IO;
 using Neurotoxin.Godspeed.Core.Caching;
 using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Shell.Models;
+using Microsoft.Practices.ObjectBuilder2;
+using System.Linq;
 
 namespace Neurotoxin.Godspeed.Shell.ContentProviders
 {
@@ -54,9 +56,21 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             _cacheStore.Update(hashKey, item);
         }
 
+        public void ClearCache()
+        {
+            foreach (var key in _cacheStore.Keys.Where(key => key.StartsWith("CacheEntry_")))
+            {
+                RemoveCacheEntry(key);
+            }
+        }
+
         public void ClearCache(string key)
         {
-            var hashKey = HashKey(key);
+            RemoveCacheEntry(HashKey(key));
+        }
+
+        private void RemoveCacheEntry(string hashKey)
+        {
             var item = _cacheStore.Get<CacheEntry<FileSystemItem>>(hashKey);
             if (!string.IsNullOrEmpty(item.TempFilePath)) File.Delete(item.TempFilePath);
             _cacheStore.Remove(hashKey);

@@ -1,0 +1,21 @@
+﻿<controls:DialogBase x:Class="Neurotoxin.Godspeed.Shell.Views.Dialogs.NotificationMessage"
+                           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                           xmlns:controls="clr-namespace:Neurotoxin.Godspeed.Presentation.Controls;assembly=Neurotoxin.Godspeed.Presentation"
+                           Width="400" Topmost="True" SizeToContent="Height" WindowStartupLocation="CenterOwner"
+                           Style="{StaticResource Dialog}">
+    <Grid x:Name="LayoutRoot">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.ColumnSpan="4" Grid.Row="0" Margin="5,0,0,5" x:Name="Message" TextWrapping="Wrap" />
+
+        <Button Grid.Column="1" Grid.Row="1" Content="OK" Margin="5" x:Name="Ok" Click="OkButtonClick" Width="80"/>
+        
+    </Grid>
+</controls:DialogBase>

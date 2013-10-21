@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows;
 using Neurotoxin.Godspeed.Core.Constants;
 using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Core.Io.Stfs;
@@ -32,7 +33,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 new RecognitionInformation("^FFFE[0-9A-F]{4}$", "System Data", TitleType.SystemDir),
                 new RecognitionInformation("^[1-9A-F][0-9A-F]{7}$", "Unknown Game", TitleType.Game),
                 new RecognitionInformation("^[0-9A-F]{8}$", "Unknown Content", TitleType.Content),
-                new RecognitionInformation("^E0000[0-9A-F]{11}$", "Unknown Profile", TitleType.Profile),
+                new RecognitionInformation("^E0000[0-9A-F]{11}$", "Unknown Profile", TitleType.Profile, false),
             };
 
         public TitleRecognizer(IFileManager fileManager, CacheManager cacheManager)
@@ -50,7 +51,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         public bool RecognizeType(FileSystemItem item)
         {
             var recognition = _recognitionKeywords.FirstOrDefault(r => new Regex(r.Pattern).IsMatch(item.Name));
-            if (recognition == null) return false;
+            if (recognition == null || (recognition.IsDirectoryOnly && item.Type != ItemType.Directory)) return false;
             item.Title = recognition.Title;
             item.TitleType = recognition.Type;
             return true;
@@ -89,7 +90,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             switch (item.TitleType)
             {
                 case TitleType.Profile:
-                    GetProfileData(item, cacheItem.Path);
+                    if (cacheItem.Type == ItemType.File) GetProfileData(item, cacheItem.Path);
                     _cacheManager.SaveEntry(cacheKey, item, DateTime.Now.AddDays(14), cacheItem.Date, cacheItem.Size, _fileManager.TempFilePath);
                     item.IsCached = true;
                     break;
@@ -146,6 +147,10 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 if (_fileManager.FileExists(profilePath))
                 {
                     var profileItem = _fileManager.GetFileInfo(profilePath);
+                    if (profileItem == null)
+                    {
+                        throw new NotImplementedException("Please sign out");
+                    }
                     RecognizeType(profileItem);
                     return profileItem;
                 }

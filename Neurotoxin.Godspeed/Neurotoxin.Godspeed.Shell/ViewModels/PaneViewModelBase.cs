@@ -38,6 +38,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private const string PROGRESSMESSAGE = "ProgressMessage";
         private string _progressMessage;
+        private int _progressPercentage;
+
         public string ProgressMessage
         {
             get { return _progressMessage; }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using Neurotoxin.Godspeed.Shell.Constants;
+using Neurotoxin.Godspeed.Shell.Models;
 using Neurotoxin.Godspeed.Shell.ViewModels;
 
 namespace Neurotoxin.Godspeed.Shell.Interfaces
@@ -12,15 +13,15 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
         FileSystemItemViewModel CurrentFolder { get; }
         FileSystemItemViewModel CurrentRow { get; set; }
 
-        Queue<FileSystemItemViewModel> PopulateQueue();
-        Queue<FileSystemItemViewModel> PopulateQueue(bool bottomToTop);
+        Queue<FileSystemItem> PopulateQueue();
+        Queue<FileSystemItem> PopulateQueue(bool bottomToTop);
         bool CreateFolder(string path);
-        bool Delete(FileSystemItemViewModel item);
+        bool Delete(FileSystemItem item);
 
         void GetItemViewModel(string itemPath);
         string GetTargetPath(string sourcePath);
 
-        bool Export(FileSystemItemViewModel item, string savePath, CopyAction action);
-        bool Import(FileSystemItemViewModel item, string savePath, CopyAction action);
+        bool Export(FileSystemItem item, string savePath, CopyAction action);
+        bool Import(FileSystemItem item, string savePath, CopyAction action);
     }
 }

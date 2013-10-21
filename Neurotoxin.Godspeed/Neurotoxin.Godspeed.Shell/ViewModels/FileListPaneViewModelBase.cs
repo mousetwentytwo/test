@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -624,7 +625,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             CurrentRow = Items.FirstOrDefault();
         }
 
-        public bool Delete(FileSystemItemViewModel item)
+        public bool Delete(FileSystemItem item)
         {
             if (item.Type == ItemType.Directory)
             {
@@ -758,37 +759,42 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             eventAggregator.GetEvent<ViewModelGeneratedEvent>().Publish(new ViewModelGeneratedEventArgs(vm));
         }
 
-        public Queue<FileSystemItemViewModel> PopulateQueue()
+        public Queue<FileSystemItem> PopulateQueue()
         {
             return PopulateQueue(false);
         }
 
-        public Queue<FileSystemItemViewModel> PopulateQueue(bool bottomToTop)
+        public Queue<FileSystemItem> PopulateQueue(bool bottomToTop)
         {
-            var queue = new Queue<FileSystemItemViewModel>();
-            PopulateQueue(queue, SelectedItems.Any() ? SelectedItems : new[] { CurrentRow }, bottomToTop);
+            var res = PopulateQueue(SelectedItems.Any() ? SelectedItems.Select(vm => vm.Model) : new[] { CurrentRow.Model }, bottomToTop);
+            var queue = new Queue<FileSystemItem>();
+            res.ForEach(queue.Enqueue);
             return queue;
         }
 
-        private void PopulateQueue(Queue<FileSystemItemViewModel> queue, IEnumerable<FileSystemItemViewModel> items, bool bottomToTop)
+        private List<FileSystemItem> PopulateQueue(IEnumerable<FileSystemItem> items, bool bottomToTop)
         {
+            var result = new List<FileSystemItem>();
             foreach (var item in items)
             {
-                if (!bottomToTop) queue.Enqueue(item);
+                if (!bottomToTop) result.Add(item);
                 if (item.Type == ItemType.Directory)
                 {
-                    var start = queue.Count;
-                    PopulateQueue(queue, ChangeDirectory(item.Path).Select(c => new FileSystemItemViewModel(c)), bottomToTop);
-                    var end = queue.Count;
-                    long size = 0;
-                    for (var i = start; i < end; i++)
-                    {
-                        size += queue.ElementAt(i).Size ?? 0;
-                    }
-                    item.Size = size;
+                    var sw = new Stopwatch();
+                    sw.Start();
+                    var sub = PopulateQueue(ChangeDirectory(item.Path), bottomToTop);
+                    sw.Stop();
+                    var x = sw.Elapsed;
+                    sw.Reset();
+                    sw.Start();
+                    item.Size = sub.Sum(i => i.Size ?? 0);
+                    result.AddRange(sub);
+                    sw.Stop();
+                    Debug.WriteLine("{0} {1} p:{2} s:{3}", item.Name, result.Count, x, sw.Elapsed);
                 }
-                if (bottomToTop) queue.Enqueue(item);
+                if (bottomToTop) result.Add(item);
             }
+            return result;
         }
 
         private void AsyncErrorCallback(Exception ex)
@@ -798,7 +804,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             Parent.ShowCorrespondingErrorDialog(ex);
         }
 
-        public bool Export(FileSystemItemViewModel item, string savePath, CopyAction action)
+        public bool Export(FileSystemItem item, string savePath, CopyAction action)
         {
             if (item.Type != ItemType.File) throw new NotSupportedException();
             FileMode mode;
@@ -833,7 +839,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             return true;
         }
 
-        public bool Import(FileSystemItemViewModel item, string savePath, CopyAction action)
+        public bool Import(FileSystemItem item, string savePath, CopyAction action)
         {
             if (item.Type != ItemType.File) throw new NotSupportedException();
             var itemPath = item.Path;

@@ -145,10 +145,5 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             NotifyPropertyChanged(TITLETYPE);
             NotifyPropertyChanged(CONTENTTYPE);
         }
-
-        public string GetRelativePath(string parent)
-        {
-            return Path.Replace(parent, string.Empty);
-        }
     }
 }
