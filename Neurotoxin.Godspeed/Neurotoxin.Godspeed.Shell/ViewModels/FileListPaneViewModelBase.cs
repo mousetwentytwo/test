@@ -5,11 +5,14 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Microsoft.Practices.Unity;
 using Neurotoxin.Godspeed.Core.Constants;
+using Neurotoxin.Godspeed.Core.Io.Stfs;
+using Neurotoxin.Godspeed.Core.Models;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
@@ -21,6 +24,7 @@ using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Microsoft.Practices.Composite;
 using Microsoft.Practices.ObjectBuilder2;
+using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
@@ -29,7 +33,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private string _sortMemberPath = "ComputedName";
         private ListSortDirection _listSortDirection = ListSortDirection.Ascending;
         private Queue<FileSystemItem> _queue;
-        private readonly Dictionary<FileSystemItemViewModel, Stack<FileSystemItemViewModel>> _stackCache = new Dictionary<FileSystemItemViewModel, Stack<FileSystemItemViewModel>>();
+        private readonly Dictionary<FileSystemItemViewModel, string> _pathCache = new Dictionary<FileSystemItemViewModel, string>();
         private readonly TitleRecognizer _titleRecognizer;
         protected readonly T FileManager;
 
@@ -60,8 +64,13 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             {
                 if (IsDriveAccessible(value))
                 {
+                    if (CurrentFolder != null) _pathCache[_drive] = CurrentFolder.Path;
                     _drive = value;
                     ChangeDrive();
+                }
+                else
+                {
+                    NotificationMessage.Show("Drive change failed", string.Format("{0} is not accessible.", value.Title));
                 }
                 NotifyPropertyChanged(DRIVE);
             }
@@ -84,9 +93,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         }
 
         private const string CURRENTFOLDER = "CurrentFolder";
+        private FileSystemItemViewModel _currentFolder;
         public FileSystemItemViewModel CurrentFolder
         {
-            get { return _stack != null && _stack.Count > 0 ? _stack.Peek() : null; }
+            get { return _currentFolder; }
+            set { _currentFolder = value; NotifyPropertyChanged(CURRENTFOLDER); }
         }
 
         private const string ITEMS = "Items";
@@ -101,8 +112,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             get { return Items.Where(item => item.IsSelected); }
         }
-
-        //private FileSystemItemViewModel _previouslyFocusedRow;
 
         private const string CURRENTROW = "CurrentRow";
         private FileSystemItemViewModel _currentRow;
@@ -172,28 +181,49 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             var keyEvent = cmdParam as EventInformation<KeyEventArgs>;
             if (keyEvent != null) keyEvent.EventArgs.Handled = true;
 
-            if (cmdParam != null && CurrentRow != null)
+            if (CurrentRow != null)
             {
                 if (CurrentRow.Type == ItemType.File)
                 {
                     if (CurrentRow.TitleType == TitleType.Profile) OpenStfsPackage();
                     return;
                 }
+
                 if (CurrentRow.IsUpDirectory)
-                    Stack.Pop();
+                {
+                    var r = new Regex(@"^(.*[\\/]).*?[\\/]$");
+                    var parentPath = r.Replace(CurrentRow.Path, "$1");
+                    if (Drive.Path == parentPath)
+                    {
+                        CurrentFolder = Drive;
+                    }
+                    else
+                    {
+                        var folder = FileManager.GetFolderInfo(parentPath);
+                        if (folder == null)
+                        {
+                            NotificationMessage.Show("Navigation error", string.Format("Can't find path: {0}", parentPath));
+                            CurrentFolder = Drive;
+                        } 
+                        else
+                        {
+                            CurrentFolder = new FileSystemItemViewModel(folder);    
+                        }
+                    }
+                } 
                 else
-                    Stack.Push(CurrentRow);
-                NotifyPropertyChanged(CURRENTFOLDER);
+                {
+                    CurrentFolder = CurrentRow;
+                }
             }
 
             ProgressMessage = "Changing directory...";
-            IsBusy = true;
-            WorkerThread.Run(() => ChangeDirectory(), ChangeDirectoryCallback, AsyncErrorCallback);
+            IsBusy = true;           
+            WorkerThread.Run(() => ChangeDirectory(CurrentFolder.Path), ChangeDirectoryCallback, AsyncErrorCallback);
         }
 
-        private List<FileSystemItem> ChangeDirectory(string selectedPath = null)
+        private List<FileSystemItem> ChangeDirectory(string selectedPath)
         {
-            if (selectedPath == null) selectedPath = CurrentFolder.Path;
             var list = FileManager.GetList(selectedPath);
             list.ForEach(item => _titleRecognizer.RecognizeType(item));
             return list;
@@ -204,21 +234,24 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             IsBusy = false;
 
             _queue = new Queue<FileSystemItem>();
+            var sw = new Stopwatch();
+            sw.Start();
             foreach (var item in result.Where(item => !_titleRecognizer.MergeWithCachedEntry(item)))
             {
                 if (CurrentFolder.ContentType == ContentType.Undefined && !_titleRecognizer.IsXboxFolder(item)) continue;
                 _queue.Enqueue(item);
             }
+            sw.Stop();
+            Debug.WriteLine(sw.Elapsed);
 
-            if (Stack.Count > 1)
+            if (CurrentFolder.Type != ItemType.Drive)
             {
-                var parentFolder = Stack.Peek();
                 result.Insert(0, new FileSystemItem
                 {
                     Title = "[..]",
-                    Type = parentFolder.Type,
-                    Date = parentFolder.Date,
-                    Path = parentFolder.Path,
+                    Type = CurrentFolder.Type,
+                    Date = CurrentFolder.Date,
+                    Path = CurrentFolder.Path,
                     Thumbnail = ApplicationExtensions.GetContentByteArray("/Resources/up.png")
                 });
             }
@@ -259,7 +292,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void OpenStfsPackageError(PaneViewModelBase pane, Exception exception)
         {
             IsBusy = false;
-            MessageBox.Show(string.Format("Can't open {0}: {1}", CurrentRow.ComputedName, exception.Message));
+            NotificationMessage.Show("Open failed", string.Format("Can't open {0}: {1}", CurrentRow.ComputedName, exception.Message));
         }
 
         #endregion
@@ -491,29 +524,71 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public DelegateCommand RefreshTitleCommand { get; private set; }
 
-        private void ExecuteRefreshTitleCommand()
-        {
-            IsBusy = true;
-            ProgressMessage = string.Format("Recognizing item {0}...", CurrentRow.Name);
-            WorkerThread.Run(RefreshTitle, RefreshTitleCallback, AsyncErrorCallback);
-        }
-
         private bool CanExecuteRefreshTitleCommand()
         {
             return CurrentRow != null;
         }
 
-        private FileSystemItemViewModel RefreshTitle()
+        private void ExecuteRefreshTitleCommand()
         {
-            var result = CurrentRow;
-            _titleRecognizer.RecognizeTitle(CurrentRow.Model, true);
-            return result;
+            var selection = SelectedItems.Any() ? SelectedItems.Select(i => i.Model) : new[] {CurrentRow.Model};
+            selection.ForEach(_titleRecognizer.ThrowCache);
+            _queue = new Queue<FileSystemItem>(selection);
+            IsBusy = true;
+            RecognitionStart();
         }
 
-        private void RefreshTitleCallback(FileSystemItemViewModel item)
+        #endregion
+
+        #region RecognizeFromProfileCommand
+
+        public DelegateCommand RecognizeFromProfileCommand { get; private set; }
+
+        private bool CanExecuteRecognizeFromProfileCommand()
+        {
+            return CurrentRow != null && CurrentRow.IsProfile;
+        }
+
+        private void ExecuteRecognizeFromProfileCommand()
+        {
+            IsBusy = true;
+            ProgressMessage = "Scanning profile...";
+            WorkerThread.Run(RecognizeFromProfile, RecognizeFromProfileCallback, AsyncErrorCallback);
+        }
+
+        private int RecognizeFromProfile()
+        {
+            var tmp = _titleRecognizer.GetTempFilePath(CurrentRow.Model);
+            if (tmp == null) return -1;
+
+            var i = 0;
+            var stfs = ModelFactory.GetModel<StfsPackage>(tmp);
+            stfs.ExtractContent();
+            stfs.ProfileInfo.TitlesPlayed.ForEach(g =>
+                                                      {
+                                                          var game = stfs.Games.Values.FirstOrDefault(gg => gg.TitleId == g.TitleCode);
+                                                          if (game == null) return;
+                                                          var cacheEntry = _titleRecognizer.GetCacheEntry(g.TitleCode);
+                                                          if (cacheEntry != null && cacheEntry.Expiration == null) return;
+                                                          var item = new FileSystemItem
+                                                                         {
+                                                                             Name = g.TitleCode,
+                                                                             Title = g.TitleName,
+                                                                             Type = ItemType.Directory,
+                                                                             TitleType = TitleType.Game,
+                                                                             Thumbnail = game.Thumbnail
+                                                                         };
+                                                          _titleRecognizer.UpdateCache(item);
+                                                          i++;
+                                                      });
+            return i;
+        }
+
+        private void RecognizeFromProfileCallback(int count)
         {
             IsBusy = false;
-            item.NotifyModelChanges();
+            var message = count < 1 ? "No new titles found." : string.Format("{0} new title{1} found.", count, count > 1 ? "s" : string.Empty);
+            NotificationMessage.Show("Title Recognition", message);
         }
 
         #endregion
@@ -600,6 +675,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             GoToFirstCommand = new DelegateCommand<bool>(ExecuteGoToFirstCommand, CanExecuteGoToFirstCommand);
             GoToLastCommand = new DelegateCommand<bool>(ExecuteGoToLastCommand, CanExecuteGoToLastCommand);
             RefreshTitleCommand = new DelegateCommand(ExecuteRefreshTitleCommand, CanExecuteRefreshTitleCommand);
+            RecognizeFromProfileCommand = new DelegateCommand(ExecuteRecognizeFromProfileCommand, CanExecuteRecognizeFromProfileCommand);
             CopyTitleIdToClipboardCommand = new DelegateCommand(ExecuteCopyTitleIdToClipboardCommand, CanExecuteCopyTitleIdToClipboardCommand);
             SearchGoogleCommand = new DelegateCommand(ExecuteSearchGoogleCommand, CanExecuteSearchGoogleCommand);
             RenameCommand = new DelegateCommand<object>(ExecuteRenameCommand, CanExecuteRenameCommand);
@@ -647,51 +723,49 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private bool IsDriveAccessible(FileSystemItemViewModel drive)
         {
-            var result = false;
             try
             {
-                result = FileManager.DriveIsReady(drive.Path);
-                if (!result)
-                {
-                    MessageBox.Show(string.Format("{0} is not accessible.", drive.Title));
-                }
+                return FileManager.DriveIsReady(drive.Path);
             }
             catch (TransferException ex)
             {
                 Parent.ShowCorrespondingErrorDialog(ex);
+                return false;
             }
-            return result;
         }
 
         protected virtual void ChangeDrive()
         {
-            if (_stackCache.ContainsKey(Drive))
-            {
-                Stack = _stackCache[Drive];
-            }
-            else
-            {
-                Stack = new Stack<FileSystemItemViewModel>();
-                Stack.Push(Drive);
-                _stackCache.Add(Drive, Stack);
-            }
             CurrentRow = null;
+            CurrentFolder = _pathCache.ContainsKey(Drive) ? new FileSystemItemViewModel(FileManager.GetFolderInfo(_pathCache[Drive])) : Drive;
             ChangeDirectoryCommand.Execute(null);
         }
 
         public override void RaiseCanExecuteChanges()
         {
             base.RaiseCanExecuteChanges();
+            ChangeDirectoryCommand.RaiseCanExecuteChanged();
+            CalculateSizeCommand.RaiseCanExecuteChanged();
             RefreshTitleCommand.RaiseCanExecuteChanged();
+            RecognizeFromProfileCommand.RaiseCanExecuteChanged();
             CopyTitleIdToClipboardCommand.RaiseCanExecuteChanged();
             SearchGoogleCommand.RaiseCanExecuteChanged();
             RenameCommand.RaiseCanExecuteChanged();
             Parent.RaiseCanExecuteChanges();
         }
 
-        public override void Refresh()
+        public override void Refresh(Action callback)
         {
-            ChangeDirectoryCommand.Execute(null);
+            ProgressMessage = "Refreshing directory...";
+            IsBusy = true;
+            WorkerThread.Run(
+                () => ChangeDirectory(CurrentFolder.Path), 
+                result =>
+                    {
+                        ChangeDirectoryCallback(result);
+                        if (callback != null) callback.Invoke();
+                    }, 
+                AsyncErrorCallback);
         }
 
         private byte[] ReadFileContent(FileSystemItemViewModel item)

@@ -1,16 +1,27 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Neurotoxin.Godspeed.Core.Caching;
 using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Shell.Models;
-using Microsoft.Practices.ObjectBuilder2;
 using System.Linq;
 
 namespace Neurotoxin.Godspeed.Shell.ContentProviders
 {
     public class CacheManager
     {
+        private const string KeyPrefix = "CacheEntry_";
         private readonly EsentPersistentDictionary _cacheStore = EsentPersistentDictionary.Instance;
+        private readonly Dictionary<string, CacheEntry<FileSystemItem>> _cache;
+
+        public CacheManager()
+        {
+            _cache = new Dictionary<string, CacheEntry<FileSystemItem>>();
+            foreach (var key in _cacheStore.Keys.Where(key => key.StartsWith(KeyPrefix)))
+            {
+                _cache.Add(key, _cacheStore.Get<CacheEntry<FileSystemItem>>(key));
+            }
+        }
 
         public bool HasEntry(string key)
         {
@@ -19,9 +30,10 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public CacheEntry<FileSystemItem> GetEntry(string key, long? size = null, DateTime? date = null)
         {
-            CacheEntry<FileSystemItem> item;
             var hashKey = HashKey(key);
-            if (!_cacheStore.TryGet(hashKey, out item)) return null;
+            if (!_cache.ContainsKey(hashKey)) return null;
+
+            var item = _cache[hashKey];
 
             if ((item.Expiration.HasValue && item.Expiration < DateTime.Now) ||
                 (size.HasValue && item.Size.HasValue && item.Size.Value < size) ||
@@ -44,13 +56,20 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                     Content = content,
                     TempFilePath = tmpPath
                 };
-            _cacheStore.Put(HashKey(key), entry);
+            var hashKey = HashKey(key);
+            _cache.Add(hashKey, entry);
+            _cacheStore.Put(hashKey, entry);
         }
 
         public void UpdateEntry(string key, FileSystemItem content)
         {
             var hashKey = HashKey(key);
-            var item = _cacheStore.Get<CacheEntry<FileSystemItem>>(hashKey);
+            if (!_cache.ContainsKey(hashKey)) 
+            {
+                SaveEntry(key, content);
+                return;
+            }
+            var item = _cache[hashKey];
             item.Content = content;
             item.Expiration = null;
             _cacheStore.Update(hashKey, item);
@@ -58,7 +77,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public void ClearCache()
         {
-            foreach (var key in _cacheStore.Keys.Where(key => key.StartsWith("CacheEntry_")))
+            foreach (var key in _cacheStore.Keys.Where(key => key.StartsWith(KeyPrefix)))
             {
                 RemoveCacheEntry(key);
             }
@@ -71,14 +90,16 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         private void RemoveCacheEntry(string hashKey)
         {
+            if (!_cache.ContainsKey(hashKey)) return;
             var item = _cacheStore.Get<CacheEntry<FileSystemItem>>(hashKey);
             if (!string.IsNullOrEmpty(item.TempFilePath)) File.Delete(item.TempFilePath);
             _cacheStore.Remove(hashKey);
+            _cache.Remove(hashKey);
         }
 
         private static string HashKey(string s)
         {
-            return string.Format("CacheEntry_{0}", s.Hash());
+            return KeyPrefix + s.Hash();
         }
 
     }

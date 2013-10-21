@@ -3,18 +3,16 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Windows;
 using Neurotoxin.Godspeed.Core.Constants;
 using Neurotoxin.Godspeed.Core.Extensions;
+using Neurotoxin.Godspeed.Core.Io.Gpd;
 using Neurotoxin.Godspeed.Core.Io.Stfs;
 using Neurotoxin.Godspeed.Core.Models;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
 using Neurotoxin.Godspeed.Presentation.Extensions;
-using Neurotoxin.Godspeed.Shell.ViewModels;
 
 namespace Neurotoxin.Godspeed.Shell.ContentProviders
 {
@@ -22,6 +20,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
     {
         private readonly IFileManager _fileManager;
         private readonly CacheManager _cacheManager;
+        private readonly Dictionary<string, FileSystemItem> _profileFileCache = new Dictionary<string, FileSystemItem>();
 
         private readonly List<RecognitionInformation> _recognitionKeywords = new List<RecognitionInformation>
             {
@@ -30,10 +29,12 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 new RecognitionInformation("^FFFE07C3$", "Gamer Pictures", TitleType.SystemDir),
                 new RecognitionInformation("^FFFE07D1$", "Profile Data", TitleType.SystemDir),
                 new RecognitionInformation("^FFFE07DF$", "Avatar Editor", TitleType.SystemDir),
-                new RecognitionInformation("^FFFE[0-9A-F]{4}$", "System Data", TitleType.SystemDir),
+                new RecognitionInformation("^F[0-9A-F]{7}$", "System Data", TitleType.SystemDir),
+                new RecognitionInformation("^F[0-9A-F]{7}.gpd$", "System Data", TitleType.SystemFile, ItemType.File),
                 new RecognitionInformation("^[1-9A-F][0-9A-F]{7}$", "Unknown Game", TitleType.Game),
+                new RecognitionInformation("^[1-9A-F][0-9A-F]{7}.gpd$", "Unknown Game", TitleType.Game, ItemType.File),
                 new RecognitionInformation("^[0-9A-F]{8}$", "Unknown Content", TitleType.Content),
-                new RecognitionInformation("^E0000[0-9A-F]{11}$", "Unknown Profile", TitleType.Profile, false),
+                new RecognitionInformation("^E0000[0-9A-F]{11}$", "Unknown Profile", TitleType.Profile, ItemType.Directory | ItemType.File),
             };
 
         public TitleRecognizer(IFileManager fileManager, CacheManager cacheManager)
@@ -44,16 +45,17 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public bool IsXboxFolder(FileSystemItem item)
         {
-            return !string.IsNullOrEmpty(item.Name) &&
-                   _recognitionKeywords.Any(r => new Regex(r.Pattern).IsMatch(item.Name));
+            if (string.IsNullOrEmpty(item.Name)) return false;
+            if (item.Type != ItemType.Directory) return false;
+            return _recognitionKeywords.Any(r => r.ItemTypeFlags.HasFlag(ItemType.Directory) && new Regex(r.Pattern, RegexOptions.IgnoreCase).IsMatch(item.Name));
         }
 
         public bool RecognizeType(FileSystemItem item)
         {
-            var recognition = _recognitionKeywords.FirstOrDefault(r => new Regex(r.Pattern).IsMatch(item.Name));
-            if (recognition == null || (recognition.IsDirectoryOnly && item.Type != ItemType.Directory)) return false;
+            var recognition = _recognitionKeywords.FirstOrDefault(r => new Regex(r.Pattern, RegexOptions.IgnoreCase).IsMatch(item.Name));
+            if (recognition == null || !recognition.ItemTypeFlags.HasFlag(item.Type)) return false;
             item.Title = recognition.Title;
-            item.TitleType = recognition.Type;
+            item.TitleType = recognition.TitleType;
             return true;
         }
 
@@ -80,7 +82,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public void RecognizeTitle(FileSystemItem item, bool overwrite = false)
         {
-            if (item.TitleType == TitleType.SystemDir) return;
+            if (item.TitleType == TitleType.SystemDir || item.TitleType == TitleType.SystemFile) return;
             var cacheItem = GetCacheItem(item);
             if (!overwrite && MergeWithCachedEntry(item, cacheItem)) return;
 
@@ -95,10 +97,18 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                     item.IsCached = true;
                     break;
                 case TitleType.Game:
-                    if (GetGameData(item) || GetGameDataFromJqe360(item))
+                    if (item.Type == ItemType.File)
+                    {
+                        GetGameDataFromGpd(item);
                         _cacheManager.SaveEntry(cacheKey, item);
+                    } 
                     else
-                        _cacheManager.SaveEntry(cacheKey, null, DateTime.Now.AddDays(7));
+                    {
+                        if (GetGameData(item) || GetGameDataFromJqe360(item))
+                            _cacheManager.SaveEntry(cacheKey, item);
+                        else
+                            _cacheManager.SaveEntry(cacheKey, item, DateTime.Now.AddDays(7));
+                    }
                     item.IsCached = true;
                     break;
                 case TitleType.Content:
@@ -142,8 +152,8 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         {
             if (item.TitleType == TitleType.Profile && item.Type == ItemType.Directory)
             {
-                var slash = item.FullPath.Contains("/") ? "/" : "\\";
-                var profilePath = string.Format("{1}FFFE07D1{2}00010000{2}{0}", item.Name, item.Path, slash);
+                var profilePath = string.Format("{1}FFFE07D1{2}00010000{2}{0}", item.Name, item.Path, _fileManager.Slash);
+                if (_profileFileCache.ContainsKey(profilePath)) return _profileFileCache[profilePath];
                 if (_fileManager.FileExists(profilePath))
                 {
                     var profileItem = _fileManager.GetFileInfo(profilePath);
@@ -152,6 +162,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                         throw new NotImplementedException("Please sign out");
                     }
                     RecognizeType(profileItem);
+                    _profileFileCache.Add(profilePath, profileItem);
                     return profileItem;
                 }
             }
@@ -163,9 +174,11 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             switch (item.TitleType)
             {
                 case TitleType.SystemDir:
+                case TitleType.SystemFile:
                 case TitleType.Content:
-                case TitleType.Game:
                     return item.Name;
+                case TitleType.Game:
+                    return item.Type == ItemType.File ? item.Name.Replace(".gpd", string.Empty) : item.Name;
                 default:
                     return item.FullPath;
             }
@@ -253,17 +266,38 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             return result;
         }
 
+        private void GetGameDataFromGpd(FileSystemItem item)
+        {
+            var fileContent = _fileManager.ReadFileContent(item.Path);
+            var gpd = ModelFactory.GetModel<GpdFile>(fileContent);
+            gpd.Parse();
+            if (gpd.Strings.Count > 0) item.Title = gpd.Strings.First().Text;
+            if (gpd.Images.Count > 0) item.Thumbnail = gpd.Images.First().ImageData;
+        }
+
         public void UpdateCache(FileSystemItem item)
         {
             var cacheKey = GetCacheKey(item);
             _cacheManager.UpdateEntry(cacheKey, item);
         }
 
-        public string GetTempFilePath(FileSystemItem item)
+        public void ThrowCache(FileSystemItem item)
         {
             var cacheKey = GetCacheKey(item);
-            var cacheEntry = _cacheManager.GetEntry(cacheKey, item.Size, item.Date);
+            _cacheManager.ClearCache(cacheKey);
+        }
+
+        public string GetTempFilePath(FileSystemItem item)
+        {
+            var cacheItem = GetCacheItem(item);
+            var cacheKey = GetCacheKey(cacheItem);
+            var cacheEntry = _cacheManager.GetEntry(cacheKey, cacheItem.Size, cacheItem.Date);
             return cacheEntry != null && !string.IsNullOrEmpty(cacheEntry.TempFilePath) ? cacheEntry.TempFilePath : null;
+        }
+
+        public CacheEntry<FileSystemItem> GetCacheEntry(string key)
+        {
+            return _cacheManager.GetEntry(key);
         }
     }
 }

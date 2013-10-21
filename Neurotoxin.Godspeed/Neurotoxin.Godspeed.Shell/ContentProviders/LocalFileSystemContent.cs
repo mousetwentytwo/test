@@ -14,6 +14,12 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 {
     public class LocalFileSystemContent : IFileManager
     {
+        private const char SLASH = '\\';
+        public char Slash
+        {
+            get { return SLASH; }
+        }
+
         public string TempFilePath { get; set; }
 
         public List<FileSystemItem> GetDrives()
@@ -49,17 +55,23 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         {
             if (path == null) throw new NotSupportedException();
 
-            var list = Directory.GetDirectories(path).Select(di => new FileSystemItem
-                                                                       {
-                                                                           Name = Path.GetFileName(di), 
-                                                                           Type = ItemType.Directory, 
-                                                                           Date = Directory.GetLastWriteTime(di), 
-                                                                           Path = string.Format("{0}\\", di),
-                                                                           FullPath = string.Format("{0}\\", di)
-                                                                       }).ToList();
+            var list = Directory.GetDirectories(path).Select(GetFolderInfo).ToList();
             list.AddRange(Directory.GetFiles(path).Select(GetFileInfo));
 
             return list;
+        }
+
+        public FileSystemItem GetFolderInfo(string path)
+        {
+            var p = path.EndsWith("\\") ? path : path + "\\";
+            return new FileSystemItem
+            {
+                Name = Path.GetFileName(path),
+                Type = ItemType.Directory,
+                Date = Directory.GetLastWriteTime(path),
+                Path = p,
+                FullPath = p
+            };
         }
 
         public FileSystemItem GetFileInfo(string path)

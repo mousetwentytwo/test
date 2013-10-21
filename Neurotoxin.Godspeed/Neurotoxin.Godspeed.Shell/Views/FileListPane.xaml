@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:e="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              xmlns:inf="clr-namespace:Neurotoxin.Godspeed.Presentation.Infrastructure;assembly=Neurotoxin.Godspeed.Presentation"
+             xmlns:controls="clr-namespace:Neurotoxin.Godspeed.Presentation.Controls;assembly=Neurotoxin.Godspeed.Presentation"
              xmlns:views="clr-namespace:Neurotoxin.Godspeed.Shell.Views"
              xmlns:vc="clr-namespace:Neurotoxin.Godspeed.Shell.Views.Controls"
              xmlns:ts="clr-namespace:Neurotoxin.Godspeed.Shell.Views.TemplateSelectors" 
@@ -151,7 +152,7 @@
                                 <Image Grid.Column="0" Source="{Binding Thumbnail}" Width="16" Height="16" Margin="2,0,3,0"/>
                                 <Grid Grid.Column="1" x:Name="TitleEditCanvas">
                                     <TextBox x:Name="TitleEditBox" Margin="0,-2" Height="20"
-                                             Text="{Binding Title, UpdateSourceTrigger=LostFocus}" FontWeight="Bold" Loaded="TitleEditBox_Loaded"/>
+                                             Text="{Binding Title, UpdateSourceTrigger=LostFocus}" FontWeight="Bold" Loaded="TitleEditBoxLoaded"/>
                                 </Grid>
                             </Grid>
                         </DataTemplate>
@@ -194,15 +195,40 @@
                     <Setter Property="ContextMenu">
                         <Setter.Value>
                             <ContextMenu>
-                                <MenuItem Header="Refresh Title"
-                                          Command="{Binding Source={StaticResource ViewModel}, Path=Data.RefreshTitleCommand}"/>
-                                <MenuItem Header="Copy TitleID to Clipboard"
-                                          Command="{Binding Source={StaticResource ViewModel}, Path=Data.CopyTitleIdToClipboardCommand}"/>
-                                <MenuItem Header="Search Google"
-                                          Command="{Binding Source={StaticResource ViewModel}, Path=Data.SearchGoogleCommand}"/>
+                                <MenuItem Header="Recognize Again"
+                                          Command="{Binding Source={StaticResource ViewModel}, Path=Data.RefreshTitleCommand}">
+                                    <MenuItem.Icon>
+                                        <controls:GreyableImage Source="/Resources/refresh.png" Width="16" Height="16" SnapsToDevicePixels="True"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Recognize Titles from Profile" 
+                                          Visibility="{Binding Source={StaticResource ViewModel}, Path=Data.CurrentRow.IsProfile, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}"
+                                          Command="{Binding Source={StaticResource ViewModel}, Path=Data.RecognizeFromProfileCommand}">
+                                    <MenuItem.Icon>
+                                        <controls:GreyableImage Source="/Resources/cog.png" Width="16" Height="16" SnapsToDevicePixels="True"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Copy TitleID to Clipboard" 
+                                          Visibility="{Binding Source={StaticResource ViewModel}, Path=Data.CurrentRow.IsGame, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}"
+                                          Command="{Binding Source={StaticResource ViewModel}, Path=Data.CopyTitleIdToClipboardCommand}">
+                                    <MenuItem.Icon>
+                                        <controls:GreyableImage Source="/Resources/clipboard_sign.png" Width="16" Height="16" SnapsToDevicePixels="True"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Search Google" 
+                                          Visibility="{Binding Source={StaticResource ViewModel}, Path=Data.CurrentRow.IsGame, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}"
+                                          Command="{Binding Source={StaticResource ViewModel}, Path=Data.SearchGoogleCommand}">
+                                    <MenuItem.Icon>
+                                        <controls:GreyableImage Source="/Resources/search.png" Width="16" Height="16" SnapsToDevicePixels="True"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
                                 <Separator/>
                                 <MenuItem Header="Rename"
-                                          Command="{Binding Source={StaticResource ViewModel}, Path=Data.RenameCommand}" CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                          Command="{Binding Source={StaticResource ViewModel}, Path=Data.RenameCommand}" CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}">
+                                    <MenuItem.Icon>
+                                        <controls:GreyableImage Source="/Resources/rename.png" Width="16" Height="16" SnapsToDevicePixels="True"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
                             </ContextMenu>
                         </Setter.Value>
                     </Setter>

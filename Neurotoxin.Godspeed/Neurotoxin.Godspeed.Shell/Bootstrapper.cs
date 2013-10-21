@@ -33,8 +33,8 @@ namespace Neurotoxin.Godspeed.Shell
             Container.RegisterType<StfsPackageContentViewModel>();
             Container.RegisterType<CacheManager>(new ContainerControlledLifetimeManager());
 
-            var cm = Container.Resolve<CacheManager>();
-            cm.ClearCache();
+            //var cm = Container.Resolve<CacheManager>();
+            //cm.ClearCache();
         }
 
         protected override IModuleCatalog GetModuleCatalog()

@@ -4,6 +4,7 @@
     {
         Undefined,
         SystemDir,
+        SystemFile,
         Content,
         Game,
         Profile

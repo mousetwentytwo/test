@@ -6,7 +6,13 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
 {
     public partial class NotificationMessage
     {
-        private bool _isClosable;
+        private readonly bool _isClosable;
+
+        public static void Show(string title, string message, bool isCloseable = true)
+        {
+            var instance = new NotificationMessage(title, message, isCloseable);
+            instance.ShowDialog();
+        }
 
         public NotificationMessage(string title, string message, bool isCloseable = true)
         {

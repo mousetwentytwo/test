@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -50,17 +51,21 @@ namespace Neurotoxin.Godspeed.Shell.Views
         {
             var currentRow = e.AddedItems.Count > 0 ? e.AddedItems[0] : null;
             if (currentRow == null) return;
+            Grid.ScrollIntoView(currentRow);
             SetFocusToTheFirstCellOfCurrentRow();
         }
 
         private void SetFocusToTheFirstCellOfCurrentRow()
         {
-            if (Grid.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated)
+            if (Grid.ItemContainerGenerator.Status != GeneratorStatus.ContainersGenerated) return;
+            if (Grid.SelectedItem == null) return;
+            var row = Grid.ItemContainerGenerator.ContainerFromItem(Grid.SelectedItem) as DataGridRow;
+            if (row == null) return;
+            try
             {
-                if (Grid.SelectedItem == null) return;
-                var row = Grid.ItemContainerGenerator.ContainerFromItem(Grid.SelectedItem) as DataGridRow;
-                if (row != null) row.FirstCell().Focus();
-            }
+                row.FirstCell().Focus();
+            } 
+            catch {}
         }
 
         private void ItemContainerGeneratorStatusChanged(object sender, EventArgs e)
@@ -70,7 +75,7 @@ namespace Neurotoxin.Godspeed.Shell.Views
             SetFocusToTheFirstCellOfCurrentRow();
         }
 
-        private void TitleEditBox_Loaded(object sender, RoutedEventArgs e)
+        private void TitleEditBoxLoaded(object sender, RoutedEventArgs e)
         {
             var box = (TextBox) sender;
             box.SelectAll();

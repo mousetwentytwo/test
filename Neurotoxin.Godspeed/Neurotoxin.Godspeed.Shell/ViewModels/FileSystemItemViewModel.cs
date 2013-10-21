@@ -130,6 +130,18 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             get { return _model.IsCached; }
         }
 
+        private const string ISGAME = "IsGame";
+        public bool IsGame
+        {
+            get { return TitleType == TitleType.Game; }
+        }
+
+        private const string ISPROFILE = "IsProfile";
+        public bool IsProfile
+        {
+            get { return TitleType == TitleType.Profile; }
+        }
+
         public string TempFilePath { get; set; }
 
         public FileSystemItemViewModel(FileSystemItem model)
@@ -144,6 +156,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             NotifyPropertyChanged(THUMBNAIL);
             NotifyPropertyChanged(TITLETYPE);
             NotifyPropertyChanged(CONTENTTYPE);
+            NotifyPropertyChanged(ISGAME);
+            NotifyPropertyChanged(ISPROFILE);
         }
     }
 }

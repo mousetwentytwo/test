@@ -22,6 +22,7 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
         protected override void CancelButtonClick(object sender, RoutedEventArgs e)
         {
             ViewModel.AbortTransfer();
+            base.CancelButtonClick(sender, e);
         }
     }
 }

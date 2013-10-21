@@ -108,7 +108,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
         }
 
-        public override void Refresh()
+        public override void Refresh(Action callback)
         {
             throw new NotImplementedException();
         }
@@ -191,7 +191,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void FtpConnectError(PaneViewModelBase pane, Exception exception)
         {
             IsBusy = false;
-            MessageBox.Show(string.Format("Can't connect to {0}", SelectedItem.Name));
+            NotificationMessage.Show("Connection failed", string.Format("Can't connect to {0}", SelectedItem.Name));
         }
 
     }

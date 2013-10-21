@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Core.Io.Stfs;
+using Neurotoxin.Godspeed.Core.Io.Stfs.Data;
 using Neurotoxin.Godspeed.Core.Models;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Interfaces;
@@ -13,6 +14,12 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 {
     public class StfsPackageContent : IFileManager, IDisposable
     {
+        private const char SLASH = '\\';
+        public char Slash
+        {
+            get { return SLASH; }
+        }
+
         private StfsPackage _stfs;
 
         public string TempFilePath { get; set; }
@@ -38,38 +45,33 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             if (path == null) throw new NotSupportedException();
 
             var folder = _stfs.GetFolderEntry(path);
-            var list = folder.Folders.Select(f => new FileSystemItem
-            {
-                Name = f.Name,
-                Type = ItemType.Directory,
-                Path = string.Format(@"{0}{1}\", path, f.Name),
-                FullPath = string.Format(@"{0}:\{1}{2}\", _stfs.DisplayName, path, f.Name),
-                Date = DateTimeExtensions.FromFatFileTime(f.AccessTimeStamp)
-            }).ToList();
-            list.AddRange(folder.Files.Select(f => new FileSystemItem
-            {
-                Name = f.Name,
-                Type = ItemType.File,
-                Path = string.Format("{0}{1}", path, f.Name),
-                FullPath = string.Format(@"{0}:\{1}{2}", _stfs.DisplayName, path, f.Name),
-                Date = DateTimeExtensions.FromFatFileTime(f.AccessTimeStamp),
-                Size = f.FileSize
-            }));
+            var list = folder.Folders.Select(f => CreateModel(f, string.Format(@"{0}{1}\", path, f.Name))).ToList();
+            list.AddRange(folder.Files.Select(f => CreateModel(f, string.Format(@"{0}{1}", path, f.Name))));
 
             return list;
         }
 
+        public FileSystemItem GetFolderInfo(string path)
+        {
+            if (!path.EndsWith("\\")) path += "\\";
+            return CreateModel(_stfs.GetFolderEntry(path), path);
+        }
+
         public FileSystemItem GetFileInfo(string path)
         {
-            var f = _stfs.GetFileEntry(path);
+            return CreateModel(_stfs.GetFileEntry(path), path);
+        }
+
+        private FileSystemItem CreateModel(FileEntry f, string path)
+        {
             return new FileSystemItem
             {
                 Name = f.Name,
-                Type = ItemType.File,
+                Type = f.IsDirectory ? ItemType.Directory : ItemType.File,
                 Path = path,
                 FullPath = string.Format(@"{0}:\{1}", _stfs.DisplayName, path),
                 Date = DateTimeExtensions.FromFatFileTime(f.AccessTimeStamp),
-                Size = f.FileSize,
+                Size = f.FileSize
             };
         }
 

@@ -75,7 +75,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             IsActive = false;
         }
 
-        public abstract void Refresh();
+        public void Refresh()
+        {
+            Refresh(null);
+        }
+
+        public abstract void Refresh(Action callback);
         public abstract void LoadDataAsync(LoadCommand cmd, object cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase, Exception> error = null);
     }
 }

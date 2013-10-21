@@ -39,19 +39,8 @@ namespace Neurotoxin.Godspeed.Core.Caching
 
 		public T Get<T>(string key)
 		{
-            return _persistentDictionary[key].FromJson<T>();
+		    return _persistentDictionary[key].FromJson<T>();
 		}
-
-        public bool TryGet<T>(string key, out T value)
-        {
-            if (!_persistentDictionary.ContainsKey(key))
-            {
-                value = default(T);
-                return false;
-            }
-            value = _persistentDictionary[key].FromJson<T>();
-            return true;
-        }
 
 	    public void Put<T>(string key, T value)
 	    {
@@ -62,8 +51,7 @@ namespace Neurotoxin.Godspeed.Core.Caching
         public void Update<T>(string key, T newvalue)
         {
             if (_persistentDictionary.ContainsKey(key)) _persistentDictionary.Remove(key);
-            _persistentDictionary.Add(key, newvalue.ToJson());
-            _persistentDictionary.Flush();
+            Put(key, newvalue);
         }
 
         public void Remove(string key)

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Collections.ObjectModel;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Models;
 using Neurotoxin.Godspeed.Shell.ViewModels;
@@ -9,6 +9,7 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
 {
     public interface IFileListPaneViewModel : IPaneViewModel
     {
+        ObservableCollection<FileSystemItemViewModel> Items { get; }
         IEnumerable<FileSystemItemViewModel> SelectedItems { get; }
         FileSystemItemViewModel CurrentFolder { get; }
         FileSystemItemViewModel CurrentRow { get; set; }

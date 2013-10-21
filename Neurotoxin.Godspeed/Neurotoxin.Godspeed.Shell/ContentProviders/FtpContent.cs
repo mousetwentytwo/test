@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Windows;
 using Limilabs.FTP.Client;
 using Microsoft.Practices.Composite.Events;
 using Neurotoxin.Godspeed.Presentation.Extensions;
@@ -17,6 +16,12 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 {
     public class FtpContent : IFileManager
     {
+        private const char SLASH = '/';
+        public char Slash
+        {
+            get { return SLASH; }
+        }
+        
         private string _connectionLostMessage;
         private readonly IEventAggregator _eventAggregator;
         private Ftp _ftpClient;
@@ -96,7 +101,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 var currentPath = _ftpClient.GetCurrentFolder();
 
                 var items = _ftpClient.GetList();
-                var result = items.Select(item => GetFileInfo(item, string.Format("{0}/{1}{2}", currentPath, item.Name, item.IsFolder ? "/" : string.Empty))).ToList();
+                var result = items.Select(item => CreateModel(item, string.Format("{0}/{1}{2}", currentPath, item.Name, item.IsFolder ? "/" : string.Empty))).ToList();
                 NotifyFtpOperationFinished();
                 return result;
             }
@@ -110,10 +115,29 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         private string LocateDirectory(string path)
         {
+            if (path.EndsWith("/")) path = path.Substring(0, path.Length - 1);
             var dir = path.Substring(0, path.LastIndexOf('/') + 1);
             var filename = path.Replace(dir, String.Empty);
             _ftpClient.ChangeFolder(dir);
             return filename;
+        }
+
+        public FileSystemItem GetFolderInfo(string path)
+        {
+            NotifyFtpOperationStarted(false);
+            try
+            {
+                var folderName = LocateDirectory(path);
+                var folder = _ftpClient.GetList().FirstOrDefault(item => item.Name == folderName);
+                NotifyFtpOperationFinished();
+                return folder != null && folder.IsFolder ? CreateModel(folder, path) : null;
+            }
+            catch (FtpException ex)
+            {
+                NotifyFtpOperationFinished();
+                if (_ftpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
+                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
+            }
         }
 
         public FileSystemItem GetFileInfo(string path)
@@ -124,7 +148,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 var filename = LocateDirectory(path);
                 var file = _ftpClient.GetList().FirstOrDefault(item => item.Name == filename);
                 NotifyFtpOperationFinished();
-                return file != null && file.IsFile ? GetFileInfo(file, path) : null;
+                return file != null && file.IsFile ? CreateModel(file, path) : null;
             }
             catch (FtpException ex)
             {
@@ -134,7 +158,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             }
         }
 
-        private FileSystemItem GetFileInfo(FtpItem item, string path)
+        private FileSystemItem CreateModel(FtpItem item, string path)
         {
             return new FileSystemItem
                        {

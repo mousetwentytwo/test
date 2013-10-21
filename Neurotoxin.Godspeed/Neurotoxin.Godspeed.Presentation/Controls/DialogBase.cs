@@ -10,7 +10,7 @@ namespace Neurotoxin.Godspeed.Presentation.Controls
             PreviewKeyDown += OnPreviewKeyDown;
         }
 
-        private void OnPreviewKeyDown(object sender, KeyEventArgs e)
+        protected virtual void OnPreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key != Key.Escape) return;
             e.Handled = true;

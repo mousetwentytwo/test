@@ -394,9 +394,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void ExecuteNewFolderCommand()
         {
-            var dialog = new NewFolderDialog();
+            var dialog = new InputDialog("Add New Folder", "Folder name:", string.Empty);
             if (dialog.ShowDialog() != true) return;
-            var name = dialog.FolderName.Text;
+            var name = dialog.Input.Text;
             var path = string.Format("{0}{1}", SourcePane.CurrentFolder.Path, name);
             WorkerThread.Run(() => SourcePane.CreateFolder(path), success => NewFolderSuccess(success, name), NewFolderError);
         }
@@ -405,10 +405,13 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             if (!success)
             {
-                MessageBox.Show(string.Format("Error: directory [{0}] already exists! Please specify a different name.", name));
+                NotificationMessage.Show("Add New Folder", string.Format("Error: folder [{0}] already exists! Please specify a different name.", name));
                 return;
             }
-            SourcePane.Refresh();
+            SourcePane.Refresh(() =>
+                                   {
+                                       SourcePane.CurrentRow = SourcePane.Items.Single(item => item.Name == name);
+                                   });
         }
 
         private void NewFolderError(Exception ex)
@@ -635,7 +638,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
             else
             {
-                MessageBox.Show("Unknown error occured: " + exception.Message);
+                NotificationMessage.Show("Unknown error occured", exception.Message);
             }
             return result;
         }
