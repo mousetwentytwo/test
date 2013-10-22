@@ -27,7 +27,7 @@ namespace Neurotoxin.Godspeed.Shell.Converters
             var contentType = (TitleType)values[2];
 
             return values[0] == null
-                       ? string.Format("<{0}>", contentType != TitleType.Undefined ? contentType.ToString().ToUpper() : type.ToString().ToUpper())
+                       ? string.Format("<{0}>", contentType != TitleType.Unknown ? contentType.ToString().ToUpper() : type.ToString().ToUpper())
                        : Convert(values[0], targetType, parameter, culture);
         }
 

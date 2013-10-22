@@ -38,7 +38,7 @@
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Row="0" Text="Type: "/>
-                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding ContentType}"/>
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding ContentType, Converter={StaticResource EnumConverter}}"/>
                 <TextBlock Grid.Row="1" Text="Size: "/>
                 <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Path=Size, Converter={StaticResource SizeConverter}, ConverterParameter=bytes}"/>
                 <TextBlock Grid.Row="2" Text="Date: "/>

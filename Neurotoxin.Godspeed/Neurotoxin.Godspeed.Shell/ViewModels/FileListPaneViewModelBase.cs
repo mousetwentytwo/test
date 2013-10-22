@@ -238,7 +238,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             sw.Start();
             foreach (var item in result.Where(item => !_titleRecognizer.MergeWithCachedEntry(item)))
             {
-                if (CurrentFolder.ContentType == ContentType.Undefined && !_titleRecognizer.IsXboxFolder(item)) continue;
+                if (CurrentFolder.ContentType == ContentType.Unknown && !_titleRecognizer.IsXboxFolder(item)) continue;
                 _queue.Enqueue(item);
             }
             sw.Stop();

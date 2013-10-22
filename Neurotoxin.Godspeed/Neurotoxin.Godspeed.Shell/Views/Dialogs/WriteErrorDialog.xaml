@@ -3,7 +3,7 @@
                            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                            xmlns:views="clr-namespace:Neurotoxin.Godspeed.Shell.Views"
                            xmlns:controls="clr-namespace:Neurotoxin.Godspeed.Presentation.Controls;assembly=Neurotoxin.Godspeed.Presentation"
-                           Width="400" Topmost="True" SizeToContent="Height" WindowStartupLocation="CenterOwner"
+                           Width="400" WindowStartupLocation="CenterOwner" Title="Target already exists"
                            Style="{StaticResource Dialog}">
     <Grid x:Name="LayoutRoot">
         <Grid.ColumnDefinitions>

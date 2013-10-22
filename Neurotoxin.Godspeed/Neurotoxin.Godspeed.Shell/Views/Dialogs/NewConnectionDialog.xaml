@@ -5,10 +5,9 @@
                      xmlns:converters="clr-namespace:Neurotoxin.Godspeed.Presentation.Converters;assembly=Neurotoxin.Godspeed.Presentation"
                      xmlns:controls="clr-namespace:Neurotoxin.Godspeed.Presentation.Controls;assembly=Neurotoxin.Godspeed.Presentation"
                      xmlns:dialogs="clr-namespace:Neurotoxin.Godspeed.Shell.Views.Dialogs" 
-                     Width="320" Topmost="True" SizeToContent="Height" WindowStartupLocation="CenterOwner" Title="Connection details"
+                     Width="320" WindowStartupLocation="CenterOwner" Title="Connection details"
                      Style="{StaticResource Dialog}">
     <controls:DialogBase.Resources>
-        <converters:EnumConverter x:Key="EnumConverter"/>
         <Style TargetType="TextBox" x:Key="TextBoxStyle">
             <Style.Triggers>
                 <Trigger Property="Validation.HasError" Value="True">

@@ -13,7 +13,7 @@ namespace Neurotoxin.Godspeed.Shell.Models
         public TitleType TitleType { get; private set; }
         public ItemType ItemTypeFlags { get; private set; }
 
-        public RecognitionInformation(string pattern, string title, TitleType titleType = TitleType.Undefined, ItemType itemTypeFlags = ItemType.Directory)
+        public RecognitionInformation(string pattern, string title, TitleType titleType = TitleType.Unknown, ItemType itemTypeFlags = ItemType.Directory)
         {
             Pattern = pattern;
             Title = title;

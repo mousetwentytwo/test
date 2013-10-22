@@ -2,7 +2,7 @@
 {
     public enum TitleType
     {
-        Undefined,
+        Unknown,
         SystemDir,
         SystemFile,
         Content,

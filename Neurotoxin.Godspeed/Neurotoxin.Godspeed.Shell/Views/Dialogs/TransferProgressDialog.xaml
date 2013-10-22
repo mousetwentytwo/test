@@ -4,8 +4,7 @@
                            xmlns:converters="clr-namespace:Neurotoxin.Godspeed.Shell.Converters"
                            xmlns:dialogs="clr-namespace:Neurotoxin.Godspeed.Shell.Views.Dialogs"
                            xmlns:controls="clr-namespace:Neurotoxin.Godspeed.Presentation.Controls;assembly=Neurotoxin.Godspeed.Presentation"
-                           Title="{Binding TransferProgressDialogMode}"
-                           Width="400" Topmost="True" SizeToContent="Height" WindowStartupLocation="CenterOwner"
+                           Title="{Binding TransferProgressDialogMode}" Width="400" WindowStartupLocation="CenterOwner"
                            Style="{StaticResource Dialog}">
     <controls:DialogBase.Resources>
         <converters:TransferProgressDialogModeConverter x:Key="TransferProgressDialogModeConverter"/>

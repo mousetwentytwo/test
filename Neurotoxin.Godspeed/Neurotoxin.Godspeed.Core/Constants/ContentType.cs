@@ -4,7 +4,7 @@ namespace Neurotoxin.Godspeed.Core.Constants
 {
     public enum ContentType
     {
-        Undefined,
+        Unknown,
         [StringValue("Saved Game")]
         SavedGame           = 0x00000001,
         [StringValue("Downloadable Content")]

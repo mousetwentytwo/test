@@ -126,7 +126,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                     _cacheManager.SaveEntry(cacheKey, item);
                     item.IsCached = true;
                     break;
-                case TitleType.Undefined:
+                case TitleType.Unknown:
                     if (item.Type == ItemType.File)
                     {
                         var header = _fileManager.ReadFileHeader(item.Path);

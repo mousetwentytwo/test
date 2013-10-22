@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Reflection;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using Neurotoxin.Godspeed.Presentation.Controls;
 using Neurotoxin.Godspeed.Shell.Commands;
 using Neurotoxin.Godspeed.Shell.ViewModels;
 using Neurotoxin.Godspeed.Shell.Views.Dialogs;

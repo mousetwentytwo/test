@@ -18,6 +18,7 @@
                     <SolidColorBrush x:Key="NormalBorderBrush" Color="#FF9B9999" />
                     <SolidColorBrush x:Key="DefaultedBorderBrush" Color="#FF9BB1C5" />
 
+                    <co:EnumConverter x:Key="EnumConverter"/>
                     <co:BoolToVisibilityConverter x:Key="BoolToVis"/>
                     <co:NotNullOrEmptyConverter x:Key="NotNullOrEmptyConverter"/>
                     <converters:SizeConverter x:Key="SizeConverter"/>
@@ -83,13 +84,16 @@
                     <Style TargetType="{x:Type controls:DialogBase}" x:Key="Dialog">
                         <Setter Property="shell:WindowChrome.WindowChrome">
                             <Setter.Value>
-                                <shell:WindowChrome ResizeBorderThickness="6" CaptionHeight="24" CornerRadius="0" GlassFrameThickness="0,0,0,1"/>
+                                <shell:WindowChrome ResizeBorderThickness="0" CaptionHeight="24" CornerRadius="0" GlassFrameThickness="0,0,0,1"/>
                             </Setter.Value>
                         </Setter>
                         <Setter Property="Icon" Value="pack://application:,,,/Neurotoxin.Godspeed.Shell;component/Resources/icon.ico"/>
                         <Setter Property="SnapsToDevicePixels" Value="True"/>
                         <Setter Property="AllowsTransparency" Value="True"/>
                         <Setter Property="WindowStyle" Value="None"/>
+                        <Setter Property="ResizeMode" Value="NoResize"/>
+                        <!--<Setter Property="Topmost" Value="True"/>-->
+                        <Setter Property="SizeToContent" Value="Height"/>
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="{x:Type controls:DialogBase}">

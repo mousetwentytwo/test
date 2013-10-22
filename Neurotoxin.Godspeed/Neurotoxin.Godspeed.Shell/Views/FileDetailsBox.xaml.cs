@@ -6,7 +6,7 @@ namespace Neurotoxin.Godspeed.Shell.Views
 {
     public partial class FileDetailsBox : UserControl
     {
-        public const string DateTimeUiFormat = "dd/MM/yyyy HH:mm:ss.fff";
+        public const string DateTimeUiFormat = "dd/MM/yyyy HH:mm";
 
         public FileDetailsBox()
         {
