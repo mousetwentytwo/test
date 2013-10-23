@@ -638,7 +638,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void ExecuteSearchGoogleCommand()
         {
-            System.Diagnostics.Process.Start(string.Format("http://www.google.com/#q={0}", CurrentRow.Name));
+            Process.Start(string.Format("http://www.google.com/#q={0}", CurrentRow.Name));
         }
 
         #endregion

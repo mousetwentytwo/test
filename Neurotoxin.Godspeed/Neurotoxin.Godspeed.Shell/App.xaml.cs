@@ -86,9 +86,9 @@ namespace Neurotoxin.Godspeed.Shell
                                  },
                              info =>
                                  {
-                                     if ((String.Compare(title, info.Item1, StringComparison.Ordinal) >= 0 && info.Item2 <= installDate)) return;
-                                     var message = string.Format("Please visit {0} to download.", url);
-                                     NotificationMessage.Show("New GODspeed version is available!", message);
+                                     if ((string.Compare(title, info.Item1, StringComparison.InvariantCultureIgnoreCase) != -1 && info.Item2 <= installDate)) return;
+                                     var dialog = new NewVersionDialog(string.Format("{0} ({1:yyyy.MM.dd HH:mm})", info.Item1, info.Item2));
+                                     dialog.ShowDialog();
                                  });
         }
 
