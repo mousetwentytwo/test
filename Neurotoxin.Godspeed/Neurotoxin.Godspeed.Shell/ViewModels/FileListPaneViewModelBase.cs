@@ -185,7 +185,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             {
                 if (CurrentRow.Type == ItemType.File)
                 {
-                    if (CurrentRow.TitleType == TitleType.Profile) OpenStfsPackage();
+                    if (CurrentRow.TitleType == TitleType.Profile) OpenStfsPackageCommand.Execute();
                     return;
                 }
 
@@ -270,11 +270,29 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
         }
 
-        private void OpenStfsPackage()
+        #endregion
+
+        #region OpenStfsPackageCommand
+
+        public DelegateCommand OpenStfsPackageCommand { get; private set; }
+
+        private bool CanExecuteOpenStfsPackageCommand()
+        {
+            return CurrentRow != null && CurrentRow.IsProfile;
+        }
+
+        private void ExecuteOpenStfsPackageCommand()
         {
             ProgressMessage = string.Format("Opening profile {0}...", CurrentRow.ComputedName);
             IsBusy = true;
-            WorkerThread.Run(() => ReadFileContent(CurrentRow), OpenStfsPackageCallback, AsyncErrorCallback);
+            WorkerThread.Run(() => OpenStfsPackage(CurrentRow.Model), OpenStfsPackageCallback, AsyncErrorCallback);
+        }
+
+        private byte[] OpenStfsPackage(FileSystemItem item)
+        {
+            if (item.Type == ItemType.Directory) item = _titleRecognizer.GetProfileItem(item);
+            var tmpPath = _titleRecognizer.GetTempFilePath(item);
+            return File.ReadAllBytes(tmpPath);
         }
 
         private void OpenStfsPackageCallback(byte[] content)
@@ -667,6 +685,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             _titleRecognizer = new TitleRecognizer(FileManager, container.Resolve<CacheManager>());
 
             ChangeDirectoryCommand = new DelegateCommand<object>(ExecuteChangeDirectoryCommand, CanExecuteChangeDirectoryCommand);
+            OpenStfsPackageCommand = new DelegateCommand(ExecuteOpenStfsPackageCommand, CanExecuteOpenStfsPackageCommand);
             CalculateSizeCommand = new DelegateCommand<bool>(ExecuteCalculateSizeCommand, CanExecuteCalculateSizeCommand);
             SortingCommand = new DelegateCommand<EventInformation<DataGridSortingEventArgs>>(ExecuteSortingCommand);
             ToggleSelectionCommand = new DelegateCommand<ToggleSelectionMode>(ExecuteToggleSelectionCommand);
@@ -745,6 +764,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             base.RaiseCanExecuteChanges();
             ChangeDirectoryCommand.RaiseCanExecuteChanged();
+            OpenStfsPackageCommand.RaiseCanExecuteChanged();
             CalculateSizeCommand.RaiseCanExecuteChanged();
             RefreshTitleCommand.RaiseCanExecuteChanged();
             RecognizeFromProfileCommand.RaiseCanExecuteChanged();
@@ -766,14 +786,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         if (callback != null) callback.Invoke();
                     }, 
                 AsyncErrorCallback);
-        }
-
-        private byte[] ReadFileContent(FileSystemItemViewModel item)
-        {
-            item.TempFilePath = _titleRecognizer.GetTempFilePath(item.Model);
-            return item.TempFilePath != null
-                ? File.ReadAllBytes(item.TempFilePath) 
-                : FileManager.ReadFileContent(item.Path);
         }
 
         public void GetItemViewModel(string itemPath)
@@ -833,40 +845,27 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             eventAggregator.GetEvent<ViewModelGeneratedEvent>().Publish(new ViewModelGeneratedEventArgs(vm));
         }
 
-        public Queue<FileSystemItem> PopulateQueue()
+        public Queue<QueueItem> PopulateQueue(TransferType type)
         {
-            return PopulateQueue(false);
-        }
-
-        public Queue<FileSystemItem> PopulateQueue(bool bottomToTop)
-        {
-            var res = PopulateQueue(SelectedItems.Any() ? SelectedItems.Select(vm => vm.Model) : new[] { CurrentRow.Model }, bottomToTop);
-            var queue = new Queue<FileSystemItem>();
+            var res = PopulateQueue(SelectedItems.Any() ? SelectedItems.Select(vm => vm.Model) : new[] { CurrentRow.Model }, type);
+            var queue = new Queue<QueueItem>();
             res.ForEach(queue.Enqueue);
             return queue;
         }
 
-        private List<FileSystemItem> PopulateQueue(IEnumerable<FileSystemItem> items, bool bottomToTop)
+        private List<QueueItem> PopulateQueue(IEnumerable<FileSystemItem> items, TransferType type)
         {
-            var result = new List<FileSystemItem>();
+            var result = new List<QueueItem>();
             foreach (var item in items)
             {
-                if (!bottomToTop) result.Add(item);
+                if (type != TransferType.Delete) result.Add(new QueueItem(item, TransferType.Copy));
                 if (item.Type == ItemType.Directory)
                 {
-                    var sw = new Stopwatch();
-                    sw.Start();
-                    var sub = PopulateQueue(ChangeDirectory(item.Path), bottomToTop);
-                    sw.Stop();
-                    var x = sw.Elapsed;
-                    sw.Reset();
-                    sw.Start();
-                    item.Size = sub.Sum(i => i.Size ?? 0);
+                    var sub = PopulateQueue(ChangeDirectory(item.Path), type);
+                    item.Size = sub.Sum(i => i.FileSystemItem.Size ?? 0);
                     result.AddRange(sub);
-                    sw.Stop();
-                    Debug.WriteLine("{0} {1} p:{2} s:{3}", item.Name, result.Count, x, sw.Elapsed);
                 }
-                if (bottomToTop) result.Add(item);
+                if (type != TransferType.Copy) result.Add(new QueueItem(item, TransferType.Delete));
             }
             return result;
         }
@@ -886,7 +885,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             switch (action)
             {
                 case CopyAction.CreateNew:
-                    if (FileManager.FileExists(savePath))
+                    if (File.Exists(savePath))
                         throw new TransferException(TransferErrorType.WriteAccessError, item.Path, savePath, "Target already exists");
                     mode = FileMode.CreateNew;
                     break;

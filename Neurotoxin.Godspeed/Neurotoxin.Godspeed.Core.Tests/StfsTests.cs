@@ -24,7 +24,7 @@ namespace Neurotoxin.Godspeed.Core.Tests
         //private byte[] _file;
         //private StfsPackage _package;
 
-        private const string OrigPath = @"..\..\..\..\Resources\hashcheck\E00001D5D85ED487.orig";
+        private const string OrigPath = @"c:\merc\Contour\Resources\hashcheck\E00001D5D85ED487.orig";
         private const string VelocityPath = @"..\..\..\..\Resources\hashcheck\E00001D5D85ED487.velocity";
         private const string HorizonPath = @"..\..\..\..\Resources\hashcheck\E00001D5D85ED487.horizon";
 

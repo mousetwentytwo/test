@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using Neurotoxin.Godspeed.Core.Attributes;
 using Neurotoxin.Godspeed.Core.Io.Gpd;
 using Neurotoxin.Godspeed.Core.Io.Stfs.Data;
@@ -43,9 +44,9 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
         {
         }
 
-        public override void Resign(string kvPath = null)
+        protected override void Resign(Stream kv)
         {
-            ResignPackage(kvPath ?? "KV_dec.bin", 0x23C, 0xDC4, 0x23C);
+            ResignPackage(kv, 0x23C, 0xDC4, 0x23C);
         }
 
         protected override void ExtractGames()

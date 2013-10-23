@@ -5,12 +5,12 @@ using Neurotoxin.Godspeed.Shell.Constants;
 
 namespace Neurotoxin.Godspeed.Shell.Converters
 {
-    public class TransferProgressDialogModeConverter : IValueConverter
+    public class TransferTypeConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            var e = (TransferProgressDialogMode)value;
-            return e == TransferProgressDialogMode.Copy || e == TransferProgressDialogMode.Move
+            var e = (TransferType)value;
+            return e == TransferType.Copy || e == TransferType.Move
                        ? Visibility.Visible
                        : Visibility.Collapsed;
         }

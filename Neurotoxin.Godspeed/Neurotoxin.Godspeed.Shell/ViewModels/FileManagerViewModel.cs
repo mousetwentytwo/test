@@ -22,7 +22,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
     public class FileManagerViewModel : ViewModelBase
     {
-        private Queue<FileSystemItem> _queue;
+        private Queue<QueueItem> _queue;
         private CopyAction _rememberedCopyAction;
         private const string RenameFromPattern = @"([\/]){0}$";
         private const string RenameToPattern = @"$1{0}";
@@ -92,12 +92,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #region Transfer properties
 
-        private const string TRANSFERPROGRESSDIALOGMODE = "TransferProgressDialogMode";
-        private TransferProgressDialogMode _transferProgressDialogMode;
-        public TransferProgressDialogMode TransferProgressDialogMode
+        private const string TRANSFERTYPE = "TransferType";
+        private TransferType _transferType;
+        public TransferType TransferType
         {
-            get { return _transferProgressDialogMode; }
-            set { _transferProgressDialogMode = value; NotifyPropertyChanged(TRANSFERPROGRESSDIALOGMODE); }
+            get { return _transferType; }
+            set { _transferType = value; NotifyPropertyChanged(TRANSFERTYPE); }
         }
 
         private const string SOURCEFILE = "SourceFile";
@@ -121,9 +121,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             get
             {
-                switch (TransferProgressDialogMode)
+                switch (TransferType)
                 {
-                    case TransferProgressDialogMode.Delete:
+                    case TransferType.Delete:
                         return FilesTransfered*100/FileCount;
                     default:
                         return (int)(BytesTransfered * 100 / TotalBytes);
@@ -212,13 +212,13 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             var message = string.Format("Do you really want to copy the selected items?");
             if (new ConfirmationDialog("Copy", message).ShowDialog() != true) return;
-            AsyncJob(SourcePane.PopulateQueue, CopyPrepare, CopyError);
+            AsyncJob(() => SourcePane.PopulateQueue(TransferType.Copy), CopyPrepare, CopyError);
         }
 
-        private void CopyPrepare(Queue<FileSystemItem> queue)
+        private void CopyPrepare(Queue<QueueItem> queue)
         {
             _queue = queue;
-            InitializeTransfer(TransferProgressDialogMode.Copy);
+            InitializeTransfer(TransferType.Copy);
             CopyStart();
         }
 
@@ -226,7 +226,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             if (_queue.Count > 0)
             {
-                var item = _queue.Peek();
+                var item = _queue.Peek().FileSystemItem;
                 SourceFile = item.Path.Replace(SourcePane.CurrentFolder.Path, string.Empty);
                 WorkerThread.Run(() => CopyInner(item, action, rename), CopySuccess, CopyError);
             }
@@ -273,7 +273,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void CopySuccess(bool result)
         {
-            UpdateTransfer(result);
+            var item = _queue.Dequeue().FileSystemItem;
+            if (item.Type == ItemType.File) BytesTransfered += item.Size ?? 0;
+            FilesTransfered++;
+            var vm = SourcePane.SelectedItems.FirstOrDefault(i => item.Path.StartsWith(i.Path));
+            if (vm != null && !_queue.Any(q => q.FileSystemItem.Path.StartsWith(vm.Path)))
+                vm.IsSelected = false;
             CopyStart();
         }
 
@@ -318,13 +323,13 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             var message = string.Format("Do you really want to move the selected items?");
             if (new ConfirmationDialog("Move", message).ShowDialog() != true) return;
-            AsyncJob(SourcePane.PopulateQueue, MovePrepare, MoveError);
+            AsyncJob(() => SourcePane.PopulateQueue(TransferType.Move), MovePrepare, MoveError);
         }
 
-        private void MovePrepare(Queue<FileSystemItem> queue)
+        private void MovePrepare(Queue<QueueItem> queue)
         {
             _queue = queue;
-            InitializeTransfer(TransferProgressDialogMode.Move);
+            InitializeTransfer(TransferType.Move);
             MoveStart();
         }
 
@@ -332,12 +337,22 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             if (_queue.Count > 0)
             {
-                var item = _queue.Peek();
+                var queueitem = _queue.Peek();
+                var item = queueitem.FileSystemItem;
                 SourceFile = item.Path.Replace(SourcePane.CurrentFolder.Path, string.Empty);
                 WorkerThread.Run(() =>
                     {
-                        CopyInner(item, action, rename);
-                        SourcePane.Delete(item); 
+                        switch (queueitem.TransferType)
+                        {
+                            case TransferType.Copy:
+                                CopyInner(item, action, rename);
+                                break;
+                            case TransferType.Delete:
+                                SourcePane.Delete(item);
+                                break;
+                            default:
+                                throw new NotSupportedException("Invalid transfer type: " + queueitem.TransferType);
+                        }
                         return true;
                     }, MoveSuccess, MoveError);
             }
@@ -350,7 +365,15 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void MoveSuccess(bool result)
         {
-            UpdateTransfer(result);
+            var queueitem = _queue.Dequeue();
+            var item = queueitem.FileSystemItem;
+            if (queueitem.TransferType == TransferType.Copy)
+            {
+                if (item.Type == ItemType.File) BytesTransfered += item.Size ?? 0;
+                FilesTransfered++;
+            }
+            var vm = SourcePane.SelectedItems.FirstOrDefault(i => item.Path == i.Path);
+            if (vm != null) vm.IsSelected = false;
             MoveStart();
         }
 
@@ -434,13 +457,13 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             var message = string.Format("Do you really want to delete the selected items?");
             if (new ConfirmationDialog("Delete", message).ShowDialog() != true) return;
-            AsyncJob(() => SourcePane.PopulateQueue(true), DeletePrepare, DeleteError);
+            AsyncJob(() => SourcePane.PopulateQueue(TransferType.Delete), DeletePrepare, DeleteError);
         }
 
-        private void DeletePrepare(Queue<FileSystemItem> queue)
+        private void DeletePrepare(Queue<QueueItem> queue)
         {
             _queue = queue;
-            InitializeTransfer(TransferProgressDialogMode.Delete);
+            InitializeTransfer(TransferType.Delete);
             DeleteStart();
         }
 
@@ -448,7 +471,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             if (_queue.Count > 0)
             {
-                var item = _queue.Peek();
+                var item = _queue.Peek().FileSystemItem;
                 SourceFile = item.Path.Replace(SourcePane.CurrentFolder.Path, string.Empty);
                 WorkerThread.Run(() => SourcePane.Delete(item), DeleteSuccess, DeleteError);
             }
@@ -461,7 +484,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void DeleteSuccess(bool result)
         {
-            UpdateTransfer(result);
+            var item = _queue.Dequeue().FileSystemItem;
+            if (item.Type == ItemType.File) BytesTransfered += item.Size ?? 0;
+            FilesTransfered++;
+            var vm = SourcePane.SelectedItems.FirstOrDefault(i => item.Path == i.Path);
+            if (vm != null) vm.IsSelected = false;
             DeleteStart();
         }
 
@@ -581,12 +608,13 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
         }
 
-        private void InitializeTransfer(TransferProgressDialogMode mode)
+        private void InitializeTransfer(TransferType mode)
         {
-            TransferProgressDialogMode = mode;
+            TransferType = mode;
             _rememberedCopyAction = CopyAction.CreateNew;
             FileCount = _queue.Count;
-            TotalBytes = _queue.Where(item => item.Type == ItemType.File).Sum(item => item.Size ?? 0);
+            if (mode == TransferType.Move) FileCount /= 2;
+            TotalBytes = _queue.Where(item => item.FileSystemItem.Type == ItemType.File).Sum(item => item.FileSystemItem.Size ?? 0);
             FilesTransfered = 0;
             BytesTransfered = 0;
             NotifyTransferStarted();
@@ -641,18 +669,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 NotificationMessage.Show("Unknown error occured", exception.Message);
             }
             return result;
-        }
-
-        private void UpdateTransfer(bool result)
-        {
-            var item = _queue.Dequeue();
-            if (item.Type == ItemType.File) BytesTransfered += item.Size ?? 0;
-            FilesTransfered++;
-            if (!result) return;
-
-            var vm = SourcePane.SelectedItems.FirstOrDefault();
-            if (vm != null && !_queue.Any(q => q.Path.StartsWith(vm.Path))) 
-                vm.IsSelected = false;
         }
 
         internal void AbortTransfer()

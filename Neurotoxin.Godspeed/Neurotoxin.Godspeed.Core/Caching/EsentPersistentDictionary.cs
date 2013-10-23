@@ -1,6 +1,7 @@
 using Microsoft.Isam.Esent.Collections.Generic;
 using System;
 using ServiceStack.Text;
+using System.Linq;
 
 namespace Neurotoxin.Godspeed.Core.Caching
 {
@@ -61,5 +62,9 @@ namespace Neurotoxin.Godspeed.Core.Caching
             _persistentDictionary.Flush();
         }
 
+	    public bool ContainsKey(string key)
+	    {
+	        return Keys.Contains(key);
+	    }
 	}
 }

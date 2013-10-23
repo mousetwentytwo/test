@@ -1,6 +1,6 @@
 ﻿namespace Neurotoxin.Godspeed.Shell.Constants
 {
-    public enum TransferProgressDialogMode
+    public enum TransferType
     {
         Copy,
         Move,

@@ -13,6 +13,7 @@ using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
 using Neurotoxin.Godspeed.Presentation.Extensions;
+using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 
 namespace Neurotoxin.Godspeed.Shell.ContentProviders
 {
@@ -148,25 +149,30 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             }
         }
 
+        public FileSystemItem GetProfileItem(FileSystemItem item)
+        {
+            var profilePath = string.Format("{1}FFFE07D1{2}00010000{2}{0}", item.Name, item.Path, _fileManager.Slash);
+            if (_profileFileCache.ContainsKey(profilePath)) return _profileFileCache[profilePath];
+            if (_fileManager.FileExists(profilePath))
+            {
+                var profileItem = _fileManager.GetFileInfo(profilePath);
+                if (profileItem == null)
+                {
+                    NotificationMessage.Show("Title recognition", string.Format("The profile with the ID {0} is currently in use. Please sign out.", item.Name));
+                    return null;
+                }
+                RecognizeType(profileItem);
+                _profileFileCache.Add(profilePath, profileItem);
+                return profileItem;
+            }
+            return null;
+        }
+
         private FileSystemItem GetCacheItem(FileSystemItem item)
         {
-            if (item.TitleType == TitleType.Profile && item.Type == ItemType.Directory)
-            {
-                var profilePath = string.Format("{1}FFFE07D1{2}00010000{2}{0}", item.Name, item.Path, _fileManager.Slash);
-                if (_profileFileCache.ContainsKey(profilePath)) return _profileFileCache[profilePath];
-                if (_fileManager.FileExists(profilePath))
-                {
-                    var profileItem = _fileManager.GetFileInfo(profilePath);
-                    if (profileItem == null)
-                    {
-                        throw new NotImplementedException("Please sign out");
-                    }
-                    RecognizeType(profileItem);
-                    _profileFileCache.Add(profilePath, profileItem);
-                    return profileItem;
-                }
-            }
-            return item;
+            return item.TitleType == TitleType.Profile && item.Type == ItemType.Directory
+                       ? (GetProfileItem(item) ?? item)
+                       : item;
         }
 
         private string GetCacheKey(FileSystemItem item)

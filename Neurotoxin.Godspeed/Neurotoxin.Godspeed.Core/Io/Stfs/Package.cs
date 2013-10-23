@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Net.Mime;
+using System.Reflection;
 using System.Security.Cryptography;
 using Neurotoxin.Godspeed.Core.Attributes;
 using Neurotoxin.Godspeed.Core.Constants;
@@ -11,6 +13,7 @@ using Neurotoxin.Godspeed.Core.Io.Gpd.Entries;
 using Neurotoxin.Godspeed.Core.Io.Stfs.Data;
 using Neurotoxin.Godspeed.Core.Models;
 using System.Linq;
+using ContentType = Neurotoxin.Godspeed.Core.Constants.ContentType;
 
 namespace Neurotoxin.Godspeed.Core.Io.Stfs
 {
@@ -189,41 +192,47 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
                                                           0x15, 0x0F, 0xBD, 0x6E, 0xD4, 0x95, 0x37, 0x79
                                                       };
 
-        public virtual void Resign(string kvPath = null)
+        public void Resign(string kvPath = null)
         {
-            ResignPackage(kvPath ?? "KV_dec.bin", 0x344, 0x118, 0x22C);
+            var kv = !string.IsNullOrEmpty(kvPath)
+                         ? (Stream) new FileStream(kvPath, FileMode.Open)
+                         : GetDefaultKeyvault();
+            Resign(kv);
+            kv.Close();
         }
 
-        protected void ResignPackage(string kvPath, int headerStart, int size, int toSignLoc)
+        protected virtual void Resign(Stream kv)
         {
-            using (var kv = new FileStream(@"Resources\" + kvPath, FileMode.Open))
-            {
-                var rsaParameters = GetRSAParameters(kv);
+            ResignPackage(kv, 0x344, 0x118, 0x22C);
+        }
 
-                // read the certificate
-                kv.Position = 0x9B8 + (kv.Length == 0x4000 ? 0x10 : 0);
-                Certificate.PublicKeyCertificateSize = kv.ReadShort();
-                kv.Read(Certificate.OwnerConsoleId, 0, 5);
-                Certificate.OwnerConsolePartNumber = kv.ReadWString(0x11);
-                Certificate.OwnerConsoleType = (ConsoleType)(kv.ReadUInt() & 3);
-                Certificate.DateGeneration = kv.ReadWString(8);
-                Certificate.PublicExponent = kv.ReadUInt();
-                kv.Read(Certificate.PublicModulus, 0, 128);
-                kv.Read(Certificate.CertificateSignature, 0, 256);
+        protected void ResignPackage(Stream kv, int headerStart, int size, int toSignLoc)
+        {
+            var rsaParameters = GetRSAParameters(kv);
 
-                ConsoleId = Certificate.OwnerConsoleId;
+            // read the certificate
+            kv.Position = 0x9B8 + (kv.Length == 0x4000 ? 0x10 : 0);
+            Certificate.PublicKeyCertificateSize = kv.ReadShort();
+            kv.Read(Certificate.OwnerConsoleId, 0, 5);
+            Certificate.OwnerConsolePartNumber = kv.ReadWString(0x11);
+            Certificate.OwnerConsoleType = (ConsoleType)(kv.ReadUInt() & 3);
+            Certificate.DateGeneration = kv.ReadWString(8);
+            Certificate.PublicExponent = kv.ReadUInt();
+            kv.Read(Certificate.PublicModulus, 0, 128);
+            kv.Read(Certificate.CertificateSignature, 0, 256);
 
-                HeaderHash = HashBlock(headerStart, ((HeaderSize + 0xFFF) & 0xF000) - headerStart);
+            ConsoleId = Certificate.OwnerConsoleId;
 
-                var rsaEncryptor = new RSACryptoServiceProvider();
-                var rsaSigFormat = new RSAPKCS1SignatureFormatter(rsaEncryptor);
-                rsaEncryptor.ImportParameters(rsaParameters);
-                rsaSigFormat.SetHashAlgorithm("SHA1");
-                var signature = rsaSigFormat.CreateSignature(HashBlock(toSignLoc, size));
-                Array.Reverse(signature);
+            HeaderHash = HashBlock(headerStart, ((HeaderSize + 0xFFF) & 0xF000) - headerStart);
 
-                Certificate.Signature = signature;
-            }
+            var rsaEncryptor = new RSACryptoServiceProvider();
+            var rsaSigFormat = new RSAPKCS1SignatureFormatter(rsaEncryptor);
+            rsaEncryptor.ImportParameters(rsaParameters);
+            rsaSigFormat.SetHashAlgorithm("SHA1");
+            var signature = rsaSigFormat.CreateSignature(HashBlock(toSignLoc, size));
+            Array.Reverse(signature);
+
+            Certificate.Signature = signature;
         }
 
         public abstract void Rehash();
@@ -266,6 +275,15 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
             p.D = DefaultD;
 
             return p;
+        }
+
+        private static UnmanagedMemoryStream GetDefaultKeyvault()
+        {
+            var assembly = Assembly.GetAssembly(typeof (Package<>));
+            var rStream = assembly.GetManifestResourceStream(assembly.GetName().Name + ".g.resources");
+            var resourceReader = new System.Resources.ResourceReader(rStream);
+            var items = resourceReader.OfType<System.Collections.DictionaryEntry>();
+            return (UnmanagedMemoryStream)items.First(x => x.Key.Equals("resources/kv_dec.bin")).Value;
         }
 
         #endregion

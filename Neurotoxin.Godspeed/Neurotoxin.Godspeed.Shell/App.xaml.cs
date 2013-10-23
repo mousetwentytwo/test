@@ -1,13 +1,18 @@
 ﻿using System;
 using System.IO;
+using System.Net;
 using System.Reflection;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Threading;
+using System.Xml;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Composite.UnityExtensions;
 using Neurotoxin.Godspeed.Presentation.Events;
 using Neurotoxin.Godspeed.Core.Extensions;
+using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 
 namespace Neurotoxin.Godspeed.Shell
@@ -23,16 +28,10 @@ namespace Neurotoxin.Godspeed.Shell
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+
             var asm = Assembly.GetExecutingAssembly();
-            var company = asm.GetAttribute<AssemblyCompanyAttribute>().Company;
-            var product = asm.GetAttribute<AssemblyProductAttribute>().Product;
-            var version = asm.GetAttribute<AssemblyFileVersionAttribute>().Version;
-            var appDir = string.Format(@"{0}\{1}\{2}\{3}", appData, company, product, version);
-            if (!Directory.Exists(appDir)) Directory.CreateDirectory(appDir);
-            AppDomain.CurrentDomain.SetData("DataDirectory", appDir);
-            var tempDir = Path.Combine(appDir, "temp");
-            if (!Directory.Exists(tempDir)) Directory.CreateDirectory(tempDir);
+            CheckNewerVersion(asm);
+            SetDataDirectory(asm);
             Dispatcher.CurrentDispatcher.UnhandledException += UnhandledThreadingException;
             ShutdownMode = ShutdownMode.OnMainWindowClose;
 
@@ -60,6 +59,50 @@ namespace Neurotoxin.Godspeed.Shell
             {
                 HandleException(ex);
             }
+        }
+
+        private void CheckNewerVersion(Assembly asm)
+        {
+            var title = asm.GetAttribute<AssemblyTitleAttribute>().Title;
+            var installDate = File.GetLastWriteTime(asm.Location);
+            const string url = "https://godspeed.codeplex.com/";
+            WorkerThread.Run(() =>
+                                 {
+                                     var request = HttpWebRequest.Create(url);
+                                     var response = request.GetResponse();
+                                     var titlePattern = new Regex(@"\<span class=""rating_header""\>current.*?\<td\>(.*?)\</td\>", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+                                     var datePattern = new Regex(@"\<span class=""rating_header""\>date.*?\<td\>.*?LocalTimeTicks=""(.*?)""", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+                                     string html;
+                                     using (var stream = response.GetResponseStream())
+                                     {
+                                         var sr = new StreamReader(stream, UTF8Encoding.UTF8);
+                                         html = sr.ReadToEnd();
+                                         sr.Close();
+                                     }
+                                     var latestTitle = titlePattern.Match(html).Groups[1].Value.Trim();
+                                     var latestDate = new DateTime(1970,1,1);
+                                     latestDate = latestDate.AddSeconds(long.Parse(datePattern.Match(html).Groups[1].Value)).ToLocalTime();
+                                     return new Tuple<string, DateTime>(latestTitle, latestDate);
+                                 },
+                             info =>
+                                 {
+                                     if ((String.Compare(title, info.Item1, StringComparison.Ordinal) >= 0 && info.Item2 <= installDate)) return;
+                                     var message = string.Format("Please visit {0} to download.", url);
+                                     NotificationMessage.Show("New GODspeed version is available!", message);
+                                 });
+        }
+
+        private void SetDataDirectory(Assembly asm)
+        {
+            var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            var company = asm.GetAttribute<AssemblyCompanyAttribute>().Company;
+            var product = asm.GetAttribute<AssemblyProductAttribute>().Product;
+            var version = asm.GetAttribute<AssemblyFileVersionAttribute>().Version;
+            var appDir = string.Format(@"{0}\{1}\{2}\{3}", appData, company, product, version);
+            if (!Directory.Exists(appDir)) Directory.CreateDirectory(appDir);
+            AppDomain.CurrentDomain.SetData("DataDirectory", appDir);
+            var tempDir = Path.Combine(appDir, "temp");
+            if (!Directory.Exists(tempDir)) Directory.CreateDirectory(tempDir);
         }
 
         private void AppDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)

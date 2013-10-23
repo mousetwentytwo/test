@@ -208,6 +208,13 @@
                                         <controls:GreyableImage Source="/Resources/cog.png" Width="16" Height="16" SnapsToDevicePixels="True"/>
                                     </MenuItem.Icon>
                                 </MenuItem>
+                                <MenuItem Header="Open Profile" 
+                                          Visibility="{Binding Source={StaticResource ViewModel}, Path=Data.CurrentRow.IsProfile, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}"
+                                          Command="{Binding Source={StaticResource ViewModel}, Path=Data.OpenStfsPackageCommand}">
+                                    <MenuItem.Icon>
+                                        <controls:GreyableImage Source="/Resources/package.png" Width="16" Height="16" SnapsToDevicePixels="True"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
                                 <MenuItem Header="Copy TitleID to Clipboard" 
                                           Visibility="{Binding Source={StaticResource ViewModel}, Path=Data.CurrentRow.IsGame, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}"
                                           Command="{Binding Source={StaticResource ViewModel}, Path=Data.CopyTitleIdToClipboardCommand}">
