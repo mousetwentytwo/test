@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Shell;
 using Microsoft.Practices.Unity;
 using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Shell.Constants;
@@ -26,6 +28,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private CopyAction _rememberedCopyAction;
         private const string RenameFromPattern = @"([\/]){0}$";
         private const string RenameToPattern = @"$1{0}";
+        private readonly Stopwatch _speedMeter = new Stopwatch();
+        private readonly Stopwatch _elapsedTimeMeter = new Stopwatch();
 
         #region Main window properties
 
@@ -124,19 +128,31 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 switch (TransferType)
                 {
                     case TransferType.Delete:
-                        return FilesTransfered*100/FileCount;
+                        return FilesTransferred*100/FileCount;
                     default:
-                        return (int)(BytesTransfered * 100 / TotalBytes);
+                        return (int)(BytesTransferred * 100 / TotalBytes);
                 }
             }
         }
 
-        private const string FILESTRANSFERED = "FilesTransfered";
-        private int _filesTransfered;
-        public int FilesTransfered
+        private const string TOTALPROGRESSDOUBLE = "TotalProgressDouble";
+        public double TotalProgressDouble
         {
-            get { return _filesTransfered; }
-            set { _filesTransfered = value; NotifyPropertyChanged(FILESTRANSFERED); NotifyPropertyChanged(TOTALPROGRESS); }
+            get { return (double) TotalProgress/100; }
+        }
+
+        private const string FILESTRANSFERRED = "FilesTransferred";
+        private int _filesTransferred;
+        public int FilesTransferred
+        {
+            get { return _filesTransferred; }
+            set
+            {
+                _filesTransferred = value; 
+                NotifyPropertyChanged(FILESTRANSFERRED); 
+                NotifyPropertyChanged(TOTALPROGRESS);
+                NotifyPropertyChanged(TOTALPROGRESSDOUBLE);
+            }
         }
 
         private const string FILECOUNT = "FileCount";
@@ -147,12 +163,18 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             set { _fileCount = value; NotifyPropertyChanged(FILECOUNT); }
         }
 
-        private const string BYTESTRANSFERED = "BytesTransfered";
-        private long _bytesTransfered;
-        public long BytesTransfered
+        private const string BYTESTRANSFERRED = "BytesTransferred";
+        private long _bytesTransferred;
+        public long BytesTransferred
         {
-            get { return _bytesTransfered; }
-            set { _bytesTransfered = value; NotifyPropertyChanged(BYTESTRANSFERED); }
+            get { return _bytesTransferred; }
+            set
+            {
+                _bytesTransferred = value;
+                NotifyPropertyChanged(BYTESTRANSFERRED);
+                NotifyPropertyChanged(TOTALPROGRESS);
+                NotifyPropertyChanged(TOTALPROGRESSDOUBLE);
+            }
         }
 
         private const string TOTALBYTES = "TotalBytes";
@@ -161,6 +183,38 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             get { return _totalBytes; }
             set { _totalBytes = value; NotifyPropertyChanged(TOTALBYTES); }
+        }
+
+        private const string SPEED = "Speed";
+        private int _speed;
+        public int Speed
+        {
+            get { return _speed; }
+            set { _speed = value; NotifyPropertyChanged(SPEED); }
+        }
+
+        private const string ELAPSEDTIME = "ElapsedTime";
+        private TimeSpan _elapsedTime;
+        public TimeSpan ElapsedTime
+        {
+            get { return _elapsedTime; }
+            set { _elapsedTime = value; NotifyPropertyChanged(ELAPSEDTIME); }
+        }
+
+        private const string REMAININGTIME = "RemainingTime";
+        private TimeSpan _remainingTime;
+        public TimeSpan RemainingTime
+        {
+            get { return _remainingTime; }
+            set { _remainingTime = value; NotifyPropertyChanged(REMAININGTIME); }
+        }
+
+        private const string PROGRESSSTATE = "ProgressState";
+        private TaskbarItemProgressState _progressState;
+        public TaskbarItemProgressState ProgressState
+        {
+            get { return _progressState; }
+            set { _progressState = value; NotifyPropertyChanged(PROGRESSSTATE); }
         }
 
         #endregion
@@ -274,8 +328,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void CopySuccess(bool result)
         {
             var item = _queue.Dequeue().FileSystemItem;
-            if (item.Type == ItemType.File) BytesTransfered += item.Size ?? 0;
-            FilesTransfered++;
+            //if (item.Type == ItemType.File) BytesTransferred += item.Size ?? 0;
+            FilesTransferred++;
             var vm = SourcePane.SelectedItems.FirstOrDefault(i => item.Path.StartsWith(i.Path));
             if (vm != null && !_queue.Any(q => q.FileSystemItem.Path.StartsWith(vm.Path)))
                 vm.IsSelected = false;
@@ -369,8 +423,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             var item = queueitem.FileSystemItem;
             if (queueitem.TransferType == TransferType.Copy)
             {
-                if (item.Type == ItemType.File) BytesTransfered += item.Size ?? 0;
-                FilesTransfered++;
+                //if (item.Type == ItemType.File) BytesTransferred += item.Size ?? 0;
+                FilesTransferred++;
             }
             var vm = SourcePane.SelectedItems.FirstOrDefault(i => item.Path == i.Path);
             if (vm != null) vm.IsSelected = false;
@@ -485,8 +539,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void DeleteSuccess(bool result)
         {
             var item = _queue.Dequeue().FileSystemItem;
-            if (item.Type == ItemType.File) BytesTransfered += item.Size ?? 0;
-            FilesTransfered++;
+            if (item.Type == ItemType.File) BytesTransferred += item.Size ?? 0;
+            FilesTransferred++;
             var vm = SourcePane.SelectedItems.FirstOrDefault(i => item.Path == i.Path);
             if (vm != null) vm.IsSelected = false;
             DeleteStart();
@@ -569,14 +623,43 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             DeleteCommand.RaiseCanExecuteChanged();
         }
 
-        public void FtpDisconnect()
+        private void FtpDisconnect()
         {
             RightPane = container.Resolve<ConnectionsViewModel>();
         }
 
         private void OnFtpOperationProgressChanged(FtpOperationProgressChangedEventArgs args)
         {
-            UIThread.Run(() => CurrentFileProgress = args.Percentage > 0 ? args.Percentage : 0);
+            UIThread.Run(() =>
+                             {
+                                 var elapsed = _elapsedTimeMeter.Elapsed;
+                                 var transferred = BytesTransferred + args.TotalBytesTransferred;
+                                 ElapsedTime = elapsed;
+                                 if (elapsed.Ticks > 0 && transferred > 0)
+                                 {
+                                     var estimated = new TimeSpan((long)Math.Floor((double)elapsed.Ticks / transferred * TotalBytes));
+                                     RemainingTime = estimated - elapsed;
+                                 }
+                                 if (args.Percentage == -1)
+                                 {
+                                     if (_speedMeter.IsRunning)
+                                         _speedMeter.Restart();
+                                     else
+                                         _speedMeter.Start();  
+                                 } 
+                                 else
+                                 {
+                                     if (args.Percentage == 100)
+                                     {
+                                         _speedMeter.Stop();
+                                     }
+                                     var ms = _speedMeter.Elapsed.TotalMilliseconds;
+                                     Speed = (int)Math.Floor(args.TotalBytesTransferred/ms*1000/1024);
+                                     if (Speed < 0) Debug.WriteLine("{0} {1} {2}", args.Transferred, ms, Speed);
+                                 }
+                                 CurrentFileProgress = args.Percentage > 0 ? args.Percentage : 0;
+                                 BytesTransferred += args.Transferred;
+                             });
         }
 
         private void OnOpenNestedPane(OpenNestedPaneEventArgs args)
@@ -615,9 +698,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             FileCount = _queue.Count;
             if (mode == TransferType.Move) FileCount /= 2;
             TotalBytes = _queue.Where(item => item.FileSystemItem.Type == ItemType.File).Sum(item => item.FileSystemItem.Size ?? 0);
-            FilesTransfered = 0;
-            BytesTransfered = 0;
+            FilesTransferred = 0;
+            BytesTransferred = 0;
+            ProgressState = TaskbarItemProgressState.Normal;
             NotifyTransferStarted();
+            _elapsedTimeMeter.Start();
         }
 
         internal TransferErrorDialogResult ShowCorrespondingErrorDialog(Exception exception)
@@ -673,24 +758,23 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         internal void AbortTransfer()
         {
-            var ftp = LeftPane as FtpContentViewModel ?? RightPane as FtpContentViewModel;
-            if (ftp != null)
+            SourcePane.Abort();
+            TargetPane.Abort();
+            lock (_queue)
             {
-                ftp.Abort();
-            } 
-            else
-            {
-                lock (_queue)
-                {
-                    var actualItem = _queue.Peek();
-                    _queue.Clear();
-                    _queue.Enqueue(actualItem);
-                }
+                var actualItem = _queue.Peek();
+                _queue.Clear();
+                _queue.Enqueue(actualItem);
             }
         }
 
         private void FinishTransfer()
         {
+            _speedMeter.Stop();
+            _speedMeter.Reset();
+            _elapsedTimeMeter.Stop();
+            _elapsedTimeMeter.Reset();
+            ProgressState = TaskbarItemProgressState.None;
             NotifyTransferFinished();
         }
 

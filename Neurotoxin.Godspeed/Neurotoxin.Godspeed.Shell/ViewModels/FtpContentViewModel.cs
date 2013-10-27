@@ -93,7 +93,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             FileManager.RestoreConnection();
         }
 
-        public void Abort()
+        public override void Abort()
         {
             FileManager.Abort();
         }

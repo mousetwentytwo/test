@@ -309,18 +309,13 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             NotifyFtpOperationStarted(true);
             try
             {
-                _ftpClient.Upload(remotePath, localPath);
+                _ftpClient.Upload(LocateDirectory(remotePath), localPath);
                 NotifyFtpOperationFinished();
             }
-            catch (IOException ex)
+            catch (Exception ex)
             {
                 NotifyFtpOperationFinished();
-                throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
-            }
-            catch (FtpException ex)
-            {
-                NotifyFtpOperationFinished();
-                if (_ftpClient.Connected) throw new TransferException(TransferErrorType.WriteAccessError, ex.Message);
+                if (_ftpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
                 throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
             }
         }
@@ -354,7 +349,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         private void FtpClientProgressChanged(object sender, ProgressEventArgs e)
         {
-            NotifyFtpOperationProgressChanged((int)e.Percentage);
+            NotifyFtpOperationProgressChanged((int)e.Percentage, e.Transferred, e.TotalBytesTransferred);
             if (_downloadHeaderOnly && e.TotalBytesTransferred > 0x971A) // v1 header size
                 _ftpClient.Abort();
         }
@@ -422,9 +417,9 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             _eventAggregator.GetEvent<FtpOperationFinishedEvent>().Publish(new FtpOperationFinishedEventArgs(streamLength));
         }
 
-        private void NotifyFtpOperationProgressChanged(int percentage)
+        private void NotifyFtpOperationProgressChanged(int percentage, long transferred, long totalBytesTransferred)
         {
-            _eventAggregator.GetEvent<FtpOperationProgressChangedEvent>().Publish(new FtpOperationProgressChangedEventArgs(percentage));
+            _eventAggregator.GetEvent<FtpOperationProgressChangedEvent>().Publish(new FtpOperationProgressChangedEventArgs(percentage, transferred, totalBytesTransferred));
         }
 
         public void Abort()

@@ -108,11 +108,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
         }
 
-        public override void Refresh(Action callback)
-        {
-            throw new NotImplementedException();
-        }
-
         public override void SetActive()
         {
             base.SetActive();

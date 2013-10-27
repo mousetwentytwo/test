@@ -68,21 +68,28 @@ namespace Neurotoxin.Godspeed.Shell
             const string url = "https://godspeed.codeplex.com/";
             WorkerThread.Run(() =>
                                  {
-                                     var request = HttpWebRequest.Create(url);
-                                     var response = request.GetResponse();
-                                     var titlePattern = new Regex(@"\<span class=""rating_header""\>current.*?\<td\>(.*?)\</td\>", RegexOptions.IgnoreCase | RegexOptions.Singleline);
-                                     var datePattern = new Regex(@"\<span class=""rating_header""\>date.*?\<td\>.*?LocalTimeTicks=""(.*?)""", RegexOptions.IgnoreCase | RegexOptions.Singleline);
-                                     string html;
-                                     using (var stream = response.GetResponseStream())
+                                     try
                                      {
-                                         var sr = new StreamReader(stream, UTF8Encoding.UTF8);
-                                         html = sr.ReadToEnd();
-                                         sr.Close();
+                                         var request = HttpWebRequest.Create(url);
+                                         var response = request.GetResponse();
+                                         var titlePattern = new Regex(@"\<span class=""rating_header""\>current.*?\<td\>(.*?)\</td\>", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+                                         var datePattern = new Regex(@"\<span class=""rating_header""\>date.*?\<td\>.*?LocalTimeTicks=""(.*?)""", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+                                         string html;
+                                         using (var stream = response.GetResponseStream())
+                                         {
+                                             var sr = new StreamReader(stream, UTF8Encoding.UTF8);
+                                             html = sr.ReadToEnd();
+                                             sr.Close();
+                                         }
+                                         var latestTitle = titlePattern.Match(html).Groups[1].Value.Trim();
+                                         var latestDate = new DateTime(1970, 1, 1);
+                                         latestDate = latestDate.AddSeconds(long.Parse(datePattern.Match(html).Groups[1].Value)).ToLocalTime();
+                                         return new Tuple<string, DateTime>(latestTitle, latestDate);
+                                     } 
+                                     catch
+                                     {
+                                         return new Tuple<string, DateTime>(string.Empty, DateTime.MinValue);
                                      }
-                                     var latestTitle = titlePattern.Match(html).Groups[1].Value.Trim();
-                                     var latestDate = new DateTime(1970,1,1);
-                                     latestDate = latestDate.AddSeconds(long.Parse(datePattern.Match(html).Groups[1].Value)).ToLocalTime();
-                                     return new Tuple<string, DateTime>(latestTitle, latestDate);
                                  },
                              info =>
                                  {

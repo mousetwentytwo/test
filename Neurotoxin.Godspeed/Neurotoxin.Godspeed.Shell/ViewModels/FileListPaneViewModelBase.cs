@@ -774,20 +774,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             Parent.RaiseCanExecuteChanges();
         }
 
-        public override void Refresh(Action callback)
-        {
-            ProgressMessage = "Refreshing directory...";
-            IsBusy = true;
-            WorkerThread.Run(
-                () => ChangeDirectory(CurrentFolder.Path), 
-                result =>
-                    {
-                        ChangeDirectoryCallback(result);
-                        if (callback != null) callback.Invoke();
-                    }, 
-                AsyncErrorCallback);
-        }
-
         public void GetItemViewModel(string itemPath)
         {
             var listedItem = Items.FirstOrDefault(item => item.Path == itemPath);
@@ -847,7 +833,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public Queue<QueueItem> PopulateQueue(TransferType type)
         {
-            var res = PopulateQueue(SelectedItems.Any() ? SelectedItems.Select(vm => vm.Model) : new[] { CurrentRow.Model }, type);
+            if (!SelectedItems.Any()) CurrentRow.IsSelected = true;
+            var res = PopulateQueue(SelectedItems.Select(vm => vm.Model), type);
+            SelectedItems.ForEach(item => item.NotifyModelChanges());
             var queue = new Queue<QueueItem>();
             res.ForEach(queue.Enqueue);
             return queue;
@@ -944,5 +932,27 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             return SelectedItems.Any() || CurrentRow != null && !CurrentRow.IsUpDirectory;
         }
+
+        public void Refresh()
+        {
+            Refresh(null);
+        }
+
+        public virtual void Refresh(Action callback)
+        {
+            ProgressMessage = "Refreshing directory...";
+            IsBusy = true;
+            WorkerThread.Run(
+                () => ChangeDirectory(CurrentFolder.Path),
+                result =>
+                {
+                    ChangeDirectoryCallback(result);
+                    if (callback != null) callback.Invoke();
+                },
+                AsyncErrorCallback);
+        }
+
+        public abstract void Abort();
+
     }
 }

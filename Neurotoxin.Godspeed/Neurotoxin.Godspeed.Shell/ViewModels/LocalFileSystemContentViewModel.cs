@@ -2,16 +2,17 @@
 using System.IO;
 using System.Linq;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
-using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
-using Neurotoxin.Godspeed.Shell.Interfaces;
+using Neurotoxin.Godspeed.Shell.Events;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
     public class LocalFileSystemContentViewModel : FileListPaneViewModelBase<LocalFileSystemContent>
     {
+        private bool _isAborted;
+
         private const string FREESPACE = "FreeSpace";
         private string _freeSpace;
         public string FreeSpace
@@ -68,13 +69,19 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         protected override void SaveToFileStream(string path, FileStream fs, long remoteStartPosition)
         {
+            _isAborted = false;
+            var totalBytesTransferred = remoteStartPosition;
             var readStream = File.Open(path, FileMode.Open);
+            var totalBytes = readStream.Length;
             readStream.Seek(remoteStartPosition, SeekOrigin.Begin);
-            var buffer = new byte[8192];
+            var buffer = new byte[32768];
             int bytesRead;
-            while ((bytesRead = readStream.Read(buffer, 0, buffer.Length)) > 0)
+            while ((bytesRead = readStream.Read(buffer, 0, buffer.Length)) > 0 && !_isAborted)
             {
                 fs.Write(buffer, 0, bytesRead);
+                totalBytesTransferred += bytesRead;
+                var percentage = (int)(totalBytesTransferred/totalBytes*100);
+                eventAggregator.GetEvent<FtpOperationProgressChangedEvent>().Publish(new FtpOperationProgressChangedEventArgs(percentage, bytesRead, totalBytesTransferred));
             }
             readStream.Close();
         }
@@ -92,6 +99,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         protected override void ResumeFile(string targetPath, string sourcePath)
         {
             throw new NotImplementedException();
+        }
+
+        public override void Abort()
+        {
+            _isAborted = true;
         }
     }
 }

@@ -158,6 +158,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             NotifyPropertyChanged(CONTENTTYPE);
             NotifyPropertyChanged(ISGAME);
             NotifyPropertyChanged(ISPROFILE);
+            NotifyPropertyChanged(SIZE);
         }
     }
 }

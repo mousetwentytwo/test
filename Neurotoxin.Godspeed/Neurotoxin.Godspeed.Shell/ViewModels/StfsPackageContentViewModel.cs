@@ -101,5 +101,10 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             FileManager.ReplaceFile(targetPath, sourcePath);
         }
+
+        public override void Abort()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
