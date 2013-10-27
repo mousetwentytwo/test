@@ -1,8 +1,8 @@
 ﻿<controls:DialogBase x:Class="Neurotoxin.Godspeed.Shell.Views.Dialogs.InputDialog"
-                           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                           xmlns:controls="clr-namespace:Neurotoxin.Godspeed.Presentation.Controls;assembly=Neurotoxin.Godspeed.Presentation"
-                           Style="{StaticResource Dialog}" Width="400" WindowStartupLocation="CenterOwner">
+                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:controls="clr-namespace:Neurotoxin.Godspeed.Presentation.Controls;assembly=Neurotoxin.Godspeed.Presentation"
+                     Style="{StaticResource Dialog}" Width="400" WindowStartupLocation="CenterOwner">
     <Grid x:Name="LayoutRoot">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -17,8 +17,14 @@
         </Grid.RowDefinitions>
 
         <TextBlock Grid.ColumnSpan="4" Grid.Row="0" Margin="5,0,0,5" x:Name="Message" TextWrapping="Wrap" />
-        
-        <TextBox Grid.ColumnSpan="4" Grid.Row="1" Margin="5,0,0,5" x:Name="Input" />
+
+        <ComboBox Grid.ColumnSpan="4" Grid.Row="1" Margin="5,0,0,5" x:Name="Input" IsEditable="True" TextSearch.TextPath="DisplayName">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding DisplayName}"/>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
 
         <Button Grid.Column="1" Grid.Row="2" Content="Yes" Margin="5" Click="OkButtonClick"/>
         <Button Grid.Column="2" Grid.Row="2" Content="No" Margin="5" Click="CancelButtonClick"/>

@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Shell;
 using Microsoft.Practices.Unity;
+using Neurotoxin.Godspeed.Core.Constants;
 using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Events;
@@ -471,9 +472,21 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void ExecuteNewFolderCommand()
         {
-            var dialog = new InputDialog("Add New Folder", "Folder name:", string.Empty);
-            if (dialog.ShowDialog() != true) return;
-            var name = dialog.Input.Text;
+            var contentTypes =
+                Enum.GetValues(typeof (ContentType))
+                    .Cast<ContentType>()
+                    .Select(type =>
+                                {
+                                    var a = BitConverter.GetBytes((int) type);
+                                    Array.Reverse(a);
+                                    return new InputDialogOptionViewModel
+                                               {
+                                                   Value = a.ToHex(),
+                                                   DisplayName = EnumHelper.GetStringValue(type)
+                                               };
+                                });
+            var name = InputDialog.Show("Add New Folder", "Folder name:", string.Empty, contentTypes);
+            if (string.IsNullOrEmpty(name)) return;
             var path = string.Format("{0}{1}", SourcePane.CurrentFolder.Path, name);
             WorkerThread.Run(() => SourcePane.CreateFolder(path), success => NewFolderSuccess(success, name), NewFolderError);
         }
@@ -780,10 +793,10 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void RenameExistingFile(TransferException exception, CopyAction? action, Action<CopyAction?, string> rename, Action<Exception> chooseDifferentOption)
         {
-            var dialog = new InputDialog("Rename", "New name:", Path.GetFileName(exception.TargetFile));
-            if (dialog.ShowDialog() == true)
+            var name = InputDialog.Show("Rename", "New name:", Path.GetFileName(exception.TargetFile));
+            if (!string.IsNullOrEmpty(name))
             {
-                rename.Invoke(action, dialog.Input.Text);
+                rename.Invoke(action, name);
             }
             else
             {
