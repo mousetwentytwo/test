@@ -225,7 +225,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private List<FileSystemItem> ChangeDirectory(string selectedPath)
         {
             var list = FileManager.GetList(selectedPath);
-            list.ForEach(item => _titleRecognizer.RecognizeType(item));
+            list.ForEach(item => TitleRecognizer.RecognizeType(item));
             return list;
         }
 
@@ -238,7 +238,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             sw.Start();
             foreach (var item in result.Where(item => !_titleRecognizer.MergeWithCachedEntry(item)))
             {
-                if (CurrentFolder.ContentType == ContentType.Unknown && !_titleRecognizer.IsXboxFolder(item)) continue;
+                if (CurrentFolder.ContentType == ContentType.Unknown && !TitleRecognizer.IsXboxFolder(item)) continue;
                 _queue.Enqueue(item);
             }
             sw.Stop();
@@ -708,6 +708,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         protected abstract void CreateFile(string targetPath, string sourcePath);
         protected abstract void OverwriteFile(string targetPath, string sourcePath);
         protected abstract void ResumeFile(string targetPath, string sourcePath);
+        public abstract void Abort();
 
         public override void SetActive()
         {
@@ -951,8 +952,5 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 },
                 AsyncErrorCallback);
         }
-
-        public abstract void Abort();
-
     }
 }

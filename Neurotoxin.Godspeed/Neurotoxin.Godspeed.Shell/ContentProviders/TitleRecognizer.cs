@@ -23,7 +23,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         private readonly CacheManager _cacheManager;
         private readonly Dictionary<string, FileSystemItem> _profileFileCache = new Dictionary<string, FileSystemItem>();
 
-        private readonly List<RecognitionInformation> _recognitionKeywords = new List<RecognitionInformation>
+        private static readonly List<RecognitionInformation> RecognitionKeywords = new List<RecognitionInformation>
             {
                 new RecognitionInformation("^0000000000000000$", "Games", TitleType.SystemDir),
                 new RecognitionInformation("^584E07D2$", "XNA Indie Player", TitleType.SystemDir),
@@ -32,8 +32,8 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 new RecognitionInformation("^FFFE07DF$", "Avatar Editor", TitleType.SystemDir),
                 new RecognitionInformation("^F[0-9A-F]{7}$", "System Data", TitleType.SystemDir),
                 new RecognitionInformation("^F[0-9A-F]{7}.gpd$", "System Data", TitleType.SystemFile, ItemType.File),
-                new RecognitionInformation("^[1-9A-F][0-9A-F]{7}$", "Unknown Game", TitleType.Game),
-                new RecognitionInformation("^[1-9A-F][0-9A-F]{7}.gpd$", "Unknown Game", TitleType.Game, ItemType.File),
+                new RecognitionInformation("^[1-9A-E][0-9A-F]{7}$", "Unknown Game", TitleType.Game),
+                new RecognitionInformation("^[1-9A-E][0-9A-F]{7}.gpd$", "Unknown Game", TitleType.Game, ItemType.File),
                 new RecognitionInformation("^[0-9A-F]{8}$", "Unknown Content", TitleType.Content),
                 new RecognitionInformation("^E0000[0-9A-F]{11}$", "Unknown Profile", TitleType.Profile, ItemType.Directory | ItemType.File),
             };
@@ -44,20 +44,59 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             _fileManager = fileManager;
         }
 
-        public bool IsXboxFolder(FileSystemItem item)
+        public static bool IsXboxFolder(FileSystemItem item)
         {
             if (string.IsNullOrEmpty(item.Name)) return false;
             if (item.Type != ItemType.Directory) return false;
-            return _recognitionKeywords.Any(r => r.ItemTypeFlags.HasFlag(ItemType.Directory) && new Regex(r.Pattern, RegexOptions.IgnoreCase).IsMatch(item.Name));
+            return RecognizeByName(item.Name) != null;
         }
 
-        public bool RecognizeType(FileSystemItem item)
+        public static bool RecognizeType(FileSystemItem item)
         {
-            var recognition = _recognitionKeywords.FirstOrDefault(r => new Regex(r.Pattern, RegexOptions.IgnoreCase).IsMatch(item.Name));
-            if (recognition == null || !recognition.ItemTypeFlags.HasFlag(item.Type)) return false;
-            item.Title = recognition.Title;
+            var recognition = RecognizeByName(item.Name, item.Type);
+            if (recognition == null) return false;
+
             item.TitleType = recognition.TitleType;
+            if (recognition.TitleType == TitleType.Content)
+            {
+                var content = BitConverter.ToInt32(item.Name.FromHex(), 0);
+                if (Enum.IsDefined(typeof (ContentType), content))
+                {
+                    item.ContentType = (ContentType) content;
+                    item.Title = GetContentTypeTitle(item.ContentType);
+                }
+            }
+            else
+            {
+                item.Title = recognition.Title;
+            }
             return true;
+        }
+
+        public static string GetTitle(string name)
+        {
+            var recognition = RecognizeByName(name);
+            if (recognition == null) return null;
+            if (recognition.TitleType == TitleType.Content)
+            {
+                var content = BitConverter.ToInt32(name.FromHex(), 0);
+                if (Enum.IsDefined(typeof (ContentType), content))
+                    return GetContentTypeTitle((ContentType) content);
+            }
+            return recognition.Title;
+        }
+
+        private static string GetContentTypeTitle(ContentType contentType)
+        {
+            var title = EnumHelper.GetStringValue(contentType);
+            var suffix = title.EndsWith("data", StringComparison.InvariantCultureIgnoreCase) ? string.Empty : "s";
+            return string.Format("{0}{1}", title, suffix);
+        }
+
+        private static RecognitionInformation RecognizeByName(string name, ItemType? flag = null)
+        {
+            var recognition = RecognitionKeywords.FirstOrDefault(r => new Regex(r.Pattern, RegexOptions.IgnoreCase).IsMatch(name));
+            return recognition != null && flag.HasValue && !recognition.ItemTypeFlags.HasFlag(flag.Value) ? null : recognition;
         }
 
         public bool MergeWithCachedEntry(FileSystemItem item, FileSystemItem cacheItem = null)
@@ -113,17 +152,6 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                     item.IsCached = true;
                     break;
                 case TitleType.Content:
-                    var content = BitConverter.ToInt32(item.Name.FromHex(), 0);
-                    if (Enum.IsDefined(typeof (ContentType), content))
-                    {
-                        item.ContentType = (ContentType) content;
-                        var title = EnumHelper.GetStringValue(item.ContentType);
-                        item.Title = string.Format("{0}{1}", title, title.EndsWith("data", StringComparison.InvariantCultureIgnoreCase) ? string.Empty : "s");
-                    }
-                    else
-                    {
-                        //TODO: log unknown entry
-                    }
                     _cacheManager.SaveEntry(cacheKey, item);
                     item.IsCached = true;
                     break;

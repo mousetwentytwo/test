@@ -22,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -43,6 +44,8 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\DeclaredOnlyAttribute.cs" />
@@ -88,6 +91,8 @@
     <Compile Include="Extensions\ToBigEndian.cs" />
     <Compile Include="Extensions\ToByteArray.cs" />
     <Compile Include="Extensions\VersionExtensions.cs" />
+    <Compile Include="Io\DirectoryInfo.cs" />
+    <Compile Include="Io\DirectoryStructure.cs" />
     <Compile Include="Io\Gpd\Entries\AchievementComparer.cs" />
     <Compile Include="Io\Gpd\Entries\AchievementEntry.cs" />
     <Compile Include="Io\Gpd\Entries\AvatarAwardEntry.cs" />
@@ -159,7 +164,14 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Io\Xtaf\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\HddDirectoryStructure.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

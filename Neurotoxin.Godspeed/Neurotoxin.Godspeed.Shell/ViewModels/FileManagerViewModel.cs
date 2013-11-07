@@ -4,13 +4,13 @@ using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Windows;
 using System.Windows.Input;
 using System.Windows.Shell;
 using Microsoft.Practices.Unity;
-using Neurotoxin.Godspeed.Core.Constants;
 using Neurotoxin.Godspeed.Core.Extensions;
+using Neurotoxin.Godspeed.Core.Io;
 using Neurotoxin.Godspeed.Shell.Constants;
+using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Exceptions;
 using Neurotoxin.Godspeed.Shell.Interfaces;
@@ -472,20 +472,15 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void ExecuteNewFolderCommand()
         {
-            var contentTypes =
-                Enum.GetValues(typeof (ContentType))
-                    .Cast<ContentType>()
-                    .Select(type =>
-                                {
-                                    var a = BitConverter.GetBytes((int) type);
-                                    Array.Reverse(a);
-                                    return new InputDialogOptionViewModel
-                                               {
-                                                   Value = a.ToHex(),
-                                                   DisplayName = EnumHelper.GetStringValue(type)
-                                               };
-                                });
-            var name = InputDialog.Show("Add New Folder", "Folder name:", string.Empty, contentTypes);
+            var items = SourcePane.Items.Select(item => item.Name).ToList();
+            var wkDirs = DirectoryStructure.WellKnownDirectoriesOf(SourcePane.CurrentFolder.Path);
+            var suggestion = wkDirs.Where(d => !items.Contains(d)).Select(d => new InputDialogOptionViewModel
+                {
+                    Value = d,
+                    DisplayName = TitleRecognizer.GetTitle(d)
+                });
+
+            var name = InputDialog.Show("Add New Folder", "Folder name:", string.Empty, suggestion);
             if (string.IsNullOrEmpty(name)) return;
             var path = string.Format("{0}{1}", SourcePane.CurrentFolder.Path, name);
             WorkerThread.Run(() => SourcePane.CreateFolder(path), success => NewFolderSuccess(success, name), NewFolderError);
@@ -646,7 +641,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             UIThread.Run(() =>
                              {
                                  var elapsed = _elapsedTimeMeter.Elapsed;
-                                 var transferred = BytesTransferred + args.TotalBytesTransferred;
+                                 var transferred = BytesTransferred;
                                  ElapsedTime = elapsed;
                                  if (elapsed.Ticks > 0 && transferred > 0)
                                  {
@@ -665,6 +660,10 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                                      if (args.Percentage == 100)
                                      {
                                          _speedMeter.Stop();
+                                     } 
+                                     else if (!_speedMeter.IsRunning)
+                                     {
+                                         _speedMeter.Restart();
                                      }
                                      var ms = _speedMeter.Elapsed.TotalMilliseconds;
                                      Speed = (int)Math.Floor(args.TotalBytesTransferred/ms*1000/1024);

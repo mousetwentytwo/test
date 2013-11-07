@@ -73,6 +73,7 @@
       <HintPath>..\packages\Microsoft.Windows.Shell\Microsoft.Windows.Shell.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\System.Windows.Interactivity.dll</HintPath>
@@ -127,7 +128,7 @@
     <Compile Include="Exceptions\TransferException.cs" />
     <Compile Include="Interfaces\IFileListPaneViewModel.cs" />
     <Compile Include="Interfaces\IFileManager.cs" />
-    <Compile Include="ViewModels\InputDialogOption.cs" />
+    <Compile Include="ViewModels\InputDialogOptionViewModel.cs" />
     <Compile Include="Interfaces\IPaneViewModel.cs" />
     <Compile Include="Interfaces\IStoredConnection.cs" />
     <Compile Include="Interfaces\IStoredConnectionViewModel.cs" />
