@@ -98,6 +98,7 @@
     <Compile Include="Constants\CopyAction.cs" />
     <Compile Include="Constants\CopyActionScope.cs" />
     <Compile Include="Constants\ErrorResolutionBehavior.cs" />
+    <Compile Include="Constants\FtpTransferDirection.cs" />
     <Compile Include="Constants\ItemType.cs" />
     <Compile Include="Constants\Modules.cs" />
     <Compile Include="Constants\ModuleLoadInfoCollection.cs" />
@@ -120,7 +121,7 @@
     <Compile Include="Events\CloseNestedPaneEvent.cs" />
     <Compile Include="Events\OpenNestedPaneEvent.cs" />
     <Compile Include="Events\FtpOperationFinishedEvent.cs" />
-    <Compile Include="Events\FtpOperationProgressChangedEvent.cs" />
+    <Compile Include="Events\TransferProgressChangedEvent.cs" />
     <Compile Include="Events\FtpOperationStartedEvent.cs" />
     <Compile Include="Events\TransferFinishedEvent.cs" />
     <Compile Include="Events\TransferStartedEvent.cs" />

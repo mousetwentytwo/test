@@ -153,19 +153,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             }
         }
 
-        public Stream GetFileStream(string path)
-        {
-            try
-            {
-                return new FileStream(path, FileMode.Open);
-            }
-            catch (IOException ex)
-            {
-                throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
-            }
-        }
-
-        public byte[] ReadFileContent(string path)
+        public byte[] ReadFileContent(string path, bool saveTempFile, long fileSize)
         {
             try
             {

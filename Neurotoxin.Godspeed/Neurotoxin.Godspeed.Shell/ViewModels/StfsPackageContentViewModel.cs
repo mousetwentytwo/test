@@ -7,6 +7,7 @@ using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
 using Neurotoxin.Godspeed.Shell.Events;
+using Neurotoxin.Godspeed.Shell.Models;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
@@ -80,9 +81,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             return string.Format("{0}{1}", CurrentFolder.Path, path.Replace('\\', '/'));
         }
 
-        protected override void SaveToFileStream(string path, FileStream fs, long remoteStartPosition)
+        protected override void SaveToFileStream(FileSystemItem item, FileStream fs, long remoteStartPosition)
         {
-            FileManager.ExtractFile(path, fs, remoteStartPosition);
+            FileManager.ExtractFile(item.Path, fs, remoteStartPosition);
         }
 
         protected override void CreateFile(string targetPath, string sourcePath)

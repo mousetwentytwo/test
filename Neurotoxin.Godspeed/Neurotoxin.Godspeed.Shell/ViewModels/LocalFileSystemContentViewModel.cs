@@ -7,6 +7,7 @@ using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
 using Neurotoxin.Godspeed.Shell.Events;
+using Neurotoxin.Godspeed.Shell.Models;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
@@ -68,11 +69,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             return string.Format("{0}{1}", CurrentFolder.Path, path.Replace('/', '\\'));
         }
 
-        protected override void SaveToFileStream(string path, FileStream fs, long remoteStartPosition)
+        protected override void SaveToFileStream(FileSystemItem item, FileStream fs, long remoteStartPosition)
         {
             _isAborted = false;
             var totalBytesTransferred = remoteStartPosition;
-            var readStream = File.Open(path, FileMode.Open);
+            var readStream = File.Open(item.Path, FileMode.Open);
             var totalBytes = readStream.Length;
             readStream.Seek(remoteStartPosition, SeekOrigin.Begin);
             var buffer = new byte[32768];
@@ -82,7 +83,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 fs.Write(buffer, 0, bytesRead);
                 totalBytesTransferred += bytesRead;
                 var percentage = (int)(totalBytesTransferred/totalBytes*100);
-                eventAggregator.GetEvent<FtpOperationProgressChangedEvent>().Publish(new FtpOperationProgressChangedEventArgs(percentage, bytesRead, totalBytesTransferred));
+                eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(percentage, bytesRead, totalBytesTransferred));
             }
             readStream.Close();
         }

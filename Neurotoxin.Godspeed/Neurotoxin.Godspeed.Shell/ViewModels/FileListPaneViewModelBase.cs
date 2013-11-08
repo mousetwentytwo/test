@@ -701,14 +701,22 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
             if (!Directory.Exists("tmp")) Directory.CreateDirectory("tmp");
             Items = new ObservableCollection<FileSystemItemViewModel>();
+
+            //eventAggregator.GetEvent<TransferProgressChangedEvent>().Subscribe(OnTransferProgressChanged);
         }
 
         public abstract string GetTargetPath(string path);
-        protected abstract void SaveToFileStream(string path, FileStream fs, long remoteStartPosition);
+        protected abstract void SaveToFileStream(FileSystemItem item, FileStream fs, long remoteStartPosition);
         protected abstract void CreateFile(string targetPath, string sourcePath);
         protected abstract void OverwriteFile(string targetPath, string sourcePath);
         protected abstract void ResumeFile(string targetPath, string sourcePath);
         public abstract void Abort();
+
+        public override void Dispose()
+        {
+            eventAggregator.GetEvent<TransferProgressChangedEvent>().Unsubscribe(OnTransferProgressChanged);
+            base.Dispose();
+        }
 
         public override void SetActive()
         {
@@ -796,7 +804,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             if (_queue.Count > 0)
             {
                 var item = _queue.Dequeue();
-                ProgressMessage = string.Format("Recognizing item {0}... ({1} left)", item.Name, _queue.Count);
+                ProgressMessage = string.Format("Recognizing item {0} ({1} left)...", item.Name, _queue.Count);
                 RecognitionInner(item, RecognitionSuccess);
             }
             else
@@ -895,7 +903,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     throw new ArgumentException("Invalid Copy action: " + action);
             }
             var fs = new FileStream(savePath, mode);
-            SaveToFileStream(item.Path, fs, remoteStartPosition);
+            SaveToFileStream(item, fs, remoteStartPosition);
             fs.Flush();
             fs.Close();
             return true;
@@ -951,6 +959,17 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     if (callback != null) callback.Invoke();
                 },
                 AsyncErrorCallback);
+        }
+
+        private void OnTransferProgressChanged(TransferProgressChangedEventArgs args)
+        {
+            UIThread.Run(() =>
+                {
+                    if (string.IsNullOrEmpty(ProgressMessage)) return;
+                    var r = new Regex(@" \([0-9]+%\)$");
+                    ProgressMessage = r.Replace(ProgressMessage, string.Empty);
+                    ProgressMessage += string.Format(" ({0}%)", args.Percentage);
+                });
         }
     }
 }

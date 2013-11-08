@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Neurotoxin.Godspeed.Core.Constants;
-using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
+using Neurotoxin.Godspeed.Shell.Models;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
@@ -108,7 +107,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 string label = null;
                 if (FileManager.FileExists(path))
                 {
-                    var bytes = FileManager.DownloadFile(path);
+                    var bytes = FileManager.ReadFileContent(path);
                     label = String.Format("[{0}]", Encoding.BigEndianUnicode.GetString(bytes));
                 }
                 _driveLabelCache.Add(Drive.Path, label);
@@ -122,9 +121,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             return String.Format("{0}{1}", CurrentFolder.Path, path.Replace('\\', '/'));
         }
 
-        protected override void SaveToFileStream(string path, FileStream fs, long remoteStartPosition)
+        protected override void SaveToFileStream(FileSystemItem item, FileStream fs, long remoteStartPosition)
         {
-            FileManager.DownloadFile(path, fs, remoteStartPosition);
+            FileManager.DownloadFile(item.Path, fs, remoteStartPosition, item.Size ?? 0);
         }
 
         protected override void CreateFile(string targetPath, string sourcePath)

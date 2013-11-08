@@ -116,6 +116,11 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             return _stfs.ExtractFile(path);
         }
 
+        public byte[] ReadFileContent(string path, bool saveTempFile, long fileSize)
+        {
+            return ReadFileContent(path);
+        }
+
         public byte[] ReadFileHeader(string path)
         {
             return _stfs.ExtractFile(path, 0x971A);

@@ -4,7 +4,7 @@ using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
 
 namespace Neurotoxin.Godspeed.Shell.Interfaces
 {
-    public interface IPaneViewModel
+    public interface IPaneViewModel : IDisposable
     {
         bool IsBusy { get; }
         string ProgressMessage { get; }

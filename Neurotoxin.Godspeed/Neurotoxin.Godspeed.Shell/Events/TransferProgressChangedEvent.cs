@@ -2,15 +2,15 @@
 
 namespace Neurotoxin.Godspeed.Shell.Events
 {
-    public class FtpOperationProgressChangedEvent : CompositePresentationEvent<FtpOperationProgressChangedEventArgs> {}
+    public class TransferProgressChangedEvent : CompositePresentationEvent<TransferProgressChangedEventArgs> {}
 
-    public class FtpOperationProgressChangedEventArgs
+    public class TransferProgressChangedEventArgs
     {
         public int Percentage { get; private set; }
         public long Transferred { get; private set; }
         public long TotalBytesTransferred { get; private set; }
 
-        public FtpOperationProgressChangedEventArgs(int percentage, long transferred, long totalBytesTransferred)
+        public TransferProgressChangedEventArgs(int percentage, long transferred, long totalBytesTransferred)
         {
             Percentage = percentage;
             Transferred = transferred;

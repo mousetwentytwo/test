@@ -222,7 +222,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         {
             try
             {
-                var bytes = _fileManager.ReadFileContent(profilePath);
+                var bytes = _fileManager.ReadFileContent(profilePath, true, item.Size ?? 0);
                 var stfs = ModelFactory.GetModel<StfsPackage>(bytes);
                 stfs.ExtractAccount();
                 item.Title = stfs.Account.GamerTag;
@@ -302,7 +302,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         private void GetGameDataFromGpd(FileSystemItem item)
         {
-            var fileContent = _fileManager.ReadFileContent(item.Path);
+            var fileContent = _fileManager.ReadFileContent(item.Path, false, item.Size ?? 0);
             var gpd = ModelFactory.GetModel<GpdFile>(fileContent);
             gpd.Parse();
             if (gpd.Strings.Count > 0) item.Title = gpd.Strings.First().Text;
@@ -317,7 +317,8 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public void ThrowCache(FileSystemItem item)
         {
-            var cacheKey = GetCacheKey(item);
+            var cacheItem = GetCacheItem(item);
+            var cacheKey = GetCacheKey(cacheItem);
             _cacheManager.ClearCache(cacheKey);
         }
 

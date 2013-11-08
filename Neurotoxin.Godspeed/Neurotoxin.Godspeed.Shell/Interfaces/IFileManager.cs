@@ -26,7 +26,7 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
 
         void CreateFolder(string path);
 
-        byte[] ReadFileContent(string path);
+        byte[] ReadFileContent(string path, bool saveToTempFile, long fileSize);
         byte[] ReadFileHeader(string path);
     }
 }

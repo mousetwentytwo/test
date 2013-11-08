@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -26,6 +27,10 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         private readonly IEventAggregator _eventAggregator;
         private Ftp _ftpClient;
         private bool _downloadHeaderOnly;
+        private long _downloadFileSize;
+        private FtpTransferDirection _transferDirection;
+        private readonly Stopwatch _notificationTimer = new Stopwatch();
+        private long _aggregatedTransferredValue;
 
         public string TempFilePath { get; set; }
         public FtpConnection Connection { get; private set; }
@@ -223,56 +228,40 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             return result;
         }
 
-        public Stream GetFileStream(string path)
-        {
-            TempFilePath = string.Format(@"{0}\{1}", AppDomain.CurrentDomain.GetData("DataDirectory"), Guid.NewGuid());
-            DownloadFile(path, TempFilePath, FileMode.Create);
-            return new FileStream(TempFilePath, FileMode.Open);
-        }
-
-        public byte[] ReadFileContent(string path)
-        {
-            TempFilePath = string.Format(@"{0}\{1}", AppDomain.CurrentDomain.GetData("DataDirectory"), Guid.NewGuid());
-            DownloadFile(path, TempFilePath, FileMode.Create);
-            return File.ReadAllBytes(TempFilePath);
-        }
-
         public byte[] ReadFileHeader(string path)
         {
             return DownloadHeader(path);
         }
 
-        internal byte[] DownloadFile(string path)
+        public byte[] ReadFileContent(string path, bool saveToTempFile = false, long fileSize = -1)
+        {
+            var ms = new MemoryStream();
+            DownloadFile(path, ms, 0, fileSize);
+            ms.Flush();
+            var result = ms.ToArray();
+            ms.Close();
+            if (saveToTempFile)
+            {
+                TempFilePath = string.Format(@"{0}\{1}", AppDomain.CurrentDomain.GetData("DataDirectory"), Guid.NewGuid());
+                File.WriteAllBytes(TempFilePath, result);
+            }
+            return result;
+        }
+
+        internal void DownloadFile(string remotePath, Stream fs, long remoteStartPosition = 0, long fileSize = -1)
         {
             NotifyFtpOperationStarted(true);
             try
             {
-                var result = _ftpClient.Download(LocateDirectory(path));
-                NotifyFtpOperationFinished(result.Length);
-                return result;
-            }
-            catch (FtpException ex)
-            {
-                NotifyFtpOperationFinished();
-                if (_ftpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
-                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
-            }
-        }
-
-        private void DownloadFile(string remotePath, string localPath, FileMode mode, long remoteStartPosition = 0)
-        {
-            var fs = new FileStream(localPath, mode);
-            DownloadFile(remotePath, fs, remoteStartPosition);
-            fs.Flush();
-            fs.Close();
-        }
-
-        internal void DownloadFile(string remotePath, FileStream fs, long remoteStartPosition = 0)
-        {
-            NotifyFtpOperationStarted(true);
-            try
-            {
-                _ftpClient.Download(LocateDirectory(remotePath), remoteStartPosition, fs);
+                var filename = LocateDirectory(remotePath);
+                if (fileSize == -1)
+                {
+                    var list = _ftpClient.GetList();
+                    fileSize = list.First(file => file.Name == filename).Size ?? 0;
+                }
+                _transferDirection = FtpTransferDirection.Download;
+                _downloadFileSize = fileSize;
+                _ftpClient.Download(filename, remoteStartPosition, fs);
                 var length = fs.Length;
                 NotifyFtpOperationFinished(length);
             }
@@ -309,6 +298,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             NotifyFtpOperationStarted(true);
             try
             {
+                _transferDirection = FtpTransferDirection.Upload;
                 _ftpClient.Upload(LocateDirectory(remotePath), localPath);
                 NotifyFtpOperationFinished();
             }
@@ -331,6 +321,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             {
                 var fs = new FileStream(localPath, FileMode.Open);
                 fs.Seek(size, SeekOrigin.Begin);
+                _transferDirection = FtpTransferDirection.Upload;
                 _ftpClient.Append(remotePath, fs);
                 NotifyFtpOperationFinished();
             }
@@ -349,7 +340,12 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         private void FtpClientProgressChanged(object sender, ProgressEventArgs e)
         {
-            NotifyFtpOperationProgressChanged((int)e.Percentage, e.Transferred, e.TotalBytesTransferred);
+            var percentage = _transferDirection == FtpTransferDirection.Download && _downloadFileSize != 0
+                                 ? (e.TotalBytesTransferred*100/_downloadFileSize)
+                                 : e.Percentage;
+
+            NotifyFtpOperationProgressChanged((int) percentage, e.Transferred, e.TotalBytesTransferred);
+
             if (_downloadHeaderOnly && e.TotalBytesTransferred > 0x971A) // v1 header size
                 _ftpClient.Abort();
         }
@@ -409,17 +405,25 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         private void NotifyFtpOperationStarted(bool binaryTransfer)
         {
+            _notificationTimer.Reset();
+            _notificationTimer.Start();
             _eventAggregator.GetEvent<FtpOperationStartedEvent>().Publish(new FtpOperationStartedEventArgs(binaryTransfer));
         }
 
         private void NotifyFtpOperationFinished(long? streamLength = null)
         {
+            _notificationTimer.Stop();
             _eventAggregator.GetEvent<FtpOperationFinishedEvent>().Publish(new FtpOperationFinishedEventArgs(streamLength));
         }
 
         private void NotifyFtpOperationProgressChanged(int percentage, long transferred, long totalBytesTransferred)
         {
-            _eventAggregator.GetEvent<FtpOperationProgressChangedEvent>().Publish(new FtpOperationProgressChangedEventArgs(percentage, transferred, totalBytesTransferred));
+            _aggregatedTransferredValue += transferred;
+            if (_notificationTimer.Elapsed.TotalMilliseconds < 100 && percentage != 100) return;
+
+            _eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(percentage, _aggregatedTransferredValue, totalBytesTransferred));
+            _notificationTimer.Restart();
+            _aggregatedTransferredValue = 0;
         }
 
         public void Abort()

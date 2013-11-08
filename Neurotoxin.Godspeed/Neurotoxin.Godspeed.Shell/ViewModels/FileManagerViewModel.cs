@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Shell;
 using Microsoft.Practices.Unity;
@@ -31,6 +32,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private const string RenameToPattern = @"$1{0}";
         private readonly Stopwatch _speedMeter = new Stopwatch();
         private readonly Stopwatch _elapsedTimeMeter = new Stopwatch();
+        private bool _isAborted;
 
         #region Main window properties
 
@@ -267,6 +269,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             var message = string.Format("Do you really want to copy the selected items?");
             if (new ConfirmationDialog("Copy", message).ShowDialog() != true) return;
+            _isAborted = false;
+            _chuckCounter = 0;
             AsyncJob(() => SourcePane.PopulateQueue(TransferType.Copy), CopyPrepare, CopyError);
         }
 
@@ -339,6 +343,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void CopyError(Exception exception)
         {
+            if (_isAborted) return;
             var result = ShowCorrespondingErrorDialog(exception);
             switch (result.Behavior)
             {
@@ -359,6 +364,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void CopyFinish()
         {
+            MessageBox.Show(_chuckCounter.ToString());
             FinishTransfer();
             TargetPane.Refresh();
         }
@@ -378,6 +384,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             var message = string.Format("Do you really want to move the selected items?");
             if (new ConfirmationDialog("Move", message).ShowDialog() != true) return;
+            _isAborted = false;
             AsyncJob(() => SourcePane.PopulateQueue(TransferType.Move), MovePrepare, MoveError);
         }
 
@@ -434,6 +441,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void MoveError(Exception exception)
         {
+            if (_isAborted) return;
             var result = ShowCorrespondingErrorDialog(exception);
             switch (result.Behavior)
             {
@@ -519,6 +527,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             var message = string.Format("Do you really want to delete the selected items?");
             if (new ConfirmationDialog("Delete", message).ShowDialog() != true) return;
+            _isAborted = false;
             AsyncJob(() => SourcePane.PopulateQueue(TransferType.Delete), DeletePrepare, DeleteError);
         }
 
@@ -556,6 +565,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void DeleteError(Exception exception)
         {
+            if (_isAborted) return;
             var result = ShowCorrespondingErrorDialog(exception);
             switch (result.Behavior)
             {
@@ -608,7 +618,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             NewFolderCommand = new DelegateCommand(ExecuteNewFolderCommand, CanExecuteNewFolderCommand);
             DeleteCommand = new DelegateCommand(ExecuteDeleteCommand, CanExecuteDeleteCommand);
 
-            eventAggregator.GetEvent<FtpOperationProgressChangedEvent>().Subscribe(OnFtpOperationProgressChanged);
+            eventAggregator.GetEvent<TransferProgressChangedEvent>().Subscribe(OnTransferProgressChanged);
             eventAggregator.GetEvent<OpenNestedPaneEvent>().Subscribe(OnOpenNestedPane);
             eventAggregator.GetEvent<CloseNestedPaneEvent>().Subscribe(OnCloseNestedPane);
         }
@@ -636,8 +646,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             RightPane = container.Resolve<ConnectionsViewModel>();
         }
 
-        private void OnFtpOperationProgressChanged(FtpOperationProgressChangedEventArgs args)
+        private int _chuckCounter = 0;
+
+        private void OnTransferProgressChanged(TransferProgressChangedEventArgs args)
         {
+            _chuckCounter++;
             UIThread.Run(() =>
                              {
                                  var elapsed = _elapsedTimeMeter.Elapsed;
@@ -692,12 +705,14 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             if (LeftPane == args.Pane)
             {
+                LeftPane.Dispose();
                 LeftPane = _leftPaneStack.Pop();
                 LeftPane.LoadDataAsync(LoadCommand.Restore, args.Payload);
                 
             }
             else if (RightPane == args.Pane)
             {
+                RightPane.Dispose();
                 RightPane = _rightPaneStack.Pop();
                 RightPane.LoadDataAsync(LoadCommand.Restore, args.Payload);
             }
@@ -770,6 +785,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         internal void AbortTransfer()
         {
+            _isAborted = true;
             SourcePane.Abort();
             TargetPane.Abort();
             lock (_queue)
