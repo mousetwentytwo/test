@@ -1,17 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows.Input;
 using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
+using Neurotoxin.Godspeed.Shell.Models;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
     public abstract class PaneViewModelBase : ViewModelBase, IPaneViewModel
     {
+        public FileListPaneSettings Settings { get; protected set; }
         protected FileManagerViewModel Parent { get; private set; }
 
         private const string ISACTIVE = "IsActive";
@@ -75,6 +74,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             IsActive = false;
         }
 
-        public abstract void LoadDataAsync(LoadCommand cmd, object cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase, Exception> error = null);
+        public virtual void LoadDataAsync(LoadCommand cmd, object cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase, Exception> error = null)
+        {
+            if (cmdParam is FileListPaneSettings) Settings = (FileListPaneSettings)cmdParam;
+        }
     }
 }

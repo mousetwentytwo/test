@@ -29,11 +29,15 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public override void LoadDataAsync(LoadCommand cmd, object cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase, Exception> error = null)
         {
+            base.LoadDataAsync(cmd, cmdParam, success, error);
             switch (cmd)
             {
                 case LoadCommand.Load:
                     Drives = FileManager.GetDrives().Select(d => new FileSystemItemViewModel(d)).ToObservableCollection();
-                    Drive = Drives.First();
+                    var storedDrive = Path.GetPathRoot(Settings.Directory);
+                    var drive = Drives.FirstOrDefault(d => d.Path == storedDrive);
+                    if (drive != null) PathCache.Add(drive, Settings.Directory);
+                    Drive = drive ?? Drives.First();
                     break;
                 case LoadCommand.Restore:
                     var payload = cmdParam as byte[];
@@ -58,10 +62,21 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         protected override void ChangeDrive()
         {
+            base.ChangeDrive();
+            UpdateDriveInfo();
+        }
+
+        protected override void ChangeDirectoryCallback(List<FileSystemItem> result)
+        {
+            base.ChangeDirectoryCallback(result);
+            UpdateDriveInfo();
+        }
+
+        private void UpdateDriveInfo()
+        {
             var driveInfo = DriveInfo.GetDrives().First(d => d.Name == Drive.Path);
             DriveLabel = string.Format("[{0}]", string.IsNullOrEmpty(driveInfo.VolumeLabel) ? "_NONE_" : driveInfo.VolumeLabel);
             FreeSpace = String.Format("{0:#,0} of {1:#,0} bytes free", driveInfo.AvailableFreeSpace, driveInfo.TotalSize);
-            base.ChangeDrive();
         }
 
         public override string GetTargetPath(string path)

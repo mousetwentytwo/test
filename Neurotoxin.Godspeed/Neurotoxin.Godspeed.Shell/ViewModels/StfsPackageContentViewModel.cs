@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
@@ -53,7 +52,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     WorkerThread.Run(
                         () =>
                             {
-                                FileManager.LoadPackage((byte[])cmdParam);
+                                var p = (Tuple<byte[], FileListPaneSettings>) cmdParam;
+                                Settings = p.Item2;
+                                FileManager.LoadPackage(p.Item1);
                                 return true;
                             },
                         result =>

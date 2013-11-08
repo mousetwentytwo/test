@@ -53,6 +53,11 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public FileSystemItem GetFolderInfo(string path)
         {
+            return GetFolderInfo(path, ItemType.Drive);
+        }
+
+        public FileSystemItem GetFolderInfo(string path, ItemType type)
+        {
             if (!path.EndsWith("\\")) path += "\\";
             return CreateModel(_stfs.GetFolderEntry(path), path);
         }

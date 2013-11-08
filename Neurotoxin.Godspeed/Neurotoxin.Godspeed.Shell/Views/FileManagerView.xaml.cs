@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Reflection;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -27,6 +28,12 @@ namespace Neurotoxin.Godspeed.Shell.Views
             CommandBindings.Add(new CommandBinding(FileManagerCommands.OpenDriveDropdownCommand, ExecutedOpenDriveDropdownCommand));
 
             LayoutRoot.PreviewKeyDown += LayoutRootOnPreviewKeyDown;
+            Closing += OnClosing;
+        }
+
+        private void OnClosing(object sender, CancelEventArgs args)
+        {
+            ((FileManagerViewModel) DataContext).Dispose();
         }
 
         //HACK: Temporary solution. KeyBinding doesn't work with Key.Delete (requires investigation)

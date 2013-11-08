@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
+using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
@@ -41,7 +43,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     WorkerThread.Run(
                         () =>
                             {
-                                return Connect((FtpConnectionItemViewModel) cmdParam);
+                                var p = (Tuple<IStoredConnectionViewModel, FileListPaneSettings>) cmdParam;
+                                Settings = p.Item2;
+                                return Connect((FtpConnectionItemViewModel)p.Item1);
                             },
                         result =>
                             {
@@ -86,7 +90,15 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void ConnectCallback()
         {
             Drives = FileManager.GetDrives().Select(d => new FileSystemItemViewModel(d)).ToObservableCollection();
-            Drive = Drives.SingleOrDefault(d => d.Name == "Hdd1") ?? Drives.First();
+            var r = new Regex("^/[A-Z0-9]+/", RegexOptions.IgnoreCase);
+            var m = r.Match(Settings.Directory);
+            FileSystemItemViewModel drive = null;
+            if (m.Success)
+            {
+                drive = Drives.SingleOrDefault(d => d.Path == m.Value);
+                if (drive != null) PathCache.Add(drive, Settings.Directory);
+            }
+            Drive = drive ?? Drives.First();
         }
 
         public void RestoreConnection()

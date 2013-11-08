@@ -93,6 +93,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public override void LoadDataAsync(LoadCommand cmd, object cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase, Exception> error = null)
         {
+            base.LoadDataAsync(cmd, cmdParam, success, error);
             switch (cmd)
             {
                 case LoadCommand.Load:
@@ -174,7 +175,10 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             IsBusy = true;
             ProgressMessage = string.Format("Connecting to {0}...", connection.Name);
             var ftp = container.Resolve<FtpContentViewModel>();
-            ftp.LoadDataAsync(LoadCommand.Load, connection, FtpConnectSuccess, FtpConnectError);
+            var dir = Settings.Directory.StartsWith(connection.Name)
+                          ? Settings.Directory.Replace(string.Format("{0}:/", connection.Name), string.Empty)
+                          : "/Hdd1";
+            ftp.LoadDataAsync(LoadCommand.Load, new Tuple<IStoredConnectionViewModel, FileListPaneSettings>(connection, new FileListPaneSettings(dir, Settings.SortByField, Settings.SortDirection)), FtpConnectSuccess, FtpConnectError);
         }
 
         private void FtpConnectSuccess(PaneViewModelBase pane)

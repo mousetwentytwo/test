@@ -109,6 +109,7 @@
     <Compile Include="ContentProviders\CacheManager.cs" />
     <Compile Include="ContentProviders\FtpContent.cs" />
     <Compile Include="ContentProviders\LocalFileSystemContent.cs" />
+    <Compile Include="ContentProviders\UserSettings.cs" />
     <Compile Include="ContentProviders\StfsPackageContent.cs" />
     <Compile Include="ContentProviders\TitleRecognizer.cs" />
     <Compile Include="Converters\NameConverter.cs" />
@@ -129,6 +130,7 @@
     <Compile Include="Exceptions\TransferException.cs" />
     <Compile Include="Interfaces\IFileListPaneViewModel.cs" />
     <Compile Include="Interfaces\IFileManager.cs" />
+    <Compile Include="Models\FileListPaneSettings.cs" />
     <Compile Include="ViewModels\InputDialogOptionViewModel.cs" />
     <Compile Include="Interfaces\IPaneViewModel.cs" />
     <Compile Include="Interfaces\IStoredConnection.cs" />

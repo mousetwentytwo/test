@@ -129,13 +129,24 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public FileSystemItem GetFolderInfo(string path)
         {
+            return GetFolderInfo(path, ItemType.Directory);
+        }
+
+        public FileSystemItem GetFolderInfo(string path, ItemType type)
+        {
             NotifyFtpOperationStarted(false);
             try
             {
                 var folderName = LocateDirectory(path);
                 var folder = _ftpClient.GetList().FirstOrDefault(item => item.Name == folderName);
                 NotifyFtpOperationFinished();
-                return folder != null && folder.IsFolder ? CreateModel(folder, path) : null;
+                if (folder != null && folder.IsFolder)
+                {
+                    var m = CreateModel(folder, path);
+                    m.Type = type;
+                    return m;
+                }
+                return null;
             }
             catch (FtpException ex)
             {

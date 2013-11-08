@@ -63,11 +63,16 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public FileSystemItem GetFolderInfo(string path)
         {
+            return GetFolderInfo(path, ItemType.Directory);
+        }
+
+        public FileSystemItem GetFolderInfo(string path, ItemType type)
+        {
             var p = path.EndsWith("\\") ? path : path + "\\";
             return new FileSystemItem
             {
                 Name = Path.GetFileName(path),
-                Type = ItemType.Directory,
+                Type = type,
                 Date = Directory.GetLastWriteTime(path),
                 Path = p,
                 FullPath = p

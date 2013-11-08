@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Models;
 
 namespace Neurotoxin.Godspeed.Shell.Interfaces
@@ -14,6 +15,7 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
         List<FileSystemItem> GetList(string path = null);
 
         FileSystemItem GetFolderInfo(string itemPath);
+        FileSystemItem GetFolderInfo(string itemPath, ItemType type);
         FileSystemItem GetFileInfo(string itemPath);
         DateTime GetFileModificationTime(string path);
 

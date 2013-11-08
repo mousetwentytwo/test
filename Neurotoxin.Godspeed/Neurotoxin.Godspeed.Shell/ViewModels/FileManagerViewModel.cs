@@ -625,10 +625,10 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public void InitializePanes()
         {
-            LeftPane = container.Resolve<LocalFileSystemContentViewModel>();
-            LeftPane.LoadDataAsync(LoadCommand.Load, null);
-            RightPane = container.Resolve<ConnectionsViewModel>();
-            RightPane.LoadDataAsync(LoadCommand.Load, null);
+            LeftPane = (IPaneViewModel)container.Resolve(UserSettings.Instance.LeftPaneType);
+            LeftPane.LoadDataAsync(LoadCommand.Load, UserSettings.Instance.LeftPaneFileListPaneSettings);
+            RightPane = (IPaneViewModel)container.Resolve(UserSettings.Instance.RightPaneType);
+            RightPane.LoadDataAsync(LoadCommand.Load, UserSettings.Instance.RightPaneFileListPaneSettings);
         }
 
         public override void RaiseCanExecuteChanges()
@@ -856,6 +856,17 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         finished = true;
                         if (error != null) error.Invoke(e);
                     });
+        }
+
+        public override void Dispose()
+        {
+            LeftPane.Dispose();
+            var left = _leftPaneStack.LastOrDefault() ?? LeftPane;
+            UserSettings.Instance.SavePaneSettings(left.GetType(), LeftPane.Settings, UserSettings.LeftPane);
+            RightPane.Dispose();
+            var right = _rightPaneStack.LastOrDefault() ?? RightPane;
+            UserSettings.Instance.SavePaneSettings(right.GetType(), RightPane.Settings, UserSettings.RightPane);
+            base.Dispose();
         }
     }
 }

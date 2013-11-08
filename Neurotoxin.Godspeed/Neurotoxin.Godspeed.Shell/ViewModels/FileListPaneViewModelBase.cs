@@ -30,12 +30,10 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
     public abstract class FileListPaneViewModelBase<T> : PaneViewModelBase, IFileListPaneViewModel where T : IFileManager
     {
-        private string _sortMemberPath = "ComputedName";
-        private ListSortDirection _listSortDirection = ListSortDirection.Ascending;
         private Queue<FileSystemItem> _queue;
-        private readonly Dictionary<FileSystemItemViewModel, string> _pathCache = new Dictionary<FileSystemItemViewModel, string>();
         private readonly TitleRecognizer _titleRecognizer;
         protected readonly T FileManager;
+        protected readonly Dictionary<FileSystemItemViewModel, string> PathCache = new Dictionary<FileSystemItemViewModel, string>();
 
         #region Properties
 
@@ -64,7 +62,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             {
                 if (IsDriveAccessible(value))
                 {
-                    if (CurrentFolder != null) _pathCache[_drive] = CurrentFolder.Path;
+                    if (CurrentFolder != null) PathCache[_drive] = CurrentFolder.Path;
                     _drive = value;
                     ChangeDrive();
                 }
@@ -229,7 +227,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             return list;
         }
 
-        private void ChangeDirectoryCallback(List<FileSystemItem> result)
+        protected virtual void ChangeDirectoryCallback(List<FileSystemItem> result)
         {
             IsBusy = false;
 
@@ -298,7 +296,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void OpenStfsPackageCallback(byte[] content)
         {
             var stfs = container.Resolve<StfsPackageContentViewModel>();
-            stfs.LoadDataAsync(LoadCommand.Load, content, OpenStfsPackageSuccess, OpenStfsPackageError);
+            stfs.LoadDataAsync(LoadCommand.Load, new Tuple<byte[], FileListPaneSettings>(content, new FileListPaneSettings("/", Settings.SortByField, Settings.SortDirection)), OpenStfsPackageSuccess, OpenStfsPackageError);
         }
 
         private void OpenStfsPackageSuccess(PaneViewModelBase pane)
@@ -386,12 +384,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             var e = cmdParam.EventArgs;
             var column = e.Column;
             e.Handled = true;
-            _sortMemberPath = column.SortMemberPath;
-            _listSortDirection = column.SortDirection == ListSortDirection.Ascending ? ListSortDirection.Descending : ListSortDirection.Ascending;
+            Settings.SortByField = column.SortMemberPath;
+            Settings.SortDirection = column.SortDirection == ListSortDirection.Ascending ? ListSortDirection.Descending : ListSortDirection.Ascending;
             var selection = CurrentRow;
             SortContent();
             CurrentRow = selection;
-            column.SortDirection = _listSortDirection;
+            column.SortDirection = Settings.SortDirection;
         }
 
         private void SortContent()
@@ -403,7 +401,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             if (content == null) return;
 
-            var list = content.OrderByDescending(p => p.Type).ThenByProperty(_sortMemberPath, _listSortDirection).ToList();
+            var list = content.OrderByDescending(p => p.Type).ThenByProperty(Settings.SortByField, Settings.SortDirection).ToList();
             var up = list.FirstOrDefault(item => item.IsUpDirectory);
             if (up != null)
             {
@@ -715,6 +713,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public override void Dispose()
         {
             eventAggregator.GetEvent<TransferProgressChangedEvent>().Unsubscribe(OnTransferProgressChanged);
+            Settings.Directory = CurrentFolder.FullPath;
             base.Dispose();
         }
 
@@ -765,7 +764,15 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         protected virtual void ChangeDrive()
         {
             CurrentRow = null;
-            CurrentFolder = _pathCache.ContainsKey(Drive) ? new FileSystemItemViewModel(FileManager.GetFolderInfo(_pathCache[Drive])) : Drive;
+            if (PathCache.ContainsKey(Drive))
+            {
+                var path = PathCache[Drive];
+                CurrentFolder = new FileSystemItemViewModel(FileManager.GetFolderInfo(path, path == Drive.Path ? ItemType.Drive : ItemType.Directory));
+            }
+            else
+            {
+                CurrentFolder = Drive;
+            }
             ChangeDirectoryCommand.Execute(null);
         }
 
