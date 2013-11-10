@@ -324,6 +324,7 @@
                 <KeyBinding Command="{Binding GoToLastCommand}" CommandParameter="{StaticResource False}" Key="End"/>
                 <KeyBinding Command="{Binding GoToLastCommand}" CommandParameter="{StaticResource True}" Key="End" Modifiers="Shift"/>
                 <KeyBinding Command="{Binding RenameCommand}" CommandParameter="{Binding ElementName=Grid}" Key="F6" Modifiers="Shift"/>
+                <KeyBinding Command="{Binding RefreshCommand}" Key="R" Modifiers="Control"/>
             </DataGrid.InputBindings>
         </DataGrid>
 

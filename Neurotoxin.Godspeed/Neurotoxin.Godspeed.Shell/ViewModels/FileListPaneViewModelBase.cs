@@ -641,7 +641,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #endregion
 
-        #region BeginRenameCommand
+        #region RenameCommand
 
         public DelegateCommand<object> RenameCommand { get; private set; }
 
@@ -677,6 +677,41 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #endregion
 
+        #region Refresh
+
+        public DelegateCommand RefreshCommand { get; private set; }
+
+        private bool CanExecuteRefreshCommand()
+        {
+            return true;
+        }
+
+        private void ExecuteRefreshCommand()
+        {
+            Refresh();
+        }
+
+        public void Refresh()
+        {
+            Refresh(null);
+        }
+
+        public virtual void Refresh(Action callback)
+        {
+            ProgressMessage = "Refreshing directory...";
+            IsBusy = true;
+            WorkerThread.Run(
+                () => ChangeDirectory(CurrentFolder.Path),
+                result =>
+                {
+                    ChangeDirectoryCallback(result);
+                    if (callback != null) callback.Invoke();
+                },
+                AsyncErrorCallback);
+        }
+
+        #endregion
+
         protected FileListPaneViewModelBase(FileManagerViewModel parent) : base(parent)
         {
             FileManager = container.Resolve<T>();
@@ -696,6 +731,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             CopyTitleIdToClipboardCommand = new DelegateCommand(ExecuteCopyTitleIdToClipboardCommand, CanExecuteCopyTitleIdToClipboardCommand);
             SearchGoogleCommand = new DelegateCommand(ExecuteSearchGoogleCommand, CanExecuteSearchGoogleCommand);
             RenameCommand = new DelegateCommand<object>(ExecuteRenameCommand, CanExecuteRenameCommand);
+            RefreshCommand = new DelegateCommand(ExecuteRefreshCommand, CanExecuteRefreshCommand);
 
             if (!Directory.Exists("tmp")) Directory.CreateDirectory("tmp");
             Items = new ObservableCollection<FileSystemItemViewModel>();
@@ -947,25 +983,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public bool HasValidSelection()
         {
             return SelectedItems.Any() || CurrentRow != null && !CurrentRow.IsUpDirectory;
-        }
-
-        public void Refresh()
-        {
-            Refresh(null);
-        }
-
-        public virtual void Refresh(Action callback)
-        {
-            ProgressMessage = "Refreshing directory...";
-            IsBusy = true;
-            WorkerThread.Run(
-                () => ChangeDirectory(CurrentFolder.Path),
-                result =>
-                {
-                    ChangeDirectoryCallback(result);
-                    if (callback != null) callback.Invoke();
-                },
-                AsyncErrorCallback);
         }
 
         private void OnTransferProgressChanged(TransferProgressChangedEventArgs args)

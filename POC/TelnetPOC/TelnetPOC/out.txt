@@ -1,0 +1,899 @@
+
+      !    
+/ # 
+
+lftp
+  lftp :~> 
+
+
+open 192.168.1.110
+
+
+lftp 192.168.1.110:~> 
+
+
+user xbox xbox
+
+
+lftp xbox@192.168.1.110:~> 
+
+
+cd /Hdd1/Apps
+
+
+cd `/Hdd1/Apps' [Waiting for response...]
+
+                                           cd ok, cwd=/Hdd1/Apps
+lftp xbox@192.168.1.110:/Hdd1/Apps> 
+
+
+put /mnt/HD_a2/x360/dlc/Nier\ -\ The\
+
+ World\  of\ Recycled\ Vessel\ DLC\ XBOX360/535107E8/00000002/B5849AE068830A162D28A72C2E 07667A19BCD61853
+`...62D28A72C2E07667A19BCD61853' at 0 (0%)
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 4745996 (0%) [Sending data]
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 8633100 (1%) 3.55M/s eta:2m [Sending data]
+
+
+
+
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 12228836 (2%) 3.20M/s eta:2m [Sending data]
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 17552484 (3%) 3.96M/s eta:2m [Sending data]
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 20867736 (4%) 3.91M/s eta:2m [Sending data]
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 24149816 (4%) 3.93M/s eta:2m [Sending data]
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 29306256 (5%) 4.18M/s eta:2m [Sending data]
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 32269788 (6%) 4.21M/s eta:2m [Sending data]
+
+
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 35959492 (7%) 4.19M/s eta:2m [Sending data]
+
+
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 41532080 (8%) 4.28M/s eta:2m [Sending data]
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 46624324 (9%) 4.35M/s eta:2m [Sending data]
+
+
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 50717408 (10%) 4.39M/s eta:99s [Sending dat
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 53793112 (10%) 4.27M/s eta:2m [Sending data
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 56727220 (11%) 4.22M/s eta:2m [Sending data
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 59434060 (11%) 4.16M/s eta:2m [Sending data
+
+
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 65828420 (12%) 4.36M/s eta:97s [Sending dat
+
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 70024180 (13%) 4.36M/s eta:96s [Sending dat
+
+
+
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 72758536 (14%) 4.28M/s eta:97s [Sending dat
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 78922884 (15%) 4.33M/s eta:94s [Sending dat
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 82164508 (16%) 4.31M/s eta:94s [Sending dat
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 85607944 (16%) 4.31M/s eta:93s [Sending dat
+
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 88243484 (17%) 4.34M/s eta:92s [Sending dat
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 95387264 (18%) 4.42M/s eta:89s [Sending dat
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 100457844 (19%) 4.52M/s eta:87s [Sending da
+
+
+
+
+
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 103840412 (20%) 4.49M/s eta:86s [Sending da
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 111588920 (22%) 4.62M/s eta:83s [Sending da
+
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 114333844 (22%) 4.56M/s eta:83s [Sending da
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 118467760 (23%) 4.53M/s eta:83s [Sending da
+
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 121159672 (23%) 4.44M/s eta:83s [Sending da
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 128738644 (25%) 4.69M/s eta:79s [Sending da
+
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 134450048 (26%) 4.76M/s eta:77s [Sending da
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 138101508 (27%) 4.71M/s eta:76s [Sending da
+
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 143702068 (28%) 4.92M/s eta:74s [Sending da
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 148366360 (29%) 4.84M/s eta:73s [Sending da
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 150204060 (29%) 4.67M/s eta:74s [Sending da
+
+
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 158585920 (31%) 4.88M/s eta:71s [Sending da
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 163534512 (32%) 4.94M/s eta:69s [Sending da
+
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 165591652 (32%) 4.93M/s eta:69s [Sending da
+
+
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 174959344 (34%) 5.10M/s eta:66s [Sending da
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 178012904 (35%) 4.97M/s eta:66s [Sending da
+
+
+
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 181267596 (35%) 4.96M/s eta:65s [Sending da
+
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 188882120 (37%) 5.02M/s eta:63s [Sending da
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 192788000 (38%) 5.02M/s eta:62s [Sending da
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 196490776 (38%) 4.98M/s eta:62s [Sending da
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 200222760 (39%) 4.93M/s eta:61s [Sending da
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 207477512 (40%) 5.18M/s eta:59s [Sending da
+
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 211384980 (41%) 5.10M/s eta:58s [Sending da
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 214008684 (42%) 4.97M/s eta:58s [Sending da
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 222802264 (43%) 5.27M/s eta:55s [Sending da
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 227591164 (44%) 5.28M/s eta:54s [Sending da
+
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 231208304 (45%) 5.20M/s eta:54s [Sending da
+
+
+
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 238852864 (47%) 5.28M/s eta:52s [Sending da
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 242047544 (47%) 5.22M/s eta:51s [Sending da
+
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 243852172 (48%) 5.20M/s eta:51s [Sending da
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 253239344 (49%) 5.31M/s eta:49s [Sending da
+
+
+
+
+
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 259550244 (51%) 5.42M/s eta:47s [Sending da
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 268530540 (52%) 5.53M/s eta:45s [Sending da
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 276626896 (54%) 5.75M/s eta:43s [Sending da
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 280126516 (55%) 5.66M/s eta:42s [Sending da
+
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 289593156 (57%) 5.96M/s eta:40s [Sending da
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 296943008 (58%) 6.10M/s eta:38s [Sending da
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 299515316 (59%) 6.14M/s eta:37s [Sending da
+
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 306560092 (60%) 6.06M/s eta:36s [Sending da
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 316089592 (62%) 6.30M/s eta:34s [Sending da
+
+
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 321532268 (63%) 6.19M/s eta:33s [Sending da
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 327058620 (64%) 6.21M/s eta:32s [Sending da
+
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 332364672 (65%) 6.21M/s eta:31s [Sending da
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 339899232 (67%) 6.33M/s eta:29s [Sending da
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 346735148 (68%) 6.42M/s eta:28s [Sending da
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 348209748 (68%) 6.17M/s eta:28s [Sending da
+
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 352502180 (69%) 6.12M/s eta:27s [Sending da
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 356841460 (70%) 6.04M/s eta:27s [Sending da
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 363294808 (71%) 6.12M/s eta:25s [Sending da
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 368144052 (72%) 6.11M/s eta:24s [Sending da
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 372386384 (73%) 6.05M/s eta:24s [Sending da
+
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 376460452 (74%) 5.99M/s eta:23s [Sending da
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 382534772 (75%) 6.03M/s eta:22s [Sending da
+
+
+
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 387410944 (76%) 6.05M/s eta:21s [Sending da
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 392449052 (77%) 5.91M/s eta:20s [Sending da
+
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 396745688 (78%) 5.86M/s eta:19s [Sending da
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 403109164 (79%) 5.92M/s eta:18s [Sending da
+
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 409056772 (80%) 6.03M/s eta:17s [Sending da
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 414601072 (81%) 5.95M/s eta:16s [Sending da
+
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 421932124 (83%) 6.10M/s eta:15s [Sending da
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 426128164 (84%) 6.04M/s eta:14s [Sending da
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 431410724 (85%) 6.05M/s eta:13s [Sending da
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 436180544 (86%) 6.05M/s eta:12s [Sending da
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 441448040 (87%) 6.03M/s eta:11s [Sending da
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 446331416 (88%) 6.07M/s eta:10s [Sending da
+
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 451813400 (89%) 6.03M/s eta:10s [Sending da
+
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 456801344 (90%) 6.00M/s eta:9s [Sending dat
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 463253748 (91%) 6.06M/s eta:8s [Sending dat
+
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 469594528 (92%) 6.14M/s eta:6s [Sending dat
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 473904008 (93%) 6.06M/s eta:6s [Sending dat
+
+
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 479046128 (94%) 6.06M/s eta:5s [Sending dat
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 485493768 (95%) 6.07M/s eta:4s [Sending dat
+
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 491885648 (97%) 6.19M/s eta:3s [Sending dat
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 497212456 (98%) 6.12M/s eta:2s [Sending dat
+
+
+
+
+
+
+
+`...62D28A72C2E07667A19BCD61853' at 502509336 (99%) 6.16M/s eta:1s [Sending dat
+
+
+
+
+
+                                                                               506937344 bytes transferred in 86 seconds (5.61M/s)
+
+
+lftp xbox@192.168.1.110:/Hdd1/Apps> 

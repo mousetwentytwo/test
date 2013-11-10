@@ -270,7 +270,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             var message = string.Format("Do you really want to copy the selected items?");
             if (new ConfirmationDialog("Copy", message).ShowDialog() != true) return;
             _isAborted = false;
-            _chuckCounter = 0;
             AsyncJob(() => SourcePane.PopulateQueue(TransferType.Copy), CopyPrepare, CopyError);
         }
 
@@ -364,7 +363,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void CopyFinish()
         {
-            MessageBox.Show(_chuckCounter.ToString());
             FinishTransfer();
             TargetPane.Refresh();
         }
@@ -646,11 +644,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             RightPane = container.Resolve<ConnectionsViewModel>();
         }
 
-        private int _chuckCounter = 0;
-
         private void OnTransferProgressChanged(TransferProgressChangedEventArgs args)
         {
-            _chuckCounter++;
             UIThread.Run(() =>
                              {
                                  var elapsed = _elapsedTimeMeter.Elapsed;
