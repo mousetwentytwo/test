@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Mime;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows;
 using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Shell.Constants;
@@ -22,11 +24,19 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public string TempFilePath { get; set; }
 
+        [DllImport("mpr.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        private static extern int WNetGetConnection(
+            [MarshalAs(UnmanagedType.LPTStr)] string localName,
+            [MarshalAs(UnmanagedType.LPTStr)] StringBuilder remoteName,
+            ref int length);
+
         public List<FileSystemItem> GetDrives()
         {
             return DriveInfo.GetDrives().Select(drive =>
-                {
+                                                    {
+                    var name = drive.Name.TrimEnd('\\');
                     string icon;
+                    string fullPath = null;
                     switch (drive.DriveType)
                     {
                         case DriveType.CDRom:
@@ -34,6 +44,9 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                             break;
                         case DriveType.Network:
                             icon = "drive_network";
+                            var sb = new StringBuilder(512);
+                            var size = sb.Capacity;
+                            if (WNetGetConnection(name, sb, ref size) == 0) fullPath = sb.ToString().TrimEnd();
                             break;
                         default:
                             icon = "drive";
@@ -42,8 +55,8 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                     var item = new FileSystemItem
                         {
                             Path = drive.Name,
-                            FullPath = drive.Name,
-                            Name = drive.Name.TrimEnd('\\'),
+                            FullPath = fullPath ?? drive.Name,
+                            Name = name,
                             Type = ItemType.Drive,
                             Thumbnail = ApplicationExtensions.GetContentByteArray(string.Format("/Resources/{0}.png", icon))
                         };
