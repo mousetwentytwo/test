@@ -1,0 +1,285 @@
+<html>
+	<head>
+		<style type="text/css">
+			body, table {
+				font-family: Tahoma;
+				font-size: 10pt;
+			}
+			
+			.grid {
+				background-color: #eaf4ff;
+				border-radius: 8px;
+				padding: 5px;
+			}
+			
+			.grid th {
+				text-align: left;
+				text-transform: uppercase;
+				font-size: 7pt;
+				font-family: Verdana;
+			}
+			
+			.grid td {
+				padding: 2px;
+			}
+			
+			.grid td:nth-child(1),
+			.grid td:nth-child(2) {
+				text-align: center;
+				font-family: Courier;
+				font-size: 8pt;
+			}
+			
+			.box {
+				position: absolute;
+			}
+			
+			label {
+				background-color: #eaf4ff;
+				border-top-left-radius: 8px;
+				border-top-right-radius: 8px;
+				padding: 5px 15px 5px 15px;
+				font-weight: bold;
+				position: absolute;
+				top: -18px;
+				left: 0px;
+				color: #40aaaa;
+			}
+
+			div.stfs {
+				top: 30px;
+				left: 10px;
+			}
+			
+			div.volumedescriptor {
+				top: 430px;
+				left: 600px;
+			}
+			
+			div.certificate {
+				top: 28px;
+				left: 360px;
+			}
+			
+			div.certificate .trapeze {
+				position: absolute;
+				top: -35px;
+				left: -60px;
+				width: 1px;
+				height: 19px;
+				border: solid 97px transparent;
+				border-right: solid 60px #cceeee;
+				border-left: none;
+				-webkit-transform: skewY(35deg);
+/*				-moz-transform: skew(35deg);
+				-ms-transform: skew(35deg);
+				-o-transform: skew(35deg);
+				transform: skew(35deg); */
+			}
+			
+			tr.certificate {
+				background-color: #cceeee;
+			}
+			
+			div.certificate .grid,
+			div.certificate label {
+				background-color: #bbe8e8;
+			}
+			
+		</style>
+	</head>
+	<body>
+		<div class="box stfs">
+			<label>STFS Package</label>
+			<table class="grid" cellspacing="0">
+				<thead>
+					<tr>
+						<th>Offset</th>
+						<th>Length</th>
+						<th>Type</th>
+						<th>Information</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>0x00000</td>
+						<td>0x00004</td>
+						<td>ascii string</td>
+						<td>Magic</td>
+					</tr>
+					<tr class="certificate">
+						<td>0x00004</td>
+						<td>0x00228</td>
+						<td>Certificate</td>
+						<td>Certificate</td>
+					</tr>
+					<tr class="metadata">
+						<td>0x0022C</td>
+						<td>0x094EE</td>
+						<td>Metadata</td>
+						<td>Metadata</td>
+					</tr>
+					<tr>
+						<td>?</td>
+						<td>0x01000</td>
+						<td>Hashtable</td>
+						<td>Hashtable #1</td>
+					</tr>
+					<tr>
+						<td>?</td>
+						<td>0xAA000</td>
+						<td>Datablock[]</td>
+						<td>Datablock 0-169</td>
+					</tr>
+					<tr>
+						<td>?</td>
+						<td>0x01000</td>
+						<td>Hashtable</td>
+						<td>Toplevel Hashtable</td>
+					</tr>
+					<tr>
+						<td>?</td>
+						<td>0x01000</td>
+						<td>Hashtable</td>
+						<td>Hashtable #2</td>
+					</tr>
+					<tr>
+						<td>?</td>
+						<td>0xAA000</td>
+						<td>Datablock[]</td>
+						<td>Datablock 170-339</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		
+		<div class="box certificate">
+			<!-- <div class="trapeze"></div> -->
+			<label>Certificate</label>
+			<table class="grid">
+				<thead>
+					<tr>
+						<th>Offset</th>
+						<th>Length</th>
+						<th>Type</th>
+						<th>Information</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>0x00</td>
+						<td>0x01</td>
+						<td>byte</td>
+						<td>Volume Descriptor size (0x24)</td>
+					</tr>
+					<tr>
+						<td>0x01</td>
+						<td>0x01</td>
+						<td>byte</td>
+						<td>Reserved</td>
+					</tr>
+					<tr>
+						<td>0x02</td>
+						<td>0x01</td>
+						<td>byte</td>
+						<td>Block Seperation</td>
+					</tr>
+					<tr>
+						<td>0x03</td>
+						<td>0x02</td>
+						<td>signed short</td>
+						<td>File Table Block Count</td>
+					</tr>
+					<tr>
+						<td>0x05</td>
+						<td>0x03</td>
+						<td>signed int24</td>
+						<td>File Table Block Number</td>
+					</tr>
+					<tr>
+						<td>0x08</td>
+						<td>0x14</td>
+						<td>byte[]</td>
+						<td>Top Hash Table Hash</td>
+					</tr>
+					<tr>
+						<td>0x1C</td>
+						<td>0x04</td>
+						<td>signed int</td>
+						<td>Total Allocated Block Count</td>
+					</tr>
+					<tr>
+						<td>0x20</td>
+						<td>0x04</td>
+						<td>signed int</td>
+						<td>Total Unallocated Block Count</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		
+		<div class="box volumedescriptor">
+			<label>Volume Descriptor</label>
+			<table class="grid">
+				<thead>
+					<tr>
+						<th>Offset</th>
+						<th>Length</th>
+						<th>Type</th>
+						<th>Information</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>0x00</td>
+						<td>0x01</td>
+						<td>byte</td>
+						<td>Volume Descriptor size (0x24)</td>
+					</tr>
+					<tr>
+						<td>0x01</td>
+						<td>0x01</td>
+						<td>byte</td>
+						<td>Reserved</td>
+					</tr>
+					<tr>
+						<td>0x02</td>
+						<td>0x01</td>
+						<td>byte</td>
+						<td>Block Seperation</td>
+					</tr>
+					<tr>
+						<td>0x03</td>
+						<td>0x02</td>
+						<td>signed short</td>
+						<td>File Table Block Count</td>
+					</tr>
+					<tr>
+						<td>0x05</td>
+						<td>0x03</td>
+						<td>signed int24</td>
+						<td>File Table Block Number</td>
+					</tr>
+					<tr>
+						<td>0x08</td>
+						<td>0x14</td>
+						<td>byte[]</td>
+						<td>Top Hash Table Hash</td>
+					</tr>
+					<tr>
+						<td>0x1C</td>
+						<td>0x04</td>
+						<td>signed int</td>
+						<td>Total Allocated Block Count</td>
+					</tr>
+					<tr>
+						<td>0x20</td>
+						<td>0x04</td>
+						<td>signed int</td>
+						<td>Total Unallocated Block Count</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</body>
+</html>

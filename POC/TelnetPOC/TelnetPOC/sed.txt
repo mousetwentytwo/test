@@ -1,0 +1,1 @@
+sed -e '/Volume_1/,/path/!d' /etc/samba/smb.conf

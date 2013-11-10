@@ -1,0 +1,9 @@
+Ever wondered how your Xbox 360 profile looks from the inside? Here, let me show you!
+
+Your profile is stored in a single file in a format called STFS package. *Secure Transacted File System
+This basically is a mini file system within a file.
+
+Like many other file types in computer history an STFS package starts with a little magic as well.
+*Explain Magic
+
+Right after that comes a signature which certificates your profile.
