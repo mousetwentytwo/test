@@ -736,7 +736,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             if (!Directory.Exists("tmp")) Directory.CreateDirectory("tmp");
             Items = new ObservableCollection<FileSystemItemViewModel>();
 
-            //eventAggregator.GetEvent<TransferProgressChangedEvent>().Subscribe(OnTransferProgressChanged);
+            eventAggregator.GetEvent<TransferProgressChangedEvent>().Subscribe(OnTransferProgressChanged);
         }
 
         public abstract string GetTargetPath(string path);

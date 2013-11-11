@@ -132,8 +132,8 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             switch (item.TitleType)
             {
                 case TitleType.Profile:
-                    if (cacheItem.Type == ItemType.File) GetProfileData(item, cacheItem.Path);
-                    _cacheManager.SaveEntry(cacheKey, item, DateTime.Now.AddDays(14), cacheItem.Date, cacheItem.Size, _fileManager.TempFilePath);
+                    if (cacheItem.Type == ItemType.File) GetProfileData(item, cacheItem);
+                    _cacheManager.SaveEntry(cacheKey, item, null, cacheItem.Date, cacheItem.Size, _fileManager.TempFilePath);
                     item.IsCached = true;
                     break;
                 case TitleType.Game:
@@ -218,11 +218,11 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             }
         }
 
-        private bool GetProfileData(FileSystemItem item, string profilePath)
+        private bool GetProfileData(FileSystemItem item, FileSystemItem cacheItem)
         {
             try
             {
-                var bytes = _fileManager.ReadFileContent(profilePath, true, item.Size ?? 0);
+                var bytes = _fileManager.ReadFileContent(cacheItem.Path, true, cacheItem.Size ?? 0);
                 var stfs = ModelFactory.GetModel<StfsPackage>(bytes);
                 stfs.ExtractAccount();
                 item.Title = stfs.Account.GamerTag;
