@@ -183,7 +183,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
 
             var name = RemoteChangeDirectory(item.Path);
-            Telnet.Download(name, savePath, c, (p, t, total) => eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(p, t, total)));
+            Telnet.Download(name, savePath, c, item.Size ?? 0, (p, t, total) => eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(p, t, total)));
             return true;
         }
 
@@ -210,7 +210,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     throw new ArgumentException("Invalid Copy action: " + action);
             }
             var name = RemoteChangeDirectory(savePath);
-            Telnet.Upload(item.Path, name, c, (p, t, total) => eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(p, t, total)));
+            Telnet.Upload(item.Path, name, c, item.Size ?? 0, (p, t, total) => eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(p, t, total)));
             return true;
         }
 

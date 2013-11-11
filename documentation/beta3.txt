@@ -1,4 +1,20 @@
-ADDED: Custom Window Chrome now can be disabled
-ADDED: Direct Copy support between a network storage and an FTP
-ADDED: Delete connection
-FIXED: Slim E icon was missing
+- FIXED: Upload to FTP (was malfunctioning with FSD 2.2)
+- FIXED: FTP upload error handling
+- FIXED: FTP download progress indication
+- FIXED: UI freeze caused by FTP download
+- FIXED: Displaying selection size after queue population
+- FIXED: Main window is not hit test visible during transfer
+- FIXED: Free space update
+- FIXED: Slim E icon was missing
+- ADDED: Progress indication in taskbar 
+- ADDED: Recognition progress indication
+- ADDED: Elapsed/remaining time calculation
+- ADDED: Transfer speed calculation
+- ADDED: Local to local progress indication
+- ADDED: Local to local data transfer abortion
+- ADDED: Context-aware "New folder" dropdown
+- ADDED: Save and restore locations and sort settings
+- ADDED: User settings (more options will be added soon)
+- ADDED: Custom Window Chrome now can be disabled
+- ADDED: Direct Copy support between NAS and FTP (if Telnet and LFTP is supported on NAS)
+- ADDED: Delete existings connection

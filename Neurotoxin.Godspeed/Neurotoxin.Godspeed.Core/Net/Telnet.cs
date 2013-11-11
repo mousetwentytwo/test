@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -10,19 +11,23 @@ namespace Neurotoxin.Godspeed.Core.Net
 {
     public static class Telnet
     {
+        private static string _networkDrive;
         private static TcpClient _client;
         private static NetworkStream _ns;
         private static string _rootPath;
-        private static readonly Regex ShareParser = new Regex(@"^\\\\(?<host>.*?)\\(?<sharename>.*?)(?<directory>\\.*)?$");
-        private static readonly Regex RootPathParser = new Regex(@"path\s*=\s*(?<path>.*)$", RegexOptions.IgnoreCase);
-        private static readonly Regex ProgressParser = new Regex(@"' at (?<totalTransferred>[0-9]+) \((?<percentage>[0-9]+)%\)");
-        private static readonly Regex FinishParser = new Regex(@"(?<totalTransferred>[0-9]+) bytes transferred in");
-        private static long _totalTransferred = 0;
+        private static long _totalSize;
+        private static long _totalTransferred;
 
-        public static void OpenSession(string sambaShare, string ftpHost, int port, string ftpUser, string ftpPwd)
+        private static readonly Regex ShareParser = new Regex(@"^\\\\(?<host>.*?)\\(?<sharename>.*?)(?<directory>\\.*)?$");
+        private static readonly Regex RootPathParser = new Regex(@"path\s*=\s*(?<path>.*)\s*$", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+        private static readonly Regex ProgressParser = new Regex(@"' at (?<totalTransferred>[0-9]+)", RegexOptions.Multiline);
+        private static readonly Regex FinishParser = new Regex(@"(?<totalTransferred>[0-9]+) bytes transferred in", RegexOptions.Multiline);
+
+        public static void OpenSession(string networkDrive, string sambaShare, string ftpHost, int port, string ftpUser, string ftpPwd)
         {
             if (_client != null) throw new TelnetException(null, "A telnet session is already opened. Please close the current one first before starting a new one.");
-            
+
+            _networkDrive = networkDrive;
             var shareParts = ShareParser.Match(sambaShare);
             if (!shareParts.Success)
                 throw new TelnetException("?", "Invalid UNC path: {0}", sambaShare);
@@ -34,13 +39,13 @@ namespace Neurotoxin.Godspeed.Core.Net
             _ns = _client.GetStream();
 
             _rootPath = null;
-
+            WaitForCursor();
             Send(string.Format("sed -e '/{0}/,/path/!d' /etc/samba/smb.conf", shareName), s =>
                 {
                     var m = RootPathParser.Match(s);
                     if (m.Success)
                     {
-                        _rootPath = m.Groups["path"].Value;
+                        _rootPath = m.Groups["path"].Value.Trim();
                         if (!string.IsNullOrEmpty(directory))
                         {
                             _rootPath = _rootPath.TrimEnd('/') + directory.Replace(@"\", "/");
@@ -97,7 +102,7 @@ namespace Neurotoxin.Godspeed.Core.Net
         public static void CloseSession()
         {
             Send("exit");
-            Send("exit");
+            _client.Close();
             _ns = null;
             _client = null;
         }
@@ -107,29 +112,33 @@ namespace Neurotoxin.Godspeed.Core.Net
             Send(string.Format("cd {0}", path));
         }
 
-        public static void Download(string ftpFileName, string targetPath, bool continueOrReget, Action<int, long, long> progressChanged)
+        public static void Download(string ftpFileName, string targetPath, bool continueOrReget, long size, Action<int, long, long> progressChanged)
         {
+            _totalSize = size;
+            _totalTransferred = 0;
+            var target = targetPath.Replace(_networkDrive, string.Empty).Replace(@"\", "/");
             //TODO: use c
-            Send(string.Format("get -O {0} {1} -o {2}", _rootPath, ftpFileName, targetPath), s => NotifyProgressChange(s, progressChanged));
+            Send(string.Format("get {0} -o {1}{2}", ftpFileName, _rootPath, target), s => NotifyProgressChange(s, progressChanged));
         }
 
-        public static void Upload(string sourcePath, string ftpFileName, bool continueOrReput, Action<int, long, long> progressChanged)
+        public static void Upload(string sourcePath, string ftpFileName, bool continueOrReput, long size, Action<int, long, long> progressChanged)
         {
+            _totalSize = size;
+            _totalTransferred = 0;
+            var source = sourcePath.Replace(_networkDrive, string.Empty).Replace(@"\", "/");
             //TODO: use c
-            Send(string.Format("put -O {0} {1} -o {2}", _rootPath, sourcePath, ftpFileName), s => NotifyProgressChange(s, progressChanged));
+            Send(string.Format("put {0}{1} -o {2}", _rootPath, source, ftpFileName), s => NotifyProgressChange(s, progressChanged));
         }
 
         private static void NotifyProgressChange(string s, Action<int, long, long> progressChanged)
         {
-            if (string.IsNullOrEmpty(s.Trim())) return;
-
             var m = ProgressParser.Matches(s).Cast<Match>().LastOrDefault();
             if (m != null)
             {
-                var percentage = Int32.Parse(m.Groups["percentage"].Value);
                 var t = Int32.Parse(m.Groups["totalTransferred"].Value);
-                var transferred = _totalTransferred - _totalTransferred;
+                var transferred = t - _totalTransferred;
                 _totalTransferred = t;
+                var percentage = (int)(_totalTransferred*100/_totalSize);
                 progressChanged.Invoke(percentage, transferred, _totalTransferred);
             }
             else
@@ -169,13 +178,20 @@ namespace Neurotoxin.Godspeed.Core.Net
         {
             var msg = Encoding.ASCII.GetBytes(message + Environment.NewLine);
             _ns.Write(msg, 0, msg.Length);
+            WaitForCursor(processResponse);
+        }
+
+        private static void WaitForCursor(Action<string> processResponse = null)
+        {
             string x;
             do
             {
                 x = Read();
+                if (string.IsNullOrEmpty(x.Trim())) continue;
+                Debug.WriteLine(x);
                 if (processResponse != null) processResponse.Invoke(x);
-            } 
-            while (!x.EndsWith("> "));
+            }
+            while (!x.EndsWith("# ") && !x.EndsWith("> "));
         }
     }
 }

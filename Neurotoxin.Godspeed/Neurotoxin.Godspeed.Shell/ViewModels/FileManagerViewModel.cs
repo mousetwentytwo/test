@@ -335,9 +335,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                             File.Delete(tempFile);
                             return result;
                         case CopyMode.RemoteExport:
-                            return ((FtpContentViewModel)TargetPane).RemoteUpload(item, targetPath, a);
-                        case CopyMode.RemoteImport:
                             return ((FtpContentViewModel)SourcePane).RemoteDownload(item, targetPath, a);
+                        case CopyMode.RemoteImport:
+                            return ((FtpContentViewModel)TargetPane).RemoteUpload(item, targetPath, a);
                         default:
                             throw new NotSupportedException("Invalid Copy Mode: " + _copyMode);
                     }
@@ -386,7 +386,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void OpenTelnetSession(LocalFileSystemContentViewModel local, FtpContentViewModel ftp)
         {
             var connection = ftp.Connection;
-            Telnet.OpenSession(local.Drive.FullPath, connection.Address, connection.Port ?? 21, connection.Username, connection.Password);
+            Telnet.OpenSession(local.Drive.Path, local.Drive.FullPath, connection.Address, connection.Port ?? 21, connection.Username, connection.Password);
         }
 
         private void CloseTelnetSession()
@@ -763,10 +763,25 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void InitializeTransfer(TransferType mode, Action callback)
         {
+            TransferType = mode;
+            _rememberedCopyAction = CopyAction.CreateNew;
+            CurrentFileProgress = 0;
+            FilesTransferred = 0;
+            FileCount = _queue.Count;
+            if (mode == TransferType.Move) FileCount /= 2;
+            BytesTransferred = 0;
+            TotalBytes = _queue.Where(item => item.FileSystemItem.Type == ItemType.File).Sum(item => item.FileSystemItem.Size ?? 0);
+            Speed = 0;
+            ElapsedTime = TimeSpan.MinValue;
+            RemainingTime = TimeSpan.MinValue;
+            ProgressState = TaskbarItemProgressState.Normal;
+
             TelnetException ex = null;
             WorkerThread.Run(
                 () =>
                     {
+                        if (mode == TransferType.Delete) return CopyMode.Invalid;
+
                         var targetPane = TargetPane as LocalFileSystemContentViewModel;
                         if (targetPane != null)
                         {
@@ -823,16 +838,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                             NotificationMessage.Show("Session initiation failed", sb.ToString());
                         }
                         _copyMode = copyMode;
-                        TransferType = mode;
-                        _rememberedCopyAction = CopyAction.CreateNew;
-                        FileCount = _queue.Count;
-                        if (mode == TransferType.Move) FileCount /= 2;
-                        TotalBytes =
-                            _queue.Where(item => item.FileSystemItem.Type == ItemType.File)
-                                  .Sum(item => item.FileSystemItem.Size ?? 0);
-                        FilesTransferred = 0;
-                        BytesTransferred = 0;
-                        ProgressState = TaskbarItemProgressState.Normal;
                         NotifyTransferStarted();
                         _elapsedTimeMeter.Start();
                         callback.Invoke();
