@@ -170,6 +170,14 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             SelectedItem = newItem;
         }
 
+        public void Delete()
+        {
+            var ftpconn = SelectedItem as FtpConnectionItemViewModel;
+            if (ftpconn == null) return;
+            Items.Remove(SelectedItem);
+            _cacheStore.Remove(string.Format("{0}{1}", CacheStoreKeyPrefix, ftpconn.Name));
+        }
+
         private void FtpConnect(IStoredConnectionViewModel connection)
         {
             IsBusy = true;

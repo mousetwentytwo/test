@@ -4,11 +4,14 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using Neurotoxin.Godspeed.Core.Net;
+using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
+using Neurotoxin.Godspeed.Shell.Exceptions;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
 
@@ -17,6 +20,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
     public class FtpContentViewModel : FileListPaneViewModelBase<FtpContent>
     {
         private readonly Dictionary<string, string> _driveLabelCache = new Dictionary<string, string>();
+
+        public FtpConnectionItemViewModel Connection { get; private set; }
 
         #region DisconnectCommand
 
@@ -45,7 +50,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                             {
                                 var p = (Tuple<IStoredConnectionViewModel, FileListPaneSettings>) cmdParam;
                                 Settings = p.Item2;
-                                return Connect((FtpConnectionItemViewModel)p.Item1);
+                                Connection = (FtpConnectionItemViewModel) p.Item1;
+                                return Connect();
                             },
                         result =>
                             {
@@ -81,10 +87,10 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
         }
 
-        private FtpConnectionItemViewModel Connect(FtpConnectionItemViewModel connection)
+        private bool Connect()
         {
-            FileManager.Connect(connection.Model);
-            return connection;
+            FileManager.Connect(Connection.Model);
+            return true;
         }
 
         private void ConnectCallback()
@@ -152,5 +158,69 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             FileManager.AppendFile(targetPath, sourcePath);
         }
+
+        public bool RemoteDownload(FileSystemItem item, string savePath, CopyAction action)
+        {
+            if (item.Type != ItemType.File) throw new NotSupportedException();
+            var c = false;
+            switch (action)
+            {
+                case CopyAction.CreateNew:
+                    if (File.Exists(savePath))
+                        throw new TransferException(TransferErrorType.WriteAccessError, item.Path, savePath, "Target already exists");
+                    break;
+                case CopyAction.Resume:
+                case CopyAction.Overwrite:
+                    c = true;
+                    break;
+                case CopyAction.OverwriteOlder:
+                    var fileDate = File.GetLastWriteTime(savePath);
+                    if (fileDate > item.Date) return false;
+                    c = true;
+                    break;
+                default:
+                    throw new ArgumentException("Invalid Copy action: " + action);
+            }
+
+            var name = RemoteChangeDirectory(item.Path);
+            Telnet.Download(name, savePath, c, (p, t, total) => eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(p, t, total)));
+            return true;
+        }
+
+        public bool RemoteUpload(FileSystemItem item, string savePath, CopyAction action)
+        {
+            if (item.Type != ItemType.File) throw new NotSupportedException();
+            var c = false;
+            switch (action)
+            {
+                case CopyAction.CreateNew:
+                    if (FileManager.FileExists(savePath))
+                        throw new TransferException(TransferErrorType.WriteAccessError, item.Path, savePath, "Target already exists");
+                    break;
+                case CopyAction.Resume:
+                case CopyAction.Overwrite:
+                    c = true;
+                    break;
+                case CopyAction.OverwriteOlder:
+                    var fileDate = FileManager.GetFileModificationTime(savePath);
+                    if (fileDate > item.Date) return false;
+                    c = true;
+                    break;
+                default:
+                    throw new ArgumentException("Invalid Copy action: " + action);
+            }
+            var name = RemoteChangeDirectory(savePath);
+            Telnet.Upload(item.Path, name, c, (p, t, total) => eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(p, t, total)));
+            return true;
+        }
+
+        private string RemoteChangeDirectory(string path)
+        {
+            if (path.EndsWith("/")) path = path.Substring(0, path.Length - 1);
+            var dir = path.Substring(0, path.LastIndexOf('/') + 1);
+            Telnet.ChangeFtpDirectory(dir);
+            return path.Replace(dir, string.Empty);
+        }
+
     }
 }

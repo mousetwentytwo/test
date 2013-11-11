@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Windows;
 using Microsoft.Practices.Composite.Modularity;
 using Microsoft.Practices.Composite.UnityExtensions;
@@ -10,7 +9,6 @@ using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Shell.Controllers;
 using Neurotoxin.Godspeed.Shell.ViewModels;
 using Neurotoxin.Godspeed.Shell.Views;
-using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 
 namespace Neurotoxin.Godspeed.Shell
 {
@@ -22,17 +20,23 @@ namespace Neurotoxin.Godspeed.Shell
             UnityInstance.Container = Container;
             Container.RegisterType<IGeneralController, ModuleController>(new ContainerControlledLifetimeManager());
 
+            // Content providers
             Container.RegisterType<FtpContent>();
             Container.RegisterType<LocalFileSystemContent>();
             Container.RegisterType<StfsPackageContent>();
+            Container.RegisterType<CacheManager>(new ContainerControlledLifetimeManager());
 
-            Container.RegisterType<FileManagerView>(new ContainerControlledLifetimeManager());
+            // ViewModels
             Container.RegisterType<FileManagerViewModel>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<SettingsViewModel>();
             Container.RegisterType<ConnectionsViewModel>(new ContainerControlledLifetimeManager());
             Container.RegisterType<FtpContentViewModel>();
             Container.RegisterType<LocalFileSystemContentViewModel>();
             Container.RegisterType<StfsPackageContentViewModel>();
-            Container.RegisterType<CacheManager>(new ContainerControlledLifetimeManager());
+
+            // Views
+            Container.RegisterType<FileManagerWindow>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<SettingsWindow>();
         }
 
         protected override IModuleCatalog GetModuleCatalog()
@@ -69,7 +73,7 @@ namespace Neurotoxin.Godspeed.Shell
                     controller.Run();
             }
 
-            return Container.Resolve<FileManagerView>();
+            return Container.Resolve<FileManagerWindow>();
         }
     }
 }

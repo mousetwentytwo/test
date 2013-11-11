@@ -1,22 +1,26 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Reflection;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using Microsoft.Practices.Unity;
+using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Commands;
+using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Shell.ViewModels;
 using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 
 namespace Neurotoxin.Godspeed.Shell.Views
 {
-    public partial class FileManagerView
+    public partial class FileManagerWindow
     {
         private TransferProgressDialog _transferProgressDialog;
 
-        public FileManagerView(FileManagerViewModel viewModel)
+        public FileManagerWindow(FileManagerViewModel viewModel)
         {
-            var assembly = Assembly.GetAssembly(typeof(FileManagerView));
+            var assembly = Assembly.GetAssembly(typeof(FileManagerWindow));
             var assemblyName = assembly.GetName();
             var version = assemblyName.Version;
             Title = String.Format("GODspeed v{0}", version);
@@ -26,6 +30,9 @@ namespace Neurotoxin.Godspeed.Shell.Views
             viewModel.TransferStarted += ViewModelOnTransferStarted;
             viewModel.TransferFinished += ViewModelOnTransferFinished;
             CommandBindings.Add(new CommandBinding(FileManagerCommands.OpenDriveDropdownCommand, ExecutedOpenDriveDropdownCommand));
+            CommandBindings.Add(new CommandBinding(FileManagerCommands.SettingsCommand, ExecutedSettingsCommand));
+            CommandBindings.Add(new CommandBinding(FileManagerCommands.AboutCommand, ExecutedAboutCommand));
+            CommandBindings.Add(new CommandBinding(FileManagerCommands.ExitCommand, ExecuteExitCommand));
 
             LayoutRoot.PreviewKeyDown += LayoutRootOnPreviewKeyDown;
             Closing += OnClosing;
@@ -56,6 +63,22 @@ namespace Neurotoxin.Godspeed.Shell.Views
             combobox.IsDropDownOpen = true;
             var item = combobox.ItemContainerGenerator.ContainerFromItem(combobox.SelectedItem) as ComboBoxItem;
             item.Focus();
+        }
+
+        private void ExecutedSettingsCommand(object sender, ExecutedRoutedEventArgs e)
+        {
+            var settings = UnityInstance.Container.Resolve<SettingsWindow>();
+            settings.ShowDialog();
+        }
+
+        private void ExecutedAboutCommand(object sender, ExecutedRoutedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void ExecuteExitCommand(object sender, ExecutedRoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
         }
 
         private void ViewModelOnTransferStarted()

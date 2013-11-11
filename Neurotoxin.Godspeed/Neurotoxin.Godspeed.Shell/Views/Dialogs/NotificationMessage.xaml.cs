@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using Neurotoxin.Godspeed.Presentation.Controls;
+using Neurotoxin.Godspeed.Shell.Primitives;
 
 namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
 {

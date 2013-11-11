@@ -1,23 +1,22 @@
-﻿<controls:DialogBase x:Class="Neurotoxin.Godspeed.Shell.Views.Dialogs.TransferProgressDialog"
-                           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                           xmlns:converters="clr-namespace:Neurotoxin.Godspeed.Shell.Converters"
-                           xmlns:dialogs="clr-namespace:Neurotoxin.Godspeed.Shell.Views.Dialogs"
-                           xmlns:controls="clr-namespace:Neurotoxin.Godspeed.Presentation.Controls;assembly=Neurotoxin.Godspeed.Presentation"
-                           Width="400" WindowStartupLocation="CenterOwner"
-                           Style="{StaticResource Dialog}">
-    <controls:DialogBase.TaskbarItemInfo>
+﻿<primitives:DialogBase x:Class="Neurotoxin.Godspeed.Shell.Views.Dialogs.TransferProgressDialog"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:converters="clr-namespace:Neurotoxin.Godspeed.Shell.Converters"
+                       xmlns:dialogs="clr-namespace:Neurotoxin.Godspeed.Shell.Views.Dialogs"
+                       xmlns:primitives="clr-namespace:Neurotoxin.Godspeed.Shell.Primitives"
+                       Width="400" WindowStartupLocation="CenterOwner">
+    <primitives:DialogBase.TaskbarItemInfo>
         <TaskbarItemInfo ProgressValue="{Binding TotalProgressDouble}" ProgressState="{Binding ProgressState}"/>
-    </controls:DialogBase.TaskbarItemInfo>
-    <controls:DialogBase.Title>
+    </primitives:DialogBase.TaskbarItemInfo>
+    <primitives:DialogBase.Title>
         <MultiBinding StringFormat="{x:Static dialogs:TransferProgressDialog.TitleFormat}">
             <Binding Path="TransferType"/>
             <Binding Path="TotalProgress"/>
         </MultiBinding>
-    </controls:DialogBase.Title>
-    <controls:DialogBase.Resources>
+    </primitives:DialogBase.Title>
+    <primitives:DialogBase.Resources>
         <converters:TransferTypeConverter x:Key="TransferTypeConverter"/>
-    </controls:DialogBase.Resources>
+    </primitives:DialogBase.Resources>
     
     <Grid x:Name="LayoutRoot" Margin="10">
         <Grid.RowDefinitions>
@@ -73,4 +72,4 @@
 
         <Button Grid.Row="5" HorizontalAlignment="Right" Width="75" Content="Cancel" Click="CancelButtonClick"/>
     </Grid>
-</controls:DialogBase>
+</primitives:DialogBase>

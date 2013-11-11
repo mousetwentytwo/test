@@ -97,6 +97,7 @@
     <Compile Include="Constants\ConnectionType.cs" />
     <Compile Include="Constants\CopyAction.cs" />
     <Compile Include="Constants\CopyActionScope.cs" />
+    <Compile Include="Constants\CopyMode.cs" />
     <Compile Include="Constants\ErrorResolutionBehavior.cs" />
     <Compile Include="Constants\FtpTransferDirection.cs" />
     <Compile Include="Constants\ItemType.cs" />
@@ -131,6 +132,12 @@
     <Compile Include="Interfaces\IFileListPaneViewModel.cs" />
     <Compile Include="Interfaces\IFileManager.cs" />
     <Compile Include="Models\FileListPaneSettings.cs" />
+    <Compile Include="Primitives\BorderlessWindow.cs" />
+    <Compile Include="Primitives\CaptionButtons.xaml.cs">
+      <DependentUpon>CaptionButtons.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Primitives\DialogBase.cs" />
+    <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\InputDialogOptionViewModel.cs" />
     <Compile Include="Interfaces\IPaneViewModel.cs" />
     <Compile Include="Interfaces\IStoredConnection.cs" />
@@ -153,12 +160,14 @@
     <Compile Include="ViewModels\PaneViewModelBase.cs" />
     <Compile Include="ViewModels\StfsPackageContentViewModel.cs" />
     <Compile Include="Commands\FileManagerCommands.cs" />
-    <Compile Include="Commands\OpenDriveDropdownCommand.cs" />
     <Compile Include="Views\ConnectionsPane.xaml.cs">
       <DependentUpon>ConnectionsPane.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Controls\ProgressNotificationBar.xaml.cs">
       <DependentUpon>ProgressNotificationBar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SettingsWindow.xaml.cs">
+      <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Dialogs\ConfirmationDialog.xaml.cs">
       <DependentUpon>ConfirmationDialog.xaml</DependentUpon>
@@ -193,8 +202,8 @@
     <Compile Include="Views\FileListPane.xaml.cs">
       <DependentUpon>FileListPane.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\FileManagerView.xaml.cs">
-      <DependentUpon>FileManagerView.xaml</DependentUpon>
+    <Compile Include="Views\FileManagerWindow.xaml.cs">
+      <DependentUpon>FileManagerWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TemplateSelectors\CloseButtonsTemplateSelector.cs" />
     <Compile Include="Views\TemplateSelectors\PaneTemplateSelector.cs" />
@@ -203,6 +212,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Controllers\ModuleController.cs" />
+    <Page Include="Primitives\CaptionButtons.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Themes\BureauBlack.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -238,6 +251,10 @@
     <Page Include="Views\Controls\ProgressNotificationBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SettingsWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Dialogs\ConfirmationDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -283,7 +300,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\FileManagerView.xaml">
+    <Page Include="Views\FileManagerWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -421,6 +438,11 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\package.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Connections\SlimE.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

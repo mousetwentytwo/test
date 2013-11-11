@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace Neurotoxin.Godspeed.Presentation.Controls
+namespace Neurotoxin.Godspeed.Shell.Primitives
 {
     /// <summary>
     /// Interaction logic for CaptionButtons.xaml

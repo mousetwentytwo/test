@@ -23,6 +23,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             set { _freeSpace = value; NotifyPropertyChanged(FREESPACE); }
         }
 
+        public bool IsNetworkDrive
+        {
+            get { return Drive.FullPath.StartsWith(@"\\"); }
+        }
+
         public LocalFileSystemContentViewModel(FileManagerViewModel parent) : base(parent)
         {
         }

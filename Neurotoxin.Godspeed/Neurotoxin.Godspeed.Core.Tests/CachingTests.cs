@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Text;
 using NUnit.Framework;
-using Neurotoxin.Godspeed.Core.Caching;
 
 namespace Neurotoxin.Godspeed.Core.Tests
 {

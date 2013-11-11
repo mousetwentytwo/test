@@ -1,15 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Shell;
 using Microsoft.Practices.Unity;
+using Neurotoxin.Godspeed.Core.Exceptions;
 using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Core.Io;
+using Neurotoxin.Godspeed.Core.Net;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Shell.Events;
@@ -27,6 +32,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
     public class FileManagerViewModel : ViewModelBase
     {
         private Queue<QueueItem> _queue;
+        private CopyMode _copyMode;
         private CopyAction _rememberedCopyAction;
         private const string RenameFromPattern = @"([\/]){0}$";
         private const string RenameToPattern = @"$1{0}";
@@ -267,7 +273,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void ExecuteCopyCommand()
         {
-            var message = string.Format("Do you really want to copy the selected items?");
+            var message = string.Format("Do you really want to copy the selected item(s)?");
             if (new ConfirmationDialog("Copy", message).ShowDialog() != true) return;
             _isAborted = false;
             AsyncJob(() => SourcePane.PopulateQueue(TransferType.Copy), CopyPrepare, CopyError);
@@ -276,8 +282,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void CopyPrepare(Queue<QueueItem> queue)
         {
             _queue = queue;
-            InitializeTransfer(TransferType.Copy);
-            CopyStart();
+            InitializeTransfer(TransferType.Copy, () => CopyStart());
         }
 
         private void CopyStart(CopyAction? action = null, string rename = null)
@@ -315,15 +320,27 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
                     var a = action ?? _rememberedCopyAction;
 
-                    if (TargetPane is LocalFileSystemContentViewModel) return SourcePane.Export(item, targetPath, a);
-                    if (SourcePane is LocalFileSystemContentViewModel) return TargetPane.Import(item, targetPath, a);
-                    var tempFile = string.Format("{0}\\temp\\{1}", AppDomain.CurrentDomain.GetData("DataDirectory"), item.FullPath.Hash());
-                    var tempItem = item.Clone();
-                    tempItem.Path = tempFile;
-                    var result = SourcePane.Export(item, tempFile, CopyAction.Overwrite) &&
-                                 TargetPane.Import(tempItem, targetPath, action ?? _rememberedCopyAction);
-                    File.Delete(tempFile);
-                    return result;
+                    switch (_copyMode)
+                    {
+                        case CopyMode.DirectExport:
+                            return SourcePane.Export(item, targetPath, a);
+                        case CopyMode.DirectImport:
+                            return TargetPane.Import(item, targetPath, a);
+                        case CopyMode.Indirect:
+                            var tempFile = string.Format("{0}\\temp\\{1}", AppDomain.CurrentDomain.GetData("DataDirectory"), item.FullPath.Hash());
+                            var tempItem = item.Clone();
+                            tempItem.Path = tempFile;
+                            var result = SourcePane.Export(item, tempFile, CopyAction.Overwrite) &&
+                                         TargetPane.Import(tempItem, targetPath, action ?? _rememberedCopyAction);
+                            File.Delete(tempFile);
+                            return result;
+                        case CopyMode.RemoteExport:
+                            return ((FtpContentViewModel)TargetPane).RemoteUpload(item, targetPath, a);
+                        case CopyMode.RemoteImport:
+                            return ((FtpContentViewModel)SourcePane).RemoteDownload(item, targetPath, a);
+                        default:
+                            throw new NotSupportedException("Invalid Copy Mode: " + _copyMode);
+                    }
                 default:
                     throw new NotSupportedException();
             }
@@ -332,7 +349,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void CopySuccess(bool result)
         {
             var item = _queue.Dequeue().FileSystemItem;
-            //if (item.Type == ItemType.File) BytesTransferred += item.Size ?? 0;
             FilesTransferred++;
             var vm = SourcePane.SelectedItems.FirstOrDefault(i => item.Path.StartsWith(i.Path));
             if (vm != null && !_queue.Any(q => q.FileSystemItem.Path.StartsWith(vm.Path)))
@@ -367,6 +383,17 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             TargetPane.Refresh();
         }
 
+        private void OpenTelnetSession(LocalFileSystemContentViewModel local, FtpContentViewModel ftp)
+        {
+            var connection = ftp.Connection;
+            Telnet.OpenSession(local.Drive.FullPath, connection.Address, connection.Port ?? 21, connection.Username, connection.Password);
+        }
+
+        private void CloseTelnetSession()
+        {
+            Telnet.CloseSession();
+        }
+
         #endregion
 
         #region MoveCommand
@@ -380,7 +407,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void ExecuteMoveCommand()
         {
-            var message = string.Format("Do you really want to move the selected items?");
+            var message = string.Format("Do you really want to move the selected item(s)?");
             if (new ConfirmationDialog("Move", message).ShowDialog() != true) return;
             _isAborted = false;
             AsyncJob(() => SourcePane.PopulateQueue(TransferType.Move), MovePrepare, MoveError);
@@ -389,8 +416,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void MovePrepare(Queue<QueueItem> queue)
         {
             _queue = queue;
-            InitializeTransfer(TransferType.Move);
-            MoveStart();
+            InitializeTransfer(TransferType.Move, () => MoveStart());
         }
 
         private void MoveStart(CopyAction? action = null, string rename = null)
@@ -518,22 +544,34 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private bool CanExecuteDeleteCommand()
         {
+            var connections = ActivePane as ConnectionsViewModel;
+            if (connections != null && connections.SelectedItem != null) return true;
             return SourcePane != null && SourcePane.HasValidSelection() && !SourcePane.IsBusy;
         }
 
         private void ExecuteDeleteCommand()
         {
-            var message = string.Format("Do you really want to delete the selected items?");
+            var connections = ActivePane as ConnectionsViewModel;
+            var s = connections != null ? string.Empty : "(s)";
+
+            var message = string.Format("Do you really want to delete the selected item{0}?", s);
             if (new ConfirmationDialog("Delete", message).ShowDialog() != true) return;
-            _isAborted = false;
-            AsyncJob(() => SourcePane.PopulateQueue(TransferType.Delete), DeletePrepare, DeleteError);
+
+            if (connections != null)
+            {
+                connections.Delete();
+            }
+            else
+            {
+                _isAborted = false;
+                AsyncJob(() => SourcePane.PopulateQueue(TransferType.Delete), DeletePrepare, DeleteError);
+            }
         }
 
         private void DeletePrepare(Queue<QueueItem> queue)
         {
             _queue = queue;
-            InitializeTransfer(TransferType.Delete);
-            DeleteStart();
+            InitializeTransfer(TransferType.Delete, DeleteStart);
         }
 
         private void DeleteStart()
@@ -623,10 +661,20 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public void InitializePanes()
         {
-            LeftPane = (IPaneViewModel)container.Resolve(UserSettings.Instance.LeftPaneType);
-            LeftPane.LoadDataAsync(LoadCommand.Load, UserSettings.Instance.LeftPaneFileListPaneSettings);
-            RightPane = (IPaneViewModel)container.Resolve(UserSettings.Instance.RightPaneType);
-            RightPane.LoadDataAsync(LoadCommand.Load, UserSettings.Instance.RightPaneFileListPaneSettings);
+            LeftPane = (IPaneViewModel)container.Resolve(GetStoredPaneType(UserSettings.LeftPaneType, typeof(LocalFileSystemContentViewModel)));
+            var leftParam = UserSettings.Get(UserSettings.LeftPaneFileListPaneSettings, new FileListPaneSettings(@"C:\", "ComputedName", ListSortDirection.Ascending));
+            LeftPane.LoadDataAsync(LoadCommand.Load, leftParam);
+
+            RightPane = (IPaneViewModel)container.Resolve(GetStoredPaneType(UserSettings.RightPaneType, typeof(ConnectionsViewModel)));
+            var rightParam = UserSettings.Get(UserSettings.RightPaneFileListPaneSettings, new FileListPaneSettings(@"C:\", "ComputedName", ListSortDirection.Ascending));
+            RightPane.LoadDataAsync(LoadCommand.Load, rightParam);
+        }
+
+        private static Type GetStoredPaneType(string key, Type defaultValue)
+        {
+            var asm = Assembly.GetExecutingAssembly();
+            var typeName = UserSettings.Get<string>(key);
+            return !string.IsNullOrEmpty(typeName) ? asm.GetType(typeName) : defaultValue;
         }
 
         public override void RaiseCanExecuteChanges()
@@ -713,18 +761,82 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
         }
 
-        private void InitializeTransfer(TransferType mode)
+        private void InitializeTransfer(TransferType mode, Action callback)
         {
-            TransferType = mode;
-            _rememberedCopyAction = CopyAction.CreateNew;
-            FileCount = _queue.Count;
-            if (mode == TransferType.Move) FileCount /= 2;
-            TotalBytes = _queue.Where(item => item.FileSystemItem.Type == ItemType.File).Sum(item => item.FileSystemItem.Size ?? 0);
-            FilesTransferred = 0;
-            BytesTransferred = 0;
-            ProgressState = TaskbarItemProgressState.Normal;
-            NotifyTransferStarted();
-            _elapsedTimeMeter.Start();
+            TelnetException ex = null;
+            WorkerThread.Run(
+                () =>
+                    {
+                        var targetPane = TargetPane as LocalFileSystemContentViewModel;
+                        if (targetPane != null)
+                        {
+                            if (targetPane.IsNetworkDrive && UserSettings.Get<bool>(UserSettings.UseRemoteCopy))
+                            {
+                                try
+                                {
+                                    OpenTelnetSession(targetPane, (FtpContentViewModel) SourcePane);
+                                    return CopyMode.RemoteExport;
+                                }
+                                catch (TelnetException exception)
+                                {
+                                    ex = exception;
+                                }
+                            }
+                            return CopyMode.DirectExport;
+                        }
+
+                        var sourcePane = SourcePane as LocalFileSystemContentViewModel;
+                        if (sourcePane != null)
+                        {
+                            if (sourcePane.IsNetworkDrive && UserSettings.Get<bool>(UserSettings.UseRemoteCopy))
+                            {
+                                try
+                                {
+                                    OpenTelnetSession(sourcePane, (FtpContentViewModel) TargetPane);
+                                    return CopyMode.RemoteImport;
+                                }
+                                catch (TelnetException exception)
+                                {
+                                    ex = exception;
+                                }                                
+                            }
+                            return CopyMode.DirectImport;
+                        }
+                        return CopyMode.Indirect;
+                    },
+                copyMode =>
+                    {
+                        if (ex != null)
+                        {
+                            var sb = new StringBuilder();
+                            sb.AppendLine(string.Format("Cannot connect to remote server [{0}]", ex.Host));
+                            sb.AppendLine();
+                            Exception e = ex;
+                            while (e != null)
+                            {
+                                sb.AppendLine(e.Message);
+                                e = ex.InnerException;
+                            }
+                            sb.AppendLine();
+                            sb.AppendLine("Please check the server supports Direct Copy or turn Direct Copy off.");
+                            sb.AppendLine("Now the selected file(s) will be transfered indirectly.");
+                            NotificationMessage.Show("Session initiation failed", sb.ToString());
+                        }
+                        _copyMode = copyMode;
+                        TransferType = mode;
+                        _rememberedCopyAction = CopyAction.CreateNew;
+                        FileCount = _queue.Count;
+                        if (mode == TransferType.Move) FileCount /= 2;
+                        TotalBytes =
+                            _queue.Where(item => item.FileSystemItem.Type == ItemType.File)
+                                  .Sum(item => item.FileSystemItem.Size ?? 0);
+                        FilesTransferred = 0;
+                        BytesTransferred = 0;
+                        ProgressState = TaskbarItemProgressState.Normal;
+                        NotifyTransferStarted();
+                        _elapsedTimeMeter.Start();
+                        callback.Invoke();
+                    });
         }
 
         internal TransferErrorDialogResult ShowCorrespondingErrorDialog(Exception exception)
@@ -793,6 +905,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void FinishTransfer()
         {
+            if (_copyMode == CopyMode.RemoteExport || _copyMode == CopyMode.RemoteImport) CloseTelnetSession();
             _speedMeter.Stop();
             _speedMeter.Reset();
             _elapsedTimeMeter.Stop();
@@ -857,10 +970,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             LeftPane.Dispose();
             var left = _leftPaneStack.LastOrDefault() ?? LeftPane;
-            UserSettings.Instance.SavePaneSettings(left.GetType(), LeftPane.Settings, UserSettings.LeftPane);
+            UserSettings.Save(UserSettings.LeftPaneType, left.GetType().FullName);
+            UserSettings.Save(UserSettings.LeftPaneFileListPaneSettings, LeftPane.Settings);
             RightPane.Dispose();
             var right = _rightPaneStack.LastOrDefault() ?? RightPane;
-            UserSettings.Instance.SavePaneSettings(right.GetType(), RightPane.Settings, UserSettings.RightPane);
+            UserSettings.Save(UserSettings.RightPaneType, right.GetType().FullName);
+            UserSettings.Save(UserSettings.RightPaneFileListPaneSettings, RightPane.Settings);
             base.Dispose();
         }
     }

@@ -1,77 +1,26 @@
-﻿using System;
-using System.ComponentModel;
-using System.Reflection;
-using Neurotoxin.Godspeed.Core.Caching;
-using Neurotoxin.Godspeed.Shell.Interfaces;
-using Neurotoxin.Godspeed.Shell.Models;
-using Neurotoxin.Godspeed.Shell.ViewModels;
+﻿using Neurotoxin.Godspeed.Core.Caching;
 
 namespace Neurotoxin.Godspeed.Shell.ContentProviders
 {
     public class UserSettings
     {
-        private readonly EsentPersistentDictionary _cacheStore = EsentPersistentDictionary.Instance;
+        private static readonly EsentPersistentDictionary CacheStore = EsentPersistentDictionary.Instance;
 
-        public const string LeftPane = "LeftPane";
-        public const string RightPane = "RightPane";
+        public const string DisableCustomChrome = "DisableCustomChrome";
+        public const string UseRemoteCopy = "UseRemoteCopy";
+        public const string LeftPaneType = "LeftPaneType";
+        public const string LeftPaneFileListPaneSettings = "LeftPaneFileListPaneSettings";
+        public const string RightPaneType = "RightPaneType";
+        public const string RightPaneFileListPaneSettings = "RightPaneFileListPaneSettings";
 
-        private static UserSettings _instance;
-        public static UserSettings Instance
+        public static T Get<T>(string key, T defaultValue = default(T))
         {
-            get { return _instance ?? (_instance = new UserSettings()); }
+            return CacheStore.ContainsKey(key) ? CacheStore.Get<T>(key) : defaultValue;
         }
 
-        private UserSettings()
+        public static void Save<T>(string key, T value)
         {
-            LeftPaneType = GetPaneType(LEFTPANETYPE, typeof(LocalFileSystemContentViewModel));
-            RightPaneType = GetPaneType(RIGHTPANETYPE, typeof(ConnectionsViewModel));
-            LeftPaneFileListPaneSettings = _cacheStore.ContainsKey(LEFTPANEFILELISTPANESETTINGS)
-                                               ? _cacheStore.Get<FileListPaneSettings>(LEFTPANEFILELISTPANESETTINGS)
-                                               : new FileListPaneSettings(@"C:\", "ComputedName", ListSortDirection.Ascending);
-            RightPaneFileListPaneSettings = _cacheStore.ContainsKey(RIGHTPANEFILELISTPANESETTINGS)
-                                               ? _cacheStore.Get<FileListPaneSettings>(RIGHTPANEFILELISTPANESETTINGS)
-                                               : new FileListPaneSettings(@"C:\", "ComputedName", ListSortDirection.Ascending);
-        }
-
-        private Type GetPaneType(string key, Type defaultValue)
-        {
-            var asm = Assembly.GetExecutingAssembly();
-            var storedValue = _cacheStore.ContainsKey(key) ? asm.GetType(_cacheStore.Get<string>(key)) : null;
-            return storedValue ?? defaultValue;
-        }
-
-        private const string LEFTPANETYPE = "LeftPaneType";
-        public Type LeftPaneType { get; private set; }
-
-        private const string LEFTPANEFILELISTPANESETTINGS = "LeftPaneFileListPaneSettings";
-        public FileListPaneSettings LeftPaneFileListPaneSettings { get; private set; }
-
-        private const string RIGHTPANETYPE = "RightPaneType";
-        public Type RightPaneType { get; private set; }
-
-        private const string RIGHTPANEFILELISTPANESETTINGS = "RightPaneFileListPaneSettings";
-        public FileListPaneSettings RightPaneFileListPaneSettings { get; private set; }
-
-        public void SavePaneSettings(Type type, FileListPaneSettings settings, string keyPrefix)
-        {
-            string typeKey;
-            string settingsKey;
-            switch (keyPrefix)
-            {
-                case LeftPane:
-                    typeKey = LEFTPANETYPE;
-                    settingsKey = LEFTPANEFILELISTPANESETTINGS;
-                    break;
-                case RightPane:
-                    typeKey = RIGHTPANETYPE;
-                    settingsKey = RIGHTPANEFILELISTPANESETTINGS;
-                    break;
-                default:
-                    throw new NotSupportedException("Invalid key prefix: " + keyPrefix);
-            }
-
-            _cacheStore.Update(typeKey, type.FullName);
-            _cacheStore.Update(settingsKey, settings);
+            CacheStore.Update(key, value);
         }
     }
 }

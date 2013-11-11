@@ -1,13 +1,11 @@
-﻿<controls:DialogBase x:Class="Neurotoxin.Godspeed.Shell.Views.Dialogs.NewConnectionDialog"
+﻿<primitives:DialogBase x:Class="Neurotoxin.Godspeed.Shell.Views.Dialogs.NewConnectionDialog"
                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                      xmlns:validation="clr-namespace:Neurotoxin.Godspeed.Presentation.Validation;assembly=Neurotoxin.Godspeed.Presentation"
-                     xmlns:converters="clr-namespace:Neurotoxin.Godspeed.Presentation.Converters;assembly=Neurotoxin.Godspeed.Presentation"
-                     xmlns:controls="clr-namespace:Neurotoxin.Godspeed.Presentation.Controls;assembly=Neurotoxin.Godspeed.Presentation"
-                     xmlns:dialogs="clr-namespace:Neurotoxin.Godspeed.Shell.Views.Dialogs" 
-                     Width="320" WindowStartupLocation="CenterOwner" Title="Connection details"
-                     Style="{StaticResource Dialog}">
-    <controls:DialogBase.Resources>
+                     xmlns:dialogs="clr-namespace:Neurotoxin.Godspeed.Shell.Views.Dialogs"
+                     xmlns:primitives="clr-namespace:Neurotoxin.Godspeed.Shell.Primitives"
+                     Width="320" WindowStartupLocation="CenterOwner" Title="Connection details">
+    <primitives:DialogBase.Resources>
         <Style TargetType="TextBox" x:Key="TextBoxStyle">
             <Style.Triggers>
                 <Trigger Property="Validation.HasError" Value="True">
@@ -67,7 +65,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
-    </controls:DialogBase.Resources>
+    </primitives:DialogBase.Resources>
     
     <Grid x:Name="LayoutRoot" Margin="2">
         <Grid.ColumnDefinitions>
@@ -155,4 +153,4 @@
             <Button Content="Cancel" Width="75" Click="CancelButtonClick"/>
         </StackPanel>
     </Grid>
-</controls:DialogBase>
+</primitives:DialogBase>

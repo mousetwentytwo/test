@@ -1,0 +1,4 @@
+ADDED: Custom Window Chrome now can be disabled
+ADDED: Direct Copy support between a network storage and an FTP
+ADDED: Delete connection
+FIXED: Slim E icon was missing

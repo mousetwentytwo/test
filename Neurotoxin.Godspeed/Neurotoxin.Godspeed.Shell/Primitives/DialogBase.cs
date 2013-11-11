@@ -1,12 +1,17 @@
 ﻿using System.Windows;
 using System.Windows.Input;
+using Neurotoxin.Godspeed.Shell.ContentProviders;
 
-namespace Neurotoxin.Godspeed.Presentation.Controls
+namespace Neurotoxin.Godspeed.Shell.Primitives
 {
     public abstract class DialogBase : BorderlessWindow
     {
         protected DialogBase()
         {
+            ResizeMode = ResizeMode.NoResize;
+            SizeToContent = SizeToContent.Height;
+            if (!UserSettings.Get<bool>(UserSettings.DisableCustomChrome))
+                Style = (Style)Application.Current.Resources["Dialog"];
             PreviewKeyDown += OnPreviewKeyDown;
         }
 
