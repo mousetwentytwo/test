@@ -30,7 +30,7 @@ namespace Neurotoxin.Godspeed.Core.Net
             _networkDrive = networkDrive;
             var shareParts = ShareParser.Match(sambaShare);
             if (!shareParts.Success)
-                throw new TelnetException("?", "Invalid UNC path: {0}", sambaShare);
+                throw new TelnetException("?", "Invalid UNC path: {0}.", sambaShare);
             var host = shareParts.Groups["host"].Value;
             var shareName = shareParts.Groups["sharename"].Value;
             var directory = shareParts.Groups["directory"].Value;
@@ -54,7 +54,7 @@ namespace Neurotoxin.Godspeed.Core.Net
                     }
                 });
             if (string.IsNullOrEmpty(_rootPath))
-                throw new TelnetException(host, "Samba share not found");
+                throw new TelnetException(host, "Samba share not found.");
 
             Send("lftp");
             Send(string.Format("open -p {0} {1}", port, ftpHost));
@@ -92,11 +92,11 @@ namespace Neurotoxin.Godspeed.Core.Net
             if (timeoutObject.WaitOne(5000, false))
             {
                 if (connected) return client;
-                throw new TelnetException(host, exception, "Connection failed. See inner exception for details.");
+                throw new TelnetException(host, exception.Message);
             }
 
             client.Close();
-            throw new TelnetException(host, "Connection timeout");
+            throw new TelnetException(host, "The connection timed out.");
         }
 
         public static void CloseSession()
@@ -112,22 +112,20 @@ namespace Neurotoxin.Godspeed.Core.Net
             Send(string.Format("cd {0}", path));
         }
 
-        public static void Download(string ftpFileName, string targetPath, bool continueOrReget, long size, Action<int, long, long> progressChanged)
+        public static void Download(string ftpFileName, string targetPath, long size, Action<int, long, long> progressChanged)
         {
             _totalSize = size;
             _totalTransferred = 0;
             var target = targetPath.Replace(_networkDrive, string.Empty).Replace(@"\", "/");
-            //TODO: use c
-            Send(string.Format("get {0} -o {1}{2}", ftpFileName, _rootPath, target), s => NotifyProgressChange(s, progressChanged));
+            Send(string.Format("get -c {0} -o {1}{2}", ftpFileName, _rootPath, target), s => NotifyProgressChange(s, progressChanged));
         }
 
-        public static void Upload(string sourcePath, string ftpFileName, bool continueOrReput, long size, Action<int, long, long> progressChanged)
+        public static void Upload(string sourcePath, string ftpFileName, long size, Action<int, long, long> progressChanged)
         {
             _totalSize = size;
             _totalTransferred = 0;
             var source = sourcePath.Replace(_networkDrive, string.Empty).Replace(@"\", "/");
-            //TODO: use c
-            Send(string.Format("put {0}{1} -o {2}", _rootPath, source, ftpFileName), s => NotifyProgressChange(s, progressChanged));
+            Send(string.Format("put -c {0}{1} -o {2}", _rootPath, source, ftpFileName), s => NotifyProgressChange(s, progressChanged));
         }
 
         private static void NotifyProgressChange(string s, Action<int, long, long> progressChanged)

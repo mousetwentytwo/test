@@ -13,8 +13,7 @@ namespace Neurotoxin.Godspeed.Shell.Primitives
             Icon = new BitmapImage(new Uri("pack://application:,,,/Neurotoxin.Godspeed.Shell;component/Resources/icon.ico"));
             SnapsToDevicePixels = true;
             Background = (SolidColorBrush) Application.Current.Resources["ControlBackgroundBrush"];
-            if (!UserSettings.Get<bool>(UserSettings.DisableCustomChrome))
-                Style = (Style)Application.Current.Resources["Window"];
+            if (!UserSettings.DisableCustomChrome) Style = (Style)Application.Current.Resources["Window"];
         }
     }
 }

@@ -10,8 +10,7 @@ namespace Neurotoxin.Godspeed.Shell.Primitives
         {
             ResizeMode = ResizeMode.NoResize;
             SizeToContent = SizeToContent.Height;
-            if (!UserSettings.Get<bool>(UserSettings.DisableCustomChrome))
-                Style = (Style)Application.Current.Resources["Dialog"];
+            if (!UserSettings.DisableCustomChrome) Style = (Style)Application.Current.Resources["Dialog"];
             PreviewKeyDown += OnPreviewKeyDown;
         }
 

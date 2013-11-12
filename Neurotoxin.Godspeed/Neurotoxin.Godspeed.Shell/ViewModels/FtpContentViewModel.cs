@@ -162,55 +162,39 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public bool RemoteDownload(FileSystemItem item, string savePath, CopyAction action)
         {
             if (item.Type != ItemType.File) throw new NotSupportedException();
-            var c = false;
             switch (action)
             {
                 case CopyAction.CreateNew:
                     if (File.Exists(savePath))
                         throw new TransferException(TransferErrorType.WriteAccessError, item.Path, savePath, "Target already exists");
                     break;
-                case CopyAction.Resume:
-                case CopyAction.Overwrite:
-                    c = true;
-                    break;
                 case CopyAction.OverwriteOlder:
                     var fileDate = File.GetLastWriteTime(savePath);
                     if (fileDate > item.Date) return false;
-                    c = true;
                     break;
-                default:
-                    throw new ArgumentException("Invalid Copy action: " + action);
             }
 
             var name = RemoteChangeDirectory(item.Path);
-            Telnet.Download(name, savePath, c, item.Size ?? 0, (p, t, total) => eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(p, t, total)));
+            Telnet.Download(name, savePath, item.Size ?? 0, (p, t, total) => eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(p, t, total)));
             return true;
         }
 
         public bool RemoteUpload(FileSystemItem item, string savePath, CopyAction action)
         {
             if (item.Type != ItemType.File) throw new NotSupportedException();
-            var c = false;
             switch (action)
             {
                 case CopyAction.CreateNew:
                     if (FileManager.FileExists(savePath))
                         throw new TransferException(TransferErrorType.WriteAccessError, item.Path, savePath, "Target already exists");
                     break;
-                case CopyAction.Resume:
-                case CopyAction.Overwrite:
-                    c = true;
-                    break;
                 case CopyAction.OverwriteOlder:
                     var fileDate = FileManager.GetFileModificationTime(savePath);
                     if (fileDate > item.Date) return false;
-                    c = true;
                     break;
-                default:
-                    throw new ArgumentException("Invalid Copy action: " + action);
             }
             var name = RemoteChangeDirectory(savePath);
-            Telnet.Upload(item.Path, name, c, item.Size ?? 0, (p, t, total) => eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(p, t, total)));
+            Telnet.Upload(item.Path, name, item.Size ?? 0, (p, t, total) => eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(p, t, total)));
             return true;
         }
 

@@ -113,6 +113,7 @@
     <Compile Include="ContentProviders\UserSettings.cs" />
     <Compile Include="ContentProviders\StfsPackageContent.cs" />
     <Compile Include="ContentProviders\TitleRecognizer.cs" />
+    <Compile Include="Converters\ExpirationConverter.cs" />
     <Compile Include="Converters\NameConverter.cs" />
     <Compile Include="Converters\PaneHeaderBackgroundConverter.cs" />
     <Compile Include="Converters\SizeAlignmentConverter.cs" />
@@ -165,6 +166,9 @@
     </Compile>
     <Compile Include="Views\Controls\ProgressNotificationBar.xaml.cs">
       <DependentUpon>ProgressNotificationBar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Dialogs\RemoteCopyErrorDialog.xaml.cs">
+      <DependentUpon>RemoteCopyErrorDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
@@ -251,6 +255,10 @@
     <Page Include="Views\Controls\ProgressNotificationBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Dialogs\RemoteCopyErrorDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\SettingsWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

@@ -123,6 +123,11 @@
                             </Setter.Value>
                         </Setter>
                     </Style>
+                    
+                    <!-- Link -->
+                    <Style TargetType="{x:Type TextBlock}" x:Key="Link">
+                        <Setter Property="Foreground" Value="Blue"/>
+                    </Style>
 
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>

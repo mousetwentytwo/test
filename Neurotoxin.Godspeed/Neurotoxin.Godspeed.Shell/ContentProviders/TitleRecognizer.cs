@@ -133,21 +133,32 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             {
                 case TitleType.Profile:
                     if (cacheItem.Type == ItemType.File) GetProfileData(item, cacheItem);
-                    _cacheManager.SaveEntry(cacheKey, item, null, cacheItem.Date, cacheItem.Size, _fileManager.TempFilePath);
+                    var profileExpiration = GetExpirationFrom(UserSettings.ProfileExpiration);
+                    if (UserSettings.ProfileInvalidation)
+                    {
+                        _cacheManager.SaveEntry(cacheKey, item, profileExpiration, cacheItem.Date, cacheItem.Size, _fileManager.TempFilePath);
+                    }
+                    else
+                    {
+                        _cacheManager.SaveEntry(cacheKey, item, profileExpiration);
+                        File.Delete(_fileManager.TempFilePath);
+                    }
                     item.IsCached = true;
                     break;
                 case TitleType.Game:
                     if (item.Type == ItemType.File)
                     {
                         GetGameDataFromGpd(item);
-                        _cacheManager.SaveEntry(cacheKey, item);
+                        _cacheManager.SaveEntry(cacheKey, item, GetExpirationFrom(UserSettings.RecognizedGameExpiration));
                     } 
                     else
                     {
-                        if (GetGameData(item) || GetGameDataFromJqe360(item))
-                            _cacheManager.SaveEntry(cacheKey, item);
-                        else
-                            _cacheManager.SaveEntry(cacheKey, item, DateTime.Now.AddDays(7));
+                        var gameExpiration = GetGameData(item)
+                                                 ? UserSettings.RecognizedGameExpiration
+                                                 : UserSettings.UseJqe360 && GetGameDataFromJqe360(item)
+                                                       ? UserSettings.PartiallyRecognizedGameExpiration
+                                                       : UserSettings.UnrecognizedGameExpiration;
+                        _cacheManager.SaveEntry(cacheKey, item, GetExpirationFrom(gameExpiration));
                     }
                     item.IsCached = true;
                     break;
@@ -165,16 +176,30 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                             item.Title = svod.DisplayName;
                             item.Thumbnail = svod.ThumbnailImage;
                             item.ContentType = svod.ContentType;
-                            _cacheManager.SaveEntry(cacheKey, item, DateTime.Now.AddDays(14), item.Date, item.Size);
+                            var svodExpiration = GetExpirationFrom(UserSettings.XboxLiveContentExpiration);
+                            if (UserSettings.XboxLiveContentInvalidation)
+                            {
+                                _cacheManager.SaveEntry(cacheKey, item, svodExpiration, item.Date, item.Size);
+                            }
+                            else
+                            {
+                                _cacheManager.SaveEntry(cacheKey, item, svodExpiration);
+                            }
                         }
                         else
                         {
-                            _cacheManager.SaveEntry(cacheKey, null);
+                            _cacheManager.SaveEntry(cacheKey, null, GetExpirationFrom(UserSettings.UnknownContentExpiration));
                         }
                         item.IsCached = true;
                     }
                     break;
             }
+        }
+
+        private static DateTime? GetExpirationFrom(int expiration)
+        {
+            if (expiration == 0) return null;
+            return DateTime.Now.AddDays(expiration);
         }
 
         public FileSystemItem GetProfileItem(FileSystemItem item)

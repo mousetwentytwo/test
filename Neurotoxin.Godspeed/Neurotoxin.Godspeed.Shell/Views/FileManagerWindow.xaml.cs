@@ -8,7 +8,6 @@ using System.Windows.Media;
 using Microsoft.Practices.Unity;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Commands;
-using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Shell.ViewModels;
 using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 

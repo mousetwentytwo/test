@@ -661,20 +661,18 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public void InitializePanes()
         {
-            LeftPane = (IPaneViewModel)container.Resolve(GetStoredPaneType(UserSettings.LeftPaneType, typeof(LocalFileSystemContentViewModel)));
-            var leftParam = UserSettings.Get(UserSettings.LeftPaneFileListPaneSettings, new FileListPaneSettings(@"C:\", "ComputedName", ListSortDirection.Ascending));
+            LeftPane = (IPaneViewModel)container.Resolve(GetStoredPaneType(UserSettings.LeftPaneType));
+            var leftParam = UserSettings.LeftPaneFileListPaneSettings;
             LeftPane.LoadDataAsync(LoadCommand.Load, leftParam);
 
-            RightPane = (IPaneViewModel)container.Resolve(GetStoredPaneType(UserSettings.RightPaneType, typeof(ConnectionsViewModel)));
-            var rightParam = UserSettings.Get(UserSettings.RightPaneFileListPaneSettings, new FileListPaneSettings(@"C:\", "ComputedName", ListSortDirection.Ascending));
+            RightPane = (IPaneViewModel)container.Resolve(GetStoredPaneType(UserSettings.RightPaneType));
+            var rightParam = UserSettings.RightPaneFileListPaneSettings;
             RightPane.LoadDataAsync(LoadCommand.Load, rightParam);
         }
 
-        private static Type GetStoredPaneType(string key, Type defaultValue)
+        private static Type GetStoredPaneType(string typeName)
         {
-            var asm = Assembly.GetExecutingAssembly();
-            var typeName = UserSettings.Get<string>(key);
-            return !string.IsNullOrEmpty(typeName) ? asm.GetType(typeName) : defaultValue;
+            return Assembly.GetExecutingAssembly().GetType(typeName);
         }
 
         public override void RaiseCanExecuteChanges()
@@ -774,7 +772,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             Speed = 0;
             ElapsedTime = TimeSpan.MinValue;
             RemainingTime = TimeSpan.MinValue;
-            ProgressState = TaskbarItemProgressState.Normal;
 
             TelnetException ex = null;
             WorkerThread.Run(
@@ -785,7 +782,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         var targetPane = TargetPane as LocalFileSystemContentViewModel;
                         if (targetPane != null)
                         {
-                            if (targetPane.IsNetworkDrive && UserSettings.Get<bool>(UserSettings.UseRemoteCopy))
+                            if (targetPane.IsNetworkDrive && UserSettings.UseRemoteCopy)
                             {
                                 try
                                 {
@@ -803,7 +800,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         var sourcePane = SourcePane as LocalFileSystemContentViewModel;
                         if (sourcePane != null)
                         {
-                            if (sourcePane.IsNetworkDrive && UserSettings.Get<bool>(UserSettings.UseRemoteCopy))
+                            if (sourcePane.IsNetworkDrive && UserSettings.UseRemoteCopy)
                             {
                                 try
                                 {
@@ -823,21 +820,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     {
                         if (ex != null)
                         {
-                            var sb = new StringBuilder();
-                            sb.AppendLine(string.Format("Cannot connect to remote server [{0}]", ex.Host));
-                            sb.AppendLine();
-                            Exception e = ex;
-                            while (e != null)
-                            {
-                                sb.AppendLine(e.Message);
-                                e = ex.InnerException;
-                            }
-                            sb.AppendLine();
-                            sb.AppendLine("Please check the server supports Direct Copy or turn Direct Copy off.");
-                            sb.AppendLine("Now the selected file(s) will be transfered indirectly.");
-                            NotificationMessage.Show("Session initiation failed", sb.ToString());
+                            var dialog = new RemoteCopyErrorDialog(ex);
+                            if (dialog.ShowDialog() == false) return;
+                            if (dialog.TurnOffRemoteCopy) UserSettings.UseRemoteCopy = false;
                         }
                         _copyMode = copyMode;
+                        ProgressState = TaskbarItemProgressState.Normal;
                         NotifyTransferStarted();
                         _elapsedTimeMeter.Start();
                         callback.Invoke();
@@ -975,12 +963,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             LeftPane.Dispose();
             var left = _leftPaneStack.LastOrDefault() ?? LeftPane;
-            UserSettings.Save(UserSettings.LeftPaneType, left.GetType().FullName);
-            UserSettings.Save(UserSettings.LeftPaneFileListPaneSettings, LeftPane.Settings);
+            UserSettings.LeftPaneType = left.GetType().FullName;
+            UserSettings.LeftPaneFileListPaneSettings = LeftPane.Settings;
             RightPane.Dispose();
             var right = _rightPaneStack.LastOrDefault() ?? RightPane;
-            UserSettings.Save(UserSettings.RightPaneType, right.GetType().FullName);
-            UserSettings.Save(UserSettings.RightPaneFileListPaneSettings, RightPane.Settings);
+            UserSettings.RightPaneType = right.GetType().FullName;
+            UserSettings.RightPaneFileListPaneSettings = RightPane.Settings;
             base.Dispose();
         }
     }
