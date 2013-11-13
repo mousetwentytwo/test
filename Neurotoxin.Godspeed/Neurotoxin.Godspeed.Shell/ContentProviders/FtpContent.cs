@@ -44,7 +44,14 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         {
             _ftpClient = new Ftp();
             _ftpClient.Connect(connection.Address, connection.Port);
-            _ftpClient.Login(connection.Username, connection.Password);
+            if (string.IsNullOrEmpty(connection.Username))
+            {
+                _ftpClient.LoginAnonymous();
+            }
+            else
+            {
+                _ftpClient.Login(connection.Username, connection.Password);
+            }
 
             //HACK: FSD FTP states that it supports SIZE command, but it throws a "not implemented" exception
             var mi = _ftpClient.Extensions.GetType().GetMethod("method_4", BindingFlags.Instance | BindingFlags.NonPublic);

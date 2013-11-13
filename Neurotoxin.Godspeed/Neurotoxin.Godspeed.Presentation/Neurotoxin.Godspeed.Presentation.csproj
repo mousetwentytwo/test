@@ -70,6 +70,7 @@
     <Compile Include="Converters\BooleanOrConverter.cs" />
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\EnumConverter.cs" />
+    <Compile Include="Converters\InverseBooleanConverter.cs" />
     <Compile Include="Converters\NotNullOrEmptyConverter.cs" />
     <Compile Include="Converters\NowPrefixConverter.cs" />
     <Compile Include="Converters\ScrollBarVisibilityConverter.cs" />
