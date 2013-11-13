@@ -15,6 +15,8 @@ namespace Neurotoxin.Godspeed.Shell.Constants
         [StringValue("Xbox360 S (Slim)")]
         Slim,
         [StringValue("Xbox360 E (Slim E)")]
-        SlimE
+        SlimE,
+        [StringValue("PlayStation 3")]
+        PlayStation3
     }
 }
