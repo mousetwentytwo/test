@@ -62,7 +62,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             set { _rightPane = value; NotifyPropertyChanged(RIGHTPANE); }
         }
 
-        private IPaneViewModel ActivePane
+        private const string ACTIVEPANE = "ActivePane";
+        public IPaneViewModel ActivePane
         {
             get 
             { 
@@ -72,7 +73,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
         }
 
-        private IPaneViewModel OtherPane
+        public IPaneViewModel OtherPane
         {
             get { return LeftPane.IsActive ? RightPane : LeftPane; }
         }
@@ -657,6 +658,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             eventAggregator.GetEvent<TransferProgressChangedEvent>().Subscribe(OnTransferProgressChanged);
             eventAggregator.GetEvent<OpenNestedPaneEvent>().Subscribe(OnOpenNestedPane);
             eventAggregator.GetEvent<CloseNestedPaneEvent>().Subscribe(OnCloseNestedPane);
+            eventAggregator.GetEvent<ActivePaneChangedEvent>().Subscribe(OnActivePaneChanged);
         }
 
         public void InitializePanes()
@@ -757,6 +759,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 RightPane = _rightPaneStack.Pop();
                 RightPane.LoadDataAsync(LoadCommand.Restore, args.Payload);
             }
+        }
+
+        private void OnActivePaneChanged(ActivePaneChangedEventArgs e)
+        {
+            NotifyPropertyChanged(ACTIVEPANE);
         }
 
         private void InitializeTransfer(TransferType mode, Action callback)

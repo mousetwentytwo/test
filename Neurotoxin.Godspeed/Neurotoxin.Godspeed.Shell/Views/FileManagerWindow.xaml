@@ -51,13 +51,25 @@
             <Menu Grid.ColumnSpan="3">
                 <Menu.Resources>
                     <Style TargetType="MenuItem">
-                        <Setter Property="Margin" Value="0"></Setter>
+                        <Setter Property="Margin" Value="0"/>
+                    </Style>
+                    <Style TargetType="MenuItem" x:Key="SubMenuItem">
+                        <Style.Triggers>
+                            <Trigger Property="Command" Value="{x:Null}">
+                                <Setter Property="IsEnabled" Value="False"/>
+                            </Trigger>
+                        </Style.Triggers>
+                        <Setter Property="Margin" Value="0"/>
                     </Style>
                 </Menu.Resources>
                 <MenuItem Header="Files">
                     <MenuItem Command="{x:Static commands:FileManagerCommands.ExitCommand}"/>
                 </MenuItem>
-                <MenuItem Header="Commands"></MenuItem>
+                <MenuItem Header="Commands">
+                    <MenuItem Command="{Binding ActivePane.CalculateSizeCommand}" CommandParameter="{StaticResource True}" 
+                              Header="Calculate Occupied Space" InputGestureText="Ctrl+L"
+                              Style="{StaticResource SubMenuItem}"/>
+                </MenuItem>
                 <MenuItem Header="Options">
                     <MenuItem Command="{x:Static commands:FileManagerCommands.SettingsCommand}"/>
                 </MenuItem>

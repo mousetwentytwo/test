@@ -23,7 +23,10 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 var changed = value != _isActive;
                 _isActive = value;
                 NotifyPropertyChanged(ISACTIVE);
-                if (value && changed) eventAggregator.GetEvent<ActivePaneChangedEvent>().Publish(new ActivePaneChangedEventArgs(this));
+                if (value && changed)
+                {
+                    eventAggregator.GetEvent<ActivePaneChangedEvent>().Publish(new ActivePaneChangedEventArgs(this));    
+                }
             }
         }
 
