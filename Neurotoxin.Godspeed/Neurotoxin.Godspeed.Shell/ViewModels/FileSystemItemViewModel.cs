@@ -62,7 +62,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         switch (Type)
                         {
                             case ItemType.Directory:
-                                bytes = ApplicationExtensions.GetContentByteArray("/Resources/folder.png");
+                                var path = IsRefreshing ? "/Resources/refresh_folder.png" : "/Resources/folder.png";
+                                bytes = ApplicationExtensions.GetContentByteArray(path);
                                 break;
                             case ItemType.File:
                                 bytes = ApplicationExtensions.GetContentByteArray("/Resources/file.png");
@@ -128,6 +129,18 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public bool IsCached
         {
             get { return _model.IsCached; }
+        }
+
+        private bool _isRefreshing;
+        public bool IsRefreshing
+        {
+            get { return _isRefreshing; }
+            set 
+            { 
+                _isRefreshing = value;
+                _thumbnail = null;
+                NotifyPropertyChanged(THUMBNAIL);
+            }
         }
 
         private const string ISGAME = "IsGame";

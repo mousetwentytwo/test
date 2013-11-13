@@ -324,15 +324,20 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             if (calculateAll)
             {
                 if (_calculationQueue == null) _calculationQueue = new Queue<FileSystemItemViewModel>();
-                foreach (var item in SelectedItems.Where(item => item.Type == ItemType.Directory && !_calculationQueue.Contains(item)))
+                foreach (var item in Items.Where(item => item.Type == ItemType.Directory && !item.IsUpDirectory && !_calculationQueue.Contains(item)))
                 {
                     _calculationQueue.Enqueue(item);
+                    item.IsRefreshing = true;
                 }
             } 
             else if (CurrentRow.Type == ItemType.Directory)
             {
                 if (_calculationQueue == null) _calculationQueue = new Queue<FileSystemItemViewModel>();
-                if (!_calculationQueue.Contains(CurrentRow)) _calculationQueue.Enqueue(CurrentRow);
+                if (!_calculationQueue.Contains(CurrentRow))
+                {
+                    _calculationQueue.Enqueue(CurrentRow);
+                    CurrentRow.IsRefreshing = true;
+                }
             }
 
             if (_calculationQueue == null || _calculationQueue.Count <= 0 || _calculationIsRunning) return;
@@ -360,7 +365,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void CalculateSizeCallback(long size)
         {
-            _calculationQueue.Dequeue().Size = size;
+            var item = _calculationQueue.Dequeue();
+            item.Size = size;
+            item.IsRefreshing = false;
             if (_calculationQueue.Count > 0)
             {
                 WorkerThread.Run(CalculateSize, CalculateSizeCallback, AsyncErrorCallback);
