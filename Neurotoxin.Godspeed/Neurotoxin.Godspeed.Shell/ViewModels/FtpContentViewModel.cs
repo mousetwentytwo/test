@@ -23,6 +23,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public FtpConnectionItemViewModel Connection { get; private set; }
 
+        public bool IsKeepAliveEnabled
+        {
+            get { return FileManager.IsKeepAliveEnabled; }
+            set { FileManager.IsKeepAliveEnabled = value; }
+        }
+
         #region DisconnectCommand
 
         public DelegateCommand DisconnectCommand { get; private set; }
@@ -162,40 +168,64 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public bool RemoteDownload(FileSystemItem item, string savePath, CopyAction action)
         {
             if (item.Type != ItemType.File) throw new NotSupportedException();
+            long resumeStartPosition = 0;
             switch (action)
             {
                 case CopyAction.CreateNew:
                     if (File.Exists(savePath))
                         throw new TransferException(TransferErrorType.WriteAccessError, item.Path, savePath, "Target already exists");
                     break;
+                case CopyAction.Overwrite:
+                    File.Delete(savePath);
+                    break;
                 case CopyAction.OverwriteOlder:
                     var fileDate = File.GetLastWriteTime(savePath);
                     if (fileDate > item.Date) return false;
+                    File.Delete(savePath);
+                    break;
+                case CopyAction.Resume:
+                    var fi = new FileInfo(savePath);
+                    resumeStartPosition = fi.Length;
                     break;
             }
 
             var name = RemoteChangeDirectory(item.Path);
-            Telnet.Download(name, savePath, item.Size ?? 0, (p, t, total) => eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(p, t, total)));
+            Telnet.Download(name, savePath, item.Size ?? 0, resumeStartPosition, TelnetProgressChanged);
             return true;
         }
 
         public bool RemoteUpload(FileSystemItem item, string savePath, CopyAction action)
         {
             if (item.Type != ItemType.File) throw new NotSupportedException();
+            long resumeStartPosition = 0;
             switch (action)
             {
                 case CopyAction.CreateNew:
                     if (FileManager.FileExists(savePath))
                         throw new TransferException(TransferErrorType.WriteAccessError, item.Path, savePath, "Target already exists");
                     break;
+                case CopyAction.Overwrite:
+                    FileManager.DeleteFile(savePath);
+                    break;
                 case CopyAction.OverwriteOlder:
                     var fileDate = FileManager.GetFileModificationTime(savePath);
                     if (fileDate > item.Date) return false;
+                    FileManager.DeleteFile(savePath);
+                    break;
+                case CopyAction.Resume:
+                    var fi = FileManager.GetFileInfo(savePath);
+                    resumeStartPosition = fi.Size ?? 0;
                     break;
             }
             var name = RemoteChangeDirectory(savePath);
-            Telnet.Upload(item.Path, name, item.Size ?? 0, (p, t, total) => eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(p, t, total)));
+            Telnet.Upload(item.Path, name, item.Size ?? 0, resumeStartPosition, TelnetProgressChanged);
             return true;
+        }
+
+        private void TelnetProgressChanged(int p, long t, long total, long resumeStartPosition)
+        {
+            var args = new TransferProgressChangedEventArgs(p, t, total, resumeStartPosition);
+            eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(args);
         }
 
         private string RemoteChangeDirectory(string path)

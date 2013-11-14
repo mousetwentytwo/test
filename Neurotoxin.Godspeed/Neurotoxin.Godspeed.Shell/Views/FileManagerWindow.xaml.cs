@@ -72,7 +72,7 @@ namespace Neurotoxin.Godspeed.Shell.Views
 
         private void ExecutedAboutCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            new AboutDialog().ShowDialog();
         }
 
         private void ExecuteExitCommand(object sender, ExecutedRoutedEventArgs e)
@@ -82,15 +82,25 @@ namespace Neurotoxin.Godspeed.Shell.Views
 
         private void ViewModelOnTransferStarted()
         {
-            if (_transferProgressDialog == null) _transferProgressDialog = new TransferProgressDialog((FileManagerViewModel)DataContext);
+            if (_transferProgressDialog == null)
+            {
+                _transferProgressDialog = new TransferProgressDialog((FileManagerViewModel)DataContext);
+                _transferProgressDialog.Closed += TransferProgressDialogOnClosed;
+            }
             IsHitTestVisible = false;
             _transferProgressDialog.Show();
         }
 
+        private void TransferProgressDialogOnClosed(object sender, EventArgs e)
+        {
+            IsHitTestVisible = true;
+            _transferProgressDialog = null;
+        }
+
         private void ViewModelOnTransferFinished()
         {
-            if (_transferProgressDialog != null) _transferProgressDialog.Hide();
-            IsHitTestVisible = true;
+            if (_transferProgressDialog != null) _transferProgressDialog.Close();
         }
+
     }
 }

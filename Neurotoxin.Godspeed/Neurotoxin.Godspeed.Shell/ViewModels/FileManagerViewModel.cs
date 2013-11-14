@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Windows;
 using System.Windows.Input;
 using System.Windows.Shell;
 using Microsoft.Practices.Unity;
@@ -31,14 +28,15 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
     public class FileManagerViewModel : ViewModelBase
     {
-        private Queue<QueueItem> _queue;
-        private CopyMode _copyMode;
-        private CopyAction _rememberedCopyAction;
         private const string RenameFromPattern = @"([\/]){0}$";
         private const string RenameToPattern = @"$1{0}";
         private readonly Stopwatch _speedMeter = new Stopwatch();
         private readonly Stopwatch _elapsedTimeMeter = new Stopwatch();
+        private Queue<QueueItem> _queue;
+        private CopyMode _copyMode;
+        private CopyAction _rememberedCopyAction;
         private bool _isAborted;
+        private bool _isContinued;
 
         #region Main window properties
 
@@ -99,6 +97,14 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 if (left != null && !left.IsActive) return left;
                 if (right != null && !right.IsActive) return right;
                 return null;
+            }
+        }
+
+        private FtpContentViewModel Ftp
+        {
+            get
+            {
+                return SourcePane as FtpContentViewModel ?? TargetPane as FtpContentViewModel;
             }
         }
 
@@ -227,6 +233,14 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             set { _progressState = value; NotifyPropertyChanged(PROGRESSSTATE); }
         }
 
+        private const string ISPAUSED = "IsPaused";
+        private bool _isPaused;
+        public bool IsPaused
+        {
+            get { return _isPaused; }
+            set { _isPaused = value; NotifyPropertyChanged(ISPAUSED); }
+        }
+
         #endregion
 
         #region SwitchPaneCommand
@@ -274,9 +288,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void ExecuteCopyCommand()
         {
-            var message = string.Format("Do you really want to copy the selected item(s)?");
-            if (new ConfirmationDialog("Copy", message).ShowDialog() != true) return;
-            _isAborted = false;
+            if (!ConfirmCommand(TransferType.Copy)) return;
             AsyncJob(() => SourcePane.PopulateQueue(TransferType.Copy), CopyPrepare, CopyError);
         }
 
@@ -349,6 +361,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void CopySuccess(bool result)
         {
+            if (IsPaused)
+            {
+                Pause();
+                return;
+            }
+
             var item = _queue.Dequeue().FileSystemItem;
             FilesTransferred++;
             var vm = SourcePane.SelectedItems.FirstOrDefault(i => item.Path.StartsWith(i.Path));
@@ -359,7 +377,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void CopyError(Exception exception)
         {
-            if (_isAborted) return;
+            if (_isAborted) { CopyFinish(); return; }
+            if (IsPaused) return;
+
             var result = ShowCorrespondingErrorDialog(exception);
             switch (result.Behavior)
             {
@@ -408,9 +428,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void ExecuteMoveCommand()
         {
-            var message = string.Format("Do you really want to move the selected item(s)?");
-            if (new ConfirmationDialog("Move", message).ShowDialog() != true) return;
-            _isAborted = false;
+            if (!ConfirmCommand(TransferType.Move)) return;
             AsyncJob(() => SourcePane.PopulateQueue(TransferType.Move), MovePrepare, MoveError);
         }
 
@@ -452,6 +470,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void MoveSuccess(bool result)
         {
+            if (IsPaused)
+            {
+                Pause();
+                return;
+            }
+
             var queueitem = _queue.Dequeue();
             var item = queueitem.FileSystemItem;
             if (queueitem.TransferType == TransferType.Copy)
@@ -466,7 +490,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void MoveError(Exception exception)
         {
-            if (_isAborted) return;
+            if (_isAborted) { MoveFinish(); return; }
+            if (IsPaused) return;
+
             var result = ShowCorrespondingErrorDialog(exception);
             switch (result.Behavior)
             {
@@ -553,11 +579,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void ExecuteDeleteCommand()
         {
             var connections = ActivePane as ConnectionsViewModel;
-            var s = connections != null ? string.Empty : "(s)";
-
-            var message = string.Format("Do you really want to delete the selected item{0}?", s);
-            if (new ConfirmationDialog("Delete", message).ShowDialog() != true) return;
-
+            if (!ConfirmCommand(TransferType.Move, connections != null ? string.Empty : "(s)")) return;
             if (connections != null)
             {
                 connections.Delete();
@@ -602,7 +624,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void DeleteError(Exception exception)
         {
-            if (_isAborted) return;
+            if (_isAborted) { DeleteFinish(); return; }
+            if (IsPaused) return;
+
             var result = ShowCorrespondingErrorDialog(exception);
             switch (result.Behavior)
             {
@@ -622,6 +646,52 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             FinishTransfer();
             SourcePane.Refresh();
+        }
+
+        #endregion
+
+        #region PauseCommand
+
+        public DelegateCommand PauseCommand { get; private set; }
+
+        private void ExecutePauseCommand()
+        {
+            IsPaused = true;
+            SourcePane.Abort();
+            TargetPane.Abort();
+        }
+
+        private void Pause()
+        {
+            _speedMeter.Stop();
+            _elapsedTimeMeter.Stop();
+            ProgressState = TaskbarItemProgressState.Indeterminate;
+        }
+
+        #endregion
+
+        #region ContinueCommand
+
+        public DelegateCommand ContinueCommand { get; private set; }
+
+        private void ExecuteContinueCommand()
+        {
+            _elapsedTimeMeter.Start();
+            ProgressState = TaskbarItemProgressState.Normal;
+            IsPaused = false;
+            _isContinued = true;
+            switch (TransferType)
+            {
+                case TransferType.Copy:
+                    CopyStart(CopyAction.Resume);
+                    break;
+                case TransferType.Move:
+                    MoveStart(CopyAction.Resume);
+                    break;
+                default:
+                    DeleteStart();
+                    break;
+            }
         }
 
         #endregion
@@ -654,6 +724,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             MoveCommand = new DelegateCommand(ExecuteMoveCommand, CanExecuteMoveCommand);
             NewFolderCommand = new DelegateCommand(ExecuteNewFolderCommand, CanExecuteNewFolderCommand);
             DeleteCommand = new DelegateCommand(ExecuteDeleteCommand, CanExecuteDeleteCommand);
+            PauseCommand = new DelegateCommand(ExecutePauseCommand);
+            ContinueCommand = new DelegateCommand(ExecuteContinueCommand);
 
             eventAggregator.GetEvent<TransferProgressChangedEvent>().Subscribe(OnTransferProgressChanged);
             eventAggregator.GetEvent<OpenNestedPaneEvent>().Subscribe(OnOpenNestedPane);
@@ -694,6 +766,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void OnTransferProgressChanged(TransferProgressChangedEventArgs args)
         {
+            if (args.Percentage == -1 && _isContinued)
+            {
+                _isContinued = false;
+                return;
+            }
             UIThread.Run(() =>
                              {
                                  var elapsed = _elapsedTimeMeter.Elapsed;
@@ -709,7 +786,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                                      if (_speedMeter.IsRunning)
                                          _speedMeter.Restart();
                                      else
-                                         _speedMeter.Start();  
+                                         _speedMeter.Start();
                                  } 
                                  else
                                  {
@@ -722,8 +799,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                                          _speedMeter.Restart();
                                      }
                                      var ms = _speedMeter.Elapsed.TotalMilliseconds;
-                                     Speed = (int)Math.Floor(args.TotalBytesTransferred/ms*1000/1024);
-                                     if (Speed < 0) Debug.WriteLine("{0} {1} {2}", args.Transferred, ms, Speed);
+                                     if (ms > 100) Speed = (int)Math.Floor((args.TotalBytesTransferred - args.ResumeStartPosition)/ms*1000/1024);
                                  }
                                  CurrentFileProgress = args.Percentage > 0 ? args.Percentage : 0;
                                  BytesTransferred += args.Transferred;
@@ -777,8 +853,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             BytesTransferred = 0;
             TotalBytes = _queue.Where(item => item.FileSystemItem.Type == ItemType.File).Sum(item => item.FileSystemItem.Size ?? 0);
             Speed = 0;
-            ElapsedTime = TimeSpan.MinValue;
-            RemainingTime = TimeSpan.MinValue;
+            ElapsedTime = new TimeSpan(0);
+            RemainingTime = new TimeSpan(0);
 
             TelnetException ex = null;
             WorkerThread.Run(
@@ -841,6 +917,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         internal TransferErrorDialogResult ShowCorrespondingErrorDialog(Exception exception)
         {
+            _elapsedTimeMeter.Stop();
             var transferException = exception as TransferException;
             var result = new TransferErrorDialogResult(ErrorResolutionBehavior.Cancel);
             if (transferException != null)
@@ -887,6 +964,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             {
                 NotificationMessage.Show("Unknown error occured", exception.Message);
             }
+            _elapsedTimeMeter.Start();
             return result;
         }
 
@@ -906,6 +984,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void FinishTransfer()
         {
             if (_copyMode == CopyMode.RemoteExport || _copyMode == CopyMode.RemoteImport) CloseTelnetSession();
+            if (Ftp != null) Ftp.IsKeepAliveEnabled = false;
             _speedMeter.Stop();
             _speedMeter.Reset();
             _elapsedTimeMeter.Stop();
@@ -925,6 +1004,16 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             {
                 chooseDifferentOption.Invoke(exception);
             }
+        }
+
+        private bool ConfirmCommand(TransferType type, string s = "(s)")
+        {
+            var cmd = type.ToString();
+            var message = string.Format("Do you really want to {0} the selected item{1}?", cmd.ToLower(), s);
+            if (new ConfirmationDialog(cmd, message).ShowDialog() != true) return false;
+            _isAborted = false;
+            if (Ftp != null) Ftp.IsKeepAliveEnabled = true;
+            return true;
         }
 
         private void AsyncJob<T>(Func<T> work, Action<T> success, Action<Exception> error = null)

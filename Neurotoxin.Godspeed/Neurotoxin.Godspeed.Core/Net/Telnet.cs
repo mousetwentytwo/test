@@ -115,23 +115,25 @@ namespace Neurotoxin.Godspeed.Core.Net
             Send(string.Format("cd {0}", path));
         }
 
-        public static void Download(string ftpFileName, string targetPath, long size, Action<int, long, long> progressChanged)
+        public static void Download(string ftpFileName, string targetPath, long size, long resumeStartPosition, Action<int, long, long, long> progressChanged)
         {
             _totalSize = size;
             _totalTransferred = 0;
             var target = targetPath.Replace(_networkDrive, string.Empty).Replace(@"\", "/").Replace(" ", @"\ ");
-            Send(string.Format("get -c {0} -o {1}{2}", ftpFileName, _rootPath, target), s => NotifyProgressChange(s, progressChanged));
+            progressChanged.Invoke(-1, resumeStartPosition, resumeStartPosition, resumeStartPosition);
+            Send(string.Format("get -c {0} -o {1}{2}", ftpFileName, _rootPath, target), s => NotifyProgressChange(s, resumeStartPosition, progressChanged));
         }
 
-        public static void Upload(string sourcePath, string ftpFileName, long size, Action<int, long, long> progressChanged)
+        public static void Upload(string sourcePath, string ftpFileName, long size, long resumeStartPosition, Action<int, long, long, long> progressChanged)
         {
             _totalSize = size;
             _totalTransferred = 0;
             var source = sourcePath.Replace(_networkDrive, string.Empty).Replace(@"\", "/").Replace(" ", @"\ ");
-            Send(string.Format("put -c {0}{1} -o {2}", _rootPath, source, ftpFileName), s => NotifyProgressChange(s, progressChanged));
+            progressChanged.Invoke(-1, resumeStartPosition, resumeStartPosition, resumeStartPosition);
+            Send(string.Format("put -c {0}{1} -o {2}", _rootPath, source, ftpFileName), s => NotifyProgressChange(s, resumeStartPosition, progressChanged));
         }
 
-        private static void NotifyProgressChange(string s, Action<int, long, long> progressChanged)
+        private static void NotifyProgressChange(string s, long resumeStartPosition, Action<int, long, long, long> progressChanged)
         {
             var m = ProgressParser.Matches(s).Cast<Match>().LastOrDefault();
             if (m != null)
@@ -140,7 +142,7 @@ namespace Neurotoxin.Godspeed.Core.Net
                 var transferred = t - _totalTransferred;
                 _totalTransferred = t;
                 var percentage = (int)(_totalTransferred*100/_totalSize);
-                progressChanged.Invoke(percentage, transferred, _totalTransferred);
+                progressChanged.Invoke(percentage, transferred, _totalTransferred, resumeStartPosition);
             }
             else
             {
@@ -150,7 +152,7 @@ namespace Neurotoxin.Godspeed.Core.Net
                     var t = Int64.Parse(m.Groups["totalTransferred"].Value);
                     var transferred = _totalTransferred - _totalTransferred;
                     _totalTransferred = t;
-                    progressChanged.Invoke(100, transferred, _totalTransferred);
+                    progressChanged.Invoke(100, transferred, _totalTransferred, resumeStartPosition);
                 }
             }
         }

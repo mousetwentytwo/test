@@ -98,12 +98,13 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             readStream.Seek(remoteStartPosition, SeekOrigin.Begin);
             var buffer = new byte[32768];
             int bytesRead;
+            eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(-1, remoteStartPosition, remoteStartPosition, remoteStartPosition));
             while ((bytesRead = readStream.Read(buffer, 0, buffer.Length)) > 0 && !_isAborted)
             {
                 fs.Write(buffer, 0, bytesRead);
                 totalBytesTransferred += bytesRead;
                 var percentage = (int)(totalBytesTransferred/totalBytes*100);
-                eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(percentage, bytesRead, totalBytesTransferred));
+                eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(percentage, bytesRead, totalBytesTransferred, remoteStartPosition));
             }
             readStream.Close();
         }

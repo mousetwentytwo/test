@@ -740,7 +740,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             RenameCommand = new DelegateCommand<object>(ExecuteRenameCommand, CanExecuteRenameCommand);
             RefreshCommand = new DelegateCommand(ExecuteRefreshCommand, CanExecuteRefreshCommand);
 
-            if (!Directory.Exists("tmp")) Directory.CreateDirectory("tmp");
             Items = new ObservableCollection<FileSystemItemViewModel>();
 
             eventAggregator.GetEvent<TransferProgressChangedEvent>().Subscribe(OnTransferProgressChanged);
@@ -953,9 +952,15 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     throw new ArgumentException("Invalid Copy action: " + action);
             }
             var fs = new FileStream(savePath, mode);
-            SaveToFileStream(item, fs, remoteStartPosition);
-            fs.Flush();
-            fs.Close();
+            try
+            {
+                SaveToFileStream(item, fs, remoteStartPosition);
+            }
+            finally
+            {
+                fs.Flush();
+                fs.Close();
+            }
             return true;
         }
 

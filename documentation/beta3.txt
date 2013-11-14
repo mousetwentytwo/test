@@ -11,7 +11,8 @@
 - ADDED: Elapsed/remaining time calculation
 - ADDED: Transfer speed calculation
 - ADDED: Local to local progress indication
-- ADDED: Local to local data transfer abortion
+- ADDED: Local to local file transfer abortion
+- ADDED: Pause & resume file transfer
 - ADDED: Context-aware "New folder" dropdown
 - ADDED: Save and restore locations and sort settings
 - ADDED: User settings (more options will be added soon)
@@ -19,3 +20,4 @@
 - ADDED: Direct Copy support between NAS and FTP (if Telnet and LFTP is supported on NAS)
 - ADDED: Delete existings connection
 - ADDED: Anonymous login
+- ADDED: Minor PS3 FTP support

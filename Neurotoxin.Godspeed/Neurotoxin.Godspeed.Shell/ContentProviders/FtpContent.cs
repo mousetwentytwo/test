@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Timers;
 using Limilabs.FTP.Client;
 using Microsoft.Practices.Composite.Events;
 using Neurotoxin.Godspeed.Presentation.Extensions;
@@ -17,48 +18,76 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 {
     public class FtpContent : IFileManager
     {
-        private const char SLASH = '/';
-        public char Slash
+        private const char Slash = '/';
+        char IFileManager.Slash
         {
-            get { return SLASH; }
+            get { return Slash; }
         }
-        
+
+        private FtpConnection _connection;
         private string _connectionLostMessage;
         private readonly IEventAggregator _eventAggregator;
-        private Ftp _ftpClient;
         private bool _downloadHeaderOnly;
-        private long _downloadFileSize;
-        private FtpTransferDirection _transferDirection;
+        private long _fileSize;
         private readonly Stopwatch _notificationTimer = new Stopwatch();
         private long _aggregatedTransferredValue;
+        private long _resumeStartPosition;
+        private bool _isIdle = true;
 
         public string TempFilePath { get; set; }
-        public FtpConnection Connection { get; private set; }
+        
+        private readonly Timer _keepAliveTimer = new Timer(30000);
+        public bool IsKeepAliveEnabled
+        {
+            get { return _keepAliveTimer.Enabled; }
+            set { _keepAliveTimer.Enabled = value; }
+        }
+
+        private Ftp _ftpClient;
+        private Ftp FtpClient
+        {
+            get
+            {
+                if (_keepAliveTimer.Enabled)
+                {
+                    _keepAliveTimer.Stop();
+                    _keepAliveTimer.Start();
+                }
+                return _ftpClient;
+            }
+        }
 
         public FtpContent(IEventAggregator eventAggregator)
         {
             _eventAggregator = eventAggregator;
+            _keepAliveTimer.AutoReset = true;
+            _keepAliveTimer.Elapsed += KeepAliveTimerOnElapsed;
+        }
+
+        private void KeepAliveTimerOnElapsed(object sender, ElapsedEventArgs e)
+        {
+            if (_isIdle) FtpClient.Noop();
         }
 
         internal void Connect(FtpConnection connection)
         {
             _ftpClient = new Ftp();
-            _ftpClient.Connect(connection.Address, connection.Port);
+            FtpClient.Connect(connection.Address, connection.Port);
             if (string.IsNullOrEmpty(connection.Username))
             {
-                _ftpClient.LoginAnonymous();
+                FtpClient.LoginAnonymous();
             }
             else
             {
-                _ftpClient.Login(connection.Username, connection.Password);
+                FtpClient.Login(connection.Username, connection.Password);
             }
 
             //HACK: FSD FTP states that it supports SIZE command, but it throws a "not implemented" exception
-            var mi = _ftpClient.Extensions.GetType().GetMethod("method_4", BindingFlags.Instance | BindingFlags.NonPublic);
-            mi.Invoke(_ftpClient.Extensions, new object[] { false });
+            var mi = FtpClient.Extensions.GetType().GetMethod("method_4", BindingFlags.Instance | BindingFlags.NonPublic);
+            mi.Invoke(FtpClient.Extensions, new object[] { false });
 
-            _ftpClient.Progress += FtpClientProgressChanged;
-            Connection = connection;
+            FtpClient.Progress += FtpClientProgressChanged;
+            _connection = connection;
             _connectionLostMessage = string.Format("The connection with {0} has been lost.", connection.Name);
         }
 
@@ -66,13 +95,13 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         {
             try
             {
-                _ftpClient.Close();
+                FtpClient.Close();
             }
             catch
             {
                 //NOTE: intentional
             }
-            _ftpClient.Dispose();
+            FtpClient.Dispose();
         }
 
         public List<FileSystemItem> GetDrives()
@@ -80,26 +109,30 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             NotifyFtpOperationStarted(false);
             try
             {
-                var currentFolder = _ftpClient.GetCurrentFolder();
-                _ftpClient.ChangeFolder("/");
+                var currentFolder = FtpClient.GetCurrentFolder();
+                FtpClient.ChangeFolder("/");
 
-                var result = _ftpClient.GetList().Select(di => new FileSystemItem
-                    {
-                        Name = di.Name,
-                        Type = ItemType.Drive,
-                        Date = di.ModifyDate,
-                        Path = string.Format("/{0}/", di.Name),
-                        FullPath = string.Format("{0}://{1}/", Connection.Name, di.Name),
-                        Thumbnail = ApplicationExtensions.GetContentByteArray("/Resources/drive.png")
-                    }).ToList();
-                _ftpClient.ChangeFolder(currentFolder);
+                var result = FtpClient.GetList()
+                                       .Where(item => item.Name != "." && item.Name != "..")
+                                       .Select(item => new FileSystemItem
+                                           {
+                                               Name = item.Name,
+                                               Type = ItemType.Drive,
+                                               Date = item.ModifyDate,
+                                               Path = string.Format("/{0}/", item.Name),
+                                               FullPath = string.Format("{0}://{1}/", _connection.Name, item.Name),
+                                               Thumbnail =
+                                                   ApplicationExtensions.GetContentByteArray("/Resources/drive.png")
+                                           })
+                                       .ToList();
+                FtpClient.ChangeFolder(currentFolder);
                 NotifyFtpOperationFinished();
                 return result;
             }
             catch (FtpException ex)
             {
                 NotifyFtpOperationFinished();
-                if (_ftpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
+                if (FtpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
                 throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
             } 
         }
@@ -109,18 +142,20 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             NotifyFtpOperationStarted(false);
             try
             {
-                if (path != null) _ftpClient.ChangeFolder(path);
-                var currentPath = _ftpClient.GetCurrentFolder();
+                if (path != null) FtpClient.ChangeFolder(path);
+                var currentPath = FtpClient.GetCurrentFolder();
 
-                var items = _ftpClient.GetList();
-                var result = items.Select(item => CreateModel(item, string.Format("{0}/{1}{2}", currentPath, item.Name, item.IsFolder ? "/" : string.Empty))).ToList();
+                var result = FtpClient.GetList()
+                                       .Where(item => item.Name != "." && item.Name != "..")
+                                       .Select(item => CreateModel(item, string.Format("{0}/{1}{2}", currentPath, item.Name, item.IsFolder ? "/" : string.Empty)))
+                                       .ToList();
                 NotifyFtpOperationFinished();
                 return result;
             }
             catch (FtpException ex)
             {
                 NotifyFtpOperationFinished();
-                if (_ftpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
+                if (FtpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
                 throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
             }          
         }
@@ -130,7 +165,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             if (path.EndsWith("/")) path = path.Substring(0, path.Length - 1);
             var dir = path.Substring(0, path.LastIndexOf('/') + 1);
             var filename = path.Replace(dir, String.Empty);
-            _ftpClient.ChangeFolder(dir);
+            FtpClient.ChangeFolder(dir);
             return filename;
         }
 
@@ -145,7 +180,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             try
             {
                 var folderName = LocateDirectory(path);
-                var folder = _ftpClient.GetList().FirstOrDefault(item => item.Name == folderName);
+                var folder = FtpClient.GetList().FirstOrDefault(item => item.Name == folderName);
                 NotifyFtpOperationFinished();
                 if (folder != null && folder.IsFolder)
                 {
@@ -158,7 +193,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             catch (FtpException ex)
             {
                 NotifyFtpOperationFinished();
-                if (_ftpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
+                if (FtpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
                 throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
             }
         }
@@ -169,14 +204,14 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             try
             {
                 var filename = LocateDirectory(path);
-                var file = _ftpClient.GetList().FirstOrDefault(item => item.Name == filename);
+                var file = FtpClient.GetList().FirstOrDefault(item => item.Name == filename);
                 NotifyFtpOperationFinished();
                 return file != null && file.IsFile ? CreateModel(file, path) : null;
             }
             catch (FtpException ex)
             {
                 NotifyFtpOperationFinished();
-                if (_ftpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
+                if (FtpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
                 throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
             }
         }
@@ -189,7 +224,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                            Type = item.IsFolder ? ItemType.Directory : ItemType.File,
                            Date = item.ModifyDate,
                            Path = path,
-                           FullPath = string.Format("{0}:/{1}", Connection.Name, path),
+                           FullPath = string.Format("{0}:/{1}", _connection.Name, path),
                            Size = item.IsFolder ? null : item.Size
                        };
         }
@@ -198,12 +233,12 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         {
             try
             {
-                return _ftpClient.GetFileModificationTime(path);
+                return FtpClient.GetFileModificationTime(path);
             }
             catch (FtpException ex)
             {
                 NotifyFtpOperationFinished();
-                if (_ftpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
+                if (FtpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
                 throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
             }
         }
@@ -212,12 +247,12 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         {
             try
             {
-                _ftpClient.ChangeFolder(drive);
+                FtpClient.ChangeFolder(drive);
                 return true;
             }
             catch (FtpException)
             {
-                if (!_ftpClient.Connected) throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
+                if (!FtpClient.Connected) throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
                 return false;
             }
         }
@@ -235,7 +270,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             try
             {
                 var filename = LocateDirectory(path);
-                var list = _ftpClient.GetList();
+                var list = FtpClient.GetList();
                 result = list.Any(file => file.Name == filename);
             }
             catch
@@ -274,19 +309,21 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 var filename = LocateDirectory(remotePath);
                 if (fileSize == -1)
                 {
-                    var list = _ftpClient.GetList();
+                    var list = FtpClient.GetList();
                     fileSize = list.First(file => file.Name == filename).Size ?? 0;
                 }
-                _transferDirection = FtpTransferDirection.Download;
-                _downloadFileSize = fileSize;
-                _ftpClient.Download(filename, remoteStartPosition, fs);
+                _fileSize = fileSize;
+                _isIdle = false;
+                _resumeStartPosition = remoteStartPosition;
+                if (remoteStartPosition != 0) NotifyFtpOperationResumeStart();
+                FtpClient.Download(filename, remoteStartPosition, fs);
                 var length = fs.Length;
                 NotifyFtpOperationFinished(length);
             }
             catch (Exception ex)
             {
                 NotifyFtpOperationFinished();
-                if (_ftpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
+                if (FtpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
                 throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
             }
         }
@@ -298,7 +335,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             var ms = new MemoryStream();
             try
             {
-                _ftpClient.Download(LocateDirectory(path), ms);
+                FtpClient.Download(LocateDirectory(path), ms);
             }
             catch
             {
@@ -308,7 +345,9 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             ms.Flush();
             RestoreConnection();
             NotifyFtpOperationFinished(ms.Length);
-            return ms.ToArray();
+            var bytes = ms.ToArray();
+            ms.Close();
+            return bytes;
         }
 
         internal void UploadFile(string remotePath, string localPath)
@@ -316,14 +355,16 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             NotifyFtpOperationStarted(true);
             try
             {
-                _transferDirection = FtpTransferDirection.Upload;
-                _ftpClient.Upload(LocateDirectory(remotePath), localPath);
+                _isIdle = false;
+                var fi = new FileInfo(localPath);
+                _fileSize = fi.Length;
+                FtpClient.Upload(LocateDirectory(remotePath), localPath);
                 NotifyFtpOperationFinished();
             }
             catch (Exception ex)
             {
                 NotifyFtpOperationFinished();
-                if (_ftpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
+                if (FtpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
                 throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
             }
         }
@@ -332,15 +373,19 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         {
             NotifyFtpOperationStarted(true);
             var filename = LocateDirectory(remotePath);
-            var list = _ftpClient.GetList();
+            var list = FtpClient.GetList();
             var file = list.FirstOrDefault(f => f.Name == filename);
-            var size = file != null ? file.Size.Value : 0;
+            var size = file != null && file.Size.HasValue ? file.Size.Value : 0;
+            _resumeStartPosition = size;
+            FileStream fs = null;
             try
             {
-                var fs = new FileStream(localPath, FileMode.Open);
+                fs = new FileStream(localPath, FileMode.Open);
                 fs.Seek(size, SeekOrigin.Begin);
-                _transferDirection = FtpTransferDirection.Upload;
-                _ftpClient.Append(remotePath, fs);
+                _isIdle = false;
+                _fileSize = fs.Length;
+                NotifyFtpOperationResumeStart();
+                FtpClient.Append(remotePath, fs);
                 NotifyFtpOperationFinished();
             }
             catch (IOException ex)
@@ -351,38 +396,42 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             catch (FtpException ex)
             {
                 NotifyFtpOperationFinished();
-                if (_ftpClient.Connected) throw new TransferException(TransferErrorType.WriteAccessError, ex.Message);
+                if (FtpClient.Connected) throw new TransferException(TransferErrorType.WriteAccessError, ex.Message);
                 throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
+            }
+            finally
+            {
+                if (fs != null) fs.Close();
             }
         }
 
         private void FtpClientProgressChanged(object sender, ProgressEventArgs e)
         {
-            var percentage = _transferDirection == FtpTransferDirection.Download && _downloadFileSize != 0
-                                 ? (e.TotalBytesTransferred*100/_downloadFileSize)
+            var percentage = _fileSize != 0
+                                 ? ((e.TotalBytesTransferred + _resumeStartPosition)*100/_fileSize)
                                  : e.Percentage;
 
-            NotifyFtpOperationProgressChanged((int) percentage, e.Transferred, e.TotalBytesTransferred);
+            NotifyFtpOperationProgressChanged((int)percentage, e.Transferred, e.TotalBytesTransferred + _resumeStartPosition);
 
             if (_downloadHeaderOnly && e.TotalBytesTransferred > 0x971A) // v1 header size
-                _ftpClient.Abort();
+                FtpClient.Abort();
         }
 
         public bool FolderExists(string path)
         {
-            return _ftpClient.FolderExists(path);
+            return FtpClient.FolderExists(path);
         }
 
         public void DeleteFolder(string path)
         {
             try
             {
-                _ftpClient.DeleteFolder(path);
+                FtpClient.DeleteFolder(path);
             }
             catch (FtpException ex)
             {
                 //TODO: not read
-                if (_ftpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
+                if (FtpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
                 throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
             }
         }
@@ -391,12 +440,12 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         {
             try
             {
-                _ftpClient.DeleteFile(path);
+                FtpClient.DeleteFile(path);
             }
             catch (FtpException ex)
             {
                 //TODO: not read
-                if (_ftpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
+                if (FtpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
                 throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
             }
         }
@@ -405,20 +454,20 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         {
             try
             {
-                _ftpClient.CreateFolder(path);
+                FtpClient.CreateFolder(path);
             }
             catch (FtpException ex)
             {
                 //TODO: not read
-                if (_ftpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
+                if (FtpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
                 throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
             }
         }
 
         public void RestoreConnection()
         {
-            _ftpClient.Progress -= FtpClientProgressChanged;
-            Connect(Connection);
+            FtpClient.Progress -= FtpClientProgressChanged;
+            Connect(_connection);
         }
 
         private void NotifyFtpOperationStarted(bool binaryTransfer)
@@ -430,6 +479,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         private void NotifyFtpOperationFinished(long? streamLength = null)
         {
+            _isIdle = true;
             _notificationTimer.Stop();
             _eventAggregator.GetEvent<FtpOperationFinishedEvent>().Publish(new FtpOperationFinishedEventArgs(streamLength));
         }
@@ -439,14 +489,19 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             _aggregatedTransferredValue += transferred;
             if (_notificationTimer.Elapsed.TotalMilliseconds < 100 && percentage != 100) return;
 
-            _eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(percentage, _aggregatedTransferredValue, totalBytesTransferred));
+            _eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(percentage, _aggregatedTransferredValue, totalBytesTransferred, _resumeStartPosition));
             _notificationTimer.Restart();
             _aggregatedTransferredValue = 0;
         }
 
+        private void NotifyFtpOperationResumeStart()
+        {
+            _eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(-1, _resumeStartPosition, _resumeStartPosition, _resumeStartPosition));
+        }
+
         public void Abort()
         {
-            _ftpClient.Abort();
+            FtpClient.Abort();
         }
     }
 }
