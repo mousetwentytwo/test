@@ -143,7 +143,14 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                                      totalSize, selectedFileCount, totalFileCount, totalFileCount > 1 ? s : string.Empty,
                                      selectedDirCount, totalDirCount, totalDirCount > 1 ? s : string.Empty);
             }
-        }        
+        }
+
+        public bool HasValidSelection
+        {
+            get { return SelectedItems.Any() || CurrentRow != null && !CurrentRow.IsUpDirectory; }
+        }
+
+        public bool IsResumeSupported { get; protected set; }
 
         #endregion
 
@@ -549,7 +556,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private bool CanExecuteRefreshTitleCommand()
         {
-            return HasValidSelection();
+            return HasValidSelection;
         }
 
         private void ExecuteRefreshTitleCommand()
@@ -990,11 +997,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     throw new ArgumentException("Invalid Copy action: " + action);
             }
             return true;
-        }
-
-        public bool HasValidSelection()
-        {
-            return SelectedItems.Any() || CurrentRow != null && !CurrentRow.IsUpDirectory;
         }
 
         private void OnTransferProgressChanged(TransferProgressChangedEventArgs args)

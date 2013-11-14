@@ -69,9 +69,11 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             if (_isIdle) FtpClient.Noop();
         }
 
-        internal void Connect(FtpConnection connection)
+        internal bool Connect(FtpConnection connection)
         {
             _ftpClient = new Ftp();
+            _connection = connection;
+            _connectionLostMessage = string.Format("The connection with {0} has been lost.", connection.Name);
             FtpClient.Connect(connection.Address, connection.Port);
             if (string.IsNullOrEmpty(connection.Username))
             {
@@ -86,9 +88,19 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             var mi = FtpClient.Extensions.GetType().GetMethod("method_4", BindingFlags.Instance | BindingFlags.NonPublic);
             mi.Invoke(FtpClient.Extensions, new object[] { false });
 
+            var isAppendSupported = false;
+            try
+            {
+                FtpClient.SendCommand("APPE");
+            } 
+            catch(FtpException ex)
+            {
+                isAppendSupported = ex.Message != "command not recognized";
+            }
+
             FtpClient.Progress += FtpClientProgressChanged;
-            _connection = connection;
-            _connectionLostMessage = string.Format("The connection with {0} has been lost.", connection.Name);
+
+            return isAppendSupported;
         }
 
         internal void Disconnect()
@@ -144,10 +156,11 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             {
                 if (path != null) FtpClient.ChangeFolder(path);
                 var currentPath = FtpClient.GetCurrentFolder();
+                if (!currentPath.EndsWith("/")) currentPath += "/";
 
                 var result = FtpClient.GetList()
                                        .Where(item => item.Name != "." && item.Name != "..")
-                                       .Select(item => CreateModel(item, string.Format("{0}/{1}{2}", currentPath, item.Name, item.IsFolder ? "/" : string.Empty)))
+                                       .Select(item => CreateModel(item, string.Format("{0}{1}{2}", currentPath, item.Name, item.IsFolder ? "/" : string.Empty)))
                                        .ToList();
                 NotifyFtpOperationFinished();
                 return result;
@@ -396,7 +409,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             catch (FtpException ex)
             {
                 NotifyFtpOperationFinished();
-                if (FtpClient.Connected) throw new TransferException(TransferErrorType.WriteAccessError, ex.Message);
+                if (FtpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
                 throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
             }
             finally

@@ -283,7 +283,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private bool CanExecuteCopyCommand()
         {
-            return TargetPane != null && SourcePane != null && SourcePane.HasValidSelection() && !SourcePane.IsBusy && !TargetPane.IsBusy;
+            return TargetPane != null && SourcePane != null && SourcePane.HasValidSelection && !SourcePane.IsBusy && !TargetPane.IsBusy;
         }
 
         private void ExecuteCopyCommand()
@@ -423,7 +423,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private bool CanExecuteMoveCommand()
         {
-            return TargetPane != null && SourcePane != null && SourcePane.HasValidSelection() && !SourcePane.IsBusy && !TargetPane.IsBusy;
+            return TargetPane != null && SourcePane != null && SourcePane.HasValidSelection && !SourcePane.IsBusy && !TargetPane.IsBusy;
         }
 
         private void ExecuteMoveCommand()
@@ -573,7 +573,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             var connections = ActivePane as ConnectionsViewModel;
             if (connections != null && connections.SelectedItem != null) return true;
-            return SourcePane != null && SourcePane.HasValidSelection() && !SourcePane.IsBusy;
+            return SourcePane != null && SourcePane.HasValidSelection && !SourcePane.IsBusy;
         }
 
         private void ExecuteDeleteCommand()

@@ -17,6 +17,11 @@ namespace Neurotoxin.Godspeed.Shell.Views
     {
         private TransferProgressDialog _transferProgressDialog;
 
+        private FileManagerViewModel ViewModel
+        {
+            get { return (FileManagerViewModel) DataContext; }
+        }
+
         public FileManagerWindow(FileManagerViewModel viewModel)
         {
             var assembly = Assembly.GetAssembly(typeof(FileManagerWindow));
@@ -39,7 +44,7 @@ namespace Neurotoxin.Godspeed.Shell.Views
 
         private void OnClosing(object sender, CancelEventArgs args)
         {
-            ((FileManagerViewModel) DataContext).Dispose();
+            ViewModel.Dispose();
         }
 
         //HACK: Temporary solution. KeyBinding doesn't work with Key.Delete (requires investigation)
@@ -47,7 +52,7 @@ namespace Neurotoxin.Godspeed.Shell.Views
         {
             if (e.Key != Key.Delete) return;
             e.Handled = true;
-            ((FileManagerViewModel) DataContext).DeleteCommand.Execute();
+            ViewModel.DeleteCommand.Execute();
         }
 
         private void ExecutedOpenDriveDropdownCommand(object sender, ExecutedRoutedEventArgs e)
@@ -84,22 +89,31 @@ namespace Neurotoxin.Godspeed.Shell.Views
         {
             if (_transferProgressDialog == null)
             {
-                _transferProgressDialog = new TransferProgressDialog((FileManagerViewModel)DataContext);
+                _transferProgressDialog = new TransferProgressDialog(ViewModel);
+                _transferProgressDialog.Closing += TransferProgressDialogOnClosing;
                 _transferProgressDialog.Closed += TransferProgressDialogOnClosed;
             }
             IsHitTestVisible = false;
             _transferProgressDialog.Show();
         }
 
+        private void TransferProgressDialogOnClosing(object sender, CancelEventArgs e)
+        {
+            ViewModel.AbortTransfer();
+        }
+
         private void TransferProgressDialogOnClosed(object sender, EventArgs e)
         {
             IsHitTestVisible = true;
+            _transferProgressDialog.Closed -= TransferProgressDialogOnClosed;
             _transferProgressDialog = null;
         }
 
         private void ViewModelOnTransferFinished()
         {
-            if (_transferProgressDialog != null) _transferProgressDialog.Close();
+            if (_transferProgressDialog == null) return;
+            _transferProgressDialog.Closing -= TransferProgressDialogOnClosing;
+            _transferProgressDialog.Close();
         }
 
     }

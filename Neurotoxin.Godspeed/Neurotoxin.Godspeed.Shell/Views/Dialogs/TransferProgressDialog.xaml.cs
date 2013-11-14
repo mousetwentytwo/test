@@ -23,12 +23,6 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
             Owner = Application.Current.MainWindow;
             InitializeComponent();
             DataContext = viewModel;
-            Closing += OnClosing;
-        }
-
-        private void OnClosing(object sender, CancelEventArgs e)
-        {
-            ViewModel.AbortTransfer();
         }
 
         protected override void CancelButtonClick(object sender, RoutedEventArgs e)

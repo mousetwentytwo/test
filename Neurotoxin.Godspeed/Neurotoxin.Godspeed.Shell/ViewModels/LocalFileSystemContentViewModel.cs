@@ -30,6 +30,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public LocalFileSystemContentViewModel(FileManagerViewModel parent) : base(parent)
         {
+            IsResumeSupported = true;
         }
 
         public override void LoadDataAsync(LoadCommand cmd, object cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase, Exception> error = null)

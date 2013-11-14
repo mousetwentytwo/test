@@ -13,6 +13,8 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
         IEnumerable<FileSystemItemViewModel> SelectedItems { get; }
         FileSystemItemViewModel CurrentFolder { get; }
         FileSystemItemViewModel CurrentRow { get; set; }
+        bool IsResumeSupported { get; }
+        bool HasValidSelection { get; }
 
         Queue<QueueItem> PopulateQueue(TransferType type);
         bool CreateFolder(string path);
@@ -23,7 +25,6 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
 
         bool Export(FileSystemItem item, string savePath, CopyAction action);
         bool Import(FileSystemItem item, string savePath, CopyAction action);
-        bool HasValidSelection();
 
         void Refresh();
         void Refresh(Action callback);

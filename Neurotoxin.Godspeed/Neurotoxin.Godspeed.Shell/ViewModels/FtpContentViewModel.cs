@@ -61,6 +61,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                             },
                         result =>
                             {
+                                IsResumeSupported = result;
                                 ConnectCallback();
                                 if (success != null) success.Invoke(this);
                             },
@@ -95,8 +96,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private bool Connect()
         {
-            FileManager.Connect(Connection.Model);
-            return true;
+            return FileManager.Connect(Connection.Model);
         }
 
         private void ConnectCallback()
