@@ -15,6 +15,7 @@ namespace Neurotoxin.Godspeed.Shell.Views
 {
     public partial class FileManagerWindow
     {
+        private bool _isAbortionInProgress;
         private TransferProgressDialog _transferProgressDialog;
 
         private FileManagerViewModel ViewModel
@@ -99,6 +100,15 @@ namespace Neurotoxin.Godspeed.Shell.Views
 
         private void TransferProgressDialogOnClosing(object sender, CancelEventArgs e)
         {
+            e.Cancel = true;
+            if (_isAbortionInProgress) return;
+            if (!ViewModel.TargetPane.IsResumeSupported)
+            {
+                var d = new ConfirmationDialog("Warning", "The resume function on target machine is not available. Do you really want to abort the transfer?");
+                if (d.ShowDialog() != true) return;
+            }
+            _transferProgressDialog.Abort.IsEnabled = false;
+            _isAbortionInProgress = true;
             ViewModel.AbortTransfer();
         }
 

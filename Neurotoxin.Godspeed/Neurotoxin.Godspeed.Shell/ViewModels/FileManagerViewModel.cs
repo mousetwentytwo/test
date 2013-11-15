@@ -71,12 +71,14 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
         }
 
+        private const string OTHERPANE = "OtherPane";
         public IPaneViewModel OtherPane
         {
             get { return LeftPane.IsActive ? RightPane : LeftPane; }
         }
 
-        private IFileListPaneViewModel SourcePane
+        private const string SOURCEPANE = "SourcePane";
+        public IFileListPaneViewModel SourcePane
         {
             get
             {
@@ -88,7 +90,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
         }
 
-        private IFileListPaneViewModel TargetPane
+        private const string TARGETPANE = "TargetPane";
+        public IFileListPaneViewModel TargetPane
         {
             get
             {
@@ -932,7 +935,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         break;
                     case TransferErrorType.WriteAccessError:
                         {
-                            var dialog = new WriteErrorDialog(transferException, eventAggregator);
+                            var dialog = new WriteErrorDialog(TargetPane, transferException, eventAggregator);
                             SourcePane.GetItemViewModel(transferException.SourceFile);
                             TargetPane.GetItemViewModel(transferException.TargetFile);
                             if (dialog.ShowDialog() == true) result = dialog.Result;
@@ -971,8 +974,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         internal void AbortTransfer()
         {
             _isAborted = true;
-            SourcePane.Abort();
-            TargetPane.Abort();
+            if (_copyMode != CopyMode.RemoteExport && _copyMode != CopyMode.RemoteImport)
+            {
+                SourcePane.Abort();
+                TargetPane.Abort();
+            }
             lock (_queue)
             {
                 var actualItem = _queue.Peek();

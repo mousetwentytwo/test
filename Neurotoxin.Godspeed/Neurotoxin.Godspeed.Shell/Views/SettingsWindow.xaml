@@ -86,12 +86,20 @@
             </TabItem>
             <TabItem Header="Operation">
                 <Grid Margin="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <CheckBox Grid.Row="0" Content="Use Remote Copy between NAS and FTP if able" Padding="5,0,0,0"
-                              IsChecked="{Binding UseRemoteCopy}"/>
+                    <CheckBox Grid.Row="0" Grid.ColumnSpan="2" Content="Use Remote Copy between NAS and FTP if able" 
+                              Padding="5,0,0,0" IsChecked="{Binding UseRemoteCopy}"/>
+
+                    <Image Grid.Row="1" Source="/Resources/info.png" Margin="20,10,5,0" VerticalAlignment="Top"/>
+                    <TextBlock Grid.Row="1" Grid.Column="1" TextWrapping="Wrap" Margin="0,10,0,0" x:Name="UseRemoteCopyRemarks"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Appearance">

@@ -13,11 +13,6 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
         public const string SpeedFormat = "{0} KBps";
         public const string TimeFormat = "{0:hh\\:mm\\:ss} / {1:hh\\:mm\\:ss}";
 
-        private FileManagerViewModel ViewModel
-        {
-            get { return (FileManagerViewModel) DataContext; }
-        }
-
         public TransferProgressDialog(FileManagerViewModel viewModel)
         {
             Owner = Application.Current.MainWindow;

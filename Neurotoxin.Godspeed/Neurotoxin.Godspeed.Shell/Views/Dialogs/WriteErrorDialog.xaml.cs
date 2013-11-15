@@ -17,11 +17,12 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
         private readonly IEventAggregator _eventAggregator;
         public TransferErrorDialogResult Result { get; private set; }
 
-        public WriteErrorDialog(TransferException exception, IEventAggregator eventAggregator)
+        public WriteErrorDialog(IFileListPaneViewModel viewModel, TransferException exception, IEventAggregator eventAggregator)
         {
             _exception = exception;
             _eventAggregator = eventAggregator;
             Owner = Application.Current.MainWindow;
+            DataContext = viewModel;
             InitializeComponent();
             _eventAggregator.GetEvent<ViewModelGeneratedEvent>().Subscribe(ViewModelGenerated);
         }

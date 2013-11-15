@@ -145,12 +145,18 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
         }
 
+        private const string ISRESUMESUPPORTED = "IsResumeSupported";
+        private bool _isResumeSupported;
+        public bool IsResumeSupported
+        {
+            get { return _isResumeSupported; }
+            protected set { _isResumeSupported = value; NotifyPropertyChanged(ISRESUMESUPPORTED); }
+        }
+
         public bool HasValidSelection
         {
             get { return SelectedItems.Any() || CurrentRow != null && !CurrentRow.IsUpDirectory; }
         }
-
-        public bool IsResumeSupported { get; protected set; }
 
         #endregion
 

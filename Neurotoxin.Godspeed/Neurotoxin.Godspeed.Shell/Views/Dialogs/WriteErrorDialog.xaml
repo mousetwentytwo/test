@@ -30,8 +30,10 @@
         <Button Grid.Column="1" Grid.Row="2" Content="Overwrite all" Margin="5" x:Name="OverwriteAll" Click="ButtonClick"/>
         <Button Grid.Column="2" Grid.Row="2" Content="Overwrite all older" Margin="5" x:Name="OverwriteAllOlder" Click="ButtonClick"/>
 
-        <Button Grid.Column="0" Grid.Row="3" Content="Resume" Margin="5" x:Name="Resume" Click="ButtonClick"/>
-        <Button Grid.Column="1" Grid.Row="3" Content="Resume all" Margin="5" x:Name="ResumeAll" Click="ButtonClick"/>
+        <Button Grid.Column="0" Grid.Row="3" Content="Resume" Margin="5" x:Name="Resume" Click="ButtonClick"
+                IsEnabled="{Binding IsResumeSupported}"/>
+        <Button Grid.Column="1" Grid.Row="3" Content="Resume all" Margin="5" x:Name="ResumeAll" Click="ButtonClick"
+                IsEnabled="{Binding IsResumeSupported}"/>
         <Button Grid.Column="2" Grid.Row="3" Content="Rename" Margin="5" x:Name="Rename" Click="ButtonClick"/>
 
         <Button Grid.Column="0" Grid.Row="4" Content="Skip" Margin="5" x:Name="Skip" Click="ButtonClick"/>
