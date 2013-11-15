@@ -1,23 +1,23 @@
-- FIXED: Upload to FTP (was malfunctioning with FSD 2.2)
-- FIXED: FTP upload error handling
-- FIXED: FTP download progress indication
-- FIXED: UI freeze caused by FTP download
-- FIXED: Displaying selection size after queue population
-- FIXED: Main window is not hit test visible during transfer
-- FIXED: Free space update
-- FIXED: Slim E icon was missing
-- ADDED: Progress indication in taskbar 
-- ADDED: Recognition progress indication
-- ADDED: Elapsed/remaining time calculation
-- ADDED: Transfer speed calculation
-- ADDED: Local to local progress indication
-- ADDED: Local to local file transfer abortion
-- ADDED: Pause & resume file transfer
-- ADDED: Context-aware "New folder" dropdown
-- ADDED: Save and restore locations and sort settings
-- ADDED: User settings (more options will be added soon)
-- ADDED: Custom Window Chrome now can be disabled
-- ADDED: Direct Copy support between NAS and FTP (if Telnet and LFTP is supported on NAS)
-- ADDED: Delete existings connection
-- ADDED: Anonymous login
-- ADDED: Minor PS3 FTP support
+* FIXED: Upload to FTP (was malfunctioning with FSD 2.2)
+* FIXED: FTP upload error handling
+* FIXED: FTP download progress indication
+* FIXED: UI freeze caused by FTP download
+* FIXED: Displaying selection size after queue population
+* FIXED: Main window is not hit test visible any more during transfer
+* FIXED: Free space update
+* FIXED: Slim E icon was missing
+* ADDED: Progress indication in taskbar 
+* ADDED: Recognition progress indication
+* ADDED: Elapsed time indication, Remaining time calculation
+* ADDED: Transfer speed calculation
+* ADDED: Local to local progress indication
+* ADDED: Local to local file transfer abortion
+* ADDED: Pause & Resume file transfer
+* ADDED: Context-aware "New folder" dropdown
+* ADDED: Save and restore locations and sort settings
+* ADDED: User settings (more options will be added soon)
+* ADDED: Custom Window Chrome now can be disabled
+* ADDED: Remote Copy support between NAS and FTP (Telnet and LFTP required)
+* ADDED: Delete existings connection
+* ADDED: Anonymous login
+* ADDED: Minor PS3 FTP support

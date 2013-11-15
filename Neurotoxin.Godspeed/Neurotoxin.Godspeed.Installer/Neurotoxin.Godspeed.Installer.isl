@@ -3980,7 +3980,7 @@
 		<col def="V0">Data</col>
 		<col def="S255">ISBuildSourcePath</col>
 		<col def="I2">ISIconIndex</col>
-		<row><td>ARPPRODUCTICON.exe</td><td/><td>C:\merc\svn\contour\Resources\Images\stock\icon-xbox (1).ico</td><td>0</td></row>
+		<row><td>ARPPRODUCTICON.exe</td><td/><td>D:\Work\NTX-CNT\svn\Neurotoxin.Godspeed\Neurotoxin.Godspeed.Shell\Resources\icon.ico</td><td>0</td></row>
 		<row><td>NewShortcut2_7FCAF3BC947E40918F8EAA2CF5FD178A.exe</td><td/><td>C:\Program Files (x86)\InstallShield\2012SpringLE\Redist\Language Independent\OS Independent\uninstall.ico</td><td>0</td></row>
 	</table>
 
