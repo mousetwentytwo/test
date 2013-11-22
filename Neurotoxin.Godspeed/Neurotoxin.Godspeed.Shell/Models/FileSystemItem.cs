@@ -40,7 +40,7 @@ namespace Neurotoxin.Godspeed.Shell.Models
 
         public string GetRelativePath(string parent)
         {
-            return Path.Replace(parent, string.Empty);
+            return string.IsNullOrEmpty(parent) ? Path : Path.Replace(parent, string.Empty);
         }
     }
 }

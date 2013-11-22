@@ -62,11 +62,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         switch (Type)
                         {
                             case ItemType.Directory:
-                                var path = IsRefreshing ? "/Resources/refresh_folder.png" : "/Resources/folder.png";
-                                bytes = ApplicationExtensions.GetContentByteArray(path);
+                                var dirIconPath = IsRefreshing ? "/Resources/refresh_folder.png" : "/Resources/folder.png";
+                                bytes = ApplicationExtensions.GetContentByteArray(dirIconPath);
                                 break;
                             case ItemType.File:
-                                bytes = ApplicationExtensions.GetContentByteArray("/Resources/file.png");
+                                var fileIconPath = IsCompressedFile ? "/Resources/package.png" : "/Resources/file.png";
+                                bytes = ApplicationExtensions.GetContentByteArray(fileIconPath);
                                 break;
                         }
                     }
@@ -156,6 +157,15 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         }
 
         public string TempFilePath { get; set; }
+
+        public bool IsCompressedFile
+        {
+            get
+            {
+                var ext = System.IO.Path.GetExtension(Path).ToLower();
+                return (ext == ".zip" || ext == ".rar" || ext == ".tar.gz" || ext == ".7zip");
+            }
+        }
 
         public FileSystemItemViewModel(FileSystemItem model)
         {

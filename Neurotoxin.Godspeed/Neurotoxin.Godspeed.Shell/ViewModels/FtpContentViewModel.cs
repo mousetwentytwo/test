@@ -29,6 +29,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             set { FileManager.IsKeepAliveEnabled = value; }
         }
 
+        public override bool IsReadOnly
+        {
+            get { return false; }
+        }
+
         #region DisconnectCommand
 
         public DelegateCommand DisconnectCommand { get; private set; }

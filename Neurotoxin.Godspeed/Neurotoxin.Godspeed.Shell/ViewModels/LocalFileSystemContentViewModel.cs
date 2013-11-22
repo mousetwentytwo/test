@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
+using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
@@ -26,6 +27,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public bool IsNetworkDrive
         {
             get { return Drive.FullPath.StartsWith(@"\\"); }
+        }
+
+        public override bool IsReadOnly
+        {
+            get { return false; }
         }
 
         public LocalFileSystemContentViewModel(FileManagerViewModel parent) : base(parent)

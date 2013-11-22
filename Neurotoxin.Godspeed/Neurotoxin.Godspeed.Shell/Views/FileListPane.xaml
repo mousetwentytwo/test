@@ -27,14 +27,14 @@
                                 </StackPanel>
                             </DataTemplate>
                         </ts:CloseButtonsTemplateSelector.FtpTemplate>
-                        <ts:CloseButtonsTemplateSelector.StfsTemplate>
+                        <ts:CloseButtonsTemplateSelector.PackageTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
                                     <Button Content="Save and Close" Command="{Binding SaveAndCloseCommand}" Margin="0,0,3,0" Width="100"/>
                                     <Button Content="Close" Command="{Binding CloseCommand}" Width="60"/>
                                 </StackPanel>
                             </DataTemplate>
-                        </ts:CloseButtonsTemplateSelector.StfsTemplate>
+                        </ts:CloseButtonsTemplateSelector.PackageTemplate>
                     </ts:CloseButtonsTemplateSelector>
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>

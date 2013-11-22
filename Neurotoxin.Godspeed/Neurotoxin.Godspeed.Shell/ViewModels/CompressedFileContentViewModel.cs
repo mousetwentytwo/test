@@ -11,26 +11,12 @@ using Neurotoxin.Godspeed.Shell.Models;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
-    public class StfsPackageContentViewModel : FileListPaneViewModelBase<StfsPackageContent>
+    public class CompressedFileContentViewModel : FileListPaneViewModelBase<CompressedFileContent>
     {
-
         public override bool IsReadOnly
         {
-            get { return false; }
+            get { return true; }
         }
-
-        #region SaveAndCloseCommand
-
-        public DelegateCommand SaveAndCloseCommand { get; private set; }
-
-        private void ExecuteSaveAndCloseCommand()
-        {
-            var bytes = FileManager.Save();
-            FileManager.Dispose();
-            eventAggregator.GetEvent<CloseNestedPaneEvent>().Publish(new CloseNestedPaneEventArgs(this, bytes));
-        }
-
-        #endregion
 
         #region CloseCommand
 
@@ -44,9 +30,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #endregion
 
-        public StfsPackageContentViewModel(FileManagerViewModel parent) : base(parent)
+        public CompressedFileContentViewModel(FileManagerViewModel parent) : base(parent)
         {
-            SaveAndCloseCommand = new DelegateCommand(ExecuteSaveAndCloseCommand);
             CloseCommand = new DelegateCommand(ExecuteCloseCommand);
             IsResumeSupported = true;
         }
@@ -59,9 +44,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     WorkerThread.Run(
                         () =>
                             {
-                                var p = (Tuple<byte[], FileListPaneSettings>) cmdParam;
+                                var p = (Tuple<string, FileListPaneSettings>) cmdParam;
                                 Settings = p.Item2;
-                                FileManager.LoadPackage(p.Item1);
+                                FileManager.Open(p.Item1);
                                 return true;
                             },
                         result =>
@@ -78,12 +63,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
         }
 
-        protected override void ChangeDrive()
-        {
-            DriveLabel = FileManager.GetAccount().GamerTag;
-            base.ChangeDrive();
-        }
-
         public override string GetTargetPath(string path)
         {
             return string.Format("{0}{1}", CurrentFolder.Path, path.Replace('\\', '/'));
@@ -91,22 +70,22 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         protected override void SaveToFileStream(FileSystemItem item, FileStream fs, long remoteStartPosition)
         {
-            FileManager.ExtractFile(item.Path, fs, remoteStartPosition);
+            FileManager.ExtractFile(item.Path, fs);
         }
 
         protected override void CreateFile(string targetPath, string sourcePath)
         {
-            FileManager.AddFile(targetPath, sourcePath);
+            throw new NotImplementedException();
         }
 
         protected override void OverwriteFile(string targetPath, string sourcePath)
         {
-            FileManager.ReplaceFile(targetPath, sourcePath);
+            throw new NotImplementedException();
         }
 
         protected override void ResumeFile(string targetPath, string sourcePath)
         {
-            FileManager.ReplaceFile(targetPath, sourcePath);
+            throw new NotImplementedException();
         }
 
         public override void Abort()

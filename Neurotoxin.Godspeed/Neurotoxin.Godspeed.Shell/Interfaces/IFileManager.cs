@@ -8,10 +8,9 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
 {
     public interface IFileManager
     {
-        string TempFilePath { get; set; }
+        string TempFilePath { get; }
         char Slash { get; }
 
-        List<FileSystemItem> GetDrives(); 
         List<FileSystemItem> GetList(string path = null);
 
         FileSystemItem GetFolderInfo(string itemPath);

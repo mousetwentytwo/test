@@ -158,6 +158,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             get { return SelectedItems.Any() || CurrentRow != null && !CurrentRow.IsUpDirectory; }
         }
 
+        public abstract bool IsReadOnly { get; }
+
         #endregion
 
         #region ChangeDirectoryCommand
@@ -197,12 +199,13 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 if (CurrentRow.Type == ItemType.File)
                 {
                     if (CurrentRow.TitleType == TitleType.Profile) OpenStfsPackageCommand.Execute();
+                    if (CurrentRow.IsCompressedFile) OpenCompressedFileCommand.Execute();
                     return;
                 }
 
                 if (CurrentRow.IsUpDirectory)
                 {
-                    var r = new Regex(@"^(.*[\\/]).*?[\\/]$");
+                    var r = new Regex(@"^(.*[\\/])?.*[\\/]$");
                     var parentPath = r.Replace(CurrentRow.Path, "$1");
                     if (Drive.Path == parentPath)
                     {
@@ -319,6 +322,48 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         }
 
         private void OpenStfsPackageError(PaneViewModelBase pane, Exception exception)
+        {
+            IsBusy = false;
+            NotificationMessage.Show("Open failed", string.Format("Can't open {0}: {1}", CurrentRow.ComputedName, exception.Message));
+        }
+
+        #endregion
+
+        #region OpenCompressedFileCommand
+
+        public DelegateCommand OpenCompressedFileCommand { get; private set; }
+
+        private bool CanExecuteOpenCompressedFileCommand()
+        {
+            return CurrentRow != null && CurrentRow.IsCompressedFile;
+        }
+
+        private void ExecuteOpenCompressedFileCommand()
+        {
+            ProgressMessage = string.Format("Opening archive {0}...", CurrentRow.ComputedName);
+            IsBusy = true;
+            WorkerThread.Run(() => OpenCompressedFile(CurrentRow.Model), OpenCompressedFileCallback, AsyncErrorCallback);
+        }
+
+        private string OpenCompressedFile(FileSystemItem item)
+        {
+            //TODO: download if ftp and return tmp path
+            return item.Path;
+        }
+
+        private void OpenCompressedFileCallback(string path)
+        {
+            var archive = container.Resolve<CompressedFileContentViewModel>();
+            archive.LoadDataAsync(LoadCommand.Load, new Tuple<string, FileListPaneSettings>(path, new FileListPaneSettings("/", Settings.SortByField, Settings.SortDirection)), OpenCompressedFileSuccess, OpenCompressedFileError);
+        }
+
+        private void OpenCompressedFileSuccess(PaneViewModelBase pane)
+        {
+            IsBusy = false;
+            eventAggregator.GetEvent<OpenNestedPaneEvent>().Publish(new OpenNestedPaneEventArgs(this, pane));
+        }
+
+        private void OpenCompressedFileError(PaneViewModelBase pane, Exception exception)
         {
             IsBusy = false;
             NotificationMessage.Show("Open failed", string.Format("Can't open {0}: {1}", CurrentRow.ComputedName, exception.Message));
@@ -739,6 +784,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
             ChangeDirectoryCommand = new DelegateCommand<object>(ExecuteChangeDirectoryCommand, CanExecuteChangeDirectoryCommand);
             OpenStfsPackageCommand = new DelegateCommand(ExecuteOpenStfsPackageCommand, CanExecuteOpenStfsPackageCommand);
+            OpenCompressedFileCommand = new DelegateCommand(ExecuteOpenCompressedFileCommand, CanExecuteOpenCompressedFileCommand);
             CalculateSizeCommand = new DelegateCommand<bool>(ExecuteCalculateSizeCommand, CanExecuteCalculateSizeCommand);
             SortingCommand = new DelegateCommand<EventInformation<DataGridSortingEventArgs>>(ExecuteSortingCommand);
             ToggleSelectionCommand = new DelegateCommand<ToggleSelectionMode>(ExecuteToggleSelectionCommand);
@@ -822,6 +868,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             if (PathCache.ContainsKey(Drive))
             {
                 var path = PathCache[Drive];
+                var clearPath = new Regex(@"^(.*)[\\/].*(:[\\/]).*$");
+                path = clearPath.Replace(path, "$1");
                 CurrentFolder = new FileSystemItemViewModel(FileManager.GetFolderInfo(path, path == Drive.Path ? ItemType.Drive : ItemType.Directory));
             }
             else
@@ -921,7 +969,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 if (item.Type == ItemType.Directory)
                 {
                     var sub = PopulateQueue(ChangeDirectory(item.Path), type);
-                    item.Size = sub.Sum(i => i.FileSystemItem.Size ?? 0);
+                    item.Size = sub.Where(i => i.FileSystemItem.Type == ItemType.File).Sum(i => i.FileSystemItem.Size ?? 0);
                     result.AddRange(sub);
                 }
                 if (type != TransferType.Copy) result.Add(new QueueItem(item, TransferType.Delete));

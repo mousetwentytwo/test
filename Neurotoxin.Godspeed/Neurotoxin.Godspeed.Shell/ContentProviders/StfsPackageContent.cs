@@ -14,6 +14,8 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 {
     public class StfsPackageContent : IFileManager, IDisposable
     {
+        public string TempFilePath { get; set; }
+
         private const char SLASH = '\\';
         public char Slash
         {
@@ -21,8 +23,6 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         }
 
         private StfsPackage _stfs;
-
-        public string TempFilePath { get; set; }
 
         public List<FileSystemItem> GetDrives()
         {

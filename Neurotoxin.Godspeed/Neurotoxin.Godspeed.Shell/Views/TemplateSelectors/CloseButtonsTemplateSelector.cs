@@ -8,12 +8,13 @@ namespace Neurotoxin.Godspeed.Shell.Views.TemplateSelectors
     {
         public DataTemplate DefaultTemplate { get; set; }
         public DataTemplate FtpTemplate { get; set; }
-        public DataTemplate StfsTemplate { get; set; }
+        public DataTemplate PackageTemplate { get; set; }
 
         public override DataTemplate SelectTemplate(object viewModel, DependencyObject container)
         {
             if (viewModel is FtpContentViewModel) return FtpTemplate;
-            if (viewModel is StfsPackageContentViewModel) return StfsTemplate;
+            if (viewModel is StfsPackageContentViewModel) return PackageTemplate;
+            if (viewModel is CompressedFileContentViewModel) return PackageTemplate;
             return DefaultTemplate;
         }
     }

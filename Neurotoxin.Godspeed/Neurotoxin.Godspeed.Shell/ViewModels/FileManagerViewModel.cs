@@ -286,7 +286,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private bool CanExecuteCopyCommand()
         {
-            return TargetPane != null && SourcePane != null && SourcePane.HasValidSelection && !SourcePane.IsBusy && !TargetPane.IsBusy;
+            return TargetPane != null && SourcePane != null && SourcePane.HasValidSelection && !SourcePane.IsBusy &&
+                   !TargetPane.IsBusy && !TargetPane.IsReadOnly;
         }
 
         private void ExecuteCopyCommand()
@@ -306,7 +307,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             if (_queue.Count > 0)
             {
                 var item = _queue.Peek().FileSystemItem;
-                SourceFile = item.Path.Replace(SourcePane.CurrentFolder.Path, string.Empty);
+                SourceFile = !string.IsNullOrEmpty(SourcePane.CurrentFolder.Path)
+                                 ? item.Path.Replace(SourcePane.CurrentFolder.Path, string.Empty)
+                                 : item.Path;
                 WorkerThread.Run(() => CopyInner(item, action, rename), CopySuccess, CopyError);
             }
             else
@@ -426,7 +429,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private bool CanExecuteMoveCommand()
         {
-            return TargetPane != null && SourcePane != null && SourcePane.HasValidSelection && !SourcePane.IsBusy && !TargetPane.IsBusy;
+            return TargetPane != null && SourcePane != null && SourcePane.HasValidSelection && !SourcePane.IsBusy &&
+                   !TargetPane.IsBusy && !TargetPane.IsReadOnly && !SourcePane.IsReadOnly;
         }
 
         private void ExecuteMoveCommand()
@@ -529,7 +533,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private bool CanExecuteNewFolderCommand()
         {
-            return SourcePane != null && !SourcePane.IsBusy;
+            return SourcePane != null && !SourcePane.IsBusy && !SourcePane.IsReadOnly;
         }
 
         private void ExecuteNewFolderCommand()
@@ -576,7 +580,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             var connections = ActivePane as ConnectionsViewModel;
             if (connections != null && connections.SelectedItem != null) return true;
-            return SourcePane != null && SourcePane.HasValidSelection && !SourcePane.IsBusy;
+            return SourcePane != null && SourcePane.HasValidSelection && !SourcePane.IsBusy && !SourcePane.IsReadOnly;
         }
 
         private void ExecuteDeleteCommand()

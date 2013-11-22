@@ -24,6 +24,7 @@ namespace Neurotoxin.Godspeed.Shell
             Container.RegisterType<FtpContent>();
             Container.RegisterType<LocalFileSystemContent>();
             Container.RegisterType<StfsPackageContent>();
+            Container.RegisterType<CompressedFileContent>();
             Container.RegisterType<CacheManager>(new ContainerControlledLifetimeManager());
 
             // ViewModels
@@ -33,6 +34,7 @@ namespace Neurotoxin.Godspeed.Shell
             Container.RegisterType<FtpContentViewModel>();
             Container.RegisterType<LocalFileSystemContentViewModel>();
             Container.RegisterType<StfsPackageContentViewModel>();
+            Container.RegisterType<CompressedFileContentViewModel>();
 
             // Views
             Container.RegisterType<FileManagerWindow>(new ContainerControlledLifetimeManager());
