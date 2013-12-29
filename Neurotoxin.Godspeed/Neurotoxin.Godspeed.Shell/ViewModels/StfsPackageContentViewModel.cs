@@ -25,9 +25,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void ExecuteSaveAndCloseCommand()
         {
-            var bytes = FileManager.Save();
-            FileManager.Dispose();
-            eventAggregator.GetEvent<CloseNestedPaneEvent>().Publish(new CloseNestedPaneEventArgs(this, bytes));
+            eventAggregator.GetEvent<CloseNestedPaneEvent>().Publish(new CloseNestedPaneEventArgs(this, FileManager.Save()));
+            Dispose();
         }
 
         #endregion
@@ -38,8 +37,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void ExecuteCloseCommand()
         {
-            FileManager.Dispose();
             eventAggregator.GetEvent<CloseNestedPaneEvent>().Publish(new CloseNestedPaneEventArgs(this, null));
+            Dispose();
         }
 
         #endregion
@@ -112,6 +111,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public override void Abort()
         {
             throw new NotImplementedException();
+        }
+
+        public void Dispose()
+        {
+            FileManager.Dispose();
+            base.Dispose();
         }
     }
 }

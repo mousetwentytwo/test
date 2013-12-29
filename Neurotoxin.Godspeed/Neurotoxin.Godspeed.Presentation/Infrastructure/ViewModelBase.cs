@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
+using Neurotoxin.Godspeed.Presentation.Events;
 
 namespace Neurotoxin.Godspeed.Presentation.Infrastructure
 {
@@ -13,7 +14,7 @@ namespace Neurotoxin.Godspeed.Presentation.Infrastructure
         protected readonly IUnityContainer container;
         protected readonly IEventAggregator eventAggregator;
 
-        protected bool IsDisposed { get; private set; }
+        public bool IsDisposed { get; private set; }
 
         public ViewModelBase()
         {
@@ -29,6 +30,7 @@ namespace Neurotoxin.Godspeed.Presentation.Infrastructure
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+        public event DisposedEventHandler Disposed;
 
         /// <summary>
         /// Raises the PropertyChanged event.
@@ -46,6 +48,8 @@ namespace Neurotoxin.Godspeed.Presentation.Infrastructure
         public virtual void Dispose()
         {
             IsDisposed = true;
+            var handler = Disposed;
+            if (handler != null) handler(this);
         }
 
     }

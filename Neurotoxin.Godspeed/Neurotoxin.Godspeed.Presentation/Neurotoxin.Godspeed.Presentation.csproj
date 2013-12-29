@@ -76,6 +76,7 @@
     <Compile Include="Converters\ScrollBarVisibilityConverter.cs" />
     <Compile Include="Converters\ViewIconConverter.cs" />
     <Compile Include="Events\ActivateModuleContextEvent.cs" />
+    <Compile Include="Events\DisposedEvent.cs" />
     <Compile Include="Events\ErrorCheckedEvent.cs" />
     <Compile Include="Events\ModuleOpenEvent.cs" />
     <Compile Include="Events\DataLoadEvents.cs" />

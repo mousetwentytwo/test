@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using Neurotoxin.Godspeed.Presentation.Controls;
+using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Primitives;
 
 namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
@@ -11,8 +12,11 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
 
         public static void Show(string title, string message, bool isCloseable = true)
         {
-            var instance = new NotificationMessage(title, message, isCloseable);
-            instance.ShowDialog();
+            UIThread.Run(() =>
+                             {
+                                 var instance = new NotificationMessage(title, message, isCloseable);
+                                 instance.ShowDialog();
+                             });
         }
 
         public NotificationMessage(string title, string message, bool isCloseable = true)

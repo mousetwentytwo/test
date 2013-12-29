@@ -1039,7 +1039,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 b =>
                     {
                         if (finished) return;
-                        notificationMessage = new NotificationMessage("Application is busy", "Populating. Please wait...", false);
+                        notificationMessage = new NotificationMessage("Application is busy", "Please wait...", false);
                         notificationMessage.ShowDialog();
                     });
             WorkerThread.Run(work, 
@@ -1067,14 +1067,30 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public override void Dispose()
         {
-            LeftPane.Dispose();
-            var left = _leftPaneStack.LastOrDefault() ?? LeftPane;
+            object data = null;
+            IPaneViewModel left;
+            do
+            {
+                data = LeftPane.Close(data);
+                left = LeftPane;
+                LeftPane = _leftPaneStack.Count > 0 ? _leftPaneStack.Pop() : null;
+            } 
+            while (LeftPane != null);  
             UserSettings.LeftPaneType = left.GetType().FullName;
-            UserSettings.LeftPaneFileListPaneSettings = LeftPane.Settings;
-            RightPane.Dispose();
-            var right = _rightPaneStack.LastOrDefault() ?? RightPane;
+            UserSettings.LeftPaneFileListPaneSettings = left.Settings;
+
+            data = null;
+            IPaneViewModel right;
+            do
+            {
+                data = RightPane.Close(data);
+                right = RightPane;
+                RightPane = _rightPaneStack.Count > 0 ? _rightPaneStack.Pop() : null;
+            }
+            while (RightPane != null);
             UserSettings.RightPaneType = right.GetType().FullName;
-            UserSettings.RightPaneFileListPaneSettings = RightPane.Settings;
+            UserSettings.RightPaneFileListPaneSettings = right.Settings;
+
             base.Dispose();
         }
     }

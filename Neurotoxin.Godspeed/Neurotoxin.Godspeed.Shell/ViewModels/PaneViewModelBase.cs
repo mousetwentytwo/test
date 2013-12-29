@@ -79,7 +79,14 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public virtual void LoadDataAsync(LoadCommand cmd, object cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase, Exception> error = null)
         {
-            if (cmdParam is FileListPaneSettings) Settings = (FileListPaneSettings)cmdParam;
+            var settings = cmdParam as FileListPaneSettings;
+            if (settings != null) Settings = settings;
+        }
+
+        public virtual object Close(object data)
+        {
+            Dispose();
+            return null;
         }
     }
 }

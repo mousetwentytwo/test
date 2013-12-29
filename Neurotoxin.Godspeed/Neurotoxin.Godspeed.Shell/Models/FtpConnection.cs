@@ -10,6 +10,7 @@ namespace Neurotoxin.Godspeed.Shell.Models
         public int Port { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
+        public string DefaultPath { get; set; }
 
         public FtpConnection Clone()
         {
@@ -20,7 +21,8 @@ namespace Neurotoxin.Godspeed.Shell.Models
                            Address = Address,
                            Port = Port,
                            Username = Username,
-                           Password = Password
+                           Password = Password,
+                           DefaultPath = DefaultPath
                        };
         }
     }

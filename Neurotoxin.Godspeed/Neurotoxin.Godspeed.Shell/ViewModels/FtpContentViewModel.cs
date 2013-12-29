@@ -40,8 +40,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void ExecuteDisconnectCommand()
         {
-            FileManager.Disconnect();
-            eventAggregator.GetEvent<CloseNestedPaneEvent>().Publish(new CloseNestedPaneEventArgs(this, null));
+            eventAggregator.GetEvent<CloseNestedPaneEvent>().Publish(new CloseNestedPaneEventArgs(this, Connection));
+            Dispose();
         }
 
         #endregion
@@ -108,12 +108,26 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             Drives = FileManager.GetDrives().Select(d => new FileSystemItemViewModel(d)).ToObservableCollection();
             var r = new Regex("^/[A-Z0-9]+/", RegexOptions.IgnoreCase);
-            var m = r.Match(Settings.Directory);
+            var defaultPath = Connection.Model.DefaultPath;
+            if (string.IsNullOrEmpty(Connection.Model.DefaultPath))
+            {
+                switch (Connection.ConnectionImage)
+                {
+                    case ConnectionImage.PlayStation3:
+                        defaultPath = "/dev_hdd0/";
+                        break;
+                    default:
+                        defaultPath = "/Hdd1/";
+                        break;
+                }
+            }
+
+            var m = r.Match(defaultPath);
             FileSystemItemViewModel drive = null;
             if (m.Success)
             {
                 drive = Drives.SingleOrDefault(d => d.Path == m.Value);
-                if (drive != null) PathCache.Add(drive, Settings.Directory);
+                if (drive != null) PathCache.Add(drive, defaultPath);
             }
             Drive = drive ?? Drives.First();
         }
@@ -241,5 +255,17 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             return path.Replace(dir, string.Empty);
         }
 
+        public override void Dispose()
+        {
+            FileManager.Disconnect();
+            Connection.Model.DefaultPath = CurrentFolder.Path;
+            base.Dispose();
+        }
+
+        public override object Close(object data)
+        {
+            Dispose();
+            return Connection;
+        }
     }
 }

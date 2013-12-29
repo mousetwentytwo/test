@@ -2,7 +2,6 @@
 using System.IO;
 using System.Linq;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
-using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
@@ -24,8 +23,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void ExecuteCloseCommand()
         {
-            FileManager.Dispose();
             eventAggregator.GetEvent<CloseNestedPaneEvent>().Publish(new CloseNestedPaneEventArgs(this, null));
+            Dispose();
         }
 
         #endregion
@@ -91,6 +90,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public override void Abort()
         {
             throw new NotImplementedException();
+        }
+
+        public override void Dispose()
+        {
+            FileManager.Dispose();
+            base.Dispose();
         }
     }
 }

@@ -64,12 +64,16 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 {
                     if (CurrentFolder != null) PathCache[_drive] = CurrentFolder.Path;
                     _drive = value;
-                    ChangeDrive();
                 }
                 else
                 {
-                    NotificationMessage.Show("Drive change failed", string.Format("{0} is not accessible.", value.Title));
+                    var name = string.IsNullOrEmpty(value.Title)
+                                   ? value.Name
+                                   : string.Format("{0} ({1})", value.Title, value.Name);
+                    NotificationMessage.Show("Drive change failed", string.Format("{0} is not accessible.", name));
+                    if (_drive == null) _drive = Drives.FirstOrDefault();
                 }
+                ChangeDrive();
                 NotifyPropertyChanged(DRIVE);
             }
         }
@@ -198,7 +202,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             {
                 if (CurrentRow.Type == ItemType.File)
                 {
-                    if (CurrentRow.TitleType == TitleType.Profile) OpenStfsPackageCommand.Execute();
+                    //if (CurrentRow.TitleType == TitleType.Profile) 
+                        OpenStfsPackageCommand.Execute();
                     if (CurrentRow.IsCompressedFile) OpenCompressedFileCommand.Execute();
                     return;
                 }
@@ -292,7 +297,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private bool CanExecuteOpenStfsPackageCommand()
         {
-            return CurrentRow != null && CurrentRow.IsProfile;
+            return CurrentRow != null;
+            //return CurrentRow != null && CurrentRow.IsProfile;
         }
 
         private void ExecuteOpenStfsPackageCommand()
@@ -305,8 +311,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private byte[] OpenStfsPackage(FileSystemItem item)
         {
             if (item.Type == ItemType.Directory) item = _titleRecognizer.GetProfileItem(item);
-            var tmpPath = _titleRecognizer.GetTempFilePath(item);
-            return File.ReadAllBytes(tmpPath);
+            var path = _titleRecognizer.GetTempFilePath(item) ?? item.Path;
+            return File.ReadAllBytes(path);
         }
 
         private void OpenStfsPackageCallback(byte[] content)

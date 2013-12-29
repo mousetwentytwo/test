@@ -106,7 +106,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     var add = new NewConnectionPlaceholderViewModel();
                     Items.Add(add);
                     break;
+                case LoadCommand.Restore:
+                    Save(cmdParam as FtpConnectionItemViewModel);
+                    break;
             }
+            if (success != null) success.Invoke(this);
         }
 
         public override void SetActive()
@@ -201,5 +205,16 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             NotificationMessage.Show("Connection failed", string.Format("Can't connect to {0}", SelectedItem.Name));
         }
 
+        private void Save(FtpConnectionItemViewModel connection)
+        {
+            if (connection == null) return;
+            _cacheStore.Update(string.Format("{0}{1}", CacheStoreKeyPrefix, connection.Name), connection.Model);
+        }
+
+        public override object Close(object data)
+        {
+            Save(data as FtpConnectionItemViewModel);
+            return base.Close(data);
+        }
     }
 }

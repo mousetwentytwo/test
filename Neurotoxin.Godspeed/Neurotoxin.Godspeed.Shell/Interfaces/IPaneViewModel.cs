@@ -13,5 +13,6 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
         bool IsActive { get; }
         void SetActive();
         void LoadDataAsync(LoadCommand cmd, object cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase, Exception> error = null);
+        object Close(object data);
     }
 }
