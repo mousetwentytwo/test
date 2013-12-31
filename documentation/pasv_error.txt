@@ -1,0 +1,6 @@
+Ftp.Download
+Ftp.method_38		?
+Ftp.method_39		Creates FTP connection, if passive calls method_44
+Ftp.method_44		If something then something else PASV
+Ftp.method_46		Sending PASV command
+Class88.method_0	PASV callback

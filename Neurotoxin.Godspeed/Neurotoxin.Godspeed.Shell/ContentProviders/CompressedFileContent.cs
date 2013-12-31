@@ -4,11 +4,15 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Neurotoxin.Godspeed.Core.Extensions;
+using Neurotoxin.Godspeed.Core.Models;
 using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
 using SharpCompress.Archive;
+using SharpCompress.Archive.Rar;
+using SharpCompress.Archive.SevenZip;
+using Microsoft.Practices.ObjectBuilder2;
 
 namespace Neurotoxin.Godspeed.Shell.ContentProviders
 {
@@ -16,13 +20,20 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
     {
         private string _archivePath;
         private IArchive _archive;
+        private Tree<FileSystemItem> _fileStructure;
 
         public string TempFilePath { get; set; }
 
         private const char SLASH = '/';
+        private const char BACKSLASH = '\\';
         public char Slash
         {
-            get { return SLASH; }
+            get { return _archive is RarArchive ? BACKSLASH : SLASH; }
+        }
+
+        public bool IsEditable
+        {
+            get { return !(_archive is RarArchive) && !(_archive is SevenZipArchive); }
         }
 
         public List<FileSystemItem> GetDrives()
@@ -42,10 +53,8 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public List<FileSystemItem> GetList(string path = null)
         {
-            if (path == null) throw new NotSupportedException();
-            var childrenPattern = new Regex(string.Format(@"^{0}[^/]+/?$", path));
-            var entries = _archive.Entries.Where(e => childrenPattern.IsMatch(e.FilePath));
-            return entries.Select(CreateModel).ToList();
+            if (path == null) throw new ArgumentException();
+            return _fileStructure.GetChildren(path);
         }
 
         public FileSystemItem GetFolderInfo(string path)
@@ -55,27 +64,48 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public FileSystemItem GetFolderInfo(string path, ItemType type)
         {
-            return CreateModel(_archive.Entries.First(e => e.FilePath == path));
+            if (_archive is RarArchive && path[path.Length -1] != BACKSLASH) path += BACKSLASH;
+            return _fileStructure.GetItem(path);
         }
 
         public FileSystemItem GetFileInfo(string path)
         {
-            return CreateModel(_archive.Entries.First(e => e.FilePath == path));
+            return _fileStructure.GetItem(path);
         }
 
         private FileSystemItem CreateModel(IArchiveEntry entry)
         {
-            var name = entry.FilePath.TrimEnd(SLASH);
-            var slashIndex = name.LastIndexOf(SLASH);
+            DateTime date = _archive is SevenZipArchive
+                                ? DateTime.MinValue
+                                : (entry.LastModifiedTime ??
+                                   entry.LastAccessedTime ??
+                                   entry.CreatedTime ??
+                                   entry.ArchivedTime ??
+                                   DateTime.MinValue);
+
+            return CreateModel(entry.FilePath, 
+                               entry.IsDirectory,
+                               date,
+                               entry.IsDirectory ? (long?) null : entry.Size);
+        }
+
+        private FileSystemItem CreateModel(string path, bool isDirectory, DateTime date, long? size)
+        {
+            var slash = Slash;
+            var name = path.TrimEnd(slash);
+            var slashIndex = name.LastIndexOf(slash);
             if (slashIndex > -1) name = name.Substring(slashIndex + 1);
+
+            if (isDirectory && path[path.Length - 1] != slash) path += slash;
+
             return new FileSystemItem
             {
                 Name = name,
-                Type = entry.IsDirectory ? ItemType.Directory : ItemType.File,
-                Path = entry.FilePath,
-                FullPath = string.Format(@"{0}:\{1}", _archivePath, entry.FilePath),
-                Date = entry.LastModifiedTime ?? entry.LastAccessedTime ?? entry.CreatedTime ?? entry.ArchivedTime ?? DateTime.MinValue,
-                Size = entry.IsDirectory ? (long?)null : entry.Size
+                Type = isDirectory ? ItemType.Directory : ItemType.File,
+                Path = path,
+                FullPath = string.Format(@"{0}:\{1}", _archivePath, path),
+                Date = date,
+                Size = size
             };
         }
 
@@ -92,12 +122,14 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public bool FileExists(string path)
         {
-            return _archive.Entries.Any(e => e.FilePath == path && !e.IsDirectory);
+            FileSystemItem item;
+            return _fileStructure.TryGetItem(path, out item) && item.Type == ItemType.File;
         }
 
         public bool FolderExists(string path)
         {
-            return _archive.Entries.Any(e => e.FilePath == path && e.IsDirectory);
+            FileSystemItem item;
+            return _fileStructure.TryGetItem(path, out item) && item.Type == ItemType.Directory;
         }
 
         public void DeleteFolder(string path)
@@ -137,14 +169,44 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             _archive.Entries.First(e => e.FilePath == path).WriteTo(fs);
         }
 
+        public FileSystemItem Rename(string path, string newName)
+        {
+            //TODO
+            throw new NotImplementedException();
+        }
+
         public void Open(string path)
         {
             _archivePath = path;
             _archive = ArchiveFactory.Open(path);
+            _fileStructure = new Tree<FileSystemItem>();
+            foreach (var file in _archive.Entries.Where(e => !e.IsDirectory))
+            {
+                _fileStructure.AddItem(file.FilePath, CreateModel(file));
+            }
+
+            if (_archive is SevenZipArchive)
+            {
+                foreach (var key in _fileStructure.Keys.Where(key => key != string.Empty && !_fileStructure.ItemHasContent(key)))
+                {
+                    _fileStructure.UpdateItem(key, CreateModel(key, true, DateTime.MinValue, null));
+                }
+            }
+            else
+            {
+                var isRar = _archive is RarArchive;
+                foreach (var dir in _archive.Entries.Where(e => e.IsDirectory))
+                {
+                    var dirPath = dir.FilePath;
+                    if (isRar) dirPath += BACKSLASH;
+                    _fileStructure.UpdateItem(dirPath, CreateModel(dir));
+                }
+            }
         }
 
         public void Dispose()
         {
+            _archive.Dispose();
             _archive = null;
             GC.Collect();
         }

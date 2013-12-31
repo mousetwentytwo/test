@@ -13,6 +13,7 @@ using Microsoft.Practices.Composite.UnityExtensions;
 using Neurotoxin.Godspeed.Presentation.Events;
 using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
+using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 
 namespace Neurotoxin.Godspeed.Shell
@@ -28,10 +29,9 @@ namespace Neurotoxin.Godspeed.Shell
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-
             var asm = Assembly.GetExecutingAssembly();
-            CheckNewerVersion(asm);
             SetDataDirectory(asm);
+            if (UserSettings.UseVersionChecker) CheckNewerVersion(asm);
             Dispatcher.CurrentDispatcher.UnhandledException += UnhandledThreadingException;
             ShutdownMode = ShutdownMode.OnMainWindowClose;
 
@@ -93,7 +93,7 @@ namespace Neurotoxin.Godspeed.Shell
                                  },
                              info =>
                                  {
-                                     if ((string.Compare(title, info.Item1, StringComparison.InvariantCultureIgnoreCase) != -1 && info.Item2 <= installDate)) return;
+                                     if ((string.Compare(title, info.Item1, StringComparison.InvariantCultureIgnoreCase) != -1)) return;
                                      var dialog = new NewVersionDialog(string.Format("{0} ({1:yyyy.MM.dd HH:mm})", info.Item1, info.Item2));
                                      dialog.ShowDialog();
                                  });

@@ -86,6 +86,7 @@
     <Compile Include="Extensions\ExtensionHelper.cs" />
     <Compile Include="Extensions\MemberInfoExtensions.cs" />
     <Compile Include="Extensions\MethodInfoExtensions.cs" />
+    <Compile Include="Extensions\ObservableCollectionExtensions.cs" />
     <Compile Include="Extensions\StreamExtensions.cs" />
     <Compile Include="Extensions\LongExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
@@ -147,6 +148,7 @@
     <Compile Include="Io\Stfs\Package.cs" />
     <Compile Include="Io\Stfs\Data\StfsVolumeDescriptor.cs" />
     <Compile Include="Models\OffsetTable.cs" />
+    <Compile Include="Models\Tree.cs" />
     <Compile Include="Net\Telnet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Security\RC4.cs" />

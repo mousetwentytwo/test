@@ -6,30 +6,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
     public class SettingsViewModel : ViewModelBase
     {
-        #region Appearance
-
-        private const string DISABLECUSTOMCHROME = "DisableCustomChrome";
-        private bool _disableCustomChrome;
-        public bool DisableCustomChrome
-        {
-            get { return _disableCustomChrome; }
-            set { _disableCustomChrome = value; NotifyPropertyChanged(DISABLECUSTOMCHROME); }
-        }
-
-        #endregion
-
-        #region Operation
-
-        private const string USEREMOTECOPY = "UseRemoteCopy";
-        private bool _useRemoteCopy;
-        public bool UseRemoteCopy
-        {
-            get { return _useRemoteCopy; }
-            set { _useRemoteCopy = value; NotifyPropertyChanged(USEREMOTECOPY); }
-        }
-
-        #endregion
-
         #region Content recognition
 
         public List<int> ExpirationTimeSpans { get; set; }
@@ -108,12 +84,46 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #endregion
 
+        #region Operation
+
+        private const string USEREMOTECOPY = "UseRemoteCopy";
+        private bool _useRemoteCopy;
+        public bool UseRemoteCopy
+        {
+            get { return _useRemoteCopy; }
+            set { _useRemoteCopy = value; NotifyPropertyChanged(USEREMOTECOPY); }
+        }
+
+        #endregion
+
+        #region Appearance
+
+        private const string DISABLECUSTOMCHROME = "DisableCustomChrome";
+        private bool _disableCustomChrome;
+        public bool DisableCustomChrome
+        {
+            get { return _disableCustomChrome; }
+            set { _disableCustomChrome = value; NotifyPropertyChanged(DISABLECUSTOMCHROME); }
+        }
+
+        #endregion
+
+        #region Misc
+
+        private const string USEVERSIONCHECKER = "UseVersionChecker";
+        private bool _useVersionChecker;
+        public bool UseVersionChecker
+        {
+            get { return _useVersionChecker; }
+            set { _useVersionChecker = value; NotifyPropertyChanged(USEVERSIONCHECKER); }
+        }
+
+        #endregion
+
         public SettingsViewModel()
         {
             ExpirationTimeSpans = new List<int> {0, 1, 2, 3, 4, 5, 6, 7, 14, 21, 30, 60, 90};
 
-            DisableCustomChrome = UserSettings.DisableCustomChrome;
-            UseRemoteCopy = UserSettings.UseRemoteCopy;
             UseJqe360 = UserSettings.UseJqe360;
             ProfileExpiration = UserSettings.ProfileExpiration;
             ProfileInvalidation = UserSettings.ProfileInvalidation;
@@ -123,12 +133,16 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             XboxLiveContentExpiration = UserSettings.XboxLiveContentExpiration;
             XboxLiveContentInvalidation = UserSettings.XboxLiveContentInvalidation;
             UnknownContentExpiration = UserSettings.UnknownContentExpiration;
+
+            UseRemoteCopy = UserSettings.UseRemoteCopy;
+
+            DisableCustomChrome = UserSettings.DisableCustomChrome;
+
+            UseVersionChecker = UserSettings.UseVersionChecker;
         }
 
         public void SaveChanges()
         {
-            UserSettings.DisableCustomChrome = DisableCustomChrome;
-            UserSettings.UseRemoteCopy = UseRemoteCopy;
             UserSettings.UseJqe360 = UseJqe360;
             UserSettings.ProfileExpiration = ProfileExpiration;
             UserSettings.ProfileInvalidation = ProfileInvalidation;
@@ -138,6 +152,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             UserSettings.XboxLiveContentExpiration = XboxLiveContentExpiration;
             UserSettings.XboxLiveContentInvalidation = XboxLiveContentInvalidation;
             UserSettings.UnknownContentExpiration = UnknownContentExpiration;
+
+            UserSettings.UseRemoteCopy = UseRemoteCopy;
+
+            UserSettings.DisableCustomChrome = DisableCustomChrome;
+
+            UserSettings.UseVersionChecker = UseVersionChecker;
         }
     }
 }

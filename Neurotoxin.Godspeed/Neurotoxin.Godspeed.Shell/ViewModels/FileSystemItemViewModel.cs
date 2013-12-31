@@ -31,16 +31,18 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             get { return _model.FullPath; }
         }
 
-        private const string TITLE = "Title";
+        internal const string TITLE = "Title";
         public string Title
         {
             get { return _model.Title; }
             set { _model.Title = value; NotifyPropertyChanged(TITLE); }
         }
 
+        internal const string NAME = "Name";
         public string Name
         {
             get { return _model.Name; }
+            set { _model.Name = value; NotifyPropertyChanged(NAME); }
         }
 
         public string ComputedName
@@ -163,7 +165,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             get
             {
                 var ext = System.IO.Path.GetExtension(Path).ToLower();
-                return (ext == ".zip" || ext == ".rar" || ext == ".tar.gz" || ext == ".7zip");
+                return (ext == ".zip" || ext == ".rar" || ext == ".tar" || ext == ".tar.gz" || ext == ".7z");
             }
         }
 

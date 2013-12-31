@@ -25,6 +25,7 @@ using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Microsoft.Practices.Composite;
 using Microsoft.Practices.ObjectBuilder2;
 using Neurotoxin.Godspeed.Shell.Views.Dialogs;
+using Neurotoxin.Godspeed.Core.Extensions;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
@@ -202,16 +203,15 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             {
                 if (CurrentRow.Type == ItemType.File)
                 {
-                    //if (CurrentRow.TitleType == TitleType.Profile) 
-                        OpenStfsPackageCommand.Execute();
                     if (CurrentRow.IsCompressedFile) OpenCompressedFileCommand.Execute();
+                    //Do STFS check instead
+                    if (CurrentRow.TitleType == TitleType.Profile) OpenStfsPackageCommand.Execute();
                     return;
                 }
 
                 if (CurrentRow.IsUpDirectory)
                 {
-                    var r = new Regex(@"^(.*[\\/])?.*[\\/]$");
-                    var parentPath = r.Replace(CurrentRow.Path, "$1");
+                    var parentPath = CurrentRow.Path.GetParentPath();
                     if (Drive.Path == parentPath)
                     {
                         CurrentFolder = Drive;
@@ -297,8 +297,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private bool CanExecuteOpenStfsPackageCommand()
         {
-            return CurrentRow != null;
-            //return CurrentRow != null && CurrentRow.IsProfile;
+            //TODO: Remove IsProfile once STFS detection is implemented
+            return CurrentRow != null && CurrentRow.IsProfile;
         }
 
         private void ExecuteOpenStfsPackageCommand()
@@ -532,6 +532,18 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #endregion
 
+        #region InvertSelectionCommand
+
+        public DelegateCommand<EventInformation<EventArgs>> InvertSelectionCommand { get; private set; }
+
+        private void ExecuteInvertSelectionCommand(EventInformation<EventArgs> cmdParam)
+        {
+            Items.Where(row => !row.IsUpDirectory).ForEach(item => item.IsSelected = !item.IsSelected);
+            NotifyPropertyChanged(SIZEINFO);
+        }
+
+        #endregion
+
         #region MouseSelectionCommand
 
         public DelegateCommand<EventInformation<MouseEventArgs>> MouseSelectionCommand { get; private set; }
@@ -714,36 +726,78 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #region RenameCommand
 
-        public DelegateCommand<object> RenameCommand { get; private set; }
+        public DelegateCommand<object> RenameTitleCommand { get; private set; }
 
-        private bool CanExecuteRenameCommand(object cmdParam)
+        private bool CanExecuteRenameTitleCommand(object cmdParam)
         {
             return CurrentRow != null && !CurrentRow.IsUpDirectory && CurrentRow.IsCached;
         }
 
-        private void ExecuteRenameCommand(object cmdParam)
+        private void ExecuteRenameTitleCommand(object cmdParam)
+        {
+            Rename(cmdParam, FileSystemItemViewModel.TITLE);
+        }
+
+        public DelegateCommand<object> RenameFileSystemItemCommand { get; private set; }
+
+        private bool CanExecuteRenameFileSystemItemCommand(object cmdParam)
+        {
+            return CurrentRow != null && !CurrentRow.IsUpDirectory && FileManager.IsEditable;
+        }
+
+        private void ExecuteRenameFileSystemItemCommand(object cmdParam)
+        {
+            Rename(cmdParam, FileSystemItemViewModel.NAME);
+        }
+
+        private void Rename(object cmdParam, string tag)
         {
             var grid = cmdParam as DataGrid;
             var row = grid != null ? grid.FindRowByValue(CurrentRow) : cmdParam as DataGridRow;
             if (row == null) return;
+            if (grid == null) grid = row.FindAncestor<DataGrid>();
             var cell = row.FirstCell();
+            cell.Tag = tag; //param for template selector
             grid.CellEditEnding += GridOnCellEditEnding;
             cell.IsEditing = true;
             IsInEditMode = true;
             ChangeDirectoryCommand.RaiseCanExecuteChanged();
-            CurrentRow.PropertyChanged += EndRename;
         }
 
-        private void GridOnCellEditEnding(object sender, DataGridCellEditEndingEventArgs dataGridCellEditEndingEventArgs)
+        private void GridOnCellEditEnding(object sender, DataGridCellEditEndingEventArgs args)
         {
             IsInEditMode = false;
-        }
+            if (args.EditAction == DataGridEditAction.Cancel) return;
 
-        private void EndRename(object sender, PropertyChangedEventArgs e)
-        {
+            var content = (ContentPresenter) args.EditingElement;
+            var tag = (string)content.FindAncestor<DataGridCell>().Tag;
+            var template = content.ContentTemplateSelector.SelectTemplate(null, content);
+            var textBox = (TextBox)template.FindName("TitleEditBox", content);
+            var newValue = textBox.Text;
+
+            switch (tag)
+            {
+                case FileSystemItemViewModel.TITLE:
+                    if (CurrentRow.Title != newValue)
+                    {
+                        CurrentRow.Title = newValue;
+                        _titleRecognizer.UpdateCache(CurrentRow.Model);
+                    }
+                    break;
+                case FileSystemItemViewModel.NAME:
+                    if (CurrentRow.Name != newValue)
+                    {
+                        var newModel = FileManager.Rename(CurrentRow.Model.Path, newValue);
+                        var newItem = new FileSystemItemViewModel(newModel);
+                        Items.Replace(CurrentRow, newItem);
+                        CurrentRow = newItem;
+                    }
+                    break;
+                default:
+                    throw new NotSupportedException("Something went wrong, property change not supported: " + tag);
+            }
+            SortContent();
             ChangeDirectoryCommand.RaiseCanExecuteChanged();
-            _titleRecognizer.UpdateCache(CurrentRow.Model);
-            CurrentRow.PropertyChanged -= EndRename;
         }
 
         #endregion
@@ -795,6 +849,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             SortingCommand = new DelegateCommand<EventInformation<DataGridSortingEventArgs>>(ExecuteSortingCommand);
             ToggleSelectionCommand = new DelegateCommand<ToggleSelectionMode>(ExecuteToggleSelectionCommand);
             SelectAllCommand = new DelegateCommand<EventInformation<EventArgs>>(ExecuteSelectAllCommand);
+            InvertSelectionCommand = new DelegateCommand<EventInformation<EventArgs>>(ExecuteInvertSelectionCommand);
             MouseSelectionCommand = new DelegateCommand<EventInformation<MouseEventArgs>>(ExecuteMouseSelectionCommand);
             GoToFirstCommand = new DelegateCommand<bool>(ExecuteGoToFirstCommand, CanExecuteGoToFirstCommand);
             GoToLastCommand = new DelegateCommand<bool>(ExecuteGoToLastCommand, CanExecuteGoToLastCommand);
@@ -802,7 +857,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             RecognizeFromProfileCommand = new DelegateCommand(ExecuteRecognizeFromProfileCommand, CanExecuteRecognizeFromProfileCommand);
             CopyTitleIdToClipboardCommand = new DelegateCommand(ExecuteCopyTitleIdToClipboardCommand, CanExecuteCopyTitleIdToClipboardCommand);
             SearchGoogleCommand = new DelegateCommand(ExecuteSearchGoogleCommand, CanExecuteSearchGoogleCommand);
-            RenameCommand = new DelegateCommand<object>(ExecuteRenameCommand, CanExecuteRenameCommand);
+            RenameTitleCommand = new DelegateCommand<object>(ExecuteRenameTitleCommand, CanExecuteRenameTitleCommand);
+            RenameFileSystemItemCommand = new DelegateCommand<object>(ExecuteRenameFileSystemItemCommand, CanExecuteRenameFileSystemItemCommand);
             RefreshCommand = new DelegateCommand(ExecuteRefreshCommand, CanExecuteRefreshCommand);
 
             Items = new ObservableCollection<FileSystemItemViewModel>();
@@ -829,7 +885,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             base.SetActive();
             if (CurrentRow != null)
             {
-                CurrentRow = Items.FirstOrDefault(item => item.Path == CurrentRow.Path);
+                var x = Items.FirstOrDefault(item => item.Path == CurrentRow.Path);
+                CurrentRow = x;
                 return;
             }
             CurrentRow = Items.FirstOrDefault();
@@ -876,7 +933,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 var path = PathCache[Drive];
                 var clearPath = new Regex(@"^(.*)[\\/].*(:[\\/]).*$");
                 path = clearPath.Replace(path, "$1");
-                CurrentFolder = new FileSystemItemViewModel(FileManager.GetFolderInfo(path, path == Drive.Path ? ItemType.Drive : ItemType.Directory));
+                var model = FileManager.GetFolderInfo(path, path == Drive.Path ? ItemType.Drive : ItemType.Directory);
+                CurrentFolder = model != null ? new FileSystemItemViewModel(model) : Drive;
             }
             else
             {
@@ -895,7 +953,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             RecognizeFromProfileCommand.RaiseCanExecuteChanged();
             CopyTitleIdToClipboardCommand.RaiseCanExecuteChanged();
             SearchGoogleCommand.RaiseCanExecuteChanged();
-            RenameCommand.RaiseCanExecuteChanged();
+            RenameTitleCommand.RaiseCanExecuteChanged();
+            RenameFileSystemItemCommand.RaiseCanExecuteChanged();
             Parent.RaiseCanExecuteChanges();
         }
 

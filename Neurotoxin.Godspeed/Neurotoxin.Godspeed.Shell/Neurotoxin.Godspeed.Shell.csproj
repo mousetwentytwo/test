@@ -218,6 +218,7 @@
       <DependentUpon>FileManagerWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TemplateSelectors\CloseButtonsTemplateSelector.cs" />
+    <Compile Include="Views\TemplateSelectors\CellEditingTemplateSelector.cs" />
     <Compile Include="Views\TemplateSelectors\PaneTemplateSelector.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>

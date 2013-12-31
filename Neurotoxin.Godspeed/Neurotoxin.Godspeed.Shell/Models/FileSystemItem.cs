@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using Neurotoxin.Godspeed.Core.Constants;
 using Neurotoxin.Godspeed.Shell.Constants;
 

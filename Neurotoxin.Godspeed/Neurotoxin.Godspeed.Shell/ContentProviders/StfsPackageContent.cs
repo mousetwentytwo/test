@@ -21,6 +21,10 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         {
             get { return SLASH; }
         }
+        public bool IsEditable
+        {
+            get { return true; }
+        }
 
         private StfsPackage _stfs;
 
@@ -149,6 +153,12 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             var content = File.ReadAllBytes(sourcePath);
             var fileEntry = _stfs.GetFileEntry(targetPath);
             _stfs.ReplaceFile(fileEntry, content);
+        }
+
+        public FileSystemItem Rename(string path, string newName)
+        {
+            //TODO
+            throw new NotImplementedException();
         }
 
         public Account GetAccount()

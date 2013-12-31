@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Mime;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows;
 using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Shell.Constants;
@@ -23,6 +24,10 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         }
 
         public string TempFilePath { get; set; }
+        public bool IsEditable
+        {
+            get { return true; }
+        }
 
         [DllImport("mpr.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         private static extern int WNetGetConnection(
@@ -82,27 +87,31 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         public FileSystemItem GetFolderInfo(string path, ItemType type)
         {
             var p = path.EndsWith("\\") ? path : path + "\\";
-            return new FileSystemItem
-            {
-                Name = Path.GetFileName(path),
-                Type = type,
-                Date = Directory.GetLastWriteTime(path),
-                Path = p,
-                FullPath = p
-            };
+            return Directory.Exists(p)
+                       ? new FileSystemItem
+                           {
+                               Name = Path.GetFileName(path),
+                               Type = type,
+                               Date = Directory.GetLastWriteTime(path),
+                               Path = p,
+                               FullPath = p
+                           }
+                       : null;
         }
 
         public FileSystemItem GetFileInfo(string path)
         {
-            return new FileSystemItem
-            {
-                Name = Path.GetFileName(path),
-                Type = ItemType.File,
-                Date = File.GetLastWriteTime(path),
-                Path = path,
-                FullPath = path,
-                Size = new FileInfo(path).Length,
-            };
+            return File.Exists(path)
+                       ? new FileSystemItem
+                           {
+                               Name = Path.GetFileName(path),
+                               Type = ItemType.File,
+                               Date = File.GetLastWriteTime(path),
+                               Path = path,
+                               FullPath = path,
+                               Size = new FileInfo(path).Length,
+                           }
+                       : null;
         }
 
         public DateTime GetFileModificationTime(string path)
@@ -196,6 +205,29 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             catch (Exception ex)
             {
                 throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
+            }
+        }
+
+        public FileSystemItem Rename(string path, string newName)
+        {
+            
+            if (FolderExists(path))
+            {
+                var r1 = new Regex("\\(.*)\\");
+                var oldName = r1.Match(path).Value;
+                var r2 = new Regex(string.Format("{0}\\$", Regex.Escape(oldName)), RegexOptions.IgnoreCase);
+                var newPath = r2.Replace(path, newName); 
+                Directory.Move(path, newPath + Slash);
+                return GetFolderInfo(newPath);
+            }
+            else
+            {
+                var oldName = Path.GetFileName(path);
+                var r = new Regex(string.Format("{0}$", Regex.Escape(oldName)), RegexOptions.IgnoreCase);
+                var newPath = r.Replace(path, newName);
+
+                File.Move(path, newPath);
+                return GetFileInfo(newPath);
             }
         }
     }

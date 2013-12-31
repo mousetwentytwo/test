@@ -112,6 +112,16 @@
                                 IsChecked="{Binding DisableCustomChrome}"/>
                 </Grid>
             </TabItem>
+            <TabItem Header="Misc">
+                <Grid Margin="5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <CheckBox Grid.Row="0" Grid.ColumnSpan="2" Content="Check for newer version on startup" 
+                              Padding="5,0,0,0" IsChecked="{Binding UseVersionChecker}"/>
+                </Grid>
+            </TabItem>
         </TabControl>
 
         <TextBlock Text="* needs restart to apply changes" Grid.Row="1" Margin="5,0,0,10"/>

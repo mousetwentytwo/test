@@ -24,7 +24,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void ExecuteCloseCommand()
         {
             eventAggregator.GetEvent<CloseNestedPaneEvent>().Publish(new CloseNestedPaneEventArgs(this, null));
-            Dispose();
         }
 
         #endregion

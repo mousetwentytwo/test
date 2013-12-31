@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Neurotoxin.Godspeed.Core.Extensions
 {
@@ -12,6 +10,13 @@ namespace Neurotoxin.Godspeed.Core.Extensions
         {
             var shA1Managed = new SHA1Managed();
             return shA1Managed.ComputeHash(Encoding.UTF8.GetBytes(s)).ToHex();
+        }
+
+        public static string GetParentPath(this string path)
+        {
+            path = "/" + path.TrimEnd('/', '\\');
+            var r = new Regex(@"^(.*[\\/]).*$");
+            return r.Replace(path, "$1").Substring(1);
         }
     }
 }

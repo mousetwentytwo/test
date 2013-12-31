@@ -10,6 +10,7 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
     {
         string TempFilePath { get; }
         char Slash { get; }
+        bool IsEditable { get; }
 
         List<FileSystemItem> GetList(string path = null);
 
@@ -29,5 +30,7 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
 
         byte[] ReadFileContent(string path, bool saveToTempFile, long fileSize);
         byte[] ReadFileHeader(string path);
+
+        FileSystemItem Rename(string path, string newName);
     }
 }

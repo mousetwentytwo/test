@@ -14,7 +14,7 @@
                 <ResourceDictionary Source="/Themes/WhistlerBlue.xaml"/>                
                 <ResourceDictionary>
                     <inf:BindingProxy x:Key="ViewModel" Data="{Binding}"/>
-                    <ts:CloseButtonsTemplateSelector x:Key="TemplateSelector">
+                    <ts:CloseButtonsTemplateSelector x:Key="CloseButtonsTemplateSelector">
                         <ts:CloseButtonsTemplateSelector.DefaultTemplate>
                             <DataTemplate>
                                 <StackPanel/>
@@ -36,6 +36,38 @@
                             </DataTemplate>
                         </ts:CloseButtonsTemplateSelector.PackageTemplate>
                     </ts:CloseButtonsTemplateSelector>
+                    <ts:CellEditingTemplateSelector x:Key="CellEditingTemplateSelector">
+                        <ts:CellEditingTemplateSelector.TitleTemplate>
+                            <DataTemplate>
+                                <Grid Background="Transparent">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Image Grid.Column="0" Source="{Binding Thumbnail}" Width="16" Height="16" Margin="2,0,3,0"/>
+                                    <Grid Grid.Column="1" x:Name="TitleEditCanvas">
+                                        <TextBox x:Name="TitleEditBox" Margin="0,-2" Height="20"
+                                             Text="{Binding Title, UpdateSourceTrigger=LostFocus}" FontWeight="Bold" Loaded="TitleEditBoxLoaded"/>
+                                    </Grid>
+                                </Grid>
+                            </DataTemplate>
+                        </ts:CellEditingTemplateSelector.TitleTemplate>
+                        <ts:CellEditingTemplateSelector.NameTemplate>
+                            <DataTemplate>
+                                <Grid Background="Transparent">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Image Grid.Column="0" Source="{Binding Thumbnail}" Width="16" Height="16" Margin="2,0,3,0"/>
+                                    <Grid Grid.Column="1" x:Name="TitleEditCanvas">
+                                        <TextBox x:Name="TitleEditBox" Margin="0,-2" Height="20"
+                                             Text="{Binding Name, UpdateSourceTrigger=LostFocus}" FontWeight="Bold" Loaded="TitleEditBoxLoaded"/>
+                                    </Grid>
+                                </Grid>
+                            </DataTemplate>
+                        </ts:CellEditingTemplateSelector.NameTemplate>
+                    </ts:CellEditingTemplateSelector>
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
@@ -80,7 +112,7 @@
                        Visibility="{Binding FreeSpace, Converter={StaticResource NotNullOrEmptyConverter}, FallbackValue=Collapsed}"/>
             
             <ContentControl Grid.Column="2" HorizontalAlignment="Right" Content="{Binding}"
-                            ContentTemplateSelector="{StaticResource TemplateSelector}"/>
+                            ContentTemplateSelector="{StaticResource CloseButtonsTemplateSelector}"/>
         </Grid>
 
         <Border Grid.Row="1" Background="{Binding Path=IsActive, Converter={StaticResource PaneHeaderBackgroundConverter}}"
@@ -93,6 +125,9 @@
                   ItemsSource="{Binding Items}" 
                   SelectedItem="{Binding CurrentRow}"
                   AutoGenerateColumns="False" 
+                  IsTextSearchEnabled="True"
+                  IsTextSearchCaseSensitive="False"
+                  TextSearch.TextPath="ComputedName"
                   Background="White"
                   SelectionMode="Single" 
                   GridLinesVisibility="None"
@@ -115,7 +150,8 @@
                 </Style>
             </DataGrid.Resources>
             <DataGrid.Columns>
-                <DataGridTemplateColumn Header="Name" SortMemberPath="ComputedName" Width="*" IsReadOnly="True">
+                <DataGridTemplateColumn Header="Name" SortMemberPath="ComputedName" Width="*" IsReadOnly="True"
+                                        CellEditingTemplateSelector="{StaticResource CellEditingTemplateSelector}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Grid Background="Transparent">
@@ -142,21 +178,6 @@
                             </Grid>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
-                    <DataGridTemplateColumn.CellEditingTemplate>
-                        <DataTemplate>
-                            <Grid Background="Transparent">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <Image Grid.Column="0" Source="{Binding Thumbnail}" Width="16" Height="16" Margin="2,0,3,0"/>
-                                <Grid Grid.Column="1" x:Name="TitleEditCanvas">
-                                    <TextBox x:Name="TitleEditBox" Margin="0,-2" Height="20"
-                                             Text="{Binding Title, UpdateSourceTrigger=LostFocus}" FontWeight="Bold" Loaded="TitleEditBoxLoaded"/>
-                                </Grid>
-                            </Grid>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellEditingTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTextColumn Header="Size" SortMemberPath="ComputedSize" Width="80" IsReadOnly="True">
                     <DataGridTextColumn.Binding>
@@ -230,8 +251,14 @@
                                     </MenuItem.Icon>
                                 </MenuItem>
                                 <Separator/>
-                                <MenuItem Header="Rename"
-                                          Command="{Binding Source={StaticResource ViewModel}, Path=Data.RenameCommand}" CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}">
+                                <MenuItem Header="Rename Title"
+                                          Command="{Binding Source={StaticResource ViewModel}, Path=Data.RenameTitleCommand}" CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}">
+                                    <MenuItem.Icon>
+                                        <controls:GreyableImage Source="/Resources/rename.png" Width="16" Height="16" SnapsToDevicePixels="True"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="{Binding Path=Type}" HeaderStringFormat="Rename {0}"
+                                          Command="{Binding Source={StaticResource ViewModel}, Path=Data.RenameFileSystemItemCommand}" CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}">
                                     <MenuItem.Icon>
                                         <controls:GreyableImage Source="/Resources/rename.png" Width="16" Height="16" SnapsToDevicePixels="True"/>
                                     </MenuItem.Icon>
@@ -307,6 +334,7 @@
                 </e:EventTrigger>
                 <e:EventTrigger EventName="PreviewKeyDown">
                     <inf:MapKeyboardEventToCommand Command="{Binding ChangeDirectoryCommand}"/>
+                    <inf:MapKeyboardEventToCommand Command="{Binding QuickSearchCommand}"/>
                 </e:EventTrigger>
                 <e:EventTrigger EventName="Sorting">
                     <inf:MapDataGridSortingEventToCommand Command="{Binding SortingCommand}"/>
@@ -323,8 +351,10 @@
                 <KeyBinding Command="{Binding GoToFirstCommand}" CommandParameter="{StaticResource True}" Key="Home" Modifiers="Shift"/>
                 <KeyBinding Command="{Binding GoToLastCommand}" CommandParameter="{StaticResource False}" Key="End"/>
                 <KeyBinding Command="{Binding GoToLastCommand}" CommandParameter="{StaticResource True}" Key="End" Modifiers="Shift"/>
-                <KeyBinding Command="{Binding RenameCommand}" CommandParameter="{Binding ElementName=Grid}" Key="F6" Modifiers="Shift"/>
+                <KeyBinding Command="{Binding RenameTitleCommand}" CommandParameter="{Binding ElementName=Grid}" Key="F6" Modifiers="Shift"/>
+                <KeyBinding Command="{Binding RenameFileSystemItemCommand}" CommandParameter="{Binding ElementName=Grid}" Key="F6" Modifiers="Ctrl+Shift"/>
                 <KeyBinding Command="{Binding RefreshCommand}" Key="R" Modifiers="Control"/>
+                <KeyBinding Command="{Binding InvertSelectionCommand}" Key="Multiply"/>
             </DataGrid.InputBindings>
         </DataGrid>
 

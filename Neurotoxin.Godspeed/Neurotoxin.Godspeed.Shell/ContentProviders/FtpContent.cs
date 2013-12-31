@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Timers;
 using Limilabs.FTP.Client;
 using Microsoft.Practices.Composite.Events;
@@ -35,6 +36,10 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         private bool _isIdle = true;
 
         public string TempFilePath { get; set; }
+        public bool IsEditable
+        {
+            get { return true; }
+        }
         
         private readonly Timer _keepAliveTimer = new Timer(30000);
         public bool IsKeepAliveEnabled
@@ -475,6 +480,15 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 if (FtpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
                 throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
             }
+        }
+
+        public FileSystemItem Rename(string path, string newName)
+        {
+            var oldName = LocateDirectory(path);
+            FtpClient.Rename(oldName, newName);
+            var r = new Regex(string.Format("{0}$", Regex.Escape(oldName)), RegexOptions.IgnoreCase);
+            path = r.Replace(path, newName);
+            return GetFileInfo(path);
         }
 
         public void RestoreConnection()
