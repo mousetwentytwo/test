@@ -52,8 +52,10 @@ namespace Neurotoxin.Godspeed.Shell.Views
         private void LayoutRootOnPreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key != Key.Delete) return;
+            var deleteCommand = ViewModel.DeleteCommand;
+            if (!deleteCommand.CanExecute()) return;
             e.Handled = true;
-            ViewModel.DeleteCommand.Execute();
+            deleteCommand.Execute();
         }
 
         private void ExecutedOpenDriveDropdownCommand(object sender, ExecutedRoutedEventArgs e)

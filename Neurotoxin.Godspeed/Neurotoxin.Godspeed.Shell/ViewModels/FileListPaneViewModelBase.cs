@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Microsoft.Practices.Unity;
+using Microsoft.Win32;
 using Neurotoxin.Godspeed.Core.Constants;
 using Neurotoxin.Godspeed.Core.Io.Stfs;
 using Neurotoxin.Godspeed.Core.Models;
@@ -32,7 +33,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
     public abstract class FileListPaneViewModelBase<T> : PaneViewModelBase, IFileListPaneViewModel where T : IFileManager
     {
         private Queue<FileSystemItem> _queue;
-        private readonly TitleRecognizer _titleRecognizer;
+        protected readonly TitleRecognizer TitleRecognizer;
         protected readonly T FileManager;
         protected readonly Dictionary<FileSystemItemViewModel, string> PathCache = new Dictionary<FileSystemItemViewModel, string>();
 
@@ -255,7 +256,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             _queue = new Queue<FileSystemItem>();
             var sw = new Stopwatch();
             sw.Start();
-            foreach (var item in result.Where(item => !_titleRecognizer.MergeWithCachedEntry(item)))
+            foreach (var item in result.Where(item => !TitleRecognizer.MergeWithCachedEntry(item)))
             {
                 if (CurrentFolder.ContentType == ContentType.Unknown && !TitleRecognizer.IsXboxFolder(item)) continue;
                 _queue.Enqueue(item);
@@ -308,17 +309,18 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             WorkerThread.Run(() => OpenStfsPackage(CurrentRow.Model), OpenStfsPackageCallback, AsyncErrorCallback);
         }
 
-        private byte[] OpenStfsPackage(FileSystemItem item)
+        private BinaryContent OpenStfsPackage(FileSystemItem item)
         {
-            if (item.Type == ItemType.Directory) item = _titleRecognizer.GetProfileItem(item);
-            var path = _titleRecognizer.GetTempFilePath(item) ?? item.Path;
-            return File.ReadAllBytes(path);
+            var contentType = item.ContentType;
+            if (item.Type == ItemType.Directory) item = TitleRecognizer.GetProfileItem(item);
+            var tempFilePath = TitleRecognizer.GetTempFilePath(item) ?? item.Path;
+            return new BinaryContent(item.Path, tempFilePath, File.ReadAllBytes(tempFilePath), contentType);
         }
 
-        private void OpenStfsPackageCallback(byte[] content)
+        private void OpenStfsPackageCallback(BinaryContent content)
         {
             var stfs = container.Resolve<StfsPackageContentViewModel>();
-            stfs.LoadDataAsync(LoadCommand.Load, new Tuple<byte[], FileListPaneSettings>(content, new FileListPaneSettings("/", Settings.SortByField, Settings.SortDirection)), OpenStfsPackageSuccess, OpenStfsPackageError);
+            stfs.LoadDataAsync(LoadCommand.Load, new Tuple<BinaryContent, FileListPaneSettings>(content, new FileListPaneSettings("/", Settings.SortByField, Settings.SortDirection)), OpenStfsPackageSuccess, OpenStfsPackageError);
         }
 
         private void OpenStfsPackageSuccess(PaneViewModelBase pane)
@@ -631,7 +633,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void ExecuteRefreshTitleCommand()
         {
             var selection = SelectedItems.Any() ? SelectedItems.Select(i => i.Model) : new[] {CurrentRow.Model};
-            selection.ForEach(_titleRecognizer.ThrowCache);
+            selection.ForEach(TitleRecognizer.ThrowCache);
             _queue = new Queue<FileSystemItem>(selection);
             IsBusy = true;
             RecognitionStart();
@@ -657,7 +659,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private int RecognizeFromProfile()
         {
-            var tmp = _titleRecognizer.GetTempFilePath(CurrentRow.Model);
+            var tmp = TitleRecognizer.GetTempFilePath(CurrentRow.Model);
             if (tmp == null) return -1;
 
             var i = 0;
@@ -667,7 +669,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                                                       {
                                                           var game = stfs.Games.Values.FirstOrDefault(gg => gg.TitleId == g.TitleCode);
                                                           if (game == null) return;
-                                                          var cacheEntry = _titleRecognizer.GetCacheEntry(g.TitleCode);
+                                                          var cacheEntry = TitleRecognizer.GetCacheEntry(g.TitleCode);
                                                           if (cacheEntry != null && cacheEntry.Expiration == null) return;
                                                           var item = new FileSystemItem
                                                                          {
@@ -677,7 +679,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                                                                              TitleType = TitleType.Game,
                                                                              Thumbnail = game.Thumbnail
                                                                          };
-                                                          _titleRecognizer.UpdateCache(item);
+                                                          TitleRecognizer.UpdateCache(item);
                                                           i++;
                                                       });
             return i;
@@ -724,6 +726,35 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #endregion
 
+        #region SearchGoogleCommand
+
+        public DelegateCommand SaveThumbnailCommand { get; private set; }
+
+        private bool CanExecuteSaveThumbnailCommand()
+        {
+            return CurrentRow != null && CurrentRow.HasThumbnail;
+        }
+
+        private void ExecuteSaveThumbnailCommand()
+        {
+            var dialog = new SaveFileDialog
+                {
+                    Filter = "PNG (*.PNG)|*.png", 
+                    FileName = CurrentRow.Name
+                };
+            if (dialog.ShowDialog() == true)
+            {
+                using (var stream = dialog.OpenFile())
+                {
+                    var bytes = CurrentRow.Model.Thumbnail;
+                    stream.Write(bytes, 0, bytes.Length);
+                    stream.Flush();
+                }
+            }
+        }
+
+        #endregion
+
         #region RenameCommand
 
         public DelegateCommand<object> RenameTitleCommand { get; private set; }
@@ -742,7 +773,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private bool CanExecuteRenameFileSystemItemCommand(object cmdParam)
         {
-            return CurrentRow != null && !CurrentRow.IsUpDirectory && FileManager.IsEditable;
+            return CurrentRow != null && !CurrentRow.IsUpDirectory && !IsReadOnly;
         }
 
         private void ExecuteRenameFileSystemItemCommand(object cmdParam)
@@ -781,7 +812,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     if (CurrentRow.Title != newValue)
                     {
                         CurrentRow.Title = newValue;
-                        _titleRecognizer.UpdateCache(CurrentRow.Model);
+                        TitleRecognizer.UpdateCache(CurrentRow.Model);
                     }
                     break;
                 case FileSystemItemViewModel.NAME:
@@ -840,7 +871,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         protected FileListPaneViewModelBase(FileManagerViewModel parent) : base(parent)
         {
             FileManager = container.Resolve<T>();
-            _titleRecognizer = new TitleRecognizer(FileManager, container.Resolve<CacheManager>());
+            TitleRecognizer = new TitleRecognizer(FileManager, container.Resolve<CacheManager>());
 
             ChangeDirectoryCommand = new DelegateCommand<object>(ExecuteChangeDirectoryCommand, CanExecuteChangeDirectoryCommand);
             OpenStfsPackageCommand = new DelegateCommand(ExecuteOpenStfsPackageCommand, CanExecuteOpenStfsPackageCommand);
@@ -857,6 +888,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             RecognizeFromProfileCommand = new DelegateCommand(ExecuteRecognizeFromProfileCommand, CanExecuteRecognizeFromProfileCommand);
             CopyTitleIdToClipboardCommand = new DelegateCommand(ExecuteCopyTitleIdToClipboardCommand, CanExecuteCopyTitleIdToClipboardCommand);
             SearchGoogleCommand = new DelegateCommand(ExecuteSearchGoogleCommand, CanExecuteSearchGoogleCommand);
+            SaveThumbnailCommand = new DelegateCommand(ExecuteSaveThumbnailCommand, CanExecuteSaveThumbnailCommand);
             RenameTitleCommand = new DelegateCommand<object>(ExecuteRenameTitleCommand, CanExecuteRenameTitleCommand);
             RenameFileSystemItemCommand = new DelegateCommand<object>(ExecuteRenameFileSystemItemCommand, CanExecuteRenameFileSystemItemCommand);
             RefreshCommand = new DelegateCommand(ExecuteRefreshCommand, CanExecuteRefreshCommand);
@@ -953,6 +985,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             RecognizeFromProfileCommand.RaiseCanExecuteChanged();
             CopyTitleIdToClipboardCommand.RaiseCanExecuteChanged();
             SearchGoogleCommand.RaiseCanExecuteChanged();
+            SaveThumbnailCommand.RaiseCanExecuteChanged();
             RenameTitleCommand.RaiseCanExecuteChanged();
             RenameFileSystemItemCommand.RaiseCanExecuteChanged();
             Parent.RaiseCanExecuteChanges();
@@ -992,7 +1025,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             WorkerThread.Run(() =>
             {
-                _titleRecognizer.RecognizeTitle(item);
+                TitleRecognizer.RecognizeTitle(item);
                 return item;
             }, callback);
         }

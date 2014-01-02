@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
+using Neurotoxin.Godspeed.Core.Constants;
 using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Core.Io.Stfs;
 using Neurotoxin.Godspeed.Core.Io.Stfs.Data;
@@ -21,11 +23,8 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         {
             get { return SLASH; }
         }
-        public bool IsEditable
-        {
-            get { return true; }
-        }
 
+        private ContentType _contentType;
         private StfsPackage _stfs;
 
         public List<FileSystemItem> GetDrives()
@@ -39,7 +38,8 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                                    Path = path,
                                    FullPath = string.Format(@"{0}:\{1}", _stfs.DisplayName, path),
                                    Type = ItemType.Drive,
-                                   Thumbnail = _stfs.ThumbnailImage
+                                   Thumbnail = _stfs.ThumbnailImage,
+                                   ContentType = _contentType
                                }
                        };
         }
@@ -157,8 +157,11 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public FileSystemItem Rename(string path, string newName)
         {
-            //TODO
-            throw new NotImplementedException();
+            var entry = _stfs.Rename(path, newName);
+            var oldName = Path.GetFileName(path.TrimEnd('\\'));
+            var r = new Regex(string.Format(@"{0}\\?$", Regex.Escape(oldName)), RegexOptions.IgnoreCase);
+            var newPath = r.Replace(path, newName);
+            return CreateModel(entry, newPath);
         }
 
         public Account GetAccount()
@@ -167,9 +170,10 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             return _stfs.Account;
         }
 
-        public void LoadPackage(byte[] bytes)
+        public void LoadPackage(BinaryContent content)
         {
-            _stfs = ModelFactory.GetModel<StfsPackage>(bytes);
+            _contentType = content.ContentType;
+            _stfs = ModelFactory.GetModel<StfsPackage>(content.Content);
         }
 
         public byte[] Save()

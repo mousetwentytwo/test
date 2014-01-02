@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Neurotoxin.Godspeed.Core.Models;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
@@ -52,12 +53,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     Drive = drive ?? Drives.First();
                     break;
                 case LoadCommand.Restore:
-                    var payload = cmdParam as byte[];
+                    var payload = cmdParam as BinaryContent;
                     if (payload == null) return;
                     WorkerThread.Run(
                         () =>
                         {
-                            File.WriteAllBytes(CurrentRow.Path, payload);
+                            File.WriteAllBytes(payload.FilePath, payload.Content);
                             return true;
                         },
                         result =>

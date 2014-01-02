@@ -8,7 +8,12 @@ namespace Neurotoxin.Godspeed.Shell.Models
     [Serializable]
     public class FileSystemItem
     {
-        public string Title { get; set; }
+        public string Title
+        {
+            get { return _title; }
+            set { _title = value; }
+        }
+
         public byte[] Thumbnail { get; set; }
         public ItemType Type { get; set; }
         public TitleType TitleType { get; set; }
@@ -21,6 +26,7 @@ namespace Neurotoxin.Godspeed.Shell.Models
         public DateTime Date;
 
         public bool IsCached;
+        private string _title;
 
         public FileSystemItem Clone()
         {

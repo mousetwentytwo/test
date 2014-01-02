@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using Neurotoxin.Godspeed.Core.Models;
 using Neurotoxin.Godspeed.Core.Net;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
@@ -76,14 +77,14 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                             });
                     break;
                 case LoadCommand.Restore:
-                    var payload = cmdParam as byte[];
+                    var payload = cmdParam as BinaryContent;
                     if (payload == null) return;
                     WorkerThread.Run(
                         () =>
                             {
-                                File.WriteAllBytes(CurrentRow.TempFilePath, payload);
+                                File.WriteAllBytes(payload.TempFilePath, payload.Content);
                                 FileManager.RestoreConnection();
-                                FileManager.UploadFile(CurrentRow.Path, CurrentRow.TempFilePath);
+                                FileManager.UploadFile(payload.FilePath, payload.TempFilePath);
                                 return true;
                             },
                         result =>

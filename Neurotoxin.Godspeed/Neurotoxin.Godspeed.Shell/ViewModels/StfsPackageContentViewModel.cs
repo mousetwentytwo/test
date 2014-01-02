@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using Neurotoxin.Godspeed.Core.Models;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
@@ -13,6 +14,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
     public class StfsPackageContentViewModel : FileListPaneViewModelBase<StfsPackageContent>
     {
+        private BinaryContent _packageContent;
 
         public override bool IsReadOnly
         {
@@ -25,7 +27,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void ExecuteSaveAndCloseCommand()
         {
-            eventAggregator.GetEvent<CloseNestedPaneEvent>().Publish(new CloseNestedPaneEventArgs(this, FileManager.Save()));
+            _packageContent.Content = FileManager.Save();
+            eventAggregator.GetEvent<CloseNestedPaneEvent>().Publish(new CloseNestedPaneEventArgs(this, _packageContent));
             Dispose();
         }
 
@@ -58,9 +61,10 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     WorkerThread.Run(
                         () =>
                             {
-                                var p = (Tuple<byte[], FileListPaneSettings>) cmdParam;
+                                var p = (Tuple<BinaryContent, FileListPaneSettings>) cmdParam;
+                                _packageContent = p.Item1;
                                 Settings = p.Item2;
-                                FileManager.LoadPackage(p.Item1);
+                                FileManager.LoadPackage(_packageContent);
                                 return true;
                             },
                         result =>

@@ -250,6 +250,13 @@
                                         <controls:GreyableImage Source="/Resources/search.png" Width="16" Height="16" SnapsToDevicePixels="True"/>
                                     </MenuItem.Icon>
                                 </MenuItem>
+                                <MenuItem Header="Save Thumbnail as..." 
+                                          Visibility="{Binding Source={StaticResource ViewModel}, Path=Data.CurrentRow.HasThumbnail, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}"
+                                          Command="{Binding Source={StaticResource ViewModel}, Path=Data.SaveThumbnailCommand}">
+                                    <MenuItem.Icon>
+                                        <controls:GreyableImage Source="/Resources/savethumbnail.png" Width="16" Height="16" SnapsToDevicePixels="True"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
                                 <Separator/>
                                 <MenuItem Header="Rename Title"
                                           Command="{Binding Source={StaticResource ViewModel}, Path=Data.RenameTitleCommand}" CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}">

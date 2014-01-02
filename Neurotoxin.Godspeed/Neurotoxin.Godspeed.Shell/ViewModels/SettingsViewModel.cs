@@ -1,11 +1,14 @@
 ﻿using System.Collections.Generic;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
+using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
     public class SettingsViewModel : ViewModelBase
     {
+        private readonly CacheManager _cacheManager;
+
         #region Content recognition
 
         public List<int> ExpirationTimeSpans { get; set; }
@@ -120,9 +123,25 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #endregion
 
-        public SettingsViewModel()
+        #region ClearCacheCommand
+
+        public DelegateCommand ClearCacheCommand { get; private set; }
+
+        private void ExecuteClearCacheCommand()
         {
-            ExpirationTimeSpans = new List<int> {0, 1, 2, 3, 4, 5, 6, 7, 14, 21, 30, 60, 90};
+            var notificationMessage = new NotificationMessage("Application is busy", "Please wait...", false);
+            WorkerThread.Run(() => { _cacheManager.ClearCache(); return true; }, r => notificationMessage.Close());
+            notificationMessage.ShowDialog();
+        }
+
+        #endregion
+
+        public SettingsViewModel(CacheManager cacheManager)
+        {
+            _cacheManager = cacheManager;
+            ClearCacheCommand = new DelegateCommand(ExecuteClearCacheCommand);
+
+            ExpirationTimeSpans = new List<int> { 0, 1, 2, 3, 4, 5, 6, 7, 14, 21, 30, 60, 90 };
 
             UseJqe360 = UserSettings.UseJqe360;
             ProfileExpiration = UserSettings.ProfileExpiration;
@@ -133,11 +152,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             XboxLiveContentExpiration = UserSettings.XboxLiveContentExpiration;
             XboxLiveContentInvalidation = UserSettings.XboxLiveContentInvalidation;
             UnknownContentExpiration = UserSettings.UnknownContentExpiration;
-
             UseRemoteCopy = UserSettings.UseRemoteCopy;
-
             DisableCustomChrome = UserSettings.DisableCustomChrome;
-
             UseVersionChecker = UserSettings.UseVersionChecker;
         }
 
@@ -152,11 +168,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             UserSettings.XboxLiveContentExpiration = XboxLiveContentExpiration;
             UserSettings.XboxLiveContentInvalidation = XboxLiveContentInvalidation;
             UserSettings.UnknownContentExpiration = UnknownContentExpiration;
-
             UserSettings.UseRemoteCopy = UseRemoteCopy;
-
             UserSettings.DisableCustomChrome = DisableCustomChrome;
-
             UserSettings.UseVersionChecker = UseVersionChecker;
         }
     }

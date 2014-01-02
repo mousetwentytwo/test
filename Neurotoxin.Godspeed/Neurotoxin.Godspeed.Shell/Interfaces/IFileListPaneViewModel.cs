@@ -16,6 +16,7 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
         bool IsResumeSupported { get; }
         bool HasValidSelection { get; }
         bool IsReadOnly { get; }
+        bool IsInEditMode { get; }
 
         Queue<QueueItem> PopulateQueue(TransferType type);
         bool CreateFolder(string path);

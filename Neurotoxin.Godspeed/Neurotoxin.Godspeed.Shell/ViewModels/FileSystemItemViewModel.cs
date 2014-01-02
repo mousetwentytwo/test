@@ -79,6 +79,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
         }
 
+        public bool HasThumbnail
+        {
+            get { return _model.Thumbnail != null; }
+        }
+
         public ItemType Type
         {
             get { return _model.Type; }

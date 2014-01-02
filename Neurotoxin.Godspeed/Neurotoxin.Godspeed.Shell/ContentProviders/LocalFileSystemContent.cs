@@ -24,10 +24,6 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         }
 
         public string TempFilePath { get; set; }
-        public bool IsEditable
-        {
-            get { return true; }
-        }
 
         [DllImport("mpr.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         private static extern int WNetGetConnection(
@@ -210,22 +206,17 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public FileSystemItem Rename(string path, string newName)
         {
+            var oldName = Path.GetFileName(path.TrimEnd('\\'));
+            var r = new Regex(string.Format(@"{0}\\?$", Regex.Escape(oldName)), RegexOptions.IgnoreCase);
+            var newPath = r.Replace(path, newName); 
             
             if (FolderExists(path))
             {
-                var r1 = new Regex("\\(.*)\\");
-                var oldName = r1.Match(path).Value;
-                var r2 = new Regex(string.Format("{0}\\$", Regex.Escape(oldName)), RegexOptions.IgnoreCase);
-                var newPath = r2.Replace(path, newName); 
                 Directory.Move(path, newPath + Slash);
                 return GetFolderInfo(newPath);
             }
             else
             {
-                var oldName = Path.GetFileName(path);
-                var r = new Regex(string.Format("{0}$", Regex.Escape(oldName)), RegexOptions.IgnoreCase);
-                var newPath = r.Replace(path, newName);
-
                 File.Move(path, newPath);
                 return GetFileInfo(newPath);
             }

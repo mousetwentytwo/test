@@ -1,8 +1,11 @@
 * FIXED: Displaying wrong folder size before copy
 * FIXED: Profile detection error
 * FIXED: Last visited path per connection
-* FIXED: Version checker
+* FIXED: New version detection
 * FIXED: Executing the Rename command from Context menu
+* FIXED: Title recognition in STFS packages
+* FIXED: STFS package saving
 * ADDED: Compressed file support (Zip, Rar, Tar, GZip, 7Zip)
 * ADDED: Invert Selection (Num *)
 * ADDED: Quick Search
+* ADDED: File/Directory rename

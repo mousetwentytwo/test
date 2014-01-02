@@ -410,7 +410,8 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
 
         private byte[] ExtractFile(FileEntry entry, int? limit = null)
         {
-            var fileSize = limit ?? entry.FileSize;
+            var fileSize = entry.FileSize;
+            if (limit != null && limit.Value < entry.FileSize) fileSize = limit.Value;
             var output = new byte[fileSize];
             var outpos = 0;
             var block = entry.StartingBlockNum;
@@ -780,7 +781,7 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
                 var he = GetHashEntry(block);
                 block = he.NextBlock;
             }
-            throw new Exception("Dafuq! No space left for a new file!");
+            throw new Exception("No space left for a new file!");
         }
 
         public void RemoveFile(string path)
@@ -830,7 +831,7 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
 
         public void RemoveFolder(string path)
         {
-            var name = Path.GetFileName(path);
+            var name = Path.GetFileName(path.TrimEnd('/','\\'));
             var parent = GetFolderEntry(path.Replace(name, string.Empty));
             var folderEntry = parent.Files.First(f => f.Name == name);
             RemoveFolder(parent, folderEntry);
@@ -842,6 +843,13 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
             folder.Files.ForEach(f => RemoveFile(folder, f));
             folder.Name = string.Empty;
             parent.Folders.Remove(folder);
+        }
+
+        public FileEntry Rename(string path, string newName)
+        {
+            var entry = GetFolderEntry(path, true) ?? GetFileEntry(path);
+            entry.Name = newName;
+            return entry;
         }
 
         #endregion

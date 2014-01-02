@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Input;
@@ -37,6 +38,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private CopyAction _rememberedCopyAction;
         private bool _isAborted;
         private bool _isContinued;
+        private string _transferLogPath;
 
         #region Main window properties
 
@@ -287,7 +289,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private bool CanExecuteCopyCommand()
         {
             return TargetPane != null && SourcePane != null && SourcePane.HasValidSelection && !SourcePane.IsBusy &&
-                   !TargetPane.IsBusy && !TargetPane.IsReadOnly;
+                   !TargetPane.IsBusy && !TargetPane.IsReadOnly && !SourcePane.IsInEditMode;
         }
 
         private void ExecuteCopyCommand()
@@ -430,7 +432,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private bool CanExecuteMoveCommand()
         {
             return TargetPane != null && SourcePane != null && SourcePane.HasValidSelection && !SourcePane.IsBusy &&
-                   !TargetPane.IsBusy && !TargetPane.IsReadOnly && !SourcePane.IsReadOnly;
+                   !TargetPane.IsBusy && !TargetPane.IsReadOnly && !SourcePane.IsReadOnly && !SourcePane.IsInEditMode;
         }
 
         private void ExecuteMoveCommand()
@@ -533,7 +535,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private bool CanExecuteNewFolderCommand()
         {
-            return SourcePane != null && !SourcePane.IsBusy && !SourcePane.IsReadOnly;
+            return SourcePane != null && !SourcePane.IsBusy && !SourcePane.IsReadOnly && !SourcePane.IsInEditMode;
         }
 
         private void ExecuteNewFolderCommand()
@@ -580,13 +582,13 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             var connections = ActivePane as ConnectionsViewModel;
             if (connections != null && connections.SelectedItem != null) return true;
-            return SourcePane != null && SourcePane.HasValidSelection && !SourcePane.IsBusy && !SourcePane.IsReadOnly;
+            return SourcePane != null && SourcePane.HasValidSelection && !SourcePane.IsBusy && !SourcePane.IsReadOnly && !SourcePane.IsInEditMode;
         }
 
         private void ExecuteDeleteCommand()
         {
             var connections = ActivePane as ConnectionsViewModel;
-            if (!ConfirmCommand(TransferType.Move, connections != null ? string.Empty : "(s)")) return;
+            if (!ConfirmCommand(TransferType.Delete, connections != null ? string.Empty : "(s)")) return;
             if (connections != null)
             {
                 connections.Delete();
@@ -725,6 +727,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public FileManagerViewModel()
         {
+            _transferLogPath = string.Format(@"{0}\transfer.log", AppDomain.CurrentDomain.GetData("DataDirectory"));
             SwitchPaneCommand = new DelegateCommand<EventInformation<KeyEventArgs>>(ExecuteSwitchPaneCommand, CanExecuteSwitchPaneCommand);
             EditCommand = new DelegateCommand(ExecuteEditCommand, CanExecuteEditCommand);
             CopyCommand = new DelegateCommand(ExecuteCopyCommand, CanExecuteCopyCommand);
@@ -779,38 +782,47 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 return;
             }
             UIThread.Run(() =>
-                             {
-                                 var elapsed = _elapsedTimeMeter.Elapsed;
-                                 var transferred = BytesTransferred;
-                                 ElapsedTime = elapsed;
-                                 if (elapsed.Ticks > 0 && transferred > 0)
-                                 {
-                                     var estimated = new TimeSpan((long)Math.Floor((double)elapsed.Ticks / transferred * TotalBytes));
-                                     RemainingTime = estimated - elapsed;
-                                 }
-                                 if (args.Percentage == -1)
-                                 {
-                                     if (_speedMeter.IsRunning)
-                                         _speedMeter.Restart();
-                                     else
-                                         _speedMeter.Start();
-                                 } 
-                                 else
-                                 {
-                                     if (args.Percentage == 100)
-                                     {
-                                         _speedMeter.Stop();
-                                     } 
-                                     else if (!_speedMeter.IsRunning)
-                                     {
-                                         _speedMeter.Restart();
-                                     }
-                                     var ms = _speedMeter.Elapsed.TotalMilliseconds;
-                                     if (ms > 100) Speed = (int)Math.Floor((args.TotalBytesTransferred - args.ResumeStartPosition)/ms*1000/1024);
-                                 }
-                                 CurrentFileProgress = args.Percentage > 0 ? args.Percentage : 0;
-                                 BytesTransferred += args.Transferred;
-                             });
+                {
+                    var sb = new StringBuilder();
+                    var elapsed = _elapsedTimeMeter.Elapsed;
+                    var transferred = BytesTransferred;
+                    ElapsedTime = elapsed;
+
+                    if (elapsed.Ticks > 0 && transferred > 0)
+                    {
+                        var estimated = new TimeSpan((long)Math.Floor((double)elapsed.Ticks / transferred * TotalBytes));
+                        RemainingTime = estimated - elapsed;
+                    }
+
+                    sb.AppendFormat("{0} {1}% {2} {3} {4} {5} {6} {7} ", SourceFile, args.Percentage, args.Transferred, args.TotalBytesTransferred, args.ResumeStartPosition, BytesTransferred, ElapsedTime, RemainingTime);
+
+                    if (args.Percentage == -1)
+                    {
+                        if (_speedMeter.IsRunning)
+                            _speedMeter.Restart();
+                        else
+                            _speedMeter.Start();
+                    } 
+                    else
+                    {
+                        if (args.Percentage == 100)
+                        {
+                            _speedMeter.Stop();
+                        } 
+                        else if (!_speedMeter.IsRunning)
+                        {
+                            _speedMeter.Restart();
+                        }
+                        var ms = _speedMeter.Elapsed.TotalMilliseconds;
+                        if (ms > 100) Speed = (int)Math.Floor((args.TotalBytesTransferred - args.ResumeStartPosition)/ms*1000/1024);
+                        sb.AppendFormat("{0} ", ms);
+                    }
+                    CurrentFileProgress = args.Percentage > 0 ? args.Percentage : 0;
+                    BytesTransferred += args.Transferred;
+
+                    sb.AppendFormat("{0}kbps {1} {2}", Speed, CurrentFileProgress, BytesTransferred);
+                    File.AppendAllLines(_transferLogPath, new[] { sb.ToString() });
+                });
         }
 
         private void OnOpenNestedPane(OpenNestedPaneEventArgs args)

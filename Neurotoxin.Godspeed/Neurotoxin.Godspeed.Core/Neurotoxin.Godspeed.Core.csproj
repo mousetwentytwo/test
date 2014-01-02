@@ -118,6 +118,7 @@
     <Compile Include="Io\Stfs\SvodPackage.cs" />
     <Compile Include="LogHelper.cs" />
     <Compile Include="Models\BinaryContainer.cs" />
+    <Compile Include="Models\BinaryContent.cs" />
     <Compile Include="Models\BinaryLocation.cs" />
     <Compile Include="Models\BinaryModelBase.cs" />
     <Compile Include="Io\Stfs\Account.cs" />

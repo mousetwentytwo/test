@@ -36,10 +36,6 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         private bool _isIdle = true;
 
         public string TempFilePath { get; set; }
-        public bool IsEditable
-        {
-            get { return true; }
-        }
         
         private readonly Timer _keepAliveTimer = new Timer(30000);
         public bool IsKeepAliveEnabled
@@ -485,10 +481,11 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         public FileSystemItem Rename(string path, string newName)
         {
             var oldName = LocateDirectory(path);
+            var isFolder = FolderExists(path);
             FtpClient.Rename(oldName, newName);
-            var r = new Regex(string.Format("{0}$", Regex.Escape(oldName)), RegexOptions.IgnoreCase);
+            var r = new Regex(string.Format("{0}{1}?$", Regex.Escape(oldName), Slash), RegexOptions.IgnoreCase);
             path = r.Replace(path, newName);
-            return GetFileInfo(path);
+            return isFolder ? GetFolderInfo(path + Slash) : GetFileInfo(path);
         }
 
         public void RestoreConnection()

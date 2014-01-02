@@ -17,7 +17,7 @@ using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 
 namespace Neurotoxin.Godspeed.Shell.ContentProviders
 {
-    internal class TitleRecognizer
+    public class TitleRecognizer
     {
         private readonly IFileManager _fileManager;
         private readonly CacheManager _cacheManager;
@@ -120,14 +120,13 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             return false;
         }
 
-        public void RecognizeTitle(FileSystemItem item, bool overwrite = false)
+        public void RecognizeTitle(FileSystemItem item)
         {
             if (item.TitleType == TitleType.SystemDir || item.TitleType == TitleType.SystemFile) return;
             var cacheItem = GetCacheItem(item);
-            if (!overwrite && MergeWithCachedEntry(item, cacheItem)) return;
+            if (MergeWithCachedEntry(item, cacheItem)) return;
 
             var cacheKey = GetCacheKey(cacheItem);
-            if (overwrite) _cacheManager.ClearCache(cacheKey);
 
             switch (item.TitleType)
             {
@@ -328,10 +327,10 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         private void GetGameDataFromGpd(FileSystemItem item)
         {
             var fileContent = _fileManager.ReadFileContent(item.Path, false, item.Size ?? 0);
-            var gpd = ModelFactory.GetModel<GpdFile>(fileContent);
+            var gpd = ModelFactory.GetModel<GameFile>(fileContent);
             gpd.Parse();
             if (gpd.Strings.Count > 0) item.Title = gpd.Strings.First().Text;
-            if (gpd.Images.Count > 0) item.Thumbnail = gpd.Images.First().ImageData;
+            item.Thumbnail = gpd.Thumbnail;
         }
 
         public void UpdateCache(FileSystemItem item)

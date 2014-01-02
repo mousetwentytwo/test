@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Core.Models;
 using Neurotoxin.Godspeed.Presentation.Extensions;
@@ -12,7 +11,6 @@ using Neurotoxin.Godspeed.Shell.Models;
 using SharpCompress.Archive;
 using SharpCompress.Archive.Rar;
 using SharpCompress.Archive.SevenZip;
-using Microsoft.Practices.ObjectBuilder2;
 
 namespace Neurotoxin.Godspeed.Shell.ContentProviders
 {
@@ -29,11 +27,6 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         public char Slash
         {
             get { return _archive is RarArchive ? BACKSLASH : SLASH; }
-        }
-
-        public bool IsEditable
-        {
-            get { return !(_archive is RarArchive) && !(_archive is SevenZipArchive); }
         }
 
         public List<FileSystemItem> GetDrives()
@@ -171,7 +164,6 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public FileSystemItem Rename(string path, string newName)
         {
-            //TODO
             throw new NotImplementedException();
         }
 
