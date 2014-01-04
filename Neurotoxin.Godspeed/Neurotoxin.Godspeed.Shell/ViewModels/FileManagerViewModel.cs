@@ -951,9 +951,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         break;
                     case TransferErrorType.WriteAccessError:
                         {
-                            var dialog = new WriteErrorDialog(TargetPane, transferException, eventAggregator);
-                            SourcePane.GetItemViewModel(transferException.SourceFile);
-                            TargetPane.GetItemViewModel(transferException.TargetFile);
+                            var sourceFile = _queue.Peek().FileSystemItem.Path;
+                            var targetFile = transferException.TargetFile;
+                            var dialog = new WriteErrorDialog(TargetPane, eventAggregator, sourceFile, targetFile);
+                            SourcePane.GetItemViewModel(sourceFile);
+                            TargetPane.GetItemViewModel(targetFile);
                             if (dialog.ShowDialog() == true) result = dialog.Result;
                         }
                         break;

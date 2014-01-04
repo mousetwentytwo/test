@@ -13,14 +13,16 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
 {
     public partial class WriteErrorDialog : ITransferErrorDialog
     {
-        private readonly TransferException _exception;
+        private readonly string _sourceFile;
+        private readonly string _targetFile;
         private readonly IEventAggregator _eventAggregator;
         public TransferErrorDialogResult Result { get; private set; }
 
-        public WriteErrorDialog(IFileListPaneViewModel viewModel, TransferException exception, IEventAggregator eventAggregator)
+        public WriteErrorDialog(IFileListPaneViewModel viewModel, IEventAggregator eventAggregator, string sourceFile, string targetFile)
         {
-            _exception = exception;
             _eventAggregator = eventAggregator;
+            _sourceFile = sourceFile;
+            _targetFile = targetFile;
             Owner = Application.Current.MainWindow;
             DataContext = viewModel;
             InitializeComponent();
@@ -31,8 +33,8 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
         {
             var vm = args.ViewModel as FileSystemItemViewModel;
             if (vm == null) return;
-            if (vm.Path == _exception.SourceFile) SourceFile.DataContext = vm;
-            if (vm.Path == _exception.TargetFile) TargetFile.DataContext = vm;
+            if (vm.Path == _sourceFile) SourceFile.DataContext = vm;
+            if (vm.Path == _targetFile) TargetFile.DataContext = vm;
         }
 
         private void ButtonClick(object sender, RoutedEventArgs e)

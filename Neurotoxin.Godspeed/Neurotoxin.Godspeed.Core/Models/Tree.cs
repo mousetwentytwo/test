@@ -83,9 +83,19 @@ namespace Neurotoxin.Godspeed.Core.Models
             return false;
         }
 
-        public void UpdateItem(string path, T content)
+        public void UpdateItem(string path, T content, bool createIfNotExists = false)
         {
-            if (!_items.ContainsKey(path)) throw new ArgumentException("Unregistered path: " + path);
+            if (!_items.ContainsKey(path))
+            {
+                if (createIfNotExists)
+                {
+                    AddItem(path, content);
+                }
+                else
+                {
+                    throw new ArgumentException("Unregistered path: " + path);    
+                }
+            }
             _items[path].Content = content;
         }
 

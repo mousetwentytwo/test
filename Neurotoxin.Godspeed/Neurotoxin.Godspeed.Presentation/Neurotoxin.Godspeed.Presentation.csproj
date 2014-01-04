@@ -115,6 +115,7 @@
     <Compile Include="Infrastructure\ModuleLoadInfo.cs" />
     <Compile Include="Infrastructure\ModuleViewBase.cs" />
     <Compile Include="Infrastructure\ModuleViewModelBase.cs" />
+    <Compile Include="Infrastructure\UIThread.cs" />
     <Compile Include="Infrastructure\UnityInstance.cs" />
     <Compile Include="Infrastructure\Utilities.cs" />
     <Compile Include="Infrastructure\ViewModelBase.cs" />

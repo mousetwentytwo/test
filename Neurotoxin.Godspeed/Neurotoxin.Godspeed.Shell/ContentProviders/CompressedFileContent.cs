@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using Microsoft.Practices.Composite.Events;
 using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Core.Models;
 using Neurotoxin.Godspeed.Presentation.Extensions;
+using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Constants;
+using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
 using SharpCompress.Archive;
@@ -19,6 +23,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         private string _archivePath;
         private IArchive _archive;
         private Tree<FileSystemItem> _fileStructure;
+        private readonly IEventAggregator _eventAggregator;
 
         public string TempFilePath { get; set; }
 
@@ -27,6 +32,11 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         public char Slash
         {
             get { return _archive is RarArchive ? BACKSLASH : SLASH; }
+        }
+
+        public CompressedFileContent(IEventAggregator eventAggregator)
+        {
+            _eventAggregator = eventAggregator;
         }
 
         public List<FileSystemItem> GetDrives()
@@ -159,7 +169,25 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public void ExtractFile(string path, FileStream fs)
         {
-            _archive.Entries.First(e => e.FilePath == path).WriteTo(fs);
+            var done = false;
+            var entry = _archive.Entries.First(e => e.FilePath == path);
+            var size = entry.Size;
+            WorkerThread.Run(() =>
+                {
+                    long totalBytesTransferred = 0;
+                    while (!done)
+                    {
+                        Thread.Sleep(100);
+                        var streamLength = fs.CanRead ? fs.Length : size;
+                        var transferred = streamLength - totalBytesTransferred;
+                        totalBytesTransferred = streamLength;
+                        var percentage = (int)(totalBytesTransferred*100/size);
+                        _eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(percentage, transferred, totalBytesTransferred, 0));
+                    }
+                    return true;
+                });
+            entry.WriteTo(fs);
+            done = true;
         }
 
         public FileSystemItem Rename(string path, string newName)
@@ -171,28 +199,18 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         {
             _archivePath = path;
             _archive = ArchiveFactory.Open(path);
+            var isRar = _archive is RarArchive;
             _fileStructure = new Tree<FileSystemItem>();
-            foreach (var file in _archive.Entries.Where(e => !e.IsDirectory))
+            foreach (var entry in _archive.Entries.OrderBy(e => e.FilePath))
             {
-                _fileStructure.AddItem(file.FilePath, CreateModel(file));
+                var entryPath = entry.FilePath;
+                if (isRar) entryPath += BACKSLASH;
+                _fileStructure.AddItem(entryPath, CreateModel(entry));
             }
 
-            if (_archive is SevenZipArchive)
+            foreach (var key in _fileStructure.Keys.Where(key => key != string.Empty && !_fileStructure.ItemHasContent(key)))
             {
-                foreach (var key in _fileStructure.Keys.Where(key => key != string.Empty && !_fileStructure.ItemHasContent(key)))
-                {
-                    _fileStructure.UpdateItem(key, CreateModel(key, true, DateTime.MinValue, null));
-                }
-            }
-            else
-            {
-                var isRar = _archive is RarArchive;
-                foreach (var dir in _archive.Entries.Where(e => e.IsDirectory))
-                {
-                    var dirPath = dir.FilePath;
-                    if (isRar) dirPath += BACKSLASH;
-                    _fileStructure.UpdateItem(dirPath, CreateModel(dir));
-                }
+                _fileStructure.UpdateItem(key, CreateModel(key, true, DateTime.MinValue, null));
             }
         }
 
