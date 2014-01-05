@@ -10,6 +10,7 @@ using Microsoft.Practices.Unity;
 using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Events;
+using Neurotoxin.Godspeed.Shell.Interfaces;
 
 namespace Neurotoxin.Godspeed.Shell.Views
 {
@@ -27,6 +28,27 @@ namespace Neurotoxin.Godspeed.Shell.Views
             Grid.Sorting += GridOnSorting;
             Grid.Loaded += GridOnLoaded;
             Grid.SelectionChanged += GridOnSelectionChanged;
+            Grid.TextInput += GridOnTextInput;
+        }
+
+        private void GridOnTextInput(object sender, TextCompositionEventArgs e)
+        {
+            // && (e.OriginalSource == Grid || ItemsControl.ItemsControlFromItemContainer(e.OriginalSource as DependencyObject) == Grid)
+            if (string.IsNullOrEmpty(e.Text) || !Grid.IsTextSearchEnabled || ((IFileListPaneViewModel)DataContext).IsInEditMode) return;
+            var type = typeof (TextSearch);
+            var ensureInstance = type.GetMethod("EnsureInstance", BindingFlags.Static | BindingFlags.NonPublic);
+            var textSearch = ensureInstance.Invoke(null, new object[] {Grid }) as TextSearch;
+            if (textSearch != null)
+            {
+                var doSearch = type.GetMethod("DoSearch", BindingFlags.Instance | BindingFlags.NonPublic);
+                if ((bool)doSearch.Invoke(textSearch, new object[] { e.Text }))
+                {
+                    var matchedItemIndex = type.GetProperty("MatchedItemIndex", BindingFlags.Instance | BindingFlags.NonPublic);
+                    var i = (int) matchedItemIndex.GetValue(textSearch, null);
+                    Grid.SelectedItem = Grid.Items.GetItemAt(i);
+                }
+                e.Handled = true;
+            }
         }
 
         private void ActivePaneChanged(ActivePaneChangedEventArgs e)

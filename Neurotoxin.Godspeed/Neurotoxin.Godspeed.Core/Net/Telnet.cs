@@ -128,7 +128,7 @@ namespace Neurotoxin.Godspeed.Core.Net
         {
             _totalSize = size;
             _totalTransferred = 0;
-            var source = sourcePath.Replace(_networkDrive, string.Empty).Replace(@"\", "/").Replace(" ", @"\ ");
+            var source = sourcePath.Replace(_networkDrive, string.Empty).Replace(@"\", "/").Replace(" ", @"\ ").Replace("&", @"\&");
             progressChanged.Invoke(-1, resumeStartPosition, resumeStartPosition, resumeStartPosition);
             Send(string.Format("put -c {0}{1} -o {2}", _rootPath, source, ftpFileName), s => NotifyProgressChange(s, resumeStartPosition, progressChanged));
         }

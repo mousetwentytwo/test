@@ -783,7 +783,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
             UIThread.Run(() =>
                 {
-                    var sb = new StringBuilder();
+                    //var sb = new StringBuilder();
                     var elapsed = _elapsedTimeMeter.Elapsed;
                     var transferred = BytesTransferred;
                     ElapsedTime = elapsed;
@@ -794,34 +794,24 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         RemainingTime = estimated - elapsed;
                     }
 
-                    sb.AppendFormat("{0} {1}% {2} {3} {4} {5} {6} {7} ", SourceFile, args.Percentage, args.Transferred, args.TotalBytesTransferred, args.ResumeStartPosition, BytesTransferred, ElapsedTime, RemainingTime);
+                    //sb.AppendFormat("{0} {1}% {2} {3} {4} {5} {6} {7} ", SourceFile, args.Percentage, args.Transferred, args.TotalBytesTransferred, args.ResumeStartPosition, BytesTransferred, ElapsedTime, RemainingTime);
 
-                    if (args.Percentage == -1)
+                    if (args.Percentage == 100)
                     {
-                        if (_speedMeter.IsRunning)
-                            _speedMeter.Restart();
-                        else
-                            _speedMeter.Start();
+                        _speedMeter.Stop();
                     } 
-                    else
+                    else if (!_speedMeter.IsRunning)
                     {
-                        if (args.Percentage == 100)
-                        {
-                            _speedMeter.Stop();
-                        } 
-                        else if (!_speedMeter.IsRunning)
-                        {
-                            _speedMeter.Restart();
-                        }
-                        var ms = _speedMeter.Elapsed.TotalMilliseconds;
-                        if (ms > 100) Speed = (int)Math.Floor((args.TotalBytesTransferred - args.ResumeStartPosition)/ms*1000/1024);
-                        sb.AppendFormat("{0} ", ms);
+                        _speedMeter.Restart();
                     }
+                    var ms = _speedMeter.Elapsed.TotalMilliseconds;
+                    if (ms > 100) Speed = (int)Math.Floor((args.TotalBytesTransferred - args.ResumeStartPosition)/ms*1000/1024);
+                    //sb.AppendFormat("{0} ", ms);
                     CurrentFileProgress = args.Percentage > 0 ? args.Percentage : 0;
                     BytesTransferred += args.Transferred;
 
-                    sb.AppendFormat("{0}kbps {1} {2}", Speed, CurrentFileProgress, BytesTransferred);
-                    File.AppendAllLines(_transferLogPath, new[] { sb.ToString() });
+                    //sb.AppendFormat("{0}kbps {1} {2}", Speed, CurrentFileProgress, BytesTransferred);
+                    //File.AppendAllLines(_transferLogPath, new[] { sb.ToString() });
                 });
         }
 

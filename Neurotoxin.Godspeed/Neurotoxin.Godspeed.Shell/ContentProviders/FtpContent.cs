@@ -158,6 +158,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 if (path != null) FtpClient.ChangeFolder(path);
                 var currentPath = FtpClient.GetCurrentFolder();
                 if (!currentPath.EndsWith("/")) currentPath += "/";
+                _fileSize = 0;
 
                 var result = FtpClient.GetList()
                                        .Where(item => item.Name != "." && item.Name != "..")

@@ -37,6 +37,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         protected readonly T FileManager;
         protected readonly Dictionary<FileSystemItemViewModel, string> PathCache = new Dictionary<FileSystemItemViewModel, string>();
 
+        #region Constants
+
+        private const string CHANGINGDIRECTORY = "Changing directory...";
+
+        #endregion
+
         #region Properties
 
         private const string ISINEDITMODE = "IsInEditMode";
@@ -237,7 +243,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 }
             }
 
-            ProgressMessage = "Changing directory...";
+            ProgressMessage = CHANGINGDIRECTORY;
             IsBusy = true;           
             WorkerThread.Run(() => ChangeDirectory(CurrentFolder.Path), ChangeDirectoryCallback, AsyncErrorCallback);
         }
@@ -268,7 +274,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             {
                 result.Insert(0, new FileSystemItem
                 {
-                    Title = "[..]",
+                    Name = "..",
                     Type = CurrentFolder.Type,
                     Date = CurrentFolder.Date,
                     Path = CurrentFolder.Path,
@@ -1155,7 +1161,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             UIThread.Run(() =>
                 {
-                    if (string.IsNullOrEmpty(ProgressMessage)) return;
+                    if (string.IsNullOrEmpty(ProgressMessage) || ProgressMessage == CHANGINGDIRECTORY) return;
                     var r = new Regex(@" \([0-9]+%\)$");
                     ProgressMessage = r.Replace(ProgressMessage, string.Empty);
                     ProgressMessage += string.Format(" ({0}%)", args.Percentage);
