@@ -40,8 +40,6 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs.Data
         public List<FileEntry> Files { get; set; }
         public List<FileEntry> Folders { get; set; }
 
-        public List<int> BlockList { get; set; }
-
         public bool BlocksAreConsecutive
         {
             get { return Flags.HasFlag(FileEntryFlags.BlocksAreConsecutive); }

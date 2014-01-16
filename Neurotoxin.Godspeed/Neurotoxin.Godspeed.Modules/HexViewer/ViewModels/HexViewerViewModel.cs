@@ -1,13 +1,10 @@
 ﻿using System;
-using Neurotoxin.Godspeed.Core.Io.Stfs;
+using Neurotoxin.Godspeed.Core.Models;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
 
 namespace Neurotoxin.Godspeed.Modules.HexViewer.ViewModels
 {
-    /// <summary>
-    /// ViewModel for HexViewerView.
-    /// </summary>
     public class HexViewerViewModel : ModuleViewModelBase
     {
         #region Properties

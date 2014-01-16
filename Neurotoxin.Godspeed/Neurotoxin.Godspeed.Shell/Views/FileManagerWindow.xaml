@@ -29,6 +29,11 @@
                                 <views:ConnectionsPane/>
                             </DataTemplate>
                         </ts:PaneTemplateSelector.ConnectionsTemplate>
+                        <ts:PaneTemplateSelector.ProfileRebuilderTemplate>
+                            <DataTemplate>
+                                <views:ProfileRebuilderPane/>
+                            </DataTemplate>
+                        </ts:PaneTemplateSelector.ProfileRebuilderTemplate>
                     </ts:PaneTemplateSelector>
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
@@ -37,18 +42,13 @@
 
     <Grid x:Name="LayoutRoot">
         <Grid Margin="3">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="3"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             
-            <Menu Grid.ColumnSpan="3">
+            <Menu>
                 <Menu.Resources>
                     <Style TargetType="MenuItem">
                         <Setter Property="Margin" Value="0"/>
@@ -77,12 +77,21 @@
                     <MenuItem Command="{x:Static commands:FileManagerCommands.AboutCommand}"/>
                 </MenuItem>
             </Menu>
-
-            <ContentControl Grid.Column="0" Grid.Row="1" Content="{Binding LeftPane}" ContentTemplateSelector="{StaticResource TemplateSelector}" x:Name="LeftPane"/>
-            <GridSplitter Grid.Column="1" Grid.Row="1"/>
-            <ContentControl Grid.Column="2" Grid.Row="1" Content="{Binding RightPane}" ContentTemplateSelector="{StaticResource TemplateSelector}" x:Name="RightPane"/>
             
-            <Grid Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="2" Margin="0,3,0,0">
+            <AdornerDecorator Grid.Row="1">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <ContentControl Grid.Column="0" Grid.Row="1" Content="{Binding LeftPane}" ContentTemplateSelector="{StaticResource TemplateSelector}" x:Name="LeftPane"/>
+                    <GridSplitter Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True" Width="3" Background="{StaticResource ControlBackgroundBrush}"/>
+                    <ContentControl Grid.Column="2" Grid.Row="1" Content="{Binding RightPane}" ContentTemplateSelector="{StaticResource TemplateSelector}" x:Name="RightPane"/>
+                </Grid>
+            </AdornerDecorator>
+
+            <Grid Grid.Column="0" Grid.Row="2" Margin="0,3,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition/>

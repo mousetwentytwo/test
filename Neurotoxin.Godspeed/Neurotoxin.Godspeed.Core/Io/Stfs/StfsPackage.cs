@@ -15,6 +15,7 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
     public abstract class StfsPackage : Package<StfsVolumeDescriptor>
     {
         public FileEntry FileStructure { get; private set; }
+        public List<FileEntry> FlatFileList { get; private set; }
         public Dictionary<FileEntry, GameFile> Games { get; protected set; }
         public Account Account { get; private set; }
         public FileEntry ProfileEntry { get; private set; }
@@ -35,7 +36,7 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
         protected override void Parse()
         {
             FirstHashTableAddress = ((HeaderSize + 0x0FFF) & 0x7FFFF000);
-            Sex = (VolumeDescriptor.BlockSeperation & 1) == 1 ? Sex.Female : Sex.Male;
+            Sex = (VolumeDescriptor.BlockSeparation & 1) == 1 ? Sex.Female : Sex.Male;
             if (VolumeDescriptor.AllocatedBlockCount >= 0x70E4) throw new NotSupportedException("STFS package too big to handle!");
             TopLevel = VolumeDescriptor.AllocatedBlockCount >= 0xAA ? 1 : 0;
 
@@ -60,6 +61,33 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
             LogHelper.NotifyStatusBarText("File entries collected");
         }
 
+        public void SwitchToBackupTables()
+        {
+            //HACK
+            VolumeDescriptor.FileTableBlockNum = 1;
+            FileStructure = ReadFileListing();
+
+            //if (Sex == Sex.Female) return;
+            //VolumeDescriptor.BlockSeparation = VolumeDescriptor.BlockSeparation == 2 ? 0 : 2;
+            //UnallocatedHashEntries = new List<int>();
+            //TopTable = GetLevelNHashTable(0, TopLevel);
+            //if (TopLevel == 1)
+            //{
+            //    TopTable.Tables = new List<HashTable>();
+            //    for (var i = 0; i < TopTable.EntryCount; i++)
+            //    {
+            //        var tableEntry = TopTable.Entries[i];
+            //        tableEntry.Status = tableEntry.Status == BlockStatus.NewlyAllocated || tableEntry.Status == BlockStatus.PreviouslyAllocated
+            //                                ? BlockStatus.Allocated
+            //                                : BlockStatus.NewlyAllocated;
+            //        var table = GetLevelNHashTable(i, 0);
+            //        tableEntry.RealBlock = table.Block;
+            //        TopTable.Tables.Add(table);
+            //    }
+            //}
+            //FileStructure = ReadFileListing();
+        }
+
         public void SwitchTables()
         {
             var oldTopTable = TopTable;
@@ -68,15 +96,15 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
 
             var topTableOffset = TopTable.StartOffset;
             var topTableBuffer = Binary.ReadBytes(topTableOffset, 0x1000);
-            if (VolumeDescriptor.BlockSeperation == 2)
+            if (VolumeDescriptor.BlockSeparation == 2)
             {
                 topTableOffset -= 0x1000;
-                VolumeDescriptor.BlockSeperation = 0;
+                VolumeDescriptor.BlockSeparation = 0;
             }
             else
             {
                 topTableOffset += 0x1000;
-                VolumeDescriptor.BlockSeperation = 2;
+                VolumeDescriptor.BlockSeparation = 2;
             }
             Binary.WriteBytes(topTableOffset, topTableBuffer, 0, 0x1000);
             TopTable = GetLevelNHashTable(0, TopLevel);
@@ -123,7 +151,7 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
 
             if (level == TopLevel)
             {
-                if (VolumeDescriptor.BlockSeperation == 2) current++;
+                if (VolumeDescriptor.BlockSeparation == 2) current++;
 
                 entryCount = VolumeDescriptor.AllocatedBlockCount;
                 if (entryCount >= 0xAA) entryCount = (entryCount + 0xA9) / 0xAA;
@@ -201,6 +229,7 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
                 {
                     var addr = currentAddr + i * 0x40;
                     var fe = ModelFactory.GetModel<FileEntry>(Binary, addr);
+                    //TODO: remove this if
                     if (block == VolumeDescriptor.FileTableBlockNum && i == 0)
                         fe.FileEntryAddress = addr;
                     fe.EntryIndex = (x * 0x40) + i;
@@ -212,6 +241,7 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
                 block = he.NextBlock;
             }
 
+            FlatFileList = fl;
             BuildFileHierarchy(fl, root);
             return root;
         }
@@ -416,13 +446,11 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
             var outpos = 0;
             var block = entry.StartingBlockNum;
             var remaining = fileSize;
-            entry.BlockList = new List<int>();
             do
             {
                 if (block >= VolumeDescriptor.AllocatedBlockCount)
                     throw new InvalidOperationException("STFS: Reference to illegal block number.\n");
 
-                entry.BlockList.Add(block);
                 var readBlock = remaining > 0x1000 ? 0x1000 : remaining;
                 remaining -= readBlock;
                 var pos = GetRealAddressOfBlock(block);
@@ -433,6 +461,29 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
                 block = he.NextBlock;
             } while (remaining != 0);
 
+            return output;
+        }
+
+        public IEnumerable<KeyValuePair<int?, BlockStatus>> GetFileEntryBlockList(FileEntry entry)
+        {
+            var block = entry.StartingBlockNum;
+            var blockList = new KeyValuePair<int?, BlockStatus>[entry.BlocksForFile];
+            var i = 0;
+            while (i < entry.BlocksForFile && block < VolumeDescriptor.AllocatedBlockCount)
+            {
+                var he = GetHashEntry(block);
+                blockList[i] = new KeyValuePair<int?, BlockStatus>(block, he.Status);
+                block = he.NextBlock;
+                i++;
+            }
+            return blockList;
+        }
+
+        public byte[] ExtractBlock(int block)
+        {
+            var output = new byte[0x1000];
+            var pos = GetRealAddressOfBlock(block);
+            Binary.ReadBytes(pos, output, 0, 0x1000);
             return output;
         }
 

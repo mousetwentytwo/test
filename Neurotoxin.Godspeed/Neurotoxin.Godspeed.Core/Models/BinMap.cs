@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
-namespace Neurotoxin.Godspeed.Core.Io.Stfs
+namespace Neurotoxin.Godspeed.Core.Models
 {
     public class BinMap
     {

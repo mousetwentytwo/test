@@ -7,8 +7,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using Neurotoxin.Godspeed.Core.Io.Stfs;
 using System.Linq;
+using Neurotoxin.Godspeed.Core.Models;
 
 namespace Neurotoxin.Godspeed.Modules.HexViewer.Controls
 {

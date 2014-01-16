@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Reflection;
@@ -31,6 +32,7 @@ namespace Neurotoxin.Godspeed.Shell
             base.OnStartup(e);
             var asm = Assembly.GetExecutingAssembly();
             SetDataDirectory(asm);
+            CheckPrerequisites();
             if (UserSettings.UseVersionChecker) CheckNewerVersion(asm);
             Dispatcher.CurrentDispatcher.UnhandledException += UnhandledThreadingException;
             ShutdownMode = ShutdownMode.OnMainWindowClose;
@@ -61,10 +63,17 @@ namespace Neurotoxin.Godspeed.Shell
             }
         }
 
+        private void CheckPrerequisites()
+        {
+            var applicationAssembly = Assembly.GetAssembly(typeof (Application));
+            var fvi = FileVersionInfo.GetVersionInfo(applicationAssembly.Location);
+            var version = fvi.ProductVersion;
+            //NotificationMessage.Show("Warning", "");
+        }
+
         private void CheckNewerVersion(Assembly asm)
         {
             var title = asm.GetAttribute<AssemblyTitleAttribute>().Title;
-            var installDate = File.GetLastWriteTime(asm.Location);
             const string url = "https://godspeed.codeplex.com/";
             WorkerThread.Run(() =>
                                  {

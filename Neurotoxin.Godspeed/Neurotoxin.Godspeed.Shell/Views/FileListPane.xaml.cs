@@ -28,7 +28,7 @@ namespace Neurotoxin.Godspeed.Shell.Views
             Grid.Sorting += GridOnSorting;
             Grid.Loaded += GridOnLoaded;
             Grid.SelectionChanged += GridOnSelectionChanged;
-            Grid.TextInput += GridOnTextInput;
+            Grid.PreviewTextInput += GridOnTextInput;
         }
 
         private void GridOnTextInput(object sender, TextCompositionEventArgs e)

@@ -226,6 +226,7 @@
 		<col key="yes" def="s72">Property</col>
 		<col key="yes" def="s72">Signature_</col>
 		<row><td>DOTNETVERSION40CLIENT</td><td>DotNet40Client</td></row>
+		<row><td>Y</td><td>NewSignature1</td></row>
 	</table>
 
 	<table name="BBControl">
@@ -2774,6 +2775,7 @@
 		<row><td>IDPROP_EXPRESS_LAUNCH_CONDITION_PROCESSOR</td><td>1033</td><td>The processor is not adequate for running [ProductName].</td><td>0</td><td/><td>-1390293551</td></row>
 		<row><td>IDPROP_EXPRESS_LAUNCH_CONDITION_RAM</td><td>1033</td><td>The amount of RAM is not adequate for running [ProductName].</td><td>0</td><td/><td>-1390293551</td></row>
 		<row><td>IDPROP_EXPRESS_LAUNCH_CONDITION_SCREEN</td><td>1033</td><td>The screen resolution is not adequate for running [ProductName].</td><td>0</td><td/><td>-1390293551</td></row>
+		<row><td>IDPROP_EXPRESS_LAUNCH_CONDITION_Y</td><td>1033</td><td>Microsoft .NET Framework 4.5.1 for Windows 7 x64-based Systems (KB2858725) needs to be installed for this installation to continue.</td><td>0</td><td/><td>1084392465</td></row>
 		<row><td>IDPROP_SETUPTYPE_COMPACT</td><td>1033</td><td>Compact</td><td>0</td><td/><td>-1390293551</td></row>
 		<row><td>IDPROP_SETUPTYPE_COMPACT_DESC</td><td>1033</td><td>Compact Description</td><td>0</td><td/><td>-1390293551</td></row>
 		<row><td>IDPROP_SETUPTYPE_COMPLETE</td><td>1033</td><td>Complete</td><td>0</td><td/><td>-1390293551</td></row>
@@ -4114,7 +4116,7 @@ UwBpAG4AZwBsAGUASQBtAGEAZwBlAAEARQB4AHAAcgBlAHMAcwA=
 		<row><td>ISTheme</td><td>InstallShield Blue.theme</td></row>
 		<row><td>ISUSLock</td><td>{56784F6C-2895-4DB7-A4EE-E358478FE2CE}</td></row>
 		<row><td>ISUSSignature</td><td>{A6D90400-8DE9-4CC7-998E-5C3C06448833}</td></row>
-		<row><td>ISVisitedViews</td><td>viewAssistant,viewShortcuts</td></row>
+		<row><td>ISVisitedViews</td><td>viewAssistant,viewShortcuts,viewSystemSearch</td></row>
 		<row><td>Limited</td><td>1</td></row>
 		<row><td>LockPermissionMode</td><td>1</td></row>
 		<row><td>MsiExecCmdLineOptions</td><td/></row>
@@ -4505,7 +4507,7 @@ UwBpAG4AZwBsAGUASQBtAGEAZwBlAAEARQB4AHAAcgBlAHMAcwA=
 		<row><td>SERIALNUMBER</td><td/><td/></row>
 		<row><td>SERIALNUMVALSUCCESSRETVAL</td><td>1</td><td/></row>
 		<row><td>SHOWLAUNCHPROGRAM</td><td>-1</td><td/></row>
-		<row><td>SecureCustomProperties</td><td>ISFOUNDNEWERPRODUCTVERSION;USERNAME;COMPANYNAME;ISX_SERIALNUM;SUPPORTDIR;DOTNETVERSION40CLIENT</td><td/></row>
+		<row><td>SecureCustomProperties</td><td>ISFOUNDNEWERPRODUCTVERSION;USERNAME;COMPANYNAME;ISX_SERIALNUM;SUPPORTDIR;DOTNETVERSION40CLIENT;Y</td><td/></row>
 		<row><td>SelectedSetupType</td><td>##IDS__DisplayName_Typical##</td><td/></row>
 		<row><td>SetupType</td><td>Typical</td><td/></row>
 		<row><td>UpgradeCode</td><td>{25AE8214-3241-4098-99C9-0D3151BB822D}</td><td/></row>
@@ -4551,6 +4553,7 @@ UwBpAG4AZwBsAGUASQBtAGEAZwBlAAEARQB4AHAAcgBlAHMAcwA=
 		<col def="S255">Name</col>
 		<col def="I2">Type</col>
 		<row><td>DotNet40Client</td><td>2</td><td>SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Client</td><td>Install</td><td>2</td></row>
+		<row><td>NewSignature1</td><td>2</td><td>SOFTWARE\Microsoft\Updates\Microsoft .NET Framework 4.5\KB2858725\ThisVersionInstalled</td><td>Y</td><td>2</td></row>
 	</table>
 
 	<table name="Registry">

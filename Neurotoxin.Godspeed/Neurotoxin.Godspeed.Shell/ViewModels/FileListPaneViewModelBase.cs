@@ -212,7 +212,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 {
                     if (CurrentRow.IsCompressedFile) OpenCompressedFileCommand.Execute();
                     //Do STFS check instead
-                    if (CurrentRow.TitleType == TitleType.Profile) OpenStfsPackageCommand.Execute();
+                    if (CurrentRow.TitleType == TitleType.Profile) OpenStfsPackageCommand.Execute(OpenStfsPackageMode.Browsing);
                     return;
                 }
 
@@ -300,19 +300,19 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #region OpenStfsPackageCommand
 
-        public DelegateCommand OpenStfsPackageCommand { get; private set; }
+        public DelegateCommand<OpenStfsPackageMode> OpenStfsPackageCommand { get; private set; }
 
-        private bool CanExecuteOpenStfsPackageCommand()
+        private bool CanExecuteOpenStfsPackageCommand(OpenStfsPackageMode mode)
         {
             //TODO: Remove IsProfile once STFS detection is implemented
             return CurrentRow != null && CurrentRow.IsProfile;
         }
 
-        private void ExecuteOpenStfsPackageCommand()
+        private void ExecuteOpenStfsPackageCommand(OpenStfsPackageMode mode)
         {
             ProgressMessage = string.Format("Opening profile {0}...", CurrentRow.ComputedName);
             IsBusy = true;
-            WorkerThread.Run(() => OpenStfsPackage(CurrentRow.Model), OpenStfsPackageCallback, AsyncErrorCallback);
+            WorkerThread.Run(() => OpenStfsPackage(CurrentRow.Model), b => OpenStfsPackageCallback(b, mode), AsyncErrorCallback);
         }
 
         private BinaryContent OpenStfsPackage(FileSystemItem item)
@@ -323,10 +323,25 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             return new BinaryContent(item.Path, tempFilePath, File.ReadAllBytes(tempFilePath), contentType);
         }
 
-        private void OpenStfsPackageCallback(BinaryContent content)
+        private void OpenStfsPackageCallback(BinaryContent content, OpenStfsPackageMode mode)
         {
-            var stfs = container.Resolve<StfsPackageContentViewModel>();
-            stfs.LoadDataAsync(LoadCommand.Load, new Tuple<BinaryContent, FileListPaneSettings>(content, new FileListPaneSettings("/", Settings.SortByField, Settings.SortDirection)), OpenStfsPackageSuccess, OpenStfsPackageError);
+            PaneViewModelBase stfs;
+            object data;
+            switch (mode)
+            {
+                case OpenStfsPackageMode.Browsing:
+                    stfs = container.Resolve<StfsPackageContentViewModel>();
+                    data = new Tuple<BinaryContent, FileListPaneSettings>(content, new FileListPaneSettings("/", Settings.SortByField, Settings.SortDirection));
+                    break;
+                case OpenStfsPackageMode.Repair:
+                    stfs = container.Resolve<ProfileRebuilderViewModel>();
+                    data = content;
+                    break;
+                default:
+                    throw new NotSupportedException("Invalid mode: " + mode);
+            }
+            
+            stfs.LoadDataAsync(LoadCommand.Load, data, OpenStfsPackageSuccess, OpenStfsPackageError);
         }
 
         private void OpenStfsPackageSuccess(PaneViewModelBase pane)
@@ -880,7 +895,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             TitleRecognizer = new TitleRecognizer(FileManager, container.Resolve<CacheManager>());
 
             ChangeDirectoryCommand = new DelegateCommand<object>(ExecuteChangeDirectoryCommand, CanExecuteChangeDirectoryCommand);
-            OpenStfsPackageCommand = new DelegateCommand(ExecuteOpenStfsPackageCommand, CanExecuteOpenStfsPackageCommand);
+            OpenStfsPackageCommand = new DelegateCommand<OpenStfsPackageMode>(ExecuteOpenStfsPackageCommand, CanExecuteOpenStfsPackageCommand);
             OpenCompressedFileCommand = new DelegateCommand(ExecuteOpenCompressedFileCommand, CanExecuteOpenCompressedFileCommand);
             CalculateSizeCommand = new DelegateCommand<bool>(ExecuteCalculateSizeCommand, CanExecuteCalculateSizeCommand);
             SortingCommand = new DelegateCommand<EventInformation<DataGridSortingEventArgs>>(ExecuteSortingCommand);

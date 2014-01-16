@@ -10,6 +10,7 @@ using System.Text;
 using NUnit.Framework;
 using Neurotoxin.Godspeed.Core.Constants;
 using Neurotoxin.Godspeed.Core.Extensions;
+using Neurotoxin.Godspeed.Core.Helpers;
 using Neurotoxin.Godspeed.Core.Io.Gpd;
 using Neurotoxin.Godspeed.Core.Io.Gpd.Entries;
 using Neurotoxin.Godspeed.Core.Io.Stfs;
@@ -426,9 +427,9 @@ namespace Neurotoxin.Godspeed.Core.Tests
             }
 
             Debug.WriteLine("BSep: {0} {1} {2}",
-                            no.VolumeDescriptor.BlockSeperation,
-                            wr.VolumeDescriptor.BlockSeperation,
-                            ok.VolumeDescriptor.BlockSeperation);
+                            no.VolumeDescriptor.BlockSeparation,
+                            wr.VolumeDescriptor.BlockSeparation,
+                            ok.VolumeDescriptor.BlockSeparation);
 
             for (var i = 0; i < no.TopTable.EntryCount; i++)
             {
@@ -581,7 +582,7 @@ namespace Neurotoxin.Godspeed.Core.Tests
             //    block = he.NextBlock;
             //}
 
-            BinMapCompare(wr, ok);
+            BinMapHelper.ModelCompare(wr, ok);
 
             //Debug.WriteLine("{0} {1}", wr.TopTable.Entries[13].BlockHash.ToHex(), ok.TopTable.Entries[13].BlockHash.ToHex());
             //var wrTable = wr.TopTable.Tables[13];
@@ -602,133 +603,6 @@ namespace Neurotoxin.Godspeed.Core.Tests
             //Debug.WriteLine("{0} {1}", wr.HashBlock(wrTable.StartOffset).ToHex(), ok.HashBlock(okTable.StartOffset).ToHex());
 
             //Debug.WriteLine("WR: {0}%", (double)wrCoverage / wr.Binary.Length * 100);
-        }
-
-        private void BinMapCompare(BinaryModelBase wr, BinaryModelBase ok, string indent = "")
-        {
-            var type = wr.GetType();
-            var modelType = typeof (BinaryModelBase);
-            var wrKeys = wr.BinMap.Keys;
-            var okKeys = ok.BinMap.Keys;
-
-            for (var i = 0; i < wrKeys.Length; i++)
-            {
-                var wrEntry = wr.BinMap.Get(wrKeys[i]).Item2;
-                var key = wrKeys[i];
-                if (okKeys.Contains(key))
-                {
-                    var okEntry = ok.BinMap.Get(key).Item2;
-                    if (wrEntry.Length != okEntry.Length)
-                    {
-                        Debug.WriteLine(
-                            "{8}[0x{0,8:X8}][{7,4}] Different content length. A[{3},{5}]: {1}; B[{4},{6}]: {2}",
-                            wrKeys[i], wrEntry.Length, okEntry.Length, wrEntry.PropertyName,
-                            okEntry.PropertyName, wrEntry.ClassName, okEntry.ClassName, wrEntry.BlockNum, indent);
-                    }
-                    else
-                    {
-                        var wrData = wr.Binary.ReadBytes(wrKeys[i], wrEntry.Length.Value);
-                        var okData = ok.Binary.ReadBytes(wrKeys[i], wrEntry.Length.Value);
-                        IStructuralEquatable eqa1 = wrData;
-                        if (!eqa1.Equals(okData, StructuralComparisons.StructuralEqualityComparer))
-                        {
-                            int? blockNum;
-                            string wrValue;
-                            string okValue;
-                            if (wr is HashEntry)
-                            {
-                                var wrhe = (HashEntry) wr;
-                                var okhe = (HashEntry) ok;
-                                switch (wrEntry.PropertyName)
-                                {
-                                    case "BlockHash":
-                                        wrValue = wrhe.BlockHash.ToHex();
-                                        okValue = okhe.BlockHash.ToHex();
-                                        break;
-                                    case "Status":
-                                        wrValue = wrhe.Status.ToString();
-                                        okValue = okhe.Status.ToString();
-                                        break;
-                                    case "NextBlock":
-                                        wrValue = wrhe.NextBlock.ToString(CultureInfo.InvariantCulture);
-                                        okValue = okhe.NextBlock.ToString(CultureInfo.InvariantCulture);
-                                        break;
-                                    default:
-                                        throw new NotSupportedException(wrEntry.PropertyName);
-                                }
-                                blockNum = wrhe.Block;
-                            }
-                            else
-                            {
-                                blockNum = wrEntry.BlockNum;
-                                wrValue = wrEntry.ClassName;
-                                okValue = okEntry.ClassName;
-                            }
-
-                            Debug.WriteLine("{6}[0x{0,8:X8}][{2,4}] Different data: {1} ({3}) vs {4} ({5})", wrKeys[i],
-                                            wrEntry.PropertyName, blockNum, wrValue, okEntry.PropertyName, okValue,
-                                            indent);
-                            var pi = type.GetProperty(wrEntry.PropertyName);
-                            switch (wrEntry.PropertyName)
-                            {
-                                case "TopTable":
-                                    {
-                                        var wrTable = ((StfsPackage) wr).TopTable;
-                                        var okTable = ((StfsPackage) ok).TopTable;
-                                        if (wrTable.EntryCount != okTable.EntryCount)
-                                            Debug.WriteLine("  -- Different entry count --");
-                                        else
-                                        {
-                                            for (var j = 0; j < wrTable.EntryCount; j++)
-                                            {
-                                                BinMapCompare(wrTable.Entries[j], okTable.Entries[j], "  ");
-                                            }
-                                            Debug.WriteLine("{0} {1}", wrTable.AllocatedBlockCount, okTable.AllocatedBlockCount);
-                                        }
-                                    }
-                                    break;
-                                case "Table":
-                                    {
-                                        var wrTable = ((StfsPackage) wr).TopTable.Tables[int.Parse(wrEntry.ClassName)];
-                                        var okTable = ((StfsPackage) ok).TopTable.Tables[int.Parse(wrEntry.ClassName)];
-                                        if (wrTable.EntryCount != okTable.EntryCount)
-                                            Debug.WriteLine("  -- Different entry count --");
-                                        else
-                                        {
-                                            for (var j = 0; j < wrTable.EntryCount; j++)
-                                                BinMapCompare(wrTable.Entries[j], okTable.Entries[j], "  ");
-                                        }
-                                    }
-                                    break;
-                                case "FileTable":
-                                    {
-                                        for (var j = 0; j < 64; j++)
-                                        {
-                                            var addr = key + j*0x40;
-                                            var wrfe = ModelFactory.GetModel<FileEntry>(wr.Binary, addr);
-                                            var okfe = ModelFactory.GetModel<FileEntry>(ok.Binary, addr);
-                                            BinMapCompare(wrfe, okfe, "  ");
-                                        }
-                                    }
-                                    break;
-                                default:
-                                    if (pi != null && modelType.IsAssignableFrom(pi.PropertyType))
-                                    {
-                                        var wrProperty = pi.GetValue(wr, null) as BinaryModelBase;
-                                        var okProperty = pi.GetValue(ok, null) as BinaryModelBase;
-                                        BinMapCompare(wrProperty, okProperty, indent + "  ");
-                                    }
-                                    break;
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    Debug.WriteLine("{4}[0x{0,8:X8}][{2,4}] Missing data. {1} ({3})", wrKeys[i], wrEntry.PropertyName,
-                                    wrEntry.BlockNum, wrEntry.ClassName, indent);
-                }
-            }
         }
 
         [Test]
@@ -764,7 +638,7 @@ namespace Neurotoxin.Godspeed.Core.Tests
                     log.Add(string.Format("{0} ({1}), {2} ({3})", xx, un, yy, pr));
                 }
                 l.Add(Path.GetFileName(file), log);
-                //g.Add(Path.GetFileName(file), m.VolumeDescriptor.BlockSeperation.ToString(CultureInfo.InvariantCulture));
+                //g.Add(Path.GetFileName(file), m.VolumeDescriptor.BlockSeparation.ToString(CultureInfo.InvariantCulture));
                 g.Add(Path.GetFileName(file), m.TopTable.Tables.Last().EntryCount.ToString());
             }
             var output = new List<string>
@@ -822,7 +696,7 @@ namespace Neurotoxin.Godspeed.Core.Tests
         {
             for (var i = 0; i < a.Count; i++)
             {
-                BinMapCompare(a.ToList()[i], b.ToList()[i]);
+                BinMapHelper.ModelCompare(a.ToList()[i], b.ToList()[i]);
             }
         }
 
@@ -835,6 +709,18 @@ namespace Neurotoxin.Godspeed.Core.Tests
                 var gpdBytes = File.ReadAllBytes(file);
                 var gpd = ModelFactory.GetModel<GpdFile>(gpdBytes);
                 Debug.WriteLine("[{4}] {0,3}/{1} {2,3}/{3} {5,6} {6} {7} {8}", gpd.EntryCount, gpd.EntryTableLength, gpd.FreeSpaceTableEntryCount, gpd.FreeSpaceTableLength, Path.GetFileName(file), gpdBytes.Length, gpd.FreeSpace[0].Length, gpd.FreeSpace[0].AddressSpecifier, 0x18 + gpd.EntryTableLength * 0x12 + gpd.FreeSpaceTableLength * 0x8);
+            }
+        }
+
+        [Test]
+        public void GenderTest()
+        {
+            var profiles = new[] { "E000000F48B24EB1", "E00001575AC16703", "E00001D5D85ED487", "E000050E524FCEFD" };
+
+            foreach (var profile in profiles)
+            {
+                var p = ModelFactory.GetModel<StfsPackage>(string.Format(@"c:\inetpub\ftproot\Hdd1\Content\{0}\FFFE07D1\00010000\{0}", profile));
+                Debug.WriteLine(p.VolumeDescriptor.BlockSeparation);
             }
         }
     }

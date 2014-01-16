@@ -106,6 +106,7 @@
     <Compile Include="Constants\ItemType.cs" />
     <Compile Include="Constants\Modules.cs" />
     <Compile Include="Constants\ModuleLoadInfoCollection.cs" />
+    <Compile Include="Constants\OpenStfsPackageMode.cs" />
     <Compile Include="Constants\TitleType.cs" />
     <Compile Include="Constants\ToggleSelectionMode.cs" />
     <Compile Include="Constants\TransferErrorType.cs" />
@@ -117,6 +118,7 @@
     <Compile Include="ContentProviders\UserSettings.cs" />
     <Compile Include="ContentProviders\StfsPackageContent.cs" />
     <Compile Include="ContentProviders\TitleRecognizer.cs" />
+    <Compile Include="Converters\FileBlockHealthStatusConverter.cs" />
     <Compile Include="Converters\ExpirationConverter.cs" />
     <Compile Include="Converters\NameConverter.cs" />
     <Compile Include="Converters\PaneHeaderBackgroundConverter.cs" />
@@ -143,6 +145,10 @@
     </Compile>
     <Compile Include="Primitives\DialogBase.cs" />
     <Compile Include="ViewModels\CompressedFileContentViewModel.cs" />
+    <Compile Include="Constants\FileBlockHealthStatus.cs" />
+    <Compile Include="ViewModels\FileBlockViewModel.cs" />
+    <Compile Include="ViewModels\FileEntryViewModel.cs" />
+    <Compile Include="ViewModels\ProfileRebuilderViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\InputDialogOptionViewModel.cs" />
     <Compile Include="Interfaces\IPaneViewModel.cs" />
@@ -171,6 +177,9 @@
     </Compile>
     <Compile Include="Views\Controls\ProgressNotificationBar.xaml.cs">
       <DependentUpon>ProgressNotificationBar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ProfileRebuilderPane.xaml.cs">
+      <DependentUpon>ProfileRebuilderPane.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Dialogs\AboutDialog.xaml.cs">
       <DependentUpon>AboutDialog.xaml</DependentUpon>
@@ -264,6 +273,10 @@
     <Page Include="Views\Controls\ProgressNotificationBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ProfileRebuilderPane.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Dialogs\AboutDialog.xaml">
       <Generator>MSBuild:Compile</Generator>

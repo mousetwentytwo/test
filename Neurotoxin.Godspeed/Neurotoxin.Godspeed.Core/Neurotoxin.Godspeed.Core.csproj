@@ -93,6 +93,7 @@
     <Compile Include="Extensions\ToBigEndian.cs" />
     <Compile Include="Extensions\ToByteArray.cs" />
     <Compile Include="Extensions\VersionExtensions.cs" />
+    <Compile Include="Helpers\BinMapHelper.cs" />
     <Compile Include="Io\DirectoryInfo.cs" />
     <Compile Include="Io\DirectoryStructure.cs" />
     <Compile Include="Io\Gpd\Entries\AchievementComparer.cs" />
@@ -102,7 +103,7 @@
     <Compile Include="Io\Gpd\Entries\EntryList.cs" />
     <Compile Include="Io\Gpd\Entries\SettingList.cs" />
     <Compile Include="Io\Gpd\Entries\TitleEntry.cs" />
-    <Compile Include="Io\Stfs\BinMap.cs" />
+    <Compile Include="Models\BinMap.cs" />
     <Compile Include="Io\Stfs\Data\AvatarItemMediaInfo.cs" />
     <Compile Include="Io\Stfs\Data\CachedUserFlags.cs" />
     <Compile Include="Io\Stfs\Data\IInstallerInformation.cs" />
@@ -112,7 +113,7 @@
     <Compile Include="Io\Stfs\Data\IMediaInfo.cs" />
     <Compile Include="Io\Stfs\Data\SvodVolumeDescriptor.cs" />
     <Compile Include="Io\Stfs\Data\IVolumeDescriptor.cs" />
-    <Compile Include="Io\Stfs\BinMapEntry.cs" />
+    <Compile Include="Models\BinMapEntry.cs" />
     <Compile Include="Io\Stfs\ProfileEmbeddedContent.cs" />
     <Compile Include="Io\Stfs\StfsPackage.cs" />
     <Compile Include="Io\Stfs\SvodPackage.cs" />

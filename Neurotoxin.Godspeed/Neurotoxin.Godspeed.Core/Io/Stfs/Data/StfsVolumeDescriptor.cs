@@ -13,7 +13,7 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs.Data
         public virtual int Reserved { get; set; }
 
         [BinaryData(0x1)]
-        public virtual int BlockSeperation { get; set; }
+        public virtual int BlockSeparation { get; set; }
 
         [BinaryData(0x2, EndianType.LittleEndian)]
         public virtual ushort FileTableBlockCount { get; set; }

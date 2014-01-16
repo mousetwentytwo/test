@@ -1,4 +1,4 @@
-﻿namespace Neurotoxin.Godspeed.Core.Io.Stfs
+﻿namespace Neurotoxin.Godspeed.Core.Models
 {
     public class BinMapEntry
     {

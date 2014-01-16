@@ -6,7 +6,8 @@
              xmlns:controls="clr-namespace:Neurotoxin.Godspeed.Presentation.Controls;assembly=Neurotoxin.Godspeed.Presentation"
              xmlns:views="clr-namespace:Neurotoxin.Godspeed.Shell.Views"
              xmlns:vc="clr-namespace:Neurotoxin.Godspeed.Shell.Views.Controls"
-             xmlns:ts="clr-namespace:Neurotoxin.Godspeed.Shell.Views.TemplateSelectors" 
+             xmlns:ts="clr-namespace:Neurotoxin.Godspeed.Shell.Views.TemplateSelectors"
+             xmlns:constants="clr-namespace:Neurotoxin.Godspeed.Shell.Constants"
              Background="Transparent">
     <UserControl.Resources>
         <ResourceDictionary>
@@ -14,6 +15,8 @@
                 <ResourceDictionary Source="/Themes/WhistlerBlue.xaml"/>                
                 <ResourceDictionary>
                     <inf:BindingProxy x:Key="ViewModel" Data="{Binding}"/>
+                    <constants:OpenStfsPackageMode x:Key="Browsing">Browsing</constants:OpenStfsPackageMode>
+                    <constants:OpenStfsPackageMode x:Key="Repair">Repair</constants:OpenStfsPackageMode>
                     <ts:CloseButtonsTemplateSelector x:Key="CloseButtonsTemplateSelector">
                         <ts:CloseButtonsTemplateSelector.DefaultTemplate>
                             <DataTemplate>
@@ -231,7 +234,14 @@
                                 </MenuItem>
                                 <MenuItem Header="Open Profile" 
                                           Visibility="{Binding Source={StaticResource ViewModel}, Path=Data.CurrentRow.IsProfile, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}"
-                                          Command="{Binding Source={StaticResource ViewModel}, Path=Data.OpenStfsPackageCommand}">
+                                          Command="{Binding Source={StaticResource ViewModel}, Path=Data.OpenStfsPackageCommand}" CommandParameter="{StaticResource Browsing}">
+                                    <MenuItem.Icon>
+                                        <controls:GreyableImage Source="/Resources/package.png" Width="16" Height="16" SnapsToDevicePixels="True"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Repair Profile" 
+                                          Visibility="{Binding Source={StaticResource ViewModel}, Path=Data.CurrentRow.IsProfile, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}"
+                                          Command="{Binding Source={StaticResource ViewModel}, Path=Data.OpenStfsPackageCommand}" CommandParameter="{StaticResource Repair}">
                                     <MenuItem.Icon>
                                         <controls:GreyableImage Source="/Resources/package.png" Width="16" Height="16" SnapsToDevicePixels="True"/>
                                     </MenuItem.Icon>
