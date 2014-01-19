@@ -12,6 +12,7 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
         public const string FileCountFormat = "{0} / {1}";
         public const string SpeedFormat = "{0} KBps";
         public const string TimeFormat = "{0:hh\\:mm\\:ss} / {1:hh\\:mm\\:ss}";
+        public const string ActionFormat = "{0}: ";
 
         public TransferProgressDialog(FileManagerViewModel viewModel)
         {

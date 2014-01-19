@@ -26,7 +26,7 @@
                         <ts:CloseButtonsTemplateSelector.FtpTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
-                                    <Button Content="Disconnect" Command="{Binding DisconnectCommand}" Width="75"/>
+                                    <Button Content="Disconnect" Command="{Binding CloseCommand}" Width="75"/>
                                 </StackPanel>
                             </DataTemplate>
                         </ts:CloseButtonsTemplateSelector.FtpTemplate>
@@ -38,6 +38,13 @@
                                 </StackPanel>
                             </DataTemplate>
                         </ts:CloseButtonsTemplateSelector.PackageTemplate>
+                        <ts:CloseButtonsTemplateSelector.CompressedFileTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Content="Close" Command="{Binding CloseCommand}" Width="60"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ts:CloseButtonsTemplateSelector.CompressedFileTemplate>
                     </ts:CloseButtonsTemplateSelector>
                     <ts:CellEditingTemplateSelector x:Key="CellEditingTemplateSelector">
                         <ts:CellEditingTemplateSelector.TitleTemplate>
@@ -239,13 +246,13 @@
                                         <controls:GreyableImage Source="/Resources/package.png" Width="16" Height="16" SnapsToDevicePixels="True"/>
                                     </MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem Header="Repair Profile" 
+                                <!--<MenuItem Header="Repair Profile" 
                                           Visibility="{Binding Source={StaticResource ViewModel}, Path=Data.CurrentRow.IsProfile, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}"
                                           Command="{Binding Source={StaticResource ViewModel}, Path=Data.OpenStfsPackageCommand}" CommandParameter="{StaticResource Repair}">
                                     <MenuItem.Icon>
                                         <controls:GreyableImage Source="/Resources/package.png" Width="16" Height="16" SnapsToDevicePixels="True"/>
                                     </MenuItem.Icon>
-                                </MenuItem>
+                                </MenuItem>-->
                                 <MenuItem Header="Copy TitleID to Clipboard" 
                                           Visibility="{Binding Source={StaticResource ViewModel}, Path=Data.CurrentRow.IsGame, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}"
                                           Command="{Binding Source={StaticResource ViewModel}, Path=Data.CopyTitleIdToClipboardCommand}">
@@ -372,6 +379,7 @@
                 <KeyBinding Command="{Binding RenameFileSystemItemCommand}" CommandParameter="{Binding ElementName=Grid}" Key="F6" Modifiers="Ctrl+Shift"/>
                 <KeyBinding Command="{Binding RefreshCommand}" Key="R" Modifiers="Control"/>
                 <KeyBinding Command="{Binding InvertSelectionCommand}" Key="Multiply"/>
+                <KeyBinding Command="{Binding UpCommand}" Key="Back"/>
             </DataGrid.InputBindings>
         </DataGrid>
 

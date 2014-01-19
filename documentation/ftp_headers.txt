@@ -1,0 +1,2 @@
+220 FSD FTPD ready
+220-XeXMenu FTPD 0.1, by XeDev

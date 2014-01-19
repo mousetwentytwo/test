@@ -210,7 +210,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 var profileItem = _fileManager.GetFileInfo(profilePath);
                 if (profileItem == null)
                 {
-                    NotificationMessage.Show("Title recognition", string.Format("The profile with the ID {0} is currently in use. Please sign out.", item.Name));
+                    NotificationMessage.ShowMessage("Title recognition", string.Format("The profile with the ID {0} is currently in use. Please sign out.", item.Name));
                     return null;
                 }
                 RecognizeType(profileItem);

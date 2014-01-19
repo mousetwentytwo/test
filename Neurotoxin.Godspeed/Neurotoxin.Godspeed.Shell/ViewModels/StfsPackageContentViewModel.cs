@@ -20,6 +20,16 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             get { return false; }
         }
 
+        protected override string ExportActionDescription
+        {
+            get { return "Extract"; }
+        }
+
+        protected override string ImportActionDescription
+        {
+            get { return "Inject"; }
+        }
+
         #region SaveAndCloseCommand
 
         public DelegateCommand SaveAndCloseCommand { get; private set; }
@@ -34,8 +44,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         #endregion
 
         #region CloseCommand
-
-        public DelegateCommand CloseCommand { get; private set; }
 
         private void ExecuteCloseCommand()
         {

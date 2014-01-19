@@ -35,6 +35,8 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         private long _resumeStartPosition;
         private bool _isIdle = true;
 
+        public readonly Stack<string> Log = new Stack<string>();
+
         public string TempFilePath { get; set; }
         
         private readonly Timer _keepAliveTimer = new Timer(30000);
@@ -43,6 +45,8 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             get { return _keepAliveTimer.Enabled; }
             set { _keepAliveTimer.Enabled = value; }
         }
+
+        public bool IsPlayStation3 { get; private set; }
 
         private Ftp _ftpClient;
         private Ftp FtpClient
@@ -72,10 +76,15 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         internal bool Connect(FtpConnection connection)
         {
-            _ftpClient = new Ftp();
+            Limilabs.FTP.Log.Enabled = true;
+            Limilabs.FTP.Log.WriteLine += LogOnWriteLine;
+
+            _ftpClient = new Ftp {Mode = FtpMode.Active};
             _connection = connection;
             _connectionLostMessage = string.Format("The connection with {0} has been lost.", connection.Name);
             FtpClient.Connect(connection.Address, connection.Port);
+            IsPlayStation3 = Log.Peek().Contains("220 multiMAN");
+
             if (string.IsNullOrEmpty(connection.Username))
             {
                 FtpClient.LoginAnonymous();
@@ -106,6 +115,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         internal void Disconnect()
         {
+            Limilabs.FTP.Log.WriteLine -= LogOnWriteLine;
             try
             {
                 FtpClient.Close();
@@ -527,6 +537,11 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         public void Abort()
         {
             FtpClient.Abort();
+        }
+
+        private void LogOnWriteLine(string s)
+        {
+            Log.Push(s);
         }
     }
 }

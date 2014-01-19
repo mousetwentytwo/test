@@ -5,7 +5,20 @@
 * FIXED: Executing the Rename command from Context menu
 * FIXED: Title recognition in STFS packages
 * FIXED: STFS package saving
+* FIXED: Refreshing directory shows random percentage
+* FIXED: Speedmeter using Remote Copy
+* FIXED: Remote Copying files with "&" in path
+* FIXED: PS3 contents aren't treated as Xbox anymore
 * ADDED: Compressed file support (Zip, Rar, Tar, GZip, 7Zip)
 * ADDED: Invert Selection (Num *)
 * ADDED: Quick Search
 * ADDED: File/Directory rename
+* ADDED: .NET version detection (Quick Search and Renaming requires .NET 4.0.30319.18408 or newer)
+* ADDED: XeXMenu support
+* ADDED: Active mode enabled and became default for FTPs (Passive Mode is still available but cannot be used with XeXMenu)
+* ADDED: Warning messages can be ignored with "Don't show this message again" checkbox
+* ADDED: NTFS Junction Point support
+* ADDED: File transfer notification during Indirect Copy
+* ADDED: Clear Cache command
+* ADDED: Navigate to parent folder and closing nested pane (FTP, STFS, Compressed file) by pressing the Backspace button
+* ADDED: PS3 Free space indication

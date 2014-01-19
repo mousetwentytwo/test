@@ -178,7 +178,15 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                     while (!done)
                     {
                         Thread.Sleep(100);
-                        var streamLength = fs.CanRead ? fs.Length : size;
+                        long streamLength;
+                        try
+                        {
+                            streamLength = fs.Length;
+                        }
+                        catch
+                        {
+                            streamLength = size;
+                        }
                         var transferred = streamLength - totalBytesTransferred;
                         totalBytesTransferred = streamLength;
                         var percentage = (int)(totalBytesTransferred*100/size);

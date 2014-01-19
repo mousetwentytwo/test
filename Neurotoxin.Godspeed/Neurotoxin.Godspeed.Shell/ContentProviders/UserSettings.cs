@@ -2,6 +2,7 @@
 using Neurotoxin.Godspeed.Core.Caching;
 using Neurotoxin.Godspeed.Shell.Models;
 using Neurotoxin.Godspeed.Shell.ViewModels;
+using Neurotoxin.Godspeed.Core.Extensions;
 
 namespace Neurotoxin.Godspeed.Shell.ContentProviders
 {
@@ -119,6 +120,16 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         {
             get { return Get(RightPaneFileListPaneSettingsKey, new FileListPaneSettings(@"C:\", "ComputedName", ListSortDirection.Ascending)); }
             set { Set(RightPaneFileListPaneSettingsKey, value); }
+        }
+
+        public static bool IsMessageIgnored(string message)
+        {
+            return CacheStore.ContainsKey("WarningMessage_" + message.Hash());
+        }
+
+        public static void IgnoreMessage(string message)
+        {
+            CacheStore.Update("WarningMessage_" + message.Hash(), true);
         }
 
         private static T Get<T>(string key, T defaultValue = default(T))

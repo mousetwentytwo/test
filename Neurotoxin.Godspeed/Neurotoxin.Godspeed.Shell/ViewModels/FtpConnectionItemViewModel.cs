@@ -73,6 +73,13 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             set { Model.Password = value ?? string.Empty; NotifyPropertyChanged(PASSWORD); }
         }
 
+        private const string USEPASSIVEMODE = "UsePassiveMode";
+        public bool UsePassiveMode
+        {
+            get { return Model.UsePassiveMode; }
+            set { Model.UsePassiveMode = value; NotifyPropertyChanged(USEPASSIVEMODE); }
+        }
+
         public FtpConnectionItemViewModel(FtpConnection model)
         {
             Model = model;

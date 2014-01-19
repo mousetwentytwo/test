@@ -103,6 +103,7 @@
     <Compile Include="Io\Gpd\Entries\EntryList.cs" />
     <Compile Include="Io\Gpd\Entries\SettingList.cs" />
     <Compile Include="Io\Gpd\Entries\TitleEntry.cs" />
+    <Compile Include="Io\ReparsePoint.cs" />
     <Compile Include="Models\BinMap.cs" />
     <Compile Include="Io\Stfs\Data\AvatarItemMediaInfo.cs" />
     <Compile Include="Io\Stfs\Data\CachedUserFlags.cs" />

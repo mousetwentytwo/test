@@ -34,12 +34,20 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             get { return false; }
         }
+        
+        protected override string ExportActionDescription
+        {
+            get { return "Download"; }
+        }
 
-        #region DisconnectCommand
+        protected override string ImportActionDescription
+        {
+            get { return "Upload"; }
+        }
 
-        public DelegateCommand DisconnectCommand { get; private set; }
+        #region Commands
 
-        private void ExecuteDisconnectCommand()
+        private void ExecuteCloseCommand()
         {
             eventAggregator.GetEvent<CloseNestedPaneEvent>().Publish(new CloseNestedPaneEventArgs(this, Connection));
             Dispose();
@@ -49,7 +57,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public FtpContentViewModel(FileManagerViewModel parent) : base(parent)
         {
-            DisconnectCommand = new DelegateCommand(ExecuteDisconnectCommand);
+            CloseCommand = new DelegateCommand(ExecuteCloseCommand);
         }
 
         public override void LoadDataAsync(LoadCommand cmd, object cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase, Exception> error = null)
@@ -93,7 +101,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                             },
                         exception =>
                             {
-                                DisconnectCommand.Execute();
+                                CloseCommand.Execute();
                                 if (error != null) error.Invoke(this, exception);
                             });
                     break;
@@ -108,7 +116,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void ConnectCallback()
         {
             Drives = FileManager.GetDrives().Select(d => new FileSystemItemViewModel(d)).ToObservableCollection();
-            var r = new Regex("^/[A-Z0-9]+/", RegexOptions.IgnoreCase);
+            var r = new Regex("^/[A-Z0-9_-]+/", RegexOptions.IgnoreCase);
             var defaultPath = Connection.Model.DefaultPath;
             if (string.IsNullOrEmpty(Connection.Model.DefaultPath))
             {
@@ -160,6 +168,22 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             base.ChangeDrive();
         }
 
+        protected override List<FileSystemItem> ChangeDirectoryInner(string selectedPath)
+        {
+            return FileManager.IsPlayStation3 ? FileManager.GetList(selectedPath) : base.ChangeDirectoryInner(selectedPath);
+        }
+
+        protected override void ChangeDirectoryCallback(List<FileSystemItem> result)
+        {
+            base.ChangeDirectoryCallback(result);
+            if (!FileManager.IsPlayStation3) return;
+
+            //PS3 Transfer complete response string
+            var r = new Regex(string.Format(@"226 Transfer complete \[{0}\] \[ ([0-9]+.*?free) \]", Drive.Path.TrimEnd('/')));
+            var m = r.Match(FileManager.Log.ElementAt(1));
+            if (m.Success) FreeSpace = m.Groups[1].Value;
+        }
+
         public override string GetTargetPath(string path)
         {
             return String.Format("{0}{1}", CurrentFolder.Path, path.Replace('\\', '/'));
@@ -188,6 +212,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public bool RemoteDownload(FileSystemItem item, string savePath, CopyAction action)
         {
             if (item.Type != ItemType.File) throw new NotSupportedException();
+            eventAggregator.GetEvent<TransferActionStartedEvent>().Publish(ExportActionDescription);
             long resumeStartPosition = 0;
             switch (action)
             {
@@ -217,6 +242,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public bool RemoteUpload(FileSystemItem item, string savePath, CopyAction action)
         {
             if (item.Type != ItemType.File) throw new NotSupportedException();
+            eventAggregator.GetEvent<TransferActionStartedEvent>().Publish(ImportActionDescription);
             long resumeStartPosition = 0;
             switch (action)
             {

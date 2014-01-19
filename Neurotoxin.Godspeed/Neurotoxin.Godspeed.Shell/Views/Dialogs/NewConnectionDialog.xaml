@@ -5,7 +5,7 @@
                        xmlns:dialogs="clr-namespace:Neurotoxin.Godspeed.Shell.Views.Dialogs"
                        xmlns:primitives="clr-namespace:Neurotoxin.Godspeed.Shell.Primitives"
                        xmlns:converters="clr-namespace:Neurotoxin.Godspeed.Presentation.Converters;assembly=Neurotoxin.Godspeed.Presentation"
-                       Width="320" WindowStartupLocation="CenterOwner" Title="Connection details">
+                       Width="520" WindowStartupLocation="CenterOwner" Title="Connection details">
     <primitives:DialogBase.Resources>
         <converters:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
         <Style TargetType="TextBox" x:Key="TextBoxStyle">
@@ -80,6 +80,8 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="100"/>
             <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="40"/>
+            <ColumnDefinition Width="70"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -93,7 +95,7 @@
         </Grid.RowDefinitions>
 
         <TextBlock Grid.Column="0" Grid.Row="0" Text="Connection name:" VerticalAlignment="Center" Margin="0,0,0,5"/>
-        <TextBox Grid.Column="1" Grid.Row="0" Margin="0,0,0,5" x:Name="ConnectionName" Style="{StaticResource TextBoxStyle}">
+        <TextBox Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="3" Margin="0,0,0,5" x:Name="ConnectionName" Style="{StaticResource TextBoxStyle}">
             <TextBox.Text>
                 <Binding Path="Name" UpdateSourceTrigger="LostFocus">
                     <Binding.ValidationRules>
@@ -103,7 +105,7 @@
             </TextBox.Text>
         </TextBox>
 
-        <TextBlock Grid.Column="0" Grid.Row="1" Text="Xbox version:" VerticalAlignment="Center" Margin="0,0,0,5"/>
+        <TextBlock Grid.Column="0" Grid.Row="1" Text="Console:" VerticalAlignment="Center" Margin="0,0,0,5"/>
         <ComboBox Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="3" Margin="0,0,0,5" 
                   ItemsSource="{Binding RelativeSource={RelativeSource AncestorType={x:Type dialogs:NewConnectionDialog}}, Path=ConnectionImages}" 
                   SelectedItem="{Binding ConnectionImage}">
@@ -125,8 +127,8 @@
             </TextBox.Text>
         </TextBox>
 
-        <TextBlock Grid.Column="0" Grid.Row="3" Text="Port:" VerticalAlignment="Center" Margin="0,0,0,5"/>
-        <TextBox Grid.Column="1" Grid.Row="3" Margin="0,0,0,5" x:Name="Port" Style="{StaticResource TextBoxStyle}">
+        <TextBlock Grid.Column="2" Grid.Row="2" Text="Port:" VerticalAlignment="Center" Margin="10,0,0,5"/>
+        <TextBox Grid.Column="3" Grid.Row="2" Margin="0,0,0,5" x:Name="Port" Style="{StaticResource TextBoxStyle}">
             <TextBox.Text>
                 <Binding Path="Port" UpdateSourceTrigger="LostFocus">
                     <Binding.ValidationRules>
@@ -136,8 +138,8 @@
             </TextBox.Text>
         </TextBox>
         
-        <TextBlock Grid.Column="0" Grid.Row="4" Text="Username:" VerticalAlignment="Center" Margin="0,0,0,5"/>
-        <TextBox Grid.Column="1" Grid.Row="4" Margin="0,0,0,5" x:Name="Username" Style="{StaticResource TextBoxStyle}"
+        <TextBlock Grid.Column="0" Grid.Row="3" Text="Username:" VerticalAlignment="Center" Margin="0,0,0,5"/>
+        <TextBox Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="3" Margin="0,0,0,5" x:Name="Username" Style="{StaticResource TextBoxStyle}"
                  IsEnabled="{Binding ElementName=AnonymousLogin, Path=IsChecked, Converter={StaticResource InverseBooleanConverter}}">
             <TextBox.Text>
                 <Binding Path="Username" UpdateSourceTrigger="LostFocus">
@@ -148,8 +150,8 @@
             </TextBox.Text>
         </TextBox>
 
-        <TextBlock Grid.Column="0" Grid.Row="5" Text="Password:" VerticalAlignment="Center" Margin="0,0,0,5"/>
-        <TextBox Grid.Column="1" Grid.Row="5" Grid.ColumnSpan="3" Margin="0,0,0,5" x:Name="Password" Style="{StaticResource TextBoxStyle}"
+        <TextBlock Grid.Column="0" Grid.Row="4" Text="Password:" VerticalAlignment="Center" Margin="0,0,0,5"/>
+        <TextBox Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="3" Margin="0,0,0,5" x:Name="Password" Style="{StaticResource TextBoxStyle}"
                  IsEnabled="{Binding ElementName=AnonymousLogin, Path=IsChecked, Converter={StaticResource InverseBooleanConverter}}">
             <TextBox.Text>
                 <Binding Path="Password" UpdateSourceTrigger="LostFocus">
@@ -160,10 +162,13 @@
             </TextBox.Text>
         </TextBox>
 
-        <CheckBox Grid.Column="1" Grid.Row="6" Margin="0,0,0,15" Content="Anonymous login" x:Name="AnonymousLogin"
+        <CheckBox Grid.Column="1" Grid.Row="5" Margin="0,0,0,5" Content="Anonymous login" x:Name="AnonymousLogin"
                   Checked="AnonymousLoginOnChange" Unchecked="AnonymousLoginOnChange"/>
 
-        <StackPanel Grid.ColumnSpan="2" Grid.Row="7" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,5,0">
+        <CheckBox Grid.Column="1" Grid.Row="6" Grid.ColumnSpan="3" Margin="0,0,0,15" IsChecked="{Binding UsePassiveMode}"
+                  Content="Use Passive Mode (Please note that XeXMenu doesn't support PASV!)"/>
+
+        <StackPanel Grid.ColumnSpan="4" Grid.Row="7" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,5,0">
             <Button Content="OK" Width="75" Margin="0,0,5,0" Click="OkButtonClick"/>
             <Button Content="Cancel" Width="75" Click="CancelButtonClick"/>
         </StackPanel>

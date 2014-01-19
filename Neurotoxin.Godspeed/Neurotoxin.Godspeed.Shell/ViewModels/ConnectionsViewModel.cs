@@ -202,7 +202,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void FtpConnectError(PaneViewModelBase pane, Exception exception)
         {
             IsBusy = false;
-            NotificationMessage.Show("Connection failed", string.Format("Can't connect to {0}", SelectedItem.Name));
+            NotificationMessage.ShowMessage("Connection failed", string.Format("Can't connect to {0}", SelectedItem.Name));
         }
 
         private void Save(FtpConnectionItemViewModel connection)

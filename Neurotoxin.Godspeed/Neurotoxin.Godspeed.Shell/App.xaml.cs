@@ -30,10 +30,7 @@ namespace Neurotoxin.Godspeed.Shell
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            var asm = Assembly.GetExecutingAssembly();
-            SetDataDirectory(asm);
-            CheckPrerequisites();
-            if (UserSettings.UseVersionChecker) CheckNewerVersion(asm);
+            SetDataDirectory();
             Dispatcher.CurrentDispatcher.UnhandledException += UnhandledThreadingException;
             ShutdownMode = ShutdownMode.OnMainWindowClose;
 
@@ -63,53 +60,9 @@ namespace Neurotoxin.Godspeed.Shell
             }
         }
 
-        private void CheckPrerequisites()
+        private void SetDataDirectory()
         {
-            var applicationAssembly = Assembly.GetAssembly(typeof (Application));
-            var fvi = FileVersionInfo.GetVersionInfo(applicationAssembly.Location);
-            var version = fvi.ProductVersion;
-            //NotificationMessage.Show("Warning", "");
-        }
-
-        private void CheckNewerVersion(Assembly asm)
-        {
-            var title = asm.GetAttribute<AssemblyTitleAttribute>().Title;
-            const string url = "https://godspeed.codeplex.com/";
-            WorkerThread.Run(() =>
-                                 {
-                                     try
-                                     {
-                                         var request = HttpWebRequest.Create(url);
-                                         var response = request.GetResponse();
-                                         var titlePattern = new Regex(@"\<span class=""rating_header""\>current.*?\<td\>(.*?)\</td\>", RegexOptions.IgnoreCase | RegexOptions.Singleline);
-                                         var datePattern = new Regex(@"\<span class=""rating_header""\>date.*?\<td\>.*?LocalTimeTicks=""(.*?)""", RegexOptions.IgnoreCase | RegexOptions.Singleline);
-                                         string html;
-                                         using (var stream = response.GetResponseStream())
-                                         {
-                                             var sr = new StreamReader(stream, UTF8Encoding.UTF8);
-                                             html = sr.ReadToEnd();
-                                             sr.Close();
-                                         }
-                                         var latestTitle = titlePattern.Match(html).Groups[1].Value.Trim();
-                                         var latestDate = new DateTime(1970, 1, 1);
-                                         latestDate = latestDate.AddSeconds(long.Parse(datePattern.Match(html).Groups[1].Value)).ToLocalTime();
-                                         return new Tuple<string, DateTime>(latestTitle, latestDate);
-                                     } 
-                                     catch
-                                     {
-                                         return new Tuple<string, DateTime>(string.Empty, DateTime.MinValue);
-                                     }
-                                 },
-                             info =>
-                                 {
-                                     if ((string.Compare(title, info.Item1, StringComparison.InvariantCultureIgnoreCase) != -1)) return;
-                                     var dialog = new NewVersionDialog(string.Format("{0} ({1:yyyy.MM.dd HH:mm})", info.Item1, info.Item2));
-                                     dialog.ShowDialog();
-                                 });
-        }
-
-        private void SetDataDirectory(Assembly asm)
-        {
+            var asm = Assembly.GetExecutingAssembly();
             var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             var company = asm.GetAttribute<AssemblyCompanyAttribute>().Company;
             var product = asm.GetAttribute<AssemblyProductAttribute>().Product;
@@ -137,7 +90,7 @@ namespace Neurotoxin.Godspeed.Shell
             //if (eventAggregator == null) eventAggregator = bootstrapper.Container.Resolve<IEventAggregator>();
 
             var raisedex = ex is TargetInvocationException ? ex.InnerException : ex;
-            NotificationMessage.Show("Error", raisedex.Message);
+            NotificationMessage.ShowMessage("Error", raisedex.Message);
             Shutdown();
 
             //eventAggregator.GetEvent<ExceptionEvent>().Publish(raisedex);

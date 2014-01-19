@@ -17,14 +17,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
     {
         private bool _isAborted;
 
-        private const string FREESPACE = "FreeSpace";
-        private string _freeSpace;
-        public string FreeSpace
-        {
-            get { return _freeSpace; }
-            set { _freeSpace = value; NotifyPropertyChanged(FREESPACE); }
-        }
-
         public bool IsNetworkDrive
         {
             get { return Drive.FullPath.StartsWith(@"\\"); }
@@ -35,7 +27,18 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             get { return false; }
         }
 
-        public LocalFileSystemContentViewModel(FileManagerViewModel parent) : base(parent)
+        protected override string ExportActionDescription
+        {
+            get { return null; }
+        }
+
+        protected override string ImportActionDescription
+        {
+            get { return null; }
+        }
+
+        public LocalFileSystemContentViewModel(FileManagerViewModel parent)
+            : base(parent)
         {
             IsResumeSupported = true;
         }

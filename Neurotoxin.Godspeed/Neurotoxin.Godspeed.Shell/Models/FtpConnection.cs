@@ -11,6 +11,7 @@ namespace Neurotoxin.Godspeed.Shell.Models
         public string Username { get; set; }
         public string Password { get; set; }
         public string DefaultPath { get; set; }
+        public bool UsePassiveMode { get; set; }
 
         public FtpConnection Clone()
         {
@@ -22,7 +23,8 @@ namespace Neurotoxin.Godspeed.Shell.Models
                            Port = Port,
                            Username = Username,
                            Password = Password,
-                           DefaultPath = DefaultPath
+                           DefaultPath = DefaultPath,
+                           UsePassiveMode = UsePassiveMode
                        };
         }
     }

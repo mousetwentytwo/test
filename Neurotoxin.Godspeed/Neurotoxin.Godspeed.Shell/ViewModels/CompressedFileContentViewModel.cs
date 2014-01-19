@@ -17,9 +17,17 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             get { return true; }
         }
 
-        #region CloseCommand
+        protected override string ExportActionDescription
+        {
+            get { return "Extract"; }
+        }
 
-        public DelegateCommand CloseCommand { get; private set; }
+        protected override string ImportActionDescription
+        {
+            get { return "Inject"; }
+        }
+
+        #region CloseCommand
 
         private void ExecuteCloseCommand()
         {

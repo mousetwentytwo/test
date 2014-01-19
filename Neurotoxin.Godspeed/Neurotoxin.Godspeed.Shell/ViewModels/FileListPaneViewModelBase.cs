@@ -40,6 +40,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         #region Constants
 
         private const string CHANGINGDIRECTORY = "Changing directory...";
+        protected abstract string ExportActionDescription { get; }
+        protected abstract string ImportActionDescription { get; }
 
         #endregion
 
@@ -78,7 +80,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     var name = string.IsNullOrEmpty(value.Title)
                                    ? value.Name
                                    : string.Format("{0} ({1})", value.Title, value.Name);
-                    NotificationMessage.Show("Drive change failed", string.Format("{0} is not accessible.", name));
+                    NotificationMessage.ShowMessage("Drive change failed", string.Format("{0} is not accessible.", name));
                     if (_drive == null) _drive = Drives.FirstOrDefault();
                 }
                 ChangeDrive();
@@ -92,6 +94,14 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             get { return _driveLabel; }
             set { _driveLabel = value; NotifyPropertyChanged(DRIVELABEL); }
+        }
+
+        private const string FREESPACE = "FreeSpace";
+        private string _freeSpace;
+        public string FreeSpace
+        {
+            get { return _freeSpace; }
+            set { _freeSpace = value; NotifyPropertyChanged(FREESPACE); }
         }
 
         private const string STACK = "Stack";
@@ -215,40 +225,19 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     if (CurrentRow.TitleType == TitleType.Profile) OpenStfsPackageCommand.Execute(OpenStfsPackageMode.Browsing);
                     return;
                 }
-
-                if (CurrentRow.IsUpDirectory)
-                {
-                    var parentPath = CurrentRow.Path.GetParentPath();
-                    if (Drive.Path == parentPath)
-                    {
-                        CurrentFolder = Drive;
-                    }
-                    else
-                    {
-                        var folder = FileManager.GetFolderInfo(parentPath);
-                        if (folder == null)
-                        {
-                            NotificationMessage.Show("Navigation error", string.Format("Can't find path: {0}", parentPath));
-                            CurrentFolder = Drive;
-                        } 
-                        else
-                        {
-                            CurrentFolder = new FileSystemItemViewModel(folder);    
-                        }
-                    }
-                } 
-                else
-                {
-                    CurrentFolder = CurrentRow;
-                }
+                CurrentFolder = CurrentRow.IsUpDirectory ? UpDirectory() : CurrentRow;
             }
-
-            ProgressMessage = CHANGINGDIRECTORY;
-            IsBusy = true;           
-            WorkerThread.Run(() => ChangeDirectory(CurrentFolder.Path), ChangeDirectoryCallback, AsyncErrorCallback);
+            ChangeDirectory();
         }
 
-        private List<FileSystemItem> ChangeDirectory(string selectedPath)
+        private void ChangeDirectory()
+        {
+            ProgressMessage = CHANGINGDIRECTORY;
+            IsBusy = true;
+            WorkerThread.Run(() => ChangeDirectoryInner(CurrentFolder.Path), ChangeDirectoryCallback, AsyncErrorCallback);
+        }
+
+        protected virtual List<FileSystemItem> ChangeDirectoryInner(string selectedPath)
         {
             var list = FileManager.GetList(selectedPath);
             list.ForEach(item => TitleRecognizer.RecognizeType(item));
@@ -258,7 +247,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         protected virtual void ChangeDirectoryCallback(List<FileSystemItem> result)
         {
             IsBusy = false;
-
             _queue = new Queue<FileSystemItem>();
             var sw = new Stopwatch();
             sw.Start();
@@ -353,7 +341,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void OpenStfsPackageError(PaneViewModelBase pane, Exception exception)
         {
             IsBusy = false;
-            NotificationMessage.Show("Open failed", string.Format("Can't open {0}: {1}", CurrentRow.ComputedName, exception.Message));
+            NotificationMessage.ShowMessage("Open failed", string.Format("Can't open {0}: {1}", CurrentRow.ComputedName, exception.Message));
         }
 
         #endregion
@@ -395,7 +383,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void OpenCompressedFileError(PaneViewModelBase pane, Exception exception)
         {
             IsBusy = false;
-            NotificationMessage.Show("Open failed", string.Format("Can't open {0}: {1}", CurrentRow.ComputedName, exception.Message));
+            NotificationMessage.ShowMessage("Open failed", string.Format("Can't open {0}: {1}", CurrentRow.ComputedName, exception.Message));
         }
 
         #endregion
@@ -710,7 +698,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             IsBusy = false;
             var message = count < 1 ? "No new titles found." : string.Format("{0} new title{1} found.", count, count > 1 ? "s" : string.Empty);
-            NotificationMessage.Show("Title Recognition", message);
+            NotificationMessage.ShowMessage("Title Recognition", message);
         }
 
         #endregion
@@ -782,7 +770,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private bool CanExecuteRenameTitleCommand(object cmdParam)
         {
-            return CurrentRow != null && !CurrentRow.IsUpDirectory && CurrentRow.IsCached;
+            return Parent.DataGridSupportsRenaming && CurrentRow != null && !CurrentRow.IsUpDirectory && CurrentRow.IsCached;
         }
 
         private void ExecuteRenameTitleCommand(object cmdParam)
@@ -794,7 +782,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private bool CanExecuteRenameFileSystemItemCommand(object cmdParam)
         {
-            return CurrentRow != null && !CurrentRow.IsUpDirectory && !IsReadOnly;
+            return Parent.DataGridSupportsRenaming && CurrentRow != null && !CurrentRow.IsUpDirectory && !IsReadOnly;
         }
 
         private void ExecuteRenameFileSystemItemCommand(object cmdParam)
@@ -854,7 +842,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #endregion
 
-        #region Refresh
+        #region RefreshCommand
 
         public DelegateCommand RefreshCommand { get; private set; }
 
@@ -878,7 +866,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             ProgressMessage = "Refreshing directory...";
             IsBusy = true;
             WorkerThread.Run(
-                () => ChangeDirectory(CurrentFolder.Path),
+                () => ChangeDirectoryInner(CurrentFolder.Path),
                 result =>
                 {
                     ChangeDirectoryCallback(result);
@@ -886,6 +874,50 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 },
                 AsyncErrorCallback);
         }
+
+        #endregion
+
+        #region UpCommand
+
+        public DelegateCommand UpCommand { get; private set; }
+
+        private bool CanExecuteUpCommand()
+        {
+            return true;
+        }
+
+        private void ExecuteUpCommand()
+        {
+            if (CurrentFolder == Drive)
+            {
+                if (CloseCommand != null) CloseCommand.Execute();
+            }
+            else
+            {
+                CurrentFolder = UpDirectory();
+                ChangeDirectory();
+            }
+        }
+
+        private FileSystemItemViewModel UpDirectory()
+        {
+            var parentPath = CurrentFolder.Path.GetParentPath();
+            if (parentPath == Drive.Path)
+                return Drive;
+
+            var folder = FileManager.GetFolderInfo(parentPath);
+            if (folder != null)
+                return new FileSystemItemViewModel(folder);
+
+            NotificationMessage.ShowMessage("Navigation error", string.Format("Can't find path: {0}", parentPath));
+            return Drive;
+        }
+
+        #endregion
+
+        #region CloseCommand
+
+        public DelegateCommand CloseCommand { get; protected set; }
 
         #endregion
 
@@ -913,6 +945,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             RenameTitleCommand = new DelegateCommand<object>(ExecuteRenameTitleCommand, CanExecuteRenameTitleCommand);
             RenameFileSystemItemCommand = new DelegateCommand<object>(ExecuteRenameFileSystemItemCommand, CanExecuteRenameFileSystemItemCommand);
             RefreshCommand = new DelegateCommand(ExecuteRefreshCommand, CanExecuteRefreshCommand);
+            UpCommand = new DelegateCommand(ExecuteUpCommand, CanExecuteUpCommand);
 
             Items = new ObservableCollection<FileSystemItemViewModel>();
 
@@ -1087,7 +1120,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 if (type != TransferType.Delete) result.Add(new QueueItem(item, TransferType.Copy));
                 if (item.Type == ItemType.Directory)
                 {
-                    var sub = PopulateQueue(ChangeDirectory(item.Path), type);
+                    var sub = PopulateQueue(ChangeDirectoryInner(item.Path), type);
                     item.Size = sub.Where(i => i.FileSystemItem.Type == ItemType.File).Sum(i => i.FileSystemItem.Size ?? 0);
                     result.AddRange(sub);
                 }
@@ -1106,6 +1139,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public bool Export(FileSystemItem item, string savePath, CopyAction action)
         {
             if (item.Type != ItemType.File) throw new NotSupportedException();
+            eventAggregator.GetEvent<TransferActionStartedEvent>().Publish(ExportActionDescription);
             FileMode mode;
             long remoteStartPosition = 0;
             switch (action)
@@ -1147,6 +1181,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public bool Import(FileSystemItem item, string savePath, CopyAction action)
         {
             if (item.Type != ItemType.File) throw new NotSupportedException();
+            eventAggregator.GetEvent<TransferActionStartedEvent>().Publish(ImportActionDescription);
             var itemPath = item.Path;
             switch (action)
             {

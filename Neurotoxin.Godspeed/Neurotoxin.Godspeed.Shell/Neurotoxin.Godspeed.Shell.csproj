@@ -128,6 +128,7 @@
     <Compile Include="Converters\TransferTypeConverter.cs" />
     <Compile Include="Events\ActivePaneChangedEvent.cs" />
     <Compile Include="Events\CloseNestedPaneEvent.cs" />
+    <Compile Include="Events\TransferActionStartedEvent.cs" />
     <Compile Include="Events\OpenNestedPaneEvent.cs" />
     <Compile Include="Events\FtpOperationFinishedEvent.cs" />
     <Compile Include="Events\TransferProgressChangedEvent.cs" />

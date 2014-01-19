@@ -7,11 +7,13 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
+using Neurotoxin.Godspeed.Core.Io;
 using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Exceptions;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
+using DirectoryInfo = System.IO.DirectoryInfo;
 
 namespace Neurotoxin.Godspeed.Shell.ContentProviders
 {
@@ -69,6 +71,9 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         {
             if (path == null) throw new NotSupportedException();
 
+            var di = new DirectoryInfo(path);
+            if (di.Attributes.HasFlag(FileAttributes.ReparsePoint))
+                path = new ReparsePoint(path).Target;
             var list = Directory.GetDirectories(path).Select(GetFolderInfo).ToList();
             list.AddRange(Directory.GetFiles(path).Select(GetFileInfo));
 

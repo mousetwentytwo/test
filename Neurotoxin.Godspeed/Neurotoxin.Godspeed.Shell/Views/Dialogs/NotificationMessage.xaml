@@ -10,11 +10,14 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.ColumnSpan="4" Grid.Row="0" Margin="5,0,0,5" x:Name="Message" TextWrapping="Wrap" />
+        <TextBlock Grid.Row="0" Margin="5,0,0,5" x:Name="Message" TextWrapping="Wrap" />
+        
+        <CheckBox Grid.Row="1" Content="Don't show this message again" Margin="0,0,0,15" x:Name="DontShowCheckbox"/>
 
-        <Button Grid.Column="1" Grid.Row="1" Content="OK" Margin="5" x:Name="Ok" Click="OkButtonClick" Width="80"/>
+        <Button Grid.Row="2" Content="OK" Margin="5" x:Name="Ok" Click="OkButtonClick" Width="80"/>
         
     </Grid>
 </primitives:DialogBase>

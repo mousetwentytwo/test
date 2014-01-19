@@ -40,6 +40,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private bool _isContinued;
         private string _transferLogPath;
 
+        public bool DataGridSupportsRenaming { get; set; }
+
         #region Main window properties
 
         private readonly Stack<IPaneViewModel> _leftPaneStack = new Stack<IPaneViewModel>();
@@ -123,6 +125,14 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             get { return _transferType; }
             set { _transferType = value; NotifyPropertyChanged(TRANSFERTYPE); }
+        }
+
+        private const string TRANSFERACTION = "TransferAction";
+        private string _transferAction;
+        public string TransferAction
+        {
+            get { return _transferAction; }
+            set { _transferAction = value; NotifyPropertyChanged(TRANSFERACTION); }
         }
 
         private const string SOURCEFILE = "SourceFile";
@@ -378,8 +388,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             var item = _queue.Dequeue().FileSystemItem;
             FilesTransferred++;
             var vm = SourcePane.SelectedItems.FirstOrDefault(i => item.Path.StartsWith(i.Path));
-            if (vm != null && !_queue.Any(q => q.FileSystemItem.Path.StartsWith(vm.Path)))
-                vm.IsSelected = false;
+            if (vm != null)
+            {
+                if (vm.Type == ItemType.File || !_queue.Any(q => q.FileSystemItem.Path.StartsWith(vm.Path)))
+                    vm.IsSelected = false;
+            }
             CopyStart();
         }
 
@@ -558,7 +571,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             if (!success)
             {
-                NotificationMessage.Show("Add New Folder", string.Format("Error: folder [{0}] already exists! Please specify a different name.", name));
+                NotificationMessage.ShowMessage("Add New Folder", string.Format("Error: folder [{0}] already exists! Please specify a different name.", name));
                 return;
             }
             SourcePane.Refresh(() =>
@@ -737,6 +750,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             PauseCommand = new DelegateCommand(ExecutePauseCommand);
             ContinueCommand = new DelegateCommand(ExecuteContinueCommand);
 
+            eventAggregator.GetEvent<TransferActionStartedEvent>().Subscribe(OnTransferActionStarted);
             eventAggregator.GetEvent<TransferProgressChangedEvent>().Subscribe(OnTransferProgressChanged);
             eventAggregator.GetEvent<OpenNestedPaneEvent>().Subscribe(OnOpenNestedPane);
             eventAggregator.GetEvent<CloseNestedPaneEvent>().Subscribe(OnCloseNestedPane);
@@ -772,6 +786,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void FtpDisconnect()
         {
             RightPane = container.Resolve<ConnectionsViewModel>();
+        }
+
+        private void OnTransferActionStarted(string action)
+        {
+            UIThread.Run(() => { TransferAction = action ?? TransferType.ToString(); });
         }
 
         private void OnTransferProgressChanged(TransferProgressChangedEventArgs args)
@@ -836,13 +855,14 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 LeftPane.Dispose();
                 LeftPane = _leftPaneStack.Pop();
                 LeftPane.LoadDataAsync(LoadCommand.Restore, args.Payload);
-                
+                LeftPane.SetActive();
             }
             else if (RightPane == args.Pane)
             {
                 RightPane.Dispose();
                 RightPane = _rightPaneStack.Pop();
                 RightPane.LoadDataAsync(LoadCommand.Restore, args.Payload);
+                RightPane.SetActive();
             }
         }
 
@@ -854,6 +874,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void InitializeTransfer(TransferType mode, Action callback)
         {
             TransferType = mode;
+            TransferAction = mode.ToString();
             _rememberedCopyAction = CopyAction.CreateNew;
             CurrentFileProgress = 0;
             FilesTransferred = 0;
@@ -916,6 +937,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                             if (dialog.ShowDialog() == false) return;
                             if (dialog.TurnOffRemoteCopy) UserSettings.UseRemoteCopy = false;
                         }
+                        if (copyMode == CopyMode.Indirect) TotalBytes *= 2;
                         _copyMode = copyMode;
                         ProgressState = TaskbarItemProgressState.Normal;
                         NotifyTransferStarted();
@@ -973,7 +995,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
             else
             {
-                NotificationMessage.Show("Unknown error occured", exception.Message);
+                NotificationMessage.ShowMessage("Unknown error occured", exception.Message);
             }
             _elapsedTimeMeter.Start();
             return result;
@@ -1033,7 +1055,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void AsyncJob<T>(Func<T> work, Action<T> success, Action<Exception> error = null)
         {
             var finished = false;
-            NotificationMessage notificationMessage = null;
             WorkerThread.Run(
                 () =>
                     {
@@ -1043,27 +1064,18 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 b =>
                     {
                         if (finished) return;
-                        notificationMessage = new NotificationMessage("Application is busy", "Please wait...", false);
-                        notificationMessage.ShowDialog();
+                        NotificationMessage.ShowMessage("Application is busy", "Please wait...", NotificationMessageFlags.NonClosable);
                     });
             WorkerThread.Run(work, 
                 b =>
                     {
-                        if (notificationMessage != null)
-                        {
-                            notificationMessage.Close();
-                            notificationMessage = null;
-                        }
+                        NotificationMessage.CloseMessage();
                         finished = true;
                         success.Invoke(b);
                     }, 
                 e =>
                     {
-                        if (notificationMessage != null)
-                        {
-                            notificationMessage.Close();
-                            notificationMessage = null;
-                        }
+                        NotificationMessage.CloseMessage();
                         finished = true;
                         if (error != null) error.Invoke(e);
                     });
