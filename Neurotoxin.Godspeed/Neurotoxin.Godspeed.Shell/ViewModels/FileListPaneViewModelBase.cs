@@ -256,7 +256,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 _queue.Enqueue(item);
             }
             sw.Stop();
-            Debug.WriteLine(sw.Elapsed);
+            Debug.WriteLine("[CD] Enqueue: " + sw.Elapsed);
 
             if (CurrentFolder.Type != ItemType.Drive)
             {

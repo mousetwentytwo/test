@@ -10,7 +10,7 @@ namespace Neurotoxin.Godspeed.Shell.Primitives
     {
         protected BorderlessWindow()
         {
-            Icon = new BitmapImage(new Uri("pack://application:,,,/Neurotoxin.Godspeed.Shell;component/Resources/icon.ico"));
+            Icon = new BitmapImage(new Uri("pack://application:,,,/Neurotoxin.Godspeed.Shell;component/Resources/window.ico"));
             SnapsToDevicePixels = true;
             Background = (SolidColorBrush) Application.Current.Resources["ControlBackgroundBrush"];
             if (!UserSettings.DisableCustomChrome) Style = (Style)Application.Current.Resources["Window"];

@@ -1,3 +1,4 @@
+* FIXED: Title caching (Directory change speed up 500-1000%)
 * FIXED: Displaying wrong folder size before copy
 * FIXED: Profile detection error
 * FIXED: Last visited path per connection

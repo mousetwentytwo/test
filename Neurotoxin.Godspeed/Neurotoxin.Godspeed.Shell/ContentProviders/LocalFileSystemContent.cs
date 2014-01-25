@@ -13,6 +13,7 @@ using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Exceptions;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
+using ContentType = Neurotoxin.Godspeed.Core.Constants.ContentType;
 using DirectoryInfo = System.IO.DirectoryInfo;
 
 namespace Neurotoxin.Godspeed.Shell.ContentProviders
@@ -50,6 +51,9 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                             var sb = new StringBuilder(512);
                             var size = sb.Capacity;
                             if (WNetGetConnection(name, sb, ref size) == 0) fullPath = sb.ToString().TrimEnd();
+                            break;
+                        case DriveType.Removable:
+                            icon = "drive_flash";
                             break;
                         default:
                             icon = "drive";

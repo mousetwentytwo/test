@@ -46,6 +46,7 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\System.Windows.Interactivity.dll</HintPath>
@@ -90,6 +91,7 @@
     <Compile Include="Extensions\DataGridExtensions.cs" />
     <Compile Include="Extensions\FrameworkElementExtensions.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
+    <Compile Include="Extensions\IconExtensions.cs" />
     <Compile Include="Extensions\StfsPackageExtensions.cs" />
     <Compile Include="Infrastructure\AsyncResult.cs" />
     <Compile Include="Infrastructure\BindingProxy.cs" />

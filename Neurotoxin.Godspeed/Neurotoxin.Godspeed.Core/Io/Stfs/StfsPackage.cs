@@ -27,7 +27,8 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
         protected int TopLevel { get; private set; }
         protected int FirstHashTableAddress { get; private set; }
 
-        protected StfsPackage(OffsetTable offsetTable, BinaryContainer binary, int startOffset) : base(offsetTable, binary, startOffset)
+        protected StfsPackage(OffsetTable offsetTable, BinaryContainer binary, int startOffset)
+            : base(offsetTable, binary, startOffset)
         {
         }
 
@@ -37,24 +38,25 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
         {
             FirstHashTableAddress = ((HeaderSize + 0x0FFF) & 0x7FFFF000);
             Sex = (VolumeDescriptor.BlockSeparation & 1) == 1 ? Sex.Female : Sex.Male;
-            if (VolumeDescriptor.AllocatedBlockCount >= 0x70E4) throw new NotSupportedException("STFS package too big to handle!");
+            if (VolumeDescriptor.AllocatedBlockCount >= 0x70E4)
+                throw new NotSupportedException("STFS package too big to handle!");
             TopLevel = VolumeDescriptor.AllocatedBlockCount >= 0xAA ? 1 : 0;
 
             LogHelper.LogDuration("Collect hash entries", () =>
-            {
-                UnallocatedHashEntries = new List<int>();
-                TopTable = GetLevelNHashTable(0, TopLevel);
-                if (TopLevel == 1)
-                {
-                    TopTable.Tables = new List<HashTable>();
-                    for (var i = 0; i < TopTable.EntryCount; i++)
-                    {
-                        var table = GetLevelNHashTable(i, 0);
-                        TopTable.Entries[i].RealBlock = table.Block;
-                        TopTable.Tables.Add(table);
-                    }
-                }
-            });
+                                                              {
+                                                                  UnallocatedHashEntries = new List<int>();
+                                                                  TopTable = GetLevelNHashTable(0, TopLevel);
+                                                                  if (TopLevel == 1)
+                                                                  {
+                                                                      TopTable.Tables = new List<HashTable>();
+                                                                      for (var i = 0; i < TopTable.EntryCount; i++)
+                                                                      {
+                                                                          var table = GetLevelNHashTable(i, 0);
+                                                                          TopTable.Entries[i].RealBlock = table.Block;
+                                                                          TopTable.Tables.Add(table);
+                                                                      }
+                                                                  }
+                                                              });
             LogHelper.NotifyStatusBarText("Hash entries collected");
 
             LogHelper.LogDuration("Collect file entries", () => FileStructure = ReadFileListing());
@@ -117,7 +119,8 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
                 var tableEntry = TopTable.Entries[i];
                 var offset = oldTopTable.Tables[i].StartOffset;
                 var buffer = Binary.ReadBytes(offset, 0x1000);
-                if (tableEntry.Status == BlockStatus.NewlyAllocated || tableEntry.Status == BlockStatus.PreviouslyAllocated)
+                if (tableEntry.Status == BlockStatus.NewlyAllocated ||
+                    tableEntry.Status == BlockStatus.PreviouslyAllocated)
                 {
                     offset -= 0x1000;
                     tableEntry.Status = BlockStatus.Allocated;
@@ -146,7 +149,7 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
                 throw new ArgumentException("Invalid level: " + level);
 
             var x = TopLevel != level ? 0xAA : 1;
-            var current = ComputeLevelNBackingHashBlockNumber(index * x, level);
+            var current = ComputeLevelNBackingHashBlockNumber(index*x, level);
             int entryCount;
 
             if (level == TopLevel)
@@ -154,7 +157,7 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
                 if (VolumeDescriptor.BlockSeparation == 2) current++;
 
                 entryCount = VolumeDescriptor.AllocatedBlockCount;
-                if (entryCount >= 0xAA) entryCount = (entryCount + 0xA9) / 0xAA;
+                if (entryCount >= 0xAA) entryCount = (entryCount + 0xA9)/0xAA;
             }
             else if (level + 1 == TopLevel)
             {
@@ -164,8 +167,8 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
 
                 // calculate the number of entries in the requested table
                 entryCount = index + 1 == TopTable.EntryCount
-                    ? VolumeDescriptor.AllocatedBlockCount % 0xAA
-                    : index == TopTable.EntryCount ? 0 : 0xAA;
+                                 ? VolumeDescriptor.AllocatedBlockCount%0xAA
+                                 : index == TopTable.EntryCount ? 0 : 0xAA;
             }
             else
             {
@@ -181,12 +184,14 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
             for (var j = 0; j < 0xAA; j++)
             {
                 var entry = table.Entries[j];
-                entry.Block = index * 0xAA + j;
+                entry.Block = index*0xAA + j;
                 entry.RealBlock = GetRealBlockNum(entry.Block.Value);
             }
             if (level == 0)
             {
-                var unallocatedEntries = table.Entries.Where(e => e.Status == BlockStatus.Unallocated || e.Status == BlockStatus.PreviouslyAllocated);
+                var unallocatedEntries =
+                    table.Entries.Where(
+                        e => e.Status == BlockStatus.Unallocated || e.Status == BlockStatus.PreviouslyAllocated);
                 UnallocatedHashEntries.AddRange(unallocatedEntries.Select(e => e.Block.Value));
             }
 
@@ -202,7 +207,7 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
             {
                 case 0:
                     if (blockNum < 0xAA) return 0;
-                    var num = (blockNum / 0xAA) * blockStep + 1;
+                    var num = (blockNum/0xAA)*blockStep + 1;
                     if (Sex == Sex.Male) num++;
                     return num;
                 case 1:
@@ -227,12 +232,12 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
                 var currentAddr = GetRealAddressOfBlock(block);
                 for (var i = 0; i < 64; i++)
                 {
-                    var addr = currentAddr + i * 0x40;
+                    var addr = currentAddr + i*0x40;
                     var fe = ModelFactory.GetModel<FileEntry>(Binary, addr);
                     //TODO: remove this if
                     if (block == VolumeDescriptor.FileTableBlockNum && i == 0)
                         fe.FileEntryAddress = addr;
-                    fe.EntryIndex = (x * 0x40) + i;
+                    fe.EntryIndex = (x*0x40) + i;
 
                     if (fe.Name != String.Empty)
                         fl.Add(fe);
@@ -252,8 +257,8 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
             if (blockNum >= 0x70E4)
                 throw new InvalidOperationException("STFS: Block number must be less than 0xFFFFFF.\n");
             var byteGender = Convert.ToByte(Sex);
-            var backingDataBlockNumber = (((blockNum + 0xAA) / 0xAA) << byteGender) + blockNum;
-            if (blockNum >= 0xAA) backingDataBlockNumber += ((blockNum + 0x70E4) / 0x70E4) << byteGender;
+            var backingDataBlockNumber = (((blockNum + 0xAA)/0xAA) << byteGender) + blockNum;
+            if (blockNum >= 0xAA) backingDataBlockNumber += ((blockNum + 0x70E4)/0x70E4) << byteGender;
             return backingDataBlockNumber;
         }
 
@@ -261,6 +266,13 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
         {
             return (GetRealBlockNum(blockNum) << 0x0C) + FirstHashTableAddress;
         }
+
+        //public int GetHashTableAddress(int index, int level)
+        //{
+        //    var x = TopLevel != level ? 0xAA : 1;
+        //    var current = ComputeLevelNBackingHashBlockNumber(index * x, level);
+        //    return (current << 0xC) + FirstHashTableAddress;
+        //}
 
         public HashEntry GetHashEntry(int blockNum)
         {

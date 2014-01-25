@@ -358,7 +358,6 @@
                 </e:EventTrigger>
                 <e:EventTrigger EventName="PreviewKeyDown">
                     <inf:MapKeyboardEventToCommand Command="{Binding ChangeDirectoryCommand}"/>
-                    <inf:MapKeyboardEventToCommand Command="{Binding QuickSearchCommand}"/>
                 </e:EventTrigger>
                 <e:EventTrigger EventName="Sorting">
                     <inf:MapDataGridSortingEventToCommand Command="{Binding SortingCommand}"/>

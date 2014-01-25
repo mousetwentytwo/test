@@ -51,7 +51,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
+    <ApplicationIcon>app.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ftp, Version=2.0.13217.1550, Culture=neutral, PublicKeyToken=6dc438ab78a525b3, processorArchitecture=MSIL">
@@ -379,9 +379,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\icon.ico">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
     <Resource Include="Resources\clipboard_sign.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
@@ -508,6 +505,19 @@
     <Resource Include="Resources\savethumbnail.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\app.ico" />
+    <Resource Include="Resources\window.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="app.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\flash_drive.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

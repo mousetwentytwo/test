@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Microsoft.Isam.Esent.Collections.Generic;
 using System;
 using ServiceStack.Text;

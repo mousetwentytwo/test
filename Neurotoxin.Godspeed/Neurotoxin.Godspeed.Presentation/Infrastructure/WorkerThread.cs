@@ -4,6 +4,25 @@ namespace Neurotoxin.Godspeed.Presentation.Infrastructure
 {
     public static class WorkerThread
     {
+        public static void Run(Action work)
+        {
+            work.BeginInvoke(asyncResult =>
+            {
+                try
+                {
+                    work.EndInvoke(asyncResult);
+                }
+                catch (Exception ex)
+                {
+                    UIThread.Run(() =>
+                    {
+                        throw ex;
+                    });
+                }
+
+            }, null);
+        }
+
         public static void Run<T>(Func<T> work, Action<T> success = null, Action<Exception> error = null)
         {
             work.BeginInvoke(asyncResult =>

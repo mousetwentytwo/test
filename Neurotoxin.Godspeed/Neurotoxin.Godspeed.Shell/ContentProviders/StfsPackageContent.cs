@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Microsoft.Practices.Composite.Events;
 using Neurotoxin.Godspeed.Core.Constants;
 using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Core.Io.Stfs;
 using Neurotoxin.Godspeed.Core.Io.Stfs.Data;
 using Neurotoxin.Godspeed.Core.Models;
 using Neurotoxin.Godspeed.Shell.Constants;
+using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
 
@@ -26,6 +28,12 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         private ContentType _contentType;
         private StfsPackage _stfs;
+        private readonly IEventAggregator _eventAggregator;
+
+        public StfsPackageContent(IEventAggregator eventAggregator)
+        {
+            _eventAggregator = eventAggregator;
+        }
 
         public List<FileSystemItem> GetDrives()
         {
@@ -137,22 +145,28 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public void ExtractFile(string remotePath, FileStream fs, long remoteStartPosition)
         {
+            _eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(0, 0, 0, 0));
             var bytes = ReadFileContent(remotePath);
             var offset = (int)remoteStartPosition;
             fs.Write(bytes, offset, bytes.Length - offset);
+            _eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(100, bytes.Length, bytes.Length, 0));
         }
 
         public void AddFile(string targetPath, string sourcePath)
         {
+            _eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(0, 0, 0, 0));
             var content = File.ReadAllBytes(sourcePath);
             _stfs.AddFile(targetPath, content);
+            _eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(100, content.Length, content.Length, 0));
         }
 
         public void ReplaceFile(string targetPath, string sourcePath)
         {
+            _eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(0, 0, 0, 0));
             var content = File.ReadAllBytes(sourcePath);
             var fileEntry = _stfs.GetFileEntry(targetPath);
             _stfs.ReplaceFile(fileEntry, content);
+            _eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(100, content.Length, content.Length, 0));
         }
 
         public FileSystemItem Rename(string path, string newName)
