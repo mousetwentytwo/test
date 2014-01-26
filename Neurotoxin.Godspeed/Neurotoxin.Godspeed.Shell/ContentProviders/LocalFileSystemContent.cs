@@ -36,39 +36,43 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public List<FileSystemItem> GetDrives()
         {
-            return DriveInfo.GetDrives().Select(drive =>
-                                                    {
-                    var name = drive.Name.TrimEnd('\\');
-                    string icon;
-                    string fullPath = null;
-                    switch (drive.DriveType)
-                    {
-                        case DriveType.CDRom:
-                            icon = "drive_cd";
-                            break;
-                        case DriveType.Network:
-                            icon = "drive_network";
-                            var sb = new StringBuilder(512);
-                            var size = sb.Capacity;
-                            if (WNetGetConnection(name, sb, ref size) == 0) fullPath = sb.ToString().TrimEnd();
-                            break;
-                        case DriveType.Removable:
-                            icon = "drive_flash";
-                            break;
-                        default:
-                            icon = "drive";
-                            break;
-                    }
-                    var item = new FileSystemItem
-                        {
-                            Path = drive.Name,
-                            FullPath = fullPath ?? drive.Name,
-                            Name = name,
-                            Type = ItemType.Drive,
-                            Thumbnail = ApplicationExtensions.GetContentByteArray(string.Format("/Resources/{0}.png", icon))
-                        };
-                    return item;
-                }).ToList();
+            var drives = DriveInfo.GetDrives();
+            var result = new List<FileSystemItem>();
+            foreach (var drive in drives)
+            {
+                var name = drive.Name.TrimEnd('\\');
+                string icon;
+                string fullPath = null;
+                switch (drive.DriveType)
+                {
+                    case DriveType.CDRom:
+                        icon = "drive_cd";
+                        break;
+                    case DriveType.Network:
+                        icon = "drive_network";
+                        var sb = new StringBuilder(512);
+                        var size = sb.Capacity;
+                        if (WNetGetConnection(name, sb, ref size) == 0) fullPath = sb.ToString().TrimEnd();
+                        break;
+                    case DriveType.Removable:
+                        icon = "drive_flash";
+                        if (!drive.IsReady) continue;
+                        break;
+                    default:
+                        icon = "drive";
+                        break;
+                }
+                var item = new FileSystemItem
+                {
+                    Path = drive.Name,
+                    FullPath = fullPath ?? drive.Name,
+                    Name = name,
+                    Type = ItemType.Drive,
+                    Thumbnail = ApplicationExtensions.GetContentByteArray(string.Format("/Resources/{0}.png", icon))
+                };
+                result.Add(item);
+            }
+            return result;
         }
 
         public List<FileSystemItem> GetList(string path = null)

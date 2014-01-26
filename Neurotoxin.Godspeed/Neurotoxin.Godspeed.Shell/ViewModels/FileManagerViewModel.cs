@@ -9,6 +9,7 @@ using System.Threading;
 using System.Windows.Input;
 using System.Windows.Shell;
 using Microsoft.Practices.Unity;
+using Neurotoxin.Godspeed.Core.Constants;
 using Neurotoxin.Godspeed.Core.Exceptions;
 using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Core.Io;

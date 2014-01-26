@@ -4,10 +4,15 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
+using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
+using Neurotoxin.Godspeed.Core.Constants;
+using Neurotoxin.Godspeed.Core.Io;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Commands;
+using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.ViewModels;
 using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 
@@ -15,6 +20,7 @@ namespace Neurotoxin.Godspeed.Shell.Views
 {
     public partial class FileManagerWindow
     {
+        private IEventAggregator _eventAggregator;
         private bool _isAbortionInProgress;
         private TransferProgressDialog _transferProgressDialog;
 
@@ -23,8 +29,9 @@ namespace Neurotoxin.Godspeed.Shell.Views
             get { return (FileManagerViewModel) DataContext; }
         }
 
-        public FileManagerWindow(FileManagerViewModel viewModel)
+        public FileManagerWindow(FileManagerViewModel viewModel, IEventAggregator eventAggregator)
         {
+            _eventAggregator = eventAggregator;
             var assembly = Assembly.GetAssembly(typeof(FileManagerWindow));
             var assemblyName = assembly.GetName();
             var version = assemblyName.Version;
@@ -56,6 +63,26 @@ namespace Neurotoxin.Godspeed.Shell.Views
             if (!deleteCommand.CanExecute()) return;
             e.Handled = true;
             deleteCommand.Execute();
+        }
+
+        protected override void OnSourceInitialized(EventArgs e)
+        {
+            base.OnSourceInitialized(e);
+            var source = HwndSource.FromHwnd(new WindowInteropHelper(this).Handle);
+            if (source == null) return;
+            source.AddHook(HwndHandler);
+            UsbNotification.RegisterUsbDeviceNotification(source.Handle);
+        }
+
+        private IntPtr HwndHandler(IntPtr hwnd, int msg, IntPtr wparam, IntPtr lparam, ref bool handled)
+        {
+            if (msg == UsbNotification.WmDevicechange)
+            {
+                var e = (UsbDeviceChange) wparam;
+                if (Enum.IsDefined(typeof(UsbDeviceChange), e)) 
+                    _eventAggregator.GetEvent<UsbDeviceChangedEvent>().Publish(new UsbDeviceChangedEventArgs(e));
+            }
+            return IntPtr.Zero;
         }
 
         private void ExecutedOpenDriveDropdownCommand(object sender, ExecutedRoutedEventArgs e)

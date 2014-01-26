@@ -85,15 +85,11 @@ namespace Neurotoxin.Godspeed.Shell
             HandleException(e.Exception);
         }
 
-        public void HandleException(Exception ex)
+        private void HandleException(Exception ex)
         {
-            //if (eventAggregator == null) eventAggregator = bootstrapper.Container.Resolve<IEventAggregator>();
-
-            var raisedex = ex is TargetInvocationException ? ex.InnerException : ex;
-            NotificationMessage.ShowMessage("Error", raisedex.Message);
+            ex = ex is TargetInvocationException ? ex.InnerException : ex;
+            ErrorMessage.Show(ex);
             Shutdown();
-
-            //eventAggregator.GetEvent<ExceptionEvent>().Publish(raisedex);
         }
 
     }

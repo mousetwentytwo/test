@@ -23,3 +23,5 @@
 * ADDED: Clear Cache command
 * ADDED: Navigate to parent folder and closing nested pane (FTP, STFS, Compressed file) by pressing the Backspace button
 * ADDED: PS3 Free space indication
+* ADDED: Removable device support (can handle the insertion and removal of USB devices)
+* ADDED: Error reporting of unhandled exceptions

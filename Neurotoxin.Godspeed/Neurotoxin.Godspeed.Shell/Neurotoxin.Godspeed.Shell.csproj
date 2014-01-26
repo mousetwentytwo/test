@@ -128,6 +128,7 @@
     <Compile Include="Converters\TransferTypeConverter.cs" />
     <Compile Include="Events\ActivePaneChangedEvent.cs" />
     <Compile Include="Events\CloseNestedPaneEvent.cs" />
+    <Compile Include="Events\UsbDeviceChangedEvent.cs" />
     <Compile Include="Events\TransferActionStartedEvent.cs" />
     <Compile Include="Events\OpenNestedPaneEvent.cs" />
     <Compile Include="Events\FtpOperationFinishedEvent.cs" />
@@ -178,6 +179,9 @@
     </Compile>
     <Compile Include="Views\Controls\ProgressNotificationBar.xaml.cs">
       <DependentUpon>ProgressNotificationBar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Dialogs\ErrorMessage.xaml.cs">
+      <DependentUpon>ErrorMessage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ProfileRebuilderPane.xaml.cs">
       <DependentUpon>ProfileRebuilderPane.xaml</DependentUpon>
@@ -274,6 +278,10 @@
     <Page Include="Views\Controls\ProgressNotificationBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Dialogs\ErrorMessage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\ProfileRebuilderPane.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -517,7 +525,7 @@
     <Resource Include="app.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\flash_drive.png" />
+    <Resource Include="Resources\drive_flash.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Microsoft.Practices.Composite.Events;
+using Neurotoxin.Godspeed.Core.Constants;
 using Neurotoxin.Godspeed.Core.Models;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
-using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
@@ -15,6 +16,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
     public class LocalFileSystemContentViewModel : FileListPaneViewModelBase<LocalFileSystemContent>
     {
+        private readonly IEventAggregator _eventAggregator;
         private bool _isAborted;
 
         public bool IsNetworkDrive
@@ -37,10 +39,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             get { return null; }
         }
 
-        public LocalFileSystemContentViewModel(FileManagerViewModel parent)
-            : base(parent)
+        public LocalFileSystemContentViewModel(FileManagerViewModel parent, IEventAggregator eventAggregator) : base(parent)
         {
+            _eventAggregator = eventAggregator;
             IsResumeSupported = true;
+            _eventAggregator.GetEvent<UsbDeviceChangedEvent>().Subscribe(OnUsbDeviceChanged);
         }
 
         public override void LoadDataAsync(LoadCommand cmd, object cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase, Exception> error = null)
@@ -53,7 +56,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     var storedDrive = Path.GetPathRoot(Settings.Directory);
                     var drive = Drives.FirstOrDefault(d => d.Path == storedDrive);
                     if (drive != null) PathCache.Add(drive, Settings.Directory);
-                    Drive = drive ?? Drives.First();
+                    Drive = drive ?? GetDefaultDrive();
                     break;
                 case LoadCommand.Restore:
                     var payload = cmdParam as BinaryContent;
@@ -75,6 +78,13 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     break;
             }
         }
+
+        private FileSystemItemViewModel GetDefaultDrive()
+        {
+            if (Drives.Count == 0) return null;
+            return Drives.FirstOrDefault(d => d.Name == "C:") ?? Drives.First();
+        }
+
 
         protected override void ChangeDrive()
         {
@@ -138,6 +148,36 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public override void Abort()
         {
             _isAborted = true;
+        }
+
+        private void OnUsbDeviceChanged(UsbDeviceChangedEventArgs e)
+        {
+            var drives = FileManager.GetDrives();
+            for (var i = 0; i < drives.Count; i++)
+            {
+                var current = drives[i];
+                if (i < Drives.Count && current.Name == Drives[i].Name) continue;
+                if (i < Drives.Count && Drives.Any(d => d.Name == current.Name))
+                {
+                    var existing = Drives[i];
+                    if (Drive.Name == existing.Name)
+                    {
+                        //TODO: dispose current usb model
+                        Drive = GetDefaultDrive();
+                    }
+                    Drives.Remove(existing);
+                } 
+                else
+                {
+                    Drives.Insert(i, new FileSystemItemViewModel(current));
+                }
+            }
+        }
+
+        public override void Dispose()
+        {
+            _eventAggregator.GetEvent<UsbDeviceChangedEvent>().Unsubscribe(OnUsbDeviceChanged);
+            base.Dispose();
         }
     }
 }
