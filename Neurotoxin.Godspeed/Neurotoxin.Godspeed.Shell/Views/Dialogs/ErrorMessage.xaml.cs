@@ -42,8 +42,8 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
 
         private void ReportButtonClick(object sender, RoutedEventArgs e)
         {
-            //TODO: CodePlex issue?
-            var request = WebRequest.Create("http://www.mercenary.hu/godspeed/report.php");
+            var request = (HttpWebRequest)WebRequest.Create("http://www.mercenary.hu/godspeed/report.php");
+            request.UserAgent = "GODspeed";
             request.Method = "POST";
 
             var assembly = Assembly.GetAssembly(typeof(FileManagerWindow));
@@ -66,8 +66,6 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
                 sw.WriteLine("Error: " + _exception.Message);
                 sw.WriteLine(_exception.StackTrace);
                 request.GetResponse();
-
-                //TODO: how to parse on the other side?
             }
             catch {}
         }

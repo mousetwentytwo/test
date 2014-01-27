@@ -923,8 +923,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         protected FileListPaneViewModelBase(FileManagerViewModel parent) : base(parent)
         {
-            //throw new Exception("werwer");
-
             FileManager = container.Resolve<T>();
             TitleRecognizer = new TitleRecognizer(FileManager, container.Resolve<CacheManager>());
 
