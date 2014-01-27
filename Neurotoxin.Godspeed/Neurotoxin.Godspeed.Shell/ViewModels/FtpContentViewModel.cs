@@ -53,6 +53,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             Dispose();
         }
 
+        protected override bool CanExecuteOpenCompressedFileCommand()
+        {
+            return false;
+        }
+
         #endregion
 
         public FtpContentViewModel(FileManagerViewModel parent) : base(parent)
@@ -208,6 +213,14 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             FileManager.AppendFile(targetPath, sourcePath);
         }
+
+        //protected override string OpenCompressedFile(FileSystemItem item)
+        //{
+        //    var tempFilePath = string.Format(@"{0}\{1}", AppDomain.CurrentDomain.GetData("DataDirectory"), Guid.NewGuid());
+        //    var fs = new FileStream(tempFilePath, FileMode.Create);
+        //    FileManager.DownloadFile(item.Path, fs, 0, item.Size ?? 0);
+        //    return tempFilePath;
+        //}
 
         public bool RemoteDownload(FileSystemItem item, string savePath, CopyAction action)
         {

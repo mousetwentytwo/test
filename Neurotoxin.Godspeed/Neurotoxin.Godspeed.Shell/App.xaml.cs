@@ -1,20 +1,10 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
-using System.Net;
 using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Threading;
-using System.Xml;
-using Microsoft.Practices.Unity;
-using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Composite.UnityExtensions;
-using Neurotoxin.Godspeed.Presentation.Events;
 using Neurotoxin.Godspeed.Core.Extensions;
-using Neurotoxin.Godspeed.Presentation.Infrastructure;
-using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 
 namespace Neurotoxin.Godspeed.Shell
@@ -24,8 +14,7 @@ namespace Neurotoxin.Godspeed.Shell
     /// </summary>
     public partial class App : Application
     {
-        private UnityBootstrapper bootstrapper;
-        private IEventAggregator eventAggregator;
+        private UnityBootstrapper _bootstrapper;
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -43,8 +32,8 @@ namespace Neurotoxin.Godspeed.Shell
 
         private void RunInDebugMode()
         {
-            bootstrapper = new Bootstrapper();
-            bootstrapper.Run();
+            _bootstrapper = new Bootstrapper();
+            _bootstrapper.Run();
         }
 
         private void RunInReleaseMode()

@@ -221,7 +221,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 if (CurrentRow.Type == ItemType.File)
                 {
                     if (CurrentRow.IsCompressedFile) OpenCompressedFileCommand.Execute();
-                    //Do STFS check instead
+                    //TODO: Do STFS check instead
                     if (CurrentRow.TitleType == TitleType.Profile) OpenStfsPackageCommand.Execute(OpenStfsPackageMode.Browsing);
                     return;
                 }
@@ -350,7 +350,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public DelegateCommand OpenCompressedFileCommand { get; private set; }
 
-        private bool CanExecuteOpenCompressedFileCommand()
+        protected virtual bool CanExecuteOpenCompressedFileCommand()
         {
             return CurrentRow != null && CurrentRow.IsCompressedFile;
         }
@@ -364,7 +364,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private string OpenCompressedFile(FileSystemItem item)
         {
-            //TODO: download if ftp and return tmp path
             return item.Path;
         }
 

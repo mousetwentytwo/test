@@ -169,26 +169,33 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 case TitleType.Unknown:
                     if (item.Type == ItemType.File)
                     {
-                        var header = _fileManager.ReadFileHeader(item.Path);
-                        var svod = ModelFactory.GetModel<SvodPackage>(header);
-                        if (svod.IsValid)
+                        try
                         {
-                            item.Title = svod.DisplayName;
-                            item.Thumbnail = svod.ThumbnailImage;
-                            item.ContentType = svod.ContentType;
-                            var svodExpiration = GetExpirationFrom(UserSettings.XboxLiveContentExpiration);
-                            if (UserSettings.XboxLiveContentInvalidation)
+                            var header = _fileManager.ReadFileHeader(item.Path);
+                            var svod = ModelFactory.GetModel<SvodPackage>(header);
+                            if (svod.IsValid)
                             {
-                                _cacheManager.SaveEntry(cacheKey, item, svodExpiration, item.Date, item.Size);
+                                item.Title = svod.DisplayName;
+                                item.Thumbnail = svod.ThumbnailImage;
+                                item.ContentType = svod.ContentType;
+                                var svodExpiration = GetExpirationFrom(UserSettings.XboxLiveContentExpiration);
+                                if (UserSettings.XboxLiveContentInvalidation)
+                                {
+                                    _cacheManager.SaveEntry(cacheKey, item, svodExpiration, item.Date, item.Size);
+                                }
+                                else
+                                {
+                                    _cacheManager.SaveEntry(cacheKey, item, svodExpiration);
+                                }
                             }
                             else
                             {
-                                _cacheManager.SaveEntry(cacheKey, item, svodExpiration);
+                                _cacheManager.SaveEntry(cacheKey, null, GetExpirationFrom(UserSettings.UnknownContentExpiration));
                             }
-                        }
-                        else
+                        } 
+                        catch
                         {
-                            _cacheManager.SaveEntry(cacheKey, null, GetExpirationFrom(UserSettings.UnknownContentExpiration));
+                            //TODO: ignore?
                         }
                         item.IsCached = true;
                     }

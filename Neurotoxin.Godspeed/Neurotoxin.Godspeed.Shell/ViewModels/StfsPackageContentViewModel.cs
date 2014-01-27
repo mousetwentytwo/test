@@ -124,7 +124,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             throw new NotImplementedException();
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             FileManager.Dispose();
             base.Dispose();
