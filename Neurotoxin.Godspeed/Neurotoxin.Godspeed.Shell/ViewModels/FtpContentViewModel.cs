@@ -23,6 +23,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private readonly Dictionary<string, string> _driveLabelCache = new Dictionary<string, string>();
 
         public FtpConnectionItemViewModel Connection { get; private set; }
+        public Stack<string> Log { get { return FileManager.Log; } } 
 
         public bool IsKeepAliveEnabled
         {
@@ -81,7 +82,20 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         result =>
                             {
                                 IsResumeSupported = result;
-                                ConnectCallback();
+                                try
+                                {
+                                    ConnectCallback();
+                                } 
+                                catch(Exception ex)
+                                {
+                                    if (error != null)
+                                    {
+                                        var somethingWentWrong = string.Format("Something went wrong while trying to establish connection. Please try again, and if the error persists try to turn {0} Passive Mode.", Connection.UsePassiveMode ? "off" : "on");
+                                        error.Invoke(this, new EstablishmentFailedException(somethingWentWrong, ex));
+                                    }
+                                    CloseCommand.Execute();
+                                    return;
+                                }
                                 if (success != null) success.Invoke(this);
                             },
                         exception =>

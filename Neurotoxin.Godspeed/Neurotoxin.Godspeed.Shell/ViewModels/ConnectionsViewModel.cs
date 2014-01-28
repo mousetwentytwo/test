@@ -7,6 +7,7 @@ using Microsoft.Practices.Unity;
 using Neurotoxin.Godspeed.Core.Caching;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Events;
+using Neurotoxin.Godspeed.Shell.Exceptions;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
 using Neurotoxin.Godspeed.Shell.Views.Dialogs;
@@ -23,6 +24,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private readonly EsentPersistentDictionary _cacheStore = EsentPersistentDictionary.Instance;
 
         #region Properties
+
+        public FtpContentViewModel ConnectedFtp { get; private set; }
 
         private const string ITEMS = "Items";
         private ObservableCollection<IStoredConnectionViewModel> _items;
@@ -186,11 +189,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             IsBusy = true;
             ProgressMessage = string.Format("Connecting to {0}...", connection.Name);
-            var ftp = container.Resolve<FtpContentViewModel>();
+            ConnectedFtp = container.Resolve<FtpContentViewModel>();
             var dir = Settings.Directory.StartsWith(connection.Name)
                           ? Settings.Directory.Replace(string.Format("{0}:/", connection.Name), string.Empty)
                           : "/Hdd1";
-            ftp.LoadDataAsync(LoadCommand.Load, new Tuple<IStoredConnectionViewModel, FileListPaneSettings>(connection, new FileListPaneSettings(dir, Settings.SortByField, Settings.SortDirection)), FtpConnectSuccess, FtpConnectError);
+            ConnectedFtp.LoadDataAsync(LoadCommand.Load, new Tuple<IStoredConnectionViewModel, FileListPaneSettings>(connection, new FileListPaneSettings(dir, Settings.SortByField, Settings.SortDirection)), FtpConnectSuccess, FtpConnectError);
         }
 
         private void FtpConnectSuccess(PaneViewModelBase pane)
@@ -202,7 +205,15 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void FtpConnectError(PaneViewModelBase pane, Exception exception)
         {
             IsBusy = false;
-            NotificationMessage.ShowMessage("Connection failed", string.Format("Can't connect to {0}", SelectedItem.Name));
+            ConnectedFtp = null;
+            if (exception is EstablishmentFailedException)
+            {
+                ErrorMessage.Show(exception);
+            } 
+            else
+            {
+                NotificationMessage.ShowMessage("Connection failed", string.Format("Can't connect to {0}", SelectedItem.Name));
+            }
         }
 
         private void Save(FtpConnectionItemViewModel connection)

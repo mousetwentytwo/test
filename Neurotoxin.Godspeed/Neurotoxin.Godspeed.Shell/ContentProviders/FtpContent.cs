@@ -144,8 +144,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                                                Date = item.ModifyDate,
                                                Path = string.Format("/{0}/", item.Name),
                                                FullPath = string.Format("{0}://{1}/", _connection.Name, item.Name),
-                                               Thumbnail =
-                                                   ApplicationExtensions.GetContentByteArray("/Resources/drive.png")
+                                               Thumbnail = ApplicationExtensions.GetContentByteArray("/Resources/drive.png")
                                            })
                                        .ToList();
                 FtpClient.ChangeFolder(currentFolder);

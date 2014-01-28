@@ -5,6 +5,8 @@ using System.Net;
 using System.Reflection;
 using System.Windows;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
+using Neurotoxin.Godspeed.Shell.ViewModels;
+using System.Linq;
 
 namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
 {
@@ -65,9 +67,31 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
                 sw.WriteLine(String.Empty);
                 sw.WriteLine("Error: " + _exception.Message);
                 sw.WriteLine(_exception.StackTrace);
+
+                var w = Application.Current.MainWindow as FileManagerWindow;
+                if (w != null)
+                {
+                    var ftp = w.ViewModel.RightPane as FtpContentViewModel;
+                    if (ftp == null)
+                    {
+                        var connections = w.ViewModel.RightPane as ConnectionsViewModel;
+                        if (connections != null) ftp = connections.ConnectedFtp;
+                    }
+                    if (ftp != null)
+                    {
+                        sw.WriteLine(String.Empty);
+                        for (var i = ftp.Log.Count - 1; i >= 0; i--)
+                        {
+                            sw.WriteLine(ftp.Log.ElementAt(i));
+                        }
+                    }
+                }
+
+                sw.Flush();
                 request.GetResponse();
             }
             catch {}
+            OkButtonClick(sender, e);
         }
 
     }

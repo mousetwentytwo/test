@@ -24,7 +24,7 @@ namespace Neurotoxin.Godspeed.Shell.Views
         private bool _isAbortionInProgress;
         private TransferProgressDialog _transferProgressDialog;
 
-        private FileManagerViewModel ViewModel
+        public FileManagerViewModel ViewModel
         {
             get { return (FileManagerViewModel) DataContext; }
         }
