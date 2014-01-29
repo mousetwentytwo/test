@@ -137,6 +137,7 @@
     <Compile Include="Events\TransferFinishedEvent.cs" />
     <Compile Include="Events\TransferStartedEvent.cs" />
     <Compile Include="Events\ViewModelGeneratedEvent.cs" />
+    <Compile Include="Exceptions\EstablishmentFailedException.cs" />
     <Compile Include="Exceptions\TransferException.cs" />
     <Compile Include="Interfaces\IFileListPaneViewModel.cs" />
     <Compile Include="Interfaces\IFileManager.cs" />

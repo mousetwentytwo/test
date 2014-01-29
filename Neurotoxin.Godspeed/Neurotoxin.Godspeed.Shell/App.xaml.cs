@@ -1,11 +1,15 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
+using Limilabs.FTP.Client;
 using Microsoft.Practices.Composite.UnityExtensions;
 using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Shell.Views.Dialogs;
+using System.Linq;
 
 namespace Neurotoxin.Godspeed.Shell
 {
@@ -19,6 +23,28 @@ namespace Neurotoxin.Godspeed.Shell
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+
+//            var ftpAsm = Assembly.GetAssembly(typeof (Ftp));
+//            var c = ftpAsm.GetTypes().FirstOrDefault(t => t.Name == "Class84");
+//            var cc = c.GetConstructor(new Type[] {});
+//            var c84 = cc.Invoke(null);
+//            var mi = c.GetMethods().FirstOrDefault(m => m.Name == "method_0");
+//            Thread.CurrentThread.CurrentCulture = new CultureInfo("pl-PL");
+//            Thread.CurrentThread.CurrentUICulture = new CultureInfo("pl-PL");
+
+//            DateTime dateTime_0;
+
+//            string[] strArrays = new string[] { "MMM d yyyy" };
+//            var flag = DateTime.TryParseExact("Cze 22 2039", strArrays, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateTime_0);
+
+//            var res = mi.Invoke(c84, new object[] { @"drwxrwxrwx   1 root  root    0 Cze 22 2039 Game
+//smb
+//drwxrwxrwx   1 root  root    0 Sty 01 1970 Flash
+//drwxrwxrwx   1 root  root    0 Sty 01 1970 Hdd1
+//drwxrwxrwx   1 root  root    0 Sty 01 1970 HddX
+//drwxrwxrwx   1 root  root    0 Sty 01 1970 SysExt
+//drwxrwxrwx   1 root  root    0 Sty 01 1970 Usb0" });
+
             SetDataDirectory();
             Dispatcher.CurrentDispatcher.UnhandledException += UnhandledThreadingException;
             ShutdownMode = ShutdownMode.OnMainWindowClose;
