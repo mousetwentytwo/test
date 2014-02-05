@@ -40,6 +40,11 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             }
         }
 
+        public CacheEntry<FileSystemItem> GetEntry(CacheComplexKey key)
+        {
+            return GetEntry(key.Key, key.Size, key.Date);
+        }
+
         public CacheEntry<FileSystemItem> GetEntry(string key, long? size = null, DateTime? date = null)
         {
             var hashKey = HashKey(key);
@@ -69,7 +74,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                     TempFilePath = tmpPath
                 };
             var hashKey = HashKey(key);
-            _cacheStore.Put(hashKey, entry);
+            _cacheStore.Update(hashKey, entry);
         }
 
         public void UpdateEntry(string key, FileSystemItem content)

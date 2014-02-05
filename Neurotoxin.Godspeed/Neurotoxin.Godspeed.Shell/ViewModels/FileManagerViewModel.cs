@@ -583,7 +583,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void NewFolderError(Exception ex)
         {
-            ShowCorrespondingErrorDialog(ex);
+            ShowCorrespondingErrorDialog(ex, false);
         }
 
         #endregion
@@ -741,7 +741,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public FileManagerViewModel()
         {
-            _transferLogPath = string.Format(@"{0}\transfer.log", AppDomain.CurrentDomain.GetData("DataDirectory"));
+            Limilabs.FTP.Log.Enabled = true;
+
+            //_transferLogPath = string.Format(@"{0}\transfer.log", AppDomain.CurrentDomain.GetData("DataDirectory"));
             SwitchPaneCommand = new DelegateCommand<EventInformation<KeyEventArgs>>(ExecuteSwitchPaneCommand, CanExecuteSwitchPaneCommand);
             EditCommand = new DelegateCommand(ExecuteEditCommand, CanExecuteEditCommand);
             CopyCommand = new DelegateCommand(ExecuteCopyCommand, CanExecuteCopyCommand);
@@ -947,7 +949,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     });
         }
 
-        internal TransferErrorDialogResult ShowCorrespondingErrorDialog(Exception exception)
+        internal TransferErrorDialogResult ShowCorrespondingErrorDialog(Exception exception, bool resultMatters = true)
         {
             _elapsedTimeMeter.Stop();
             var transferException = exception as TransferException;
@@ -958,8 +960,15 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 {
                     case TransferErrorType.ReadAccessError:
                         {
-                            var dialog = new ReadErrorDialog(exception);
-                            if (dialog.ShowDialog() == true) result = dialog.Result;
+                            if (resultMatters)
+                            {
+                                var dialog = new ReadErrorDialog(exception);
+                                if (dialog.ShowDialog() == true) result = dialog.Result;
+                            } 
+                            else
+                            {
+                                NotificationMessage.ShowMessage("Error reading file", exception.Message);
+                            }
                         }
                         break;
                     case TransferErrorType.WriteAccessError:
@@ -978,7 +987,15 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         if (reconnectionDialog.ShowDialog() == true)
                         {
                             var ftp = LeftPane as FtpContentViewModel ?? RightPane as FtpContentViewModel;
-                            ftp.RestoreConnection();
+                            try
+                            {
+                                ftp.RestoreConnection();
+                            } 
+                            catch (Exception ex)
+                            {
+                                NotificationMessage.ShowMessage("Connection failed", string.Format("Cannot reestablish connection because: {0}", ex.Message));
+                                FtpDisconnect();
+                            }
                         }
                         else
                         {

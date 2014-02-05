@@ -26,6 +26,8 @@ namespace Neurotoxin.Godspeed.Shell.Models
         public DateTime Date;
 
         public bool IsCached;
+        public bool IsLocked = false;
+        public string LockMessage = null;
         private string _title;
 
         public FileSystemItem Clone()

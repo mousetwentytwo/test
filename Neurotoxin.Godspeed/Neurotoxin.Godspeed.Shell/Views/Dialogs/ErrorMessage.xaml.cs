@@ -65,8 +65,17 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
                 sw.WriteLine("Framework version: " + wpfVersion);
                 sw.WriteLine("OS version: " + os);
                 sw.WriteLine(String.Empty);
-                sw.WriteLine("Error: " + _exception.Message);
-                sw.WriteLine(_exception.StackTrace);
+
+                var ex = _exception;
+                do
+                {
+                    sw.WriteLine("Error: " + _exception.Message);
+                    sw.WriteLine(_exception.StackTrace);
+                    sw.WriteLine(String.Empty);
+                    ex = ex.InnerException;
+                } 
+                while (ex != null); 
+
 
                 var w = Application.Current.MainWindow as FileManagerWindow;
                 if (w != null)
@@ -79,7 +88,6 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
                     }
                     if (ftp != null)
                     {
-                        sw.WriteLine(String.Empty);
                         for (var i = ftp.Log.Count - 1; i >= 0; i--)
                         {
                             sw.WriteLine(ftp.Log.ElementAt(i));

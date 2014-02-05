@@ -141,7 +141,9 @@
     <Compile Include="Exceptions\TransferException.cs" />
     <Compile Include="Interfaces\IFileListPaneViewModel.cs" />
     <Compile Include="Interfaces\IFileManager.cs" />
+    <Compile Include="Models\CacheComplexKey.cs" />
     <Compile Include="Models\FileListPaneSettings.cs" />
+    <Compile Include="Models\ProfileItemWrapper.cs" />
     <Compile Include="Primitives\BorderlessWindow.cs" />
     <Compile Include="Primitives\CaptionButtons.xaml.cs">
       <DependentUpon>CaptionButtons.xaml</DependentUpon>
@@ -240,6 +242,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Controllers\ModuleController.cs" />
+    <Compile Include="Views\Validations\IsNonExistentConnection.cs" />
     <Page Include="Primitives\CaptionButtons.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -521,6 +524,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\drive_flash.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\warning.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -139,6 +139,16 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             get { return _model.IsCached; }
         }
 
+        public bool IsLocked
+        {
+            get { return _model.IsLocked; }
+        }
+
+        public string LockMessage
+        {
+            get { return _model.LockMessage; }
+        }
+
         private bool _isRefreshing;
         public bool IsRefreshing
         {

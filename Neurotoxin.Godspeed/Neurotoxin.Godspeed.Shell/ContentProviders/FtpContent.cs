@@ -67,6 +67,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             _eventAggregator = eventAggregator;
             _keepAliveTimer.AutoReset = true;
             _keepAliveTimer.Elapsed += KeepAliveTimerOnElapsed;
+            Limilabs.FTP.Log.WriteLine += LogOnWriteLine;
         }
 
         private void KeepAliveTimerOnElapsed(object sender, ElapsedEventArgs e)
@@ -76,9 +77,6 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         internal bool Connect(FtpConnection connection)
         {
-            Limilabs.FTP.Log.Enabled = true;
-            Limilabs.FTP.Log.WriteLine += LogOnWriteLine;
-
             _ftpClient = new Ftp {Mode = FtpMode.Active};
             _connection = connection;
             _connectionLostMessage = string.Format("The connection with {0} has been lost.", connection.Name);
@@ -154,8 +152,8 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             catch (FtpException ex)
             {
                 NotifyFtpOperationFinished();
-                if (FtpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
-                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
+                if (FtpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message, ex);
+                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage, ex);
             } 
         }
 
@@ -179,8 +177,8 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             catch (FtpException ex)
             {
                 NotifyFtpOperationFinished();
-                if (FtpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
-                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
+                if (FtpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message, ex);
+                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage, ex);
             }          
         }
 
@@ -217,8 +215,8 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             catch (FtpException ex)
             {
                 NotifyFtpOperationFinished();
-                if (FtpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
-                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
+                if (FtpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message, ex);
+                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage, ex);
             }
         }
 
@@ -235,8 +233,8 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             catch (FtpException ex)
             {
                 NotifyFtpOperationFinished();
-                if (FtpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
-                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
+                if (FtpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message, ex);
+                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage, ex);
             }
         }
 
@@ -262,8 +260,8 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             catch (FtpException ex)
             {
                 NotifyFtpOperationFinished();
-                if (FtpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
-                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
+                if (FtpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message, ex);
+                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage, ex);
             }
         }
 
@@ -274,9 +272,9 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 FtpClient.ChangeFolder(drive);
                 return true;
             }
-            catch (FtpException)
+            catch (FtpException ex)
             {
-                if (!FtpClient.Connected) throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
+                if (!FtpClient.Connected) throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage, ex);
                 return false;
             }
         }
@@ -285,7 +283,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         /// 
         /// </summary>
         /// <param name="path"></param>
-        /// <remarks>Unfortunately the FTP server in FSD doesn't support the FileExists command</remarks>
+        /// <remarks>Unfortunately the FTP server in FSD2 doesn't support the FileExists command</remarks>
         /// <returns></returns>
         public bool FileExists(string path)
         {
@@ -347,8 +345,8 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             catch (Exception ex)
             {
                 NotifyFtpOperationFinished();
-                if (FtpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
-                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
+                if (FtpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message, ex);
+                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage, ex);
             }
         }
 
@@ -388,8 +386,8 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             catch (Exception ex)
             {
                 NotifyFtpOperationFinished();
-                if (FtpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
-                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
+                if (FtpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message, ex);
+                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage, ex);
             }
         }
 
@@ -415,13 +413,13 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             catch (IOException ex)
             {
                 NotifyFtpOperationFinished();
-                throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
+                throw new TransferException(TransferErrorType.ReadAccessError, ex.Message, ex);
             }
             catch (FtpException ex)
             {
                 NotifyFtpOperationFinished();
-                if (FtpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
-                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
+                if (FtpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message, ex);
+                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage, ex);
             }
             finally
             {
@@ -455,8 +453,8 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             catch (FtpException ex)
             {
                 //TODO: not read
-                if (FtpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
-                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
+                if (FtpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message, ex);
+                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage, ex);
             }
         }
 
@@ -469,8 +467,8 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             catch (FtpException ex)
             {
                 //TODO: not read
-                if (FtpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
-                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
+                if (FtpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message, ex);
+                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage, ex);
             }
         }
 
@@ -483,8 +481,8 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             catch (FtpException ex)
             {
                 //TODO: not read
-                if (FtpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
-                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage);
+                if (FtpClient.Connected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message, ex);
+                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage, ex);
             }
         }
 

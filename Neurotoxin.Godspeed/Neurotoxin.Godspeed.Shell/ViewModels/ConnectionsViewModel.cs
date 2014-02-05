@@ -20,7 +20,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
     public class ConnectionsViewModel : PaneViewModelBase
     {
         private IStoredConnectionViewModel _previouslyFocusedItem;
-        private const string CacheStoreKeyPrefix = "FtpConnection_";
+        public const string CacheStoreKeyPrefix = "FtpConnection_";
         private readonly EsentPersistentDictionary _cacheStore = EsentPersistentDictionary.Instance;
 
         #region Properties
@@ -205,15 +205,16 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void FtpConnectError(PaneViewModelBase pane, Exception exception)
         {
             IsBusy = false;
-            ConnectedFtp = null;
+            var connectionName = ConnectedFtp.Connection.Name;
             if (exception is EstablishmentFailedException)
             {
                 ErrorMessage.Show(exception);
             } 
             else
             {
-                NotificationMessage.ShowMessage("Connection failed", string.Format("Can't connect to {0}", SelectedItem.Name));
+                NotificationMessage.ShowMessage("Connection failed", string.Format("Can't connect to {0}", connectionName));
             }
+            ConnectedFtp = null;
         }
 
         private void Save(FtpConnectionItemViewModel connection)

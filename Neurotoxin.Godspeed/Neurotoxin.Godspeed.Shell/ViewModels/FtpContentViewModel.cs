@@ -312,7 +312,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public override void Dispose()
         {
             FileManager.Disconnect();
-            Connection.Model.DefaultPath = CurrentFolder.Path;
+            if (CurrentFolder != null) Connection.Model.DefaultPath = CurrentFolder.Path;
             base.Dispose();
         }
 

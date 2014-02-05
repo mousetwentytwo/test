@@ -104,14 +104,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             set { _freeSpace = value; NotifyPropertyChanged(FREESPACE); }
         }
 
-        private const string STACK = "Stack";
-        private Stack<FileSystemItemViewModel> _stack;
-        public Stack<FileSystemItemViewModel> Stack
-        {
-            get { return _stack; }
-            set { _stack = value; NotifyPropertyChanged(STACK); }
-        }
-
         private const string CURRENTFOLDER = "CurrentFolder";
         private FileSystemItemViewModel _currentFolder;
         public FileSystemItemViewModel CurrentFolder
@@ -225,7 +217,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     if (CurrentRow.TitleType == TitleType.Profile) OpenStfsPackageCommand.Execute(OpenStfsPackageMode.Browsing);
                     return;
                 }
-                CurrentFolder = CurrentRow.IsUpDirectory ? UpDirectory() : CurrentRow;
+                var destination = CurrentRow.IsUpDirectory ? UpDirectory() : CurrentRow;
+                if (destination == null) return;
+                CurrentFolder = destination;
             }
             ChangeDirectory();
         }
@@ -256,7 +250,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 _queue.Enqueue(item);
             }
             sw.Stop();
-            Debug.WriteLine("[CD] Enqueue: " + sw.Elapsed);
+            Debug.WriteLine("[CD] Enqueued {0}: {1}", _queue.Count, sw.Elapsed);
 
             if (CurrentFolder.Type != ItemType.Drive)
             {
@@ -293,7 +287,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private bool CanExecuteOpenStfsPackageCommand(OpenStfsPackageMode mode)
         {
             //TODO: Remove IsProfile once STFS detection is implemented
-            return CurrentRow != null && CurrentRow.IsProfile;
+            return CurrentRow != null && CurrentRow.IsProfile && !CurrentRow.IsLocked;
         }
 
         private void ExecuteOpenStfsPackageCommand(OpenStfsPackageMode mode)
@@ -306,7 +300,13 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private BinaryContent OpenStfsPackage(FileSystemItem item)
         {
             var contentType = item.ContentType;
-            if (item.Type == ItemType.Directory) item = TitleRecognizer.GetProfileItem(item);
+            if (item.Type == ItemType.Directory)
+            {
+                var recognition = TitleRecognizer.GetProfileItem(item);
+                item = recognition.Item;
+                if (item == null) throw new TransferException(TransferErrorType.ReadAccessError, recognition.ErrorMessage);
+            }
+
             var tempFilePath = TitleRecognizer.GetTempFilePath(item) ?? item.Path;
             return new BinaryContent(item.Path, tempFilePath, File.ReadAllBytes(tempFilePath), contentType);
         }
@@ -655,7 +655,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private bool CanExecuteRecognizeFromProfileCommand()
         {
-            return CurrentRow != null && !CurrentRow.IsUpDirectory && CurrentRow.IsProfile;
+            return CurrentRow != null && !CurrentRow.IsUpDirectory && CurrentRow.IsProfile && !CurrentRow.IsLocked;
         }
 
         private void ExecuteRecognizeFromProfileCommand()
@@ -893,7 +893,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
             else
             {
-                CurrentFolder = UpDirectory();
+                var up = UpDirectory();
+                if (up == null) return;
+                CurrentFolder = up;
                 ChangeDirectory();
             }
         }
@@ -904,12 +906,16 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             if (parentPath == Drive.Path)
                 return Drive;
 
-            var folder = FileManager.GetFolderInfo(parentPath);
-            if (folder != null)
+            try
+            {
+                var folder = FileManager.GetFolderInfo(parentPath);
                 return new FileSystemItemViewModel(folder);
-
-            NotificationMessage.ShowMessage("Navigation error", string.Format("Can't find path: {0}", parentPath));
-            return Drive;
+            }
+            catch(TransferException ex)
+            {
+                AsyncErrorCallback(ex);
+                return null;
+            }
         }
 
         #endregion
@@ -1005,7 +1011,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
             catch (TransferException ex)
             {
-                Parent.ShowCorrespondingErrorDialog(ex);
+                Parent.ShowCorrespondingErrorDialog(ex, false);
                 return false;
             }
         }
@@ -1132,7 +1138,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             _calculationIsRunning = false;
             IsBusy = false;
-            Parent.ShowCorrespondingErrorDialog(ex);
+            Parent.ShowCorrespondingErrorDialog(ex, false);
         }
 
         public bool Export(FileSystemItem item, string savePath, CopyAction action)

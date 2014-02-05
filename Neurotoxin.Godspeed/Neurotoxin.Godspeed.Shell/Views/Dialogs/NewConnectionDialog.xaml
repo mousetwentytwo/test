@@ -5,7 +5,7 @@
                        xmlns:dialogs="clr-namespace:Neurotoxin.Godspeed.Shell.Views.Dialogs"
                        xmlns:primitives="clr-namespace:Neurotoxin.Godspeed.Shell.Primitives"
                        xmlns:converters="clr-namespace:Neurotoxin.Godspeed.Presentation.Converters;assembly=Neurotoxin.Godspeed.Presentation"
-                       Width="520" WindowStartupLocation="CenterOwner" Title="Connection details">
+                       xmlns:shellValidations="clr-namespace:Neurotoxin.Godspeed.Shell.Views.Validations" Width="520" WindowStartupLocation="CenterOwner" Title="Connection details">
     <primitives:DialogBase.Resources>
         <converters:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
         <Style TargetType="TextBox" x:Key="TextBoxStyle">
@@ -100,6 +100,7 @@
                 <Binding Path="Name" UpdateSourceTrigger="LostFocus">
                     <Binding.ValidationRules>
                         <validation:IsRequired ValidatesOnTargetUpdated="True"  />
+                        <shellValidations:IsNonExistentConnection ValidatesOnTargetUpdated="True"  />
                     </Binding.ValidationRules>
                 </Binding>
             </TextBox.Text>

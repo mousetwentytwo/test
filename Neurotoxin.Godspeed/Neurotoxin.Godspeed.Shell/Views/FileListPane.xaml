@@ -176,6 +176,9 @@
                                             </MultiBinding>
                                         </TextBlock.Text>
                                     </TextBlock>
+                                    <Image Source="/Resources/warning.png" Width="11" Height="16" Margin="0" 
+                                           Visibility="{Binding IsLocked, Converter={StaticResource BoolToVis}}"
+                                           ToolTip="{Binding LockMessage}"/>
                                     <TextBlock Opacity="0.4" Style="{StaticResource CellText}">
                                         <TextBlock.Text>
                                             <MultiBinding Converter="{StaticResource NameConverter}">
