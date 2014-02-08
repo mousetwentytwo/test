@@ -1,0 +1,9 @@
+* FIXED Issue #4: Handle connection callback errors
+* FIXED Issue #10: Connection name existance check
+* FIXED Issue #12: Handle lost connection when calling up directory
+* FIXED Issue #24: Null reference exception in FTP connection error callback
+* ADDED: Indicate inaccessible files
+* ADDED: Indicate inaccessible profiles
+* ADDED: Cache item won't be invalidated if refreshing fails
+* ADDED: Invalid items won't be cached anymore
+* ADDED: Sending screenshot attached to error reporting

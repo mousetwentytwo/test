@@ -124,6 +124,7 @@
     <Compile Include="Infrastructure\WorkerThread.cs" />
     <Compile Include="Primitives\StatusBarBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Extensions\UIElementExtensions.cs" />
     <Compile Include="Validation\IsInteger.cs" />
     <Compile Include="Validation\IsIPv4Address.cs" />
     <Compile Include="Validation\IsRequired.cs" />

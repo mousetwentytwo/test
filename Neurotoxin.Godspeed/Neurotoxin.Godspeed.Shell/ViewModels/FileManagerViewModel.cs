@@ -39,7 +39,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private CopyAction _rememberedCopyAction;
         private bool _isAborted;
         private bool _isContinued;
-        private string _transferLogPath;
 
         public bool DataGridSupportsRenaming { get; set; }
 

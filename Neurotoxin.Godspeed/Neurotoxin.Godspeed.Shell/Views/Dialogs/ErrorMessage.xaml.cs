@@ -4,15 +4,17 @@ using System.IO;
 using System.Net;
 using System.Reflection;
 using System.Windows;
+using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.ViewModels;
 using System.Linq;
+using Application = System.Windows.Application;
 
 namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
 {
     public partial class ErrorMessage
     {
-        private Exception _exception;
+        private readonly Exception _exception;
 
         public static void Show(Exception exception)
         {
@@ -44,9 +46,14 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
 
         private void ReportButtonClick(object sender, RoutedEventArgs e)
         {
-            var request = (HttpWebRequest)WebRequest.Create("http://www.mercenary.hu/godspeed/report.php");
+            const string boundary = "----GODSpeedFormBoundary";
+            const string url = "http://www.mercenary.hu/godspeed/report.php";
+            //const string url = "http://localhost/report.php";
+
+            var request = (HttpWebRequest)WebRequest.Create(url);
             request.UserAgent = "GODspeed";
             request.Method = "POST";
+            request.ContentType = "multipart/form-data; boundary=" + boundary;
 
             var assembly = Assembly.GetAssembly(typeof(FileManagerWindow));
             var assemblyName = assembly.GetName();
@@ -60,7 +67,11 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
 
             try
             {
-                var sw = new StreamWriter(request.GetRequestStream());
+                var requestStream = request.GetRequestStream();
+                var sw = new StreamWriter(requestStream);
+                sw.WriteLine("--" + boundary);
+                sw.WriteLine("Content-Disposition: form-data; name=\"log\"");
+                sw.WriteLine();
                 sw.WriteLine("GODspeed version: " + appVersion);
                 sw.WriteLine("Framework version: " + wpfVersion);
                 sw.WriteLine("OS version: " + os);
@@ -95,10 +106,30 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
                     }
                 }
 
+                var iw = 0;
+                foreach (Window window in Application.Current.Windows)
+                {
+                    sw.WriteLine("--" + boundary);
+                    sw.WriteLine("Content-Disposition: form-data; name=\"window{0}\"; filename=\"{0}.png\";", iw);
+                    sw.WriteLine("Content-Type: image/png");
+                    sw.WriteLine();
+                    sw.Flush();
+                    var ms = window.CaptureVisual();
+                    ms.Position = 0;
+                    ms.CopyTo(requestStream);
+                    requestStream.Flush();
+                    ms.Dispose();
+                    sw.WriteLine();
+                    iw++;
+                }
+                sw.WriteLine("--" + boundary + "--");
                 sw.Flush();
                 request.GetResponse();
             }
-            catch {}
+            catch
+            {
+                
+            }
             OkButtonClick(sender, e);
         }
 
