@@ -51,6 +51,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private bool CanExecuteConnectCommand(object cmdParam)
         {
+            if (ConnectedFtp != null) return false;
+
             var mouseEvent = cmdParam as EventInformation<MouseEventArgs>;
             if (mouseEvent != null)
             {
@@ -82,7 +84,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
             else if (SelectedItem is FtpConnectionItemViewModel)
             {
-                FtpConnect(SelectedItem);
+                ConnectedFtp = FtpConnect(SelectedItem);
             }
         }
 
@@ -111,6 +113,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     break;
                 case LoadCommand.Restore:
                     Save(cmdParam as FtpConnectionItemViewModel);
+                    ConnectedFtp = null;
                     break;
             }
             if (success != null) success.Invoke(this);
@@ -122,7 +125,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             SelectedItem = SelectedItem ?? _previouslyFocusedItem ?? Items.FirstOrDefault();
         }
 
-        protected override void OnActivePaneChanged(Events.ActivePaneChangedEventArgs e)
+        protected override void OnActivePaneChanged(ActivePaneChangedEventArgs e)
         {
             base.OnActivePaneChanged(e);
             if (e.ActivePane == this) return;
@@ -134,6 +137,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             base.RaiseCanExecuteChanges();
             Parent.EditCommand.RaiseCanExecuteChanged();
+            Parent.DeleteCommand.RaiseCanExecuteChanged();
         }
 
         public void Edit()
@@ -185,15 +189,16 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             _cacheStore.Remove(string.Format("{0}{1}", CacheStoreKeyPrefix, ftpconn.Name));
         }
 
-        private void FtpConnect(IStoredConnectionViewModel connection)
+        private FtpContentViewModel FtpConnect(IStoredConnectionViewModel connection)
         {
             IsBusy = true;
             ProgressMessage = string.Format("Connecting to {0}...", connection.Name);
-            ConnectedFtp = container.Resolve<FtpContentViewModel>();
+            var connectedFtp = container.Resolve<FtpContentViewModel>();
             var dir = Settings.Directory.StartsWith(connection.Name)
                           ? Settings.Directory.Replace(string.Format("{0}:/", connection.Name), string.Empty)
                           : "/Hdd1";
-            ConnectedFtp.LoadDataAsync(LoadCommand.Load, new Tuple<IStoredConnectionViewModel, FileListPaneSettings>(connection, new FileListPaneSettings(dir, Settings.SortByField, Settings.SortDirection)), FtpConnectSuccess, FtpConnectError);
+            connectedFtp.LoadDataAsync(LoadCommand.Load, new Tuple<IStoredConnectionViewModel, FileListPaneSettings>(connection, new FileListPaneSettings(dir, Settings.SortByField, Settings.SortDirection)), FtpConnectSuccess, FtpConnectError);
+            return connectedFtp;
         }
 
         private void FtpConnectSuccess(PaneViewModelBase pane)
@@ -205,7 +210,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void FtpConnectError(PaneViewModelBase pane, Exception exception)
         {
             IsBusy = false;
-            var connectionName = ConnectedFtp.Connection.Name;
+            var connectionName = ((FtpContentViewModel)pane).Connection.Name;
             if (exception is EstablishmentFailedException)
             {
                 ErrorMessage.Show(exception);

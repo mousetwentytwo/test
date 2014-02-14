@@ -30,7 +30,7 @@
 		fclose($f);
 		
 		$headers .= "--" . $separator . $eol;
-		$headers .= "Content-Type: text/plain; charset=\"iso-8859-1\"" . $eol;
+		$headers .= "Content-Type: text/plain; charset=\"utf-8\"" . $eol;
 		$headers .= "Content-Transfer-Encoding: 8bit" . $eol . $eol;
 		$headers .= $_POST['log'] . $eol . $eol;
 

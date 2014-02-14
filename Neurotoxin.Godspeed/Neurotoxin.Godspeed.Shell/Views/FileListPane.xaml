@@ -149,6 +149,7 @@
                   CanUserSortColumns="True"
                   SelectionUnit="FullRow"
                   Focusable="False"
+                  ClipboardCopyMode="None"
                   BorderBrush="#FF9B9999">
             <DataGrid.Resources>
                 <Style TargetType="{x:Type TextBlock}" x:Key="CellText">

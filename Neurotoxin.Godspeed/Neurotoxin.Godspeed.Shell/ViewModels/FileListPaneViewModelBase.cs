@@ -967,7 +967,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public override void Dispose()
         {
             eventAggregator.GetEvent<TransferProgressChangedEvent>().Unsubscribe(OnTransferProgressChanged);
-            Settings.Directory = CurrentFolder.FullPath;
+            if (CurrentFolder != null) Settings.Directory = CurrentFolder.FullPath;
             base.Dispose();
         }
 

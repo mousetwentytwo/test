@@ -42,6 +42,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public bool DataGridSupportsRenaming { get; set; }
 
+        public string xxx
+        {
+            get { return @"<b>Warning!</b> Some of the features require .NET version 4.0.30319.18408 (October 2013) or newer. Please update .NET Framework and restart GODspeed to enable those features."; }
+        }
+
         #region Main window properties
 
         private readonly Stack<IPaneViewModel> _leftPaneStack = new Stack<IPaneViewModel>();
@@ -594,7 +599,10 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private bool CanExecuteDeleteCommand()
         {
             var connections = ActivePane as ConnectionsViewModel;
-            if (connections != null && connections.SelectedItem != null) return true;
+            if (connections != null)
+            {
+                return connections.SelectedItem != null && !connections.IsBusy;
+            }
             return SourcePane != null && SourcePane.HasValidSelection && !SourcePane.IsBusy && !SourcePane.IsReadOnly && !SourcePane.IsInEditMode;
         }
 
@@ -989,6 +997,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                             try
                             {
                                 ftp.RestoreConnection();
+                                ftp.Refresh();
                             } 
                             catch (Exception ex)
                             {

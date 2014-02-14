@@ -78,8 +78,10 @@ namespace Neurotoxin.Godspeed.Shell
         {
             var applicationAssembly = Assembly.GetAssembly(typeof(Application));
             var fvi = FileVersionInfo.GetVersionInfo(applicationAssembly.Location);
-            var version = fvi.ProductVersion;
-            viewModel.DataGridSupportsRenaming = String.CompareOrdinal(version, "4.0.30319.18408") != -1;
+            var actualVersion = new Version(fvi.ProductVersion);
+            var requiredVersion = new Version(4, 0, 30319, 18408);
+
+            viewModel.DataGridSupportsRenaming = actualVersion >= requiredVersion;
             if (!viewModel.DataGridSupportsRenaming)
             {
                 NotificationMessage.ShowMessage("Warning!", "Some of the features require .NET version 4.0.30319.18408 (October 2013) or newer. Please update .NET Framework and restart GODspeed to enable those features.", NotificationMessageFlags.Ignorable);

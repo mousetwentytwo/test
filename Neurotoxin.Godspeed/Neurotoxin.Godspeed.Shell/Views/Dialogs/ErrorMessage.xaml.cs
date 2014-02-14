@@ -80,8 +80,8 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
                 var ex = _exception;
                 do
                 {
-                    sw.WriteLine("Error: " + _exception.Message);
-                    sw.WriteLine(_exception.StackTrace);
+                    sw.WriteLine("Error: " + ex.Message);
+                    sw.WriteLine(ex.StackTrace);
                     sw.WriteLine(String.Empty);
                     ex = ex.InnerException;
                 } 
