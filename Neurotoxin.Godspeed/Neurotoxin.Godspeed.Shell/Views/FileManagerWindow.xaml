@@ -8,7 +8,7 @@
                              xmlns:ts="clr-namespace:Neurotoxin.Godspeed.Shell.Views.TemplateSelectors"
                              xmlns:primitives="clr-namespace:Neurotoxin.Godspeed.Shell.Primitives"
                              xmlns:controls="clr-namespace:Neurotoxin.Godspeed.Presentation.Controls;assembly=Neurotoxin.Godspeed.Presentation"
-                             xmlns:u2u="clr-namespace:Microsoft.Windows.Controls;assembly=U2UConsult.RichHtmlTextBlock"
+                             xmlns:f="clr-namespace:Neurotoxin.Godspeed.Presentation.Formatters;assembly=Neurotoxin.Godspeed.Presentation"
                              Width="950" Height="600">
     <primitives:BorderlessWindow.Resources>
         <ResourceDictionary>
@@ -24,10 +24,13 @@
                             </Trigger>
                             <Trigger Property="Role" Value="SubmenuHeader">
                                 <Setter Property="Template" Value="{StaticResource SubmenuHeaderTemplate}"/>
-                            </Trigger>                            
+                            </Trigger>
+                            <Trigger Property="Role" Value="SubmenuItem">
+                                <Setter Property="Template" Value="{StaticResource SubmenuItemTemplate}"/>
+                            </Trigger>
                         </Style.Triggers>
                     </Style>
-                    <Style TargetType="u2u:RichTextBox">
+                    <Style TargetType="controls:RichTextBox">
                         <Setter Property="Background" Value="Transparent"/>
                         <Setter Property="BorderBrush" Value="Transparent"/>
                         <Setter Property="BorderThickness" Value="0"/>
@@ -72,23 +75,12 @@
             </Grid.RowDefinitions>
             
             <Menu>
-                <Menu.Resources>
-                    <Style TargetType="MenuItem" x:Key="SubMenuItem">
-                        <Style.Triggers>
-                            <Trigger Property="Command" Value="{x:Null}">
-                                <Setter Property="IsEnabled" Value="False"/>
-                            </Trigger>
-                        </Style.Triggers>
-                        <Setter Property="Margin" Value="0"/>
-                    </Style>
-                </Menu.Resources>
                 <MenuItem Header="Files">
                     <MenuItem Command="{x:Static commands:FileManagerCommands.ExitCommand}"/>
                 </MenuItem>
                 <MenuItem Header="Commands">
                     <MenuItem Command="{Binding ActivePane.CalculateSizeCommand}" CommandParameter="{StaticResource True}" 
-                              Header="Calculate Occupied Space" InputGestureText="Ctrl+L"
-                              Style="{StaticResource SubMenuItem}"/>
+                              Header="Calculate Occupied Space" InputGestureText="Ctrl+L"/>
                 </MenuItem>
                 <MenuItem Header="Options">
                     <MenuItem Command="{x:Static commands:FileManagerCommands.SettingsCommand}"/>
@@ -99,55 +91,45 @@
             </Menu>
             
             <Menu Grid.Column="1">
-                <Menu.Resources>
-                    <Style TargetType="MenuItem" x:Key="MessageItem">
-                        <Setter Property="Margin" Value="0"/>
-                        <Setter Property="Width" Value="350"/>
-                        <Setter Property="FlowDirection" Value="LeftToRight" />
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="{x:Type MenuItem}">
-                                    <ControlTemplate.Resources>
-                                        <u2u:HtmlFormatter x:Key="Formatter"/>
-                                    </ControlTemplate.Resources>
-                                    <Border Name="Border" Background="White">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
-                                            <ContentPresenter Margin="6,3,8,0" VerticalAlignment="Top" ContentSource="Icon"/>
-                                            <u2u:RichTextBox Grid.Column="1" Text="{TemplateBinding Header}" TextFormatter="{StaticResource Formatter}" />
-                                        </Grid>
-                                        </Border>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsHighlighted" Value="true">
-                                            <Setter TargetName="Border" Property="Background" Value="{StaticResource ControlBackgroundBrush}"/>
-                                            <Setter Property="Cursor" Value="Hand"/>
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </Menu.Resources>
-                <MenuItem Header="{Binding UnreadMessageCount}" FlowDirection="RightToLeft">
+                <MenuItem Header="{Binding UnreadMessageCount}" FlowDirection="RightToLeft" ItemsSource="{Binding UserMessages}">
                     <MenuItem.HeaderTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
                                 <TextBlock Text="Messages"/>
-                                <Border CornerRadius="8" Background="#dc0d17" Margin="3,1,0,0">
-                                    <TextBlock Text="9" Foreground="White" FontWeight="Bold" Margin="5,0,5,0" FontSize="10" />
+                                <Border x:Name="UnreadCount" CornerRadius="8" Background="#dc0d17" Margin="3,1,0,0">
+                                    <TextBlock Text="{Binding}" Foreground="White" FontWeight="Bold" Margin="5,0,5,0" FontSize="10" />
                                 </Border>
                             </StackPanel>
+                            <DataTemplate.Triggers>
+                                <DataTrigger Binding="{Binding}" Value="0">
+                                    <Setter TargetName="UnreadCount" Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
                         </DataTemplate>
                     </MenuItem.HeaderTemplate>
-                    <MenuItem Header="{Binding xxx}" 
-                              Style="{StaticResource MessageItem}">
-                        <MenuItem.Icon>
-                            <controls:GreyableImage Source="/Resources/info.png" Width="16" Height="16" SnapsToDevicePixels="True"/>
-                        </MenuItem.Icon>
-                    </MenuItem>
+                    <MenuItem.ItemContainerStyle>
+                        <Style TargetType="MenuItem">
+                            <Setter Property="Command" Value="{Binding Command}" />
+                            <Setter Property="Margin" Value="0"/>
+                            <Setter Property="Width" Value="350"/>
+                            <Setter Property="Icon">
+                                <Setter.Value>
+                                    <controls:GreyableImage Margin="6,3,8,0" VerticalAlignment="Top" Width="16" Height="16" SnapsToDevicePixels="True" Source="{Binding Icon}"/>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="Template" Value="{StaticResource SubmenuItemTemplate}"/>
+                        </Style>
+                    </MenuItem.ItemContainerStyle>
+                    <MenuItem.ItemTemplate>
+                        <DataTemplate>
+                            <DataTemplate.Resources>
+                                <f:HtmlFormatter x:Key="Formatter"/>
+                            </DataTemplate.Resources>
+                            <Grid FlowDirection="LeftToRight">
+                                <controls:RichTextBox Grid.Column="1" Text="{Binding Path=Message, Mode=OneWay}" TextFormatter="{StaticResource Formatter}" />
+                            </Grid>
+                        </DataTemplate>
+                    </MenuItem.ItemTemplate>
                 </MenuItem>
             </Menu>
             

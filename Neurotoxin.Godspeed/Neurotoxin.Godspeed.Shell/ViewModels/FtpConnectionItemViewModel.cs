@@ -30,7 +30,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
         }
 
-        private const string THUMBNAIL = "THUMBNAIL";
         private ImageSource _thumbnail;
         public ImageSource Thumbnail
         {

@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Shell;
 using Microsoft.Practices.Unity;
-using Neurotoxin.Godspeed.Core.Constants;
 using Neurotoxin.Godspeed.Core.Exceptions;
 using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Core.Io;
@@ -41,11 +43,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private bool _isContinued;
 
         public bool DataGridSupportsRenaming { get; set; }
-
-        public string xxx
-        {
-            get { return @"<b>Warning!</b> Some of the features require .NET version 4.0.30319.18408 (October 2013) or newer. Please update .NET Framework and restart GODspeed to enable those features."; }
-        }
 
         #region Main window properties
 
@@ -260,6 +257,18 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             get { return _isPaused; }
             set { _isPaused = value; NotifyPropertyChanged(ISPAUSED); }
         }
+
+        #endregion
+
+        #region Messaging
+
+        private const string UNREADMESSAGECOUNT = "UnreadMessageCount";
+        public int UnreadMessageCount
+        {
+            get { return UserMessages.Count(m => !m.IsRead); }
+        }
+
+        public ObservableCollection<UserMessageViewModel> UserMessages { get; private set; }
 
         #endregion
 
@@ -748,9 +757,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public FileManagerViewModel()
         {
-            Limilabs.FTP.Log.Enabled = true;
+            UserMessages = new ObservableCollection<UserMessageViewModel>();
+            UserMessages.CollectionChanged += (sender, args) => NotifyPropertyChanged(UNREADMESSAGECOUNT);
 
-            //_transferLogPath = string.Format(@"{0}\transfer.log", AppDomain.CurrentDomain.GetData("DataDirectory"));
             SwitchPaneCommand = new DelegateCommand<EventInformation<KeyEventArgs>>(ExecuteSwitchPaneCommand, CanExecuteSwitchPaneCommand);
             EditCommand = new DelegateCommand(ExecuteEditCommand, CanExecuteEditCommand);
             CopyCommand = new DelegateCommand(ExecuteCopyCommand, CanExecuteCopyCommand);
@@ -765,10 +774,24 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             eventAggregator.GetEvent<OpenNestedPaneEvent>().Subscribe(OnOpenNestedPane);
             eventAggregator.GetEvent<CloseNestedPaneEvent>().Subscribe(OnCloseNestedPane);
             eventAggregator.GetEvent<ActivePaneChangedEvent>().Subscribe(OnActivePaneChanged);
+            eventAggregator.GetEvent<NotifyUserMessageEvent>().Subscribe(OnNotifyUserMessage);
         }
 
-        public void InitializePanes()
+        public void Initialize()
         {
+            Limilabs.FTP.Log.Enabled = true;
+
+            var applicationAssembly = Assembly.GetAssembly(typeof(Application));
+            var fvi = FileVersionInfo.GetVersionInfo(applicationAssembly.Location);
+            var actualVersion = new Version(fvi.ProductVersion);
+            var requiredVersion = new Version(4, 0, 30319, 18408);
+
+            DataGridSupportsRenaming = actualVersion >= requiredVersion;
+            //if (!DataGridSupportsRenaming) 
+                OnNotifyUserMessage(new NotifyUserMessageEventArgs("<b>Warning!</b> Some of the features require .NET version 4.0.30319.18408 (October 2013) or newer. Please update .NET Framework and restart GODspeed to enable those features.", "info"));
+
+            if (UserSettings.UseVersionChecker) CheckForNewerVersion();
+
             LeftPane = (IPaneViewModel)container.Resolve(GetStoredPaneType(UserSettings.LeftPaneType));
             var leftParam = UserSettings.LeftPaneFileListPaneSettings;
             LeftPane.LoadDataAsync(LoadCommand.Load, leftParam);
@@ -776,6 +799,45 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             RightPane = (IPaneViewModel)container.Resolve(GetStoredPaneType(UserSettings.RightPaneType));
             var rightParam = UserSettings.RightPaneFileListPaneSettings;
             RightPane.LoadDataAsync(LoadCommand.Load, rightParam);
+        }
+
+        public void CheckForNewerVersion()
+        {
+            var asm = Assembly.GetExecutingAssembly();
+            var title = asm.GetAttribute<AssemblyTitleAttribute>().Title;
+            const string url = "https://godspeed.codeplex.com/";
+            WorkerThread.Run(() =>
+                                 {
+                                     try
+                                     {
+                                         var request = HttpWebRequest.Create(url);
+                                         var response = request.GetResponse();
+                                         var titlePattern = new Regex(@"\<span class=""rating_header""\>current.*?\<td\>(.*?)\</td\>", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+                                         var datePattern = new Regex(@"\<span class=""rating_header""\>date.*?\<td\>.*?LocalTimeTicks=""(.*?)""", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+                                         string html;
+                                         using (var stream = response.GetResponseStream())
+                                         {
+                                             var sr = new StreamReader(stream, UTF8Encoding.UTF8);
+                                             html = sr.ReadToEnd();
+                                             sr.Close();
+                                         }
+                                         var latestTitle = titlePattern.Match(html).Groups[1].Value.Trim();
+                                         var latestDate = new DateTime(1970, 1, 1);
+                                         latestDate = latestDate.AddSeconds(long.Parse(datePattern.Match(html).Groups[1].Value)).ToLocalTime();
+                                         return new Tuple<string, DateTime>(latestTitle, latestDate);
+                                     }
+                                     catch
+                                     {
+                                         return new Tuple<string, DateTime>(string.Empty, DateTime.MinValue);
+                                     }
+                                 },
+                             info =>
+                                 {
+                                     if (string.Compare(title, info.Item1, StringComparison.InvariantCultureIgnoreCase) != -1) return;
+                                     OnNotifyUserMessage(new NotifyUserMessageEventArgs(string.Format("<b>New version available!</b> {0} ({1:yyyy.MM.dd HH:mm})", info.Item1, info.Item2), "info"));
+                                     //var dialog = new NewVersionDialog();
+                                     //dialog.ShowDialog();
+                                 });
         }
 
         private static Type GetStoredPaneType(string typeName)
@@ -812,7 +874,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
             UIThread.Run(() =>
                 {
-                    //var sb = new StringBuilder();
                     var elapsed = _elapsedTimeMeter.Elapsed;
                     var transferred = BytesTransferred;
                     ElapsedTime = elapsed;
@@ -822,8 +883,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         var estimated = new TimeSpan((long)Math.Floor((double)elapsed.Ticks / transferred * TotalBytes));
                         RemainingTime = estimated - elapsed;
                     }
-
-                    //sb.AppendFormat("{0} {1}% {2} {3} {4} {5} {6} {7} ", SourceFile, args.Percentage, args.Transferred, args.TotalBytesTransferred, args.ResumeStartPosition, BytesTransferred, ElapsedTime, RemainingTime);
 
                     if (args.Percentage == 100)
                     {
@@ -835,12 +894,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     }
                     var ms = _speedMeter.Elapsed.TotalMilliseconds;
                     if (ms > 100) Speed = (int)Math.Floor((args.TotalBytesTransferred - args.ResumeStartPosition)/ms*1000/1024);
-                    //sb.AppendFormat("{0} ", ms);
                     CurrentFileProgress = args.Percentage > 0 ? args.Percentage : 0;
                     BytesTransferred += args.Transferred;
-
-                    //sb.AppendFormat("{0}kbps {1} {2}", Speed, CurrentFileProgress, BytesTransferred);
-                    //File.AppendAllLines(_transferLogPath, new[] { sb.ToString() });
                 });
         }
 
@@ -879,6 +934,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void OnActivePaneChanged(ActivePaneChangedEventArgs e)
         {
             NotifyPropertyChanged(ACTIVEPANE);
+        }
+
+        private void OnNotifyUserMessage(NotifyUserMessageEventArgs e)
+        {
+            UserMessages.Insert(0, new UserMessageViewModel(e));
         }
 
         private void InitializeTransfer(TransferType mode, Action callback)

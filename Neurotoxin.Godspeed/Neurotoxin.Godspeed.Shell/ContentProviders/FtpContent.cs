@@ -162,8 +162,11 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             NotifyFtpOperationStarted(false);
             try
             {
-                if (path != null) FtpClient.ChangeFolder(path);
-                var currentPath = FtpClient.GetCurrentFolder();
+                var currentPath = path;
+                if (path != null) 
+                    FtpClient.ChangeFolder(path);
+                else
+                    currentPath = FtpClient.GetCurrentFolder();
                 if (!currentPath.EndsWith("/")) currentPath += "/";
                 _fileSize = 0;
 
