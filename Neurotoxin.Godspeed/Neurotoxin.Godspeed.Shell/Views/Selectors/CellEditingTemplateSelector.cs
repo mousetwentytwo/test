@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using Neurotoxin.Godspeed.Presentation.Extensions;
 
-namespace Neurotoxin.Godspeed.Shell.Views.TemplateSelectors
+namespace Neurotoxin.Godspeed.Shell.Views.Selectors
 {
     public class CellEditingTemplateSelector : DataTemplateSelector
     {

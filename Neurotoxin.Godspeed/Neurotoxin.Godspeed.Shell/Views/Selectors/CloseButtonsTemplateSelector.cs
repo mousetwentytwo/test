@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using Neurotoxin.Godspeed.Shell.ViewModels;
 
-namespace Neurotoxin.Godspeed.Shell.Views.TemplateSelectors
+namespace Neurotoxin.Godspeed.Shell.Views.Selectors
 {
     public class CloseButtonsTemplateSelector : DataTemplateSelector
     {

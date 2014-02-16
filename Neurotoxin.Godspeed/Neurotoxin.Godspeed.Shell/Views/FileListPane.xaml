@@ -6,9 +6,8 @@
              xmlns:controls="clr-namespace:Neurotoxin.Godspeed.Presentation.Controls;assembly=Neurotoxin.Godspeed.Presentation"
              xmlns:views="clr-namespace:Neurotoxin.Godspeed.Shell.Views"
              xmlns:vc="clr-namespace:Neurotoxin.Godspeed.Shell.Views.Controls"
-             xmlns:ts="clr-namespace:Neurotoxin.Godspeed.Shell.Views.TemplateSelectors"
              xmlns:constants="clr-namespace:Neurotoxin.Godspeed.Shell.Constants"
-             Background="Transparent">
+             xmlns:s="clr-namespace:Neurotoxin.Godspeed.Shell.Views.Selectors" Background="Transparent">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -17,37 +16,37 @@
                     <inf:BindingProxy x:Key="ViewModel" Data="{Binding}"/>
                     <constants:OpenStfsPackageMode x:Key="Browsing">Browsing</constants:OpenStfsPackageMode>
                     <constants:OpenStfsPackageMode x:Key="Repair">Repair</constants:OpenStfsPackageMode>
-                    <ts:CloseButtonsTemplateSelector x:Key="CloseButtonsTemplateSelector">
-                        <ts:CloseButtonsTemplateSelector.DefaultTemplate>
+                    <s:CloseButtonsTemplateSelector x:Key="CloseButtonsTemplateSelector">
+                        <s:CloseButtonsTemplateSelector.DefaultTemplate>
                             <DataTemplate>
                                 <StackPanel/>
                             </DataTemplate>
-                        </ts:CloseButtonsTemplateSelector.DefaultTemplate>
-                        <ts:CloseButtonsTemplateSelector.FtpTemplate>
+                        </s:CloseButtonsTemplateSelector.DefaultTemplate>
+                        <s:CloseButtonsTemplateSelector.FtpTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
                                     <Button Content="Disconnect" Command="{Binding CloseCommand}" Width="75"/>
                                 </StackPanel>
                             </DataTemplate>
-                        </ts:CloseButtonsTemplateSelector.FtpTemplate>
-                        <ts:CloseButtonsTemplateSelector.PackageTemplate>
+                        </s:CloseButtonsTemplateSelector.FtpTemplate>
+                        <s:CloseButtonsTemplateSelector.PackageTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
                                     <Button Content="Save and Close" Command="{Binding SaveAndCloseCommand}" Margin="0,0,3,0" Width="100"/>
                                     <Button Content="Close" Command="{Binding CloseCommand}" Width="60"/>
                                 </StackPanel>
                             </DataTemplate>
-                        </ts:CloseButtonsTemplateSelector.PackageTemplate>
-                        <ts:CloseButtonsTemplateSelector.CompressedFileTemplate>
+                        </s:CloseButtonsTemplateSelector.PackageTemplate>
+                        <s:CloseButtonsTemplateSelector.CompressedFileTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
                                     <Button Content="Close" Command="{Binding CloseCommand}" Width="60"/>
                                 </StackPanel>
                             </DataTemplate>
-                        </ts:CloseButtonsTemplateSelector.CompressedFileTemplate>
-                    </ts:CloseButtonsTemplateSelector>
-                    <ts:CellEditingTemplateSelector x:Key="CellEditingTemplateSelector">
-                        <ts:CellEditingTemplateSelector.TitleTemplate>
+                        </s:CloseButtonsTemplateSelector.CompressedFileTemplate>
+                    </s:CloseButtonsTemplateSelector>
+                    <s:CellEditingTemplateSelector x:Key="CellEditingTemplateSelector">
+                        <s:CellEditingTemplateSelector.TitleTemplate>
                             <DataTemplate>
                                 <Grid Background="Transparent">
                                     <Grid.ColumnDefinitions>
@@ -61,8 +60,8 @@
                                     </Grid>
                                 </Grid>
                             </DataTemplate>
-                        </ts:CellEditingTemplateSelector.TitleTemplate>
-                        <ts:CellEditingTemplateSelector.NameTemplate>
+                        </s:CellEditingTemplateSelector.TitleTemplate>
+                        <s:CellEditingTemplateSelector.NameTemplate>
                             <DataTemplate>
                                 <Grid Background="Transparent">
                                     <Grid.ColumnDefinitions>
@@ -76,8 +75,8 @@
                                     </Grid>
                                 </Grid>
                             </DataTemplate>
-                        </ts:CellEditingTemplateSelector.NameTemplate>
-                    </ts:CellEditingTemplateSelector>
+                        </s:CellEditingTemplateSelector.NameTemplate>
+                    </s:CellEditingTemplateSelector>
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

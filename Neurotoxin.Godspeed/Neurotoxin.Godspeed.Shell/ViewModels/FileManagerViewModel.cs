@@ -270,7 +270,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             get { return UserMessages.Count(m => !m.IsRead); }
         }
 
-        public ObservableCollection<UserMessageViewModel> UserMessages { get; private set; }
+        public ObservableCollection<IUserMessageViewModel> UserMessages { get; private set; }
 
         private const string ISMESSAGESDROPDOWNOPEN = "IsMessagesDropdownOpen";
         private bool _isMessagesDropdownOpen;
@@ -792,6 +792,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 UserSettings.IgnoreMessage(message.Message);
             }
             UserMessages.Remove(message);
+            if (UserMessages.Count == 0) UserMessages.Add(new NoMessagesViewModel());
         }
 
         #endregion
@@ -818,7 +819,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public FileManagerViewModel()
         {
-            UserMessages = new ObservableCollection<UserMessageViewModel>();
+            UserMessages = new ObservableCollection<IUserMessageViewModel> { new NoMessagesViewModel() };
             UserMessages.CollectionChanged += (sender, args) => NotifyPropertyChanged(UNREADMESSAGECOUNT);
 
             SwitchPaneCommand = new DelegateCommand<EventInformation<KeyEventArgs>>(ExecuteSwitchPaneCommand, CanExecuteSwitchPaneCommand);
@@ -1007,6 +1008,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             var i = UserMessages.IndexOf(m => m.Message == e.Message);
             if (i == -1)
             {
+                if (UserMessages.First() is NoMessagesViewModel) UserMessages.RemoveAt(0);
                 UserMessages.Insert(0, new UserMessageViewModel(e));
             } 
             else if (i != 0)

@@ -3,7 +3,7 @@ using System.Windows.Controls;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.ViewModels;
 
-namespace Neurotoxin.Godspeed.Shell.Views.TemplateSelectors
+namespace Neurotoxin.Godspeed.Shell.Views.Selectors
 {
     public class PaneTemplateSelector : DataTemplateSelector
     {

@@ -8,11 +8,12 @@ using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Events;
+using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
-    public class UserMessageViewModel : ViewModelBase
+    public class UserMessageViewModel : ViewModelBase, IUserMessageViewModel
     {
         public string Message { get; private set; }
         public ImageSource Icon { get; private set; }
