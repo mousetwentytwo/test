@@ -18,6 +18,7 @@ using Neurotoxin.Godspeed.Core.Io;
 using Neurotoxin.Godspeed.Core.Net;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
+using Neurotoxin.Godspeed.Shell.Controllers;
 using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Exceptions;
 using Neurotoxin.Godspeed.Shell.Interfaces;
@@ -26,6 +27,7 @@ using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
 using System.Linq;
+using Microsoft.Practices.ObjectBuilder2;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
@@ -269,6 +271,29 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         }
 
         public ObservableCollection<UserMessageViewModel> UserMessages { get; private set; }
+
+        private const string ISMESSAGESDROPDOWNOPEN = "IsMessagesDropdownOpen";
+        private bool _isMessagesDropdownOpen;
+        public bool IsMessagesDropdownOpen
+        {
+            get { return _isMessagesDropdownOpen; }
+            set
+            {
+                _isMessagesDropdownOpen = value; 
+                NotifyPropertyChanged(ISMESSAGESDROPDOWNOPEN);
+                WorkerThread.Run(() =>
+                                     {
+                                         Thread.Sleep(3000); 
+                                         return true;
+                                     },
+                                 b =>
+                                     {
+                                         if (!IsMessagesDropdownOpen) return;
+                                         UserMessages.ForEach(m => m.IsRead = true);
+                                         NotifyPropertyChanged(UNREADMESSAGECOUNT);
+                                     });
+            }
+        }
 
         #endregion
 
@@ -735,6 +760,42 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #endregion
 
+        #region OpenUserMessageCommand
+
+        public DelegateCommand<UserMessageCommandParameter> OpenUserMessageCommand { get; private set; }
+
+        private void ExecuteOpenUserMessageCommand(UserMessageCommandParameter p)
+        {
+            p.ViewModel.IsRead = true;
+            p.ViewModel.IsChecked = true;
+            NotifyPropertyChanged(UNREADMESSAGECOUNT);
+
+            switch (p.Command)
+            {
+                case MessageCommand.OpenUrl:
+                    Process.Start((string)p.Parameter);
+                    break;
+            }
+        }
+
+        #endregion
+
+        #region RemoveUserMessageCommand
+
+        public DelegateCommand<UserMessageViewModel> RemoveUserMessageCommand { get; private set; }
+
+        private void ExecuteRemoveUserMessageCommand(UserMessageViewModel message)
+        {
+            if (message.Flags.HasFlag(MessageFlags.Ignorable) && 
+                new ConfirmationDialog("Remove message", "Do you want to disable this message permanently in the future?").ShowDialog() == true)
+            {
+                UserSettings.IgnoreMessage(message.Message);
+            }
+            UserMessages.Remove(message);
+        }
+
+        #endregion
+
         #region Events
 
         public event TransferStartedEventHandler TransferStarted;
@@ -768,6 +829,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             DeleteCommand = new DelegateCommand(ExecuteDeleteCommand, CanExecuteDeleteCommand);
             PauseCommand = new DelegateCommand(ExecutePauseCommand);
             ContinueCommand = new DelegateCommand(ExecuteContinueCommand);
+            OpenUserMessageCommand = new DelegateCommand<UserMessageCommandParameter>(ExecuteOpenUserMessageCommand);
+            RemoveUserMessageCommand = new DelegateCommand<UserMessageViewModel>(ExecuteRemoveUserMessageCommand);
 
             eventAggregator.GetEvent<TransferActionStartedEvent>().Subscribe(OnTransferActionStarted);
             eventAggregator.GetEvent<TransferProgressChangedEvent>().Subscribe(OnTransferProgressChanged);
@@ -787,8 +850,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             var requiredVersion = new Version(4, 0, 30319, 18408);
 
             DataGridSupportsRenaming = actualVersion >= requiredVersion;
-            //if (!DataGridSupportsRenaming) 
-                OnNotifyUserMessage(new NotifyUserMessageEventArgs("<b>Warning!</b> Some of the features require .NET version 4.0.30319.18408 (October 2013) or newer. Please update .NET Framework and restart GODspeed to enable those features.", "info"));
+            if (!DataGridSupportsRenaming) 
+            {
+                const string message = "<b>Warning!</b> Some of the features require .NET version 4.0.30319.18408 (October 2013) or newer. Please update .NET Framework and restart GODspeed to enable those features.";
+                OnNotifyUserMessage(new NotifyUserMessageEventArgs(message, MessageIcon.Info, MessageCommand.OpenUrl, "http://www.microsoft.com/en-us/download/details.aspx?id=40779"));
+            }
 
             if (UserSettings.UseVersionChecker) CheckForNewerVersion();
 
@@ -834,9 +900,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                              info =>
                                  {
                                      if (string.Compare(title, info.Item1, StringComparison.InvariantCultureIgnoreCase) != -1) return;
-                                     OnNotifyUserMessage(new NotifyUserMessageEventArgs(string.Format("<b>New version available!</b> {0} ({1:yyyy.MM.dd HH:mm})", info.Item1, info.Item2), "info"));
-                                     //var dialog = new NewVersionDialog();
-                                     //dialog.ShowDialog();
+                                     var message = string.Format("<b>New version available!</b><br/>{0} ({1:yyyy.MM.dd HH:mm})", info.Item1, info.Item2);
+                                     OnNotifyUserMessage(new NotifyUserMessageEventArgs(message, MessageIcon.Info, MessageCommand.OpenUrl, "http://godspeed.codeplex.com", MessageFlags.None));
                                  });
         }
 
@@ -938,7 +1003,16 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void OnNotifyUserMessage(NotifyUserMessageEventArgs e)
         {
-            UserMessages.Insert(0, new UserMessageViewModel(e));
+            if (UserSettings.IsMessageIgnored(e.Message)) return;
+            var i = UserMessages.IndexOf(m => m.Message == e.Message);
+            if (i == -1)
+            {
+                UserMessages.Insert(0, new UserMessageViewModel(e));
+            } 
+            else if (i != 0)
+            {
+                UserMessages.Move(i, 0);
+            }
         }
 
         private void InitializeTransfer(TransferType mode, Action callback)

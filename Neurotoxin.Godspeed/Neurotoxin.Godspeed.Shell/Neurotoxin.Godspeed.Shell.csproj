@@ -105,6 +105,7 @@
     <Compile Include="Constants\ErrorResolutionBehavior.cs" />
     <Compile Include="Constants\FtpTransferDirection.cs" />
     <Compile Include="Constants\ItemType.cs" />
+    <Compile Include="Constants\MessageFlags.cs" />
     <Compile Include="Constants\Modules.cs" />
     <Compile Include="Constants\ModuleLoadInfoCollection.cs" />
     <Compile Include="Constants\OpenStfsPackageMode.cs" />
@@ -129,6 +130,8 @@
     <Compile Include="Converters\TransferTypeConverter.cs" />
     <Compile Include="Events\ActivePaneChangedEvent.cs" />
     <Compile Include="Events\CloseNestedPaneEvent.cs" />
+    <Compile Include="Constants\MessageCommand.cs" />
+    <Compile Include="Constants\MessageIcon.cs" />
     <Compile Include="Events\NotifyUserMessageEvent.cs" />
     <Compile Include="Events\UsbDeviceChangedEvent.cs" />
     <Compile Include="Events\TransferActionStartedEvent.cs" />
@@ -146,6 +149,7 @@
     <Compile Include="Models\CacheComplexKey.cs" />
     <Compile Include="Models\FileListPaneSettings.cs" />
     <Compile Include="Models\ProfileItemWrapper.cs" />
+    <Compile Include="Models\UserMessageCommandParameter.cs" />
     <Compile Include="Primitives\BorderlessWindow.cs" />
     <Compile Include="Primitives\CaptionButtons.xaml.cs">
       <DependentUpon>CaptionButtons.xaml</DependentUpon>
@@ -265,6 +269,10 @@
     <Page Include="Themes\ExpressionLight.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\FloatingScrollBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Themes\ShinyBlue.xaml">
       <Generator>MSBuild:Compile</Generator>

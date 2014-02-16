@@ -30,11 +30,32 @@
                             </Trigger>
                         </Style.Triggers>
                     </Style>
+                    
                     <Style TargetType="controls:RichTextBox">
                         <Setter Property="Background" Value="Transparent"/>
                         <Setter Property="BorderBrush" Value="Transparent"/>
                         <Setter Property="BorderThickness" Value="0"/>
                     </Style>
+                    
+                    <ControlTemplate TargetType="MenuItem" x:Key="UserMessageTemplate">
+                        <Border Name="Border" Background="White" BorderThickness="0,0,0,1" BorderBrush="{StaticResource ControlBackgroundBrush}">
+                            <Grid>
+                                <ContentPresenter Name="HeaderHost" Grid.Column="0" ContentSource="Header" RecognizesAccessKey="True" VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <DataTrigger Binding="{Binding IsRead}" Value="False">
+                                <Setter TargetName="Border" Property="Background" Value="{StaticResource MenuHighlight1}"/>
+                            </DataTrigger>
+                            <Trigger Property="IsHighlighted" Value="true">
+                                <Setter TargetName="Border" Property="Background" Value="{StaticResource MenuHighlight2}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Foreground" Value="{StaticResource DisabledForegroundBrush}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+
                     <ts:PaneTemplateSelector x:Key="TemplateSelector">
                         <ts:PaneTemplateSelector.DefaultTemplate>
                             <DataTemplate>
@@ -75,6 +96,7 @@
             </Grid.RowDefinitions>
             
             <Menu>
+                <MenuItem Visibility="Collapsed"/>
                 <MenuItem Header="Files">
                     <MenuItem Command="{x:Static commands:FileManagerCommands.ExitCommand}"/>
                 </MenuItem>
@@ -91,7 +113,10 @@
             </Menu>
             
             <Menu Grid.Column="1">
-                <MenuItem Header="{Binding UnreadMessageCount}" FlowDirection="RightToLeft" ItemsSource="{Binding UserMessages}">
+                <MenuItem Header="{Binding UnreadMessageCount}" FlowDirection="RightToLeft" ItemsSource="{Binding UserMessages}" IsSubmenuOpen="{Binding Path=IsMessagesDropdownOpen, Mode=TwoWay}">
+                    <MenuItem.Resources>
+                        <ResourceDictionary Source="/Themes/FloatingScrollBar.xaml"/>
+                    </MenuItem.Resources>
                     <MenuItem.HeaderTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
@@ -109,15 +134,12 @@
                     </MenuItem.HeaderTemplate>
                     <MenuItem.ItemContainerStyle>
                         <Style TargetType="MenuItem">
-                            <Setter Property="Command" Value="{Binding Command}" />
+                            <Setter Property="Command" Value="{Binding ElementName=LayoutRoot, Path=DataContext.OpenUserMessageCommand}" />
+                            <Setter Property="CommandParameter" Value="{Binding CommandParameter}" />
                             <Setter Property="Margin" Value="0"/>
                             <Setter Property="Width" Value="350"/>
-                            <Setter Property="Icon">
-                                <Setter.Value>
-                                    <controls:GreyableImage Margin="6,3,8,0" VerticalAlignment="Top" Width="16" Height="16" SnapsToDevicePixels="True" Source="{Binding Icon}"/>
-                                </Setter.Value>
-                            </Setter>
-                            <Setter Property="Template" Value="{StaticResource SubmenuItemTemplate}"/>
+                            <Setter Property="Cursor" Value="Hand"/>
+                            <Setter Property="Template" Value="{StaticResource UserMessageTemplate}"/>
                         </Style>
                     </MenuItem.ItemContainerStyle>
                     <MenuItem.ItemTemplate>
@@ -126,8 +148,34 @@
                                 <f:HtmlFormatter x:Key="Formatter"/>
                             </DataTemplate.Resources>
                             <Grid FlowDirection="LeftToRight">
-                                <controls:RichTextBox Grid.Column="1" Text="{Binding Path=Message, Mode=OneWay}" TextFormatter="{StaticResource Formatter}" />
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <controls:GreyableImage Margin="6,3,8,0" Width="16" Height="16" SnapsToDevicePixels="True" Source="{Binding Icon}" VerticalAlignment="Top"/>
+                                <controls:RichTextBox Grid.Column="1" Text="{Binding Path=Message, Mode=OneWay}" TextFormatter="{StaticResource Formatter}" Cursor="Hand" />
+                                <StackPanel Grid.Column="2" Margin="6,3,12,0" VerticalAlignment="Top" Width="13">
+                                    <Border Name="Checked" Height="13" Background="Transparent" Margin="0,0,0,3">
+                                        <!--<Path Name="CheckMark" Width="9" Height="9" Visibility="Hidden" SnapsToDevicePixels="False" Fill="{StaticResource MenuGlyphBrush}" Stretch="Fill" Data="M0,2 L0,4.8 L2.5,7.4 L7.1,2.8 L7.1,0 L2.5,4.6 z" />-->
+                                        <Ellipse Name="CheckMark" Width="7" Height="7" Stroke="{StaticResource MenuGlyphBrush}" StrokeThickness="2"/>
+                                    </Border>
+                                    <Button Name="Remove" Height="13" Command="{Binding ElementName=LayoutRoot, Path=DataContext.RemoveUserMessageCommand}" CommandParameter="{Binding}">
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="Transparent">
+                                                    <Path Name="RemoveMark" Width="7" Height="7" SnapsToDevicePixels="False" Stroke="{StaticResource MenuGlyphBrush}" StrokeThickness="2" Data="M 0 0 L 7 7 M 0 7 L 7 0" />
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
+                                </StackPanel>
                             </Grid>
+                            <DataTemplate.Triggers>
+                                <DataTrigger Binding="{Binding IsChecked}" Value="True">
+                                    <Setter TargetName="CheckMark" Property="Fill" Value="{StaticResource MenuGlyphBrush}"/>
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
                         </DataTemplate>
                     </MenuItem.ItemTemplate>
                 </MenuItem>

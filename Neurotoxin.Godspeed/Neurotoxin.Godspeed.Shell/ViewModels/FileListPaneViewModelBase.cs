@@ -929,7 +929,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         protected FileListPaneViewModelBase(FileManagerViewModel parent) : base(parent)
         {
             FileManager = container.Resolve<T>();
-            TitleRecognizer = new TitleRecognizer(FileManager, container.Resolve<CacheManager>());
+            TitleRecognizer = new TitleRecognizer(FileManager, container.Resolve<CacheManager>(), eventAggregator);
 
             ChangeDirectoryCommand = new DelegateCommand<object>(ExecuteChangeDirectoryCommand, CanExecuteChangeDirectoryCommand);
             OpenStfsPackageCommand = new DelegateCommand<OpenStfsPackageMode>(ExecuteOpenStfsPackageCommand, CanExecuteOpenStfsPackageCommand);

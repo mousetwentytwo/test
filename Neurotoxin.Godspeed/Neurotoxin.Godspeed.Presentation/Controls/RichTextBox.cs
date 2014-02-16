@@ -34,12 +34,16 @@ namespace Neurotoxin.Godspeed.Presentation.Controls
 
     public RichTextBox()
     {
+        IsReadOnly = true;
+        IsReadOnlyCaretVisible = false;
+        IsHitTestVisible = false;
     }
 
-    public RichTextBox( System.Windows.Documents.FlowDocument document )
-      : base( document )
+    public RichTextBox(System.Windows.Documents.FlowDocument document) : base(document)
     {
-
+        IsReadOnly = true;
+        IsReadOnlyCaretVisible = false;
+        IsHitTestVisible = false;
     }
 
     #endregion //Constructors

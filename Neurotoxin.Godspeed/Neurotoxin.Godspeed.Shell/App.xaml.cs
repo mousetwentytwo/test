@@ -104,7 +104,7 @@ namespace Neurotoxin.Godspeed.Shell
         {
             ex = ex is TargetInvocationException ? ex.InnerException : ex;
             ErrorMessage.Show(ex);
-            Shutdown();
+            //Shutdown();
         }
 
     }

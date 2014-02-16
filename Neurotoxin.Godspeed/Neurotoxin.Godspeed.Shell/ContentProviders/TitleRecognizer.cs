@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using Microsoft.Practices.Composite.Events;
 using Neurotoxin.Godspeed.Core.Constants;
 using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Core.Io.Gpd;
 using Neurotoxin.Godspeed.Core.Io.Stfs;
 using Neurotoxin.Godspeed.Core.Models;
+using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Constants;
+using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
 using Neurotoxin.Godspeed.Presentation.Extensions;
-using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 
 namespace Neurotoxin.Godspeed.Shell.ContentProviders
 {
@@ -22,6 +23,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
     {
         private readonly IFileManager _fileManager;
         private readonly CacheManager _cacheManager;
+        private readonly IEventAggregator _eventAggregator;
         private readonly Dictionary<string, FileSystemItem> _profileFileCache = new Dictionary<string, FileSystemItem>();
 
         private const string ACCESSERRORMESSAGE = "Inaccessible file. Please check the corresponding permissions.";
@@ -41,10 +43,11 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 new RecognitionInformation("^E0000[0-9A-F]{11}$", "Unknown Profile", TitleType.Profile, ItemType.Directory | ItemType.File),
             };
 
-        public TitleRecognizer(IFileManager fileManager, CacheManager cacheManager)
+        public TitleRecognizer(IFileManager fileManager, CacheManager cacheManager, IEventAggregator eventAggregator)
         {
             _cacheManager = cacheManager;
             _fileManager = fileManager;
+            _eventAggregator = eventAggregator;
         }
 
         public static bool IsXboxFolder(FileSystemItem item)
@@ -344,7 +347,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             return infoFileFound;
         }
 
-        private static bool GetGameDataFromJqe360(FileSystemItem item)
+        private bool GetGameDataFromJqe360(FileSystemItem item)
         {
             var request = WebRequest.Create(string.Format("http://covers.jqe360.com/main.php?search={0}", item.Name));
             string title = null;
@@ -366,7 +369,15 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             {
                 //TODO: ?
             }
-            if (result) item.Title = title;
+            if (result)
+            {
+                UIThread.Run(() =>
+                                 {
+                                     const string message = "<b>One or more titles couldn't be recognized fully.</b> If you played with them earlier try to extract the corresponding data from your profile by right clicking and selecting <i>Recognize Titles from Profile</i>.";
+                                     _eventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(new NotifyUserMessageEventArgs(message, MessageIcon.Info));
+                                 });
+                item.Title = title;
+            }
             item.Thumbnail = ApplicationExtensions.GetContentByteArray("/Resources/xbox_logo.png");
             return result;
         }
