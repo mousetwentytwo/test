@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
@@ -41,9 +42,11 @@ namespace Neurotoxin.Godspeed.Shell.Views
             DataContext = viewModel;
             viewModel.TransferStarted += ViewModelOnTransferStarted;
             viewModel.TransferFinished += ViewModelOnTransferFinished;
-            CommandBindings.Add(new CommandBinding(FileManagerCommands.OpenDriveDropdownCommand, ExecutedOpenDriveDropdownCommand));
-            CommandBindings.Add(new CommandBinding(FileManagerCommands.SettingsCommand, ExecutedSettingsCommand));
-            CommandBindings.Add(new CommandBinding(FileManagerCommands.AboutCommand, ExecutedAboutCommand));
+            CommandBindings.Add(new CommandBinding(FileManagerCommands.OpenDriveDropdownCommand, ExecuteOpenDriveDropdownCommand));
+            CommandBindings.Add(new CommandBinding(FileManagerCommands.SettingsCommand, ExecuteSettingsCommand));
+            CommandBindings.Add(new CommandBinding(FileManagerCommands.StatisticsCommand, ExecuteStatisticsCommand));
+            CommandBindings.Add(new CommandBinding(FileManagerCommands.AboutCommand, ExecuteAboutCommand));
+            CommandBindings.Add(new CommandBinding(FileManagerCommands.VisitWebsiteCommand, ExecuteVisitWebsiteCommand));
             CommandBindings.Add(new CommandBinding(FileManagerCommands.ExitCommand, ExecuteExitCommand));
 
             LayoutRoot.PreviewKeyDown += LayoutRootOnPreviewKeyDown;
@@ -85,7 +88,7 @@ namespace Neurotoxin.Godspeed.Shell.Views
             return IntPtr.Zero;
         }
 
-        private void ExecutedOpenDriveDropdownCommand(object sender, ExecutedRoutedEventArgs e)
+        private void ExecuteOpenDriveDropdownCommand(object sender, ExecutedRoutedEventArgs e)
         {
             var control = e.Parameter as ContentControl;
             if (control == null) return;
@@ -99,15 +102,26 @@ namespace Neurotoxin.Godspeed.Shell.Views
             item.Focus();
         }
 
-        private void ExecutedSettingsCommand(object sender, ExecutedRoutedEventArgs e)
+        private void ExecuteSettingsCommand(object sender, ExecutedRoutedEventArgs e)
         {
             var settings = UnityInstance.Container.Resolve<SettingsWindow>();
             settings.ShowDialog();
         }
 
-        private void ExecutedAboutCommand(object sender, ExecutedRoutedEventArgs e)
+        private void ExecuteStatisticsCommand(object sender, ExecutedRoutedEventArgs e)
+        {
+            var statistics = UnityInstance.Container.Resolve<StatisticsWindow>();
+            statistics.ShowDialog();
+        }
+
+        private void ExecuteAboutCommand(object sender, ExecutedRoutedEventArgs e)
         {
             new AboutDialog().ShowDialog();
+        }
+
+        private void ExecuteVisitWebsiteCommand(object sender, ExecutedRoutedEventArgs e)
+        {
+            Process.Start(e.Parameter.ToString());
         }
 
         private void ExecuteExitCommand(object sender, ExecutedRoutedEventArgs e)

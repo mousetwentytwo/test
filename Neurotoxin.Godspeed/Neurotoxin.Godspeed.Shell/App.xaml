@@ -179,10 +179,13 @@
                                    Focusable="false" PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimation}}" 
                                    IsOpen="{Binding Path=IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
                                    MaxHeight="300">
+                                <Popup.Resources>
+                                    <ResourceDictionary Source="/Themes/FloatingScrollBar.xaml"/>
+                                </Popup.Resources>
                                 <theme:SystemDropShadowChrome Name="Shdw" Color="Transparent" FlowDirection="LeftToRight">
                                     <Border Name="SubMenuBorder" Background="White" BorderBrush="{StaticResource NormalBorderBrush}" BorderThickness="1">
                                         <ScrollViewer Name="SubMenuScrollViewer" Margin="1,0">
-                                            <Grid RenderOptions.ClearTypeHint="Enabled">
+                                            <Grid>
                                                 <ItemsPresenter Name="ItemsPresenter" Margin="2" KeyboardNavigation.TabNavigation="Cycle" KeyboardNavigation.DirectionalNavigation="Cycle" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Grid.IsSharedSizeScope="true" />
                                             </Grid>
                                         </ScrollViewer>

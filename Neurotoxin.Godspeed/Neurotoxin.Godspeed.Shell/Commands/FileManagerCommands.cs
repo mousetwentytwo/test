@@ -11,7 +11,9 @@ namespace Neurotoxin.Godspeed.Shell.Commands
     {
         public static readonly RoutedUICommand OpenDriveDropdownCommand = new RoutedUICommand("Open Drive Dropdown", "OpenDriveDropdown", typeof(FileManagerWindow));
         public static readonly RoutedUICommand SettingsCommand = new RoutedUICommand("Settings...", "Settings", typeof(FileManagerWindow));
+        public static readonly RoutedUICommand StatisticsCommand = new RoutedUICommand("Statistics...", "Statistics", typeof(FileManagerWindow));
         public static readonly RoutedUICommand AboutCommand = new RoutedUICommand("About", "About", typeof(FileManagerWindow));
+        public static readonly RoutedUICommand VisitWebsiteCommand = new RoutedUICommand("Visit the official GODspeed Website", "VisitGODspeedWebsite", typeof(FileManagerWindow));
         public static readonly RoutedUICommand ExitCommand = new RoutedUICommand("Quit", "Quit", typeof(FileManagerWindow), new InputGestureCollection
             {
                 new KeyGesture(Key.F4, ModifierKeys.Alt)

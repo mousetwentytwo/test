@@ -29,6 +29,7 @@ namespace Neurotoxin.Godspeed.Shell
             // ViewModels
             Container.RegisterType<FileManagerViewModel>(new ContainerControlledLifetimeManager());
             Container.RegisterType<SettingsViewModel>();
+            Container.RegisterType<StatisticsViewModel>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ConnectionsViewModel>(new ContainerControlledLifetimeManager());
             Container.RegisterType<FtpContentViewModel>();
             Container.RegisterType<LocalFileSystemContentViewModel>();
@@ -38,6 +39,7 @@ namespace Neurotoxin.Godspeed.Shell
             // Views
             Container.RegisterType<FileManagerWindow>(new ContainerControlledLifetimeManager());
             Container.RegisterType<SettingsWindow>();
+            Container.RegisterType<StatisticsWindow>();
         }
 
         protected override IModuleCatalog GetModuleCatalog()

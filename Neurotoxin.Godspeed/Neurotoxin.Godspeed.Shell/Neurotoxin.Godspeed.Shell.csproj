@@ -161,6 +161,7 @@
     <Compile Include="ViewModels\NoMessagesViewModel.cs" />
     <Compile Include="ViewModels\FileBlockViewModel.cs" />
     <Compile Include="ViewModels\FileEntryViewModel.cs" />
+    <Compile Include="ViewModels\StatisticsViewModel.cs" />
     <Compile Include="ViewModels\UserMessageViewModel.cs" />
     <Compile Include="ViewModels\ProfileRebuilderViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
@@ -192,6 +193,9 @@
     <Compile Include="Views\Controls\ProgressNotificationBar.xaml.cs">
       <DependentUpon>ProgressNotificationBar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\StatisticsWindow.xaml.cs">
+      <DependentUpon>StatisticsWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Dialogs\ErrorMessage.xaml.cs">
       <DependentUpon>ErrorMessage.xaml</DependentUpon>
     </Compile>
@@ -209,9 +213,6 @@
     </Compile>
     <Compile Include="Views\Dialogs\ConfirmationDialog.xaml.cs">
       <DependentUpon>ConfirmationDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Dialogs\NewVersionDialog.xaml.cs">
-      <DependentUpon>NewVersionDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Dialogs\NotificationMessage.xaml.cs">
       <DependentUpon>NotificationMessage.xaml</DependentUpon>
@@ -298,6 +299,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\StatisticsWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Dialogs\ErrorMessage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -319,10 +324,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Dialogs\ConfirmationDialog.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Dialogs\NewVersionDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

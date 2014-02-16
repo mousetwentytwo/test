@@ -124,12 +124,12 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public static bool IsMessageIgnored(string message)
         {
-            return CacheStore.ContainsKey("WarningMessage_" + message.Hash());
+            return CacheStore.ContainsKey("UserMessage_" + message.Hash());
         }
 
         public static void IgnoreMessage(string message)
         {
-            CacheStore.Update("WarningMessage_" + message.Hash(), true);
+            CacheStore.Update("UserMessage_" + message.Hash(), true);
         }
 
         private static T Get<T>(string key, T defaultValue = default(T))

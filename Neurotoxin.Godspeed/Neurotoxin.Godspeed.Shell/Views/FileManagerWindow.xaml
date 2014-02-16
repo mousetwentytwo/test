@@ -103,9 +103,11 @@
                 </MenuItem>
                 <MenuItem Header="Options">
                     <MenuItem Command="{x:Static commands:FileManagerCommands.SettingsCommand}"/>
+                    <MenuItem Command="{x:Static commands:FileManagerCommands.StatisticsCommand}"/>
                 </MenuItem>
                 <MenuItem Header="Help">
                     <MenuItem Command="{x:Static commands:FileManagerCommands.AboutCommand}"/>
+                    <MenuItem Command="{x:Static commands:FileManagerCommands.VisitWebsiteCommand}" CommandParameter="http://godspeed.codeplex.com"/>
                 </MenuItem>
             </Menu>
             
@@ -188,9 +190,6 @@
                             </s:MessageStyleSelector.NoMessagesStyle>
                         </s:MessageStyleSelector>
                     </MenuItem.ItemContainerStyleSelector>
-                    <MenuItem.Resources>
-                        <ResourceDictionary Source="/Themes/FloatingScrollBar.xaml"/>
-                    </MenuItem.Resources>
                     <MenuItem.HeaderTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
