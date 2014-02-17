@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using Neurotoxin.Godspeed.Core.Caching;
 using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
@@ -13,6 +14,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 {
     public class CacheManager
     {
+        private bool _cachePopupated;
         private const string KeyPrefix = "CacheEntry_";
         private readonly EsentPersistentDictionary _cacheStore = EsentPersistentDictionary.Instance;
         private readonly Dictionary<string, CacheEntry<FileSystemItem>> _inMemoryCache = new Dictionary<string,CacheEntry<FileSystemItem>>();
@@ -26,6 +28,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                                      sw.Start();
                                      _cacheStore.Keys.Where(k => k.StartsWith(KeyPrefix)).ForEach(k => Get(k));
                                      sw.Stop();
+                                     _cachePopupated = true;
                                      Debug.WriteLine("Cache fetched [{0}]", sw.Elapsed);
                                  });
         }
@@ -102,6 +105,12 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         public void ClearCache(string key)
         {
             RemoveCacheEntry(HashKey(key));
+        }
+
+        public int EntryCount(Func<FileSystemItem, bool> predicate)
+        {
+            while (!_cachePopupated) Thread.Sleep(100);
+            return _inMemoryCache.Count(kvp => predicate(kvp.Value.Content));
         }
 
         private void RemoveCacheEntry(string hashKey)

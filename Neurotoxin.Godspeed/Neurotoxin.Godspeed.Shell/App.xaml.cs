@@ -1,52 +1,30 @@
 ﻿using System;
-using System.Globalization;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
-using Limilabs.FTP.Client;
-using Microsoft.Practices.Composite.UnityExtensions;
+using Neurotoxin.Godspeed.Core.Caching;
 using Neurotoxin.Godspeed.Core.Extensions;
+using Neurotoxin.Godspeed.Shell.Interfaces;
+using Neurotoxin.Godspeed.Shell.Reporting;
+using Neurotoxin.Godspeed.Shell.ViewModels;
 using Neurotoxin.Godspeed.Shell.Views.Dialogs;
-using System.Linq;
 
 namespace Neurotoxin.Godspeed.Shell
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
+
     public partial class App : Application
     {
-        private UnityBootstrapper _bootstrapper;
+        private Bootstrapper _bootstrapper;
 
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-
-//            var ftpAsm = Assembly.GetAssembly(typeof (Ftp));
-//            var c = ftpAsm.GetTypes().FirstOrDefault(t => t.Name == "Class84");
-//            var cc = c.GetConstructor(new Type[] {});
-//            var c84 = cc.Invoke(null);
-//            var mi = c.GetMethods().FirstOrDefault(m => m.Name == "method_0");
-//            Thread.CurrentThread.CurrentCulture = new CultureInfo("pl-PL");
-//            Thread.CurrentThread.CurrentUICulture = new CultureInfo("pl-PL");
-
-//            DateTime dateTime_0;
-
-//            string[] strArrays = new string[] { "MMM d yyyy" };
-//            var flag = DateTime.TryParseExact("Cze 22 2039", strArrays, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateTime_0);
-
-//            var res = mi.Invoke(c84, new object[] { @"drwxrwxrwx   1 root  root    0 Cze 22 2039 Game
-//smb
-//drwxrwxrwx   1 root  root    0 Sty 01 1970 Flash
-//drwxrwxrwx   1 root  root    0 Sty 01 1970 Hdd1
-//drwxrwxrwx   1 root  root    0 Sty 01 1970 HddX
-//drwxrwxrwx   1 root  root    0 Sty 01 1970 SysExt
-//drwxrwxrwx   1 root  root    0 Sty 01 1970 Usb0" });
-
             SetDataDirectory();
             Dispatcher.CurrentDispatcher.UnhandledException += UnhandledThreadingException;
+            EsentPersistentDictionary.Instance.Set("ClientID", Guid.NewGuid().ToString());
+            
             ShutdownMode = ShutdownMode.OnMainWindowClose;
 
 #if (DEBUG)
@@ -104,7 +82,34 @@ namespace Neurotoxin.Godspeed.Shell
         {
             ex = ex is TargetInvocationException ? ex.InnerException : ex;
             ErrorMessage.Show(ex);
-            Shutdown();
+            //TODO: ex to exitCode
+            Shutdown(1);
+        }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            var fileManager = _bootstrapper.Resolve<FileManagerViewModel>();
+            if (!fileManager.IsDisposed) fileManager.Dispose();
+            var statistics = _bootstrapper.Resolve<StatisticsViewModel>();
+            if (e.ApplicationExitCode != 0) statistics.ApplicationCrashed++;
+
+            statistics.PersistData();
+
+            HttpForm.Post("http://www.mercenary.hu/godspeed/stats.php", new List<IFormData>
+                {
+                    new RawPostData("client_id", EsentPersistentDictionary.Instance.Get<string>("ClientID")),
+                    new RawPostData("date", statistics.UsageStart.ToUnixTimestamp()),
+                    new RawPostData("usage", statistics.UsageTime),
+                    new RawPostData("exit_code", e.ApplicationExitCode),
+                    new RawPostData("games_recognized", statistics.GamesRecognizedFully),
+                    new RawPostData("partially_recognized", statistics.GamesRecognizedPartially),
+                    new RawPostData("svod_recognized", statistics.SvodPackagesRecognized),
+                    new RawPostData("stfs_recognized", statistics.StfsPackagesRecognized),
+                    new RawPostData("transferred_bytes", statistics.BytesTransferred),
+                    new RawPostData("transferred_files", statistics.FilesTransferred),
+                    new RawPostData("transfer_time", statistics.TimeSpentWithTransfer),
+                });
+            base.OnExit(e);
         }
 
     }

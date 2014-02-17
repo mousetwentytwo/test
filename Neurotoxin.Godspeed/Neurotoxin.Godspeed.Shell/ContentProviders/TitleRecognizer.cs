@@ -302,6 +302,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 item.Title = stfs.Account.GamerTag;
                 item.Thumbnail = stfs.ThumbnailImage;
                 item.ContentType = stfs.ContentType;
+                item.RecognitionState = RecognitionState.Recognized;
                 return true;
             }
             catch
@@ -340,6 +341,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                         item.Title = svod.TitleName;
                         item.Thumbnail = svod.ThumbnailImage;
                         item.ContentType = svod.ContentType;
+                        item.RecognitionState = RecognitionState.Recognized;
                         infoFileFound = true;
                     }
                 }
@@ -377,6 +379,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                                      _eventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(new NotifyUserMessageEventArgs(message, MessageIcon.Info));
                                  });
                 item.Title = title;
+                item.RecognitionState = RecognitionState.PartiallyRecognized;
             }
             item.Thumbnail = ApplicationExtensions.GetContentByteArray("/Resources/xbox_logo.png");
             return result;
@@ -389,6 +392,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             gpd.Parse();
             if (gpd.Strings.Count > 0) item.Title = gpd.Strings.First().Text;
             item.Thumbnail = gpd.Thumbnail;
+            item.RecognitionState = RecognitionState.Recognized;
         }
 
         public void UpdateCache(FileSystemItem item)

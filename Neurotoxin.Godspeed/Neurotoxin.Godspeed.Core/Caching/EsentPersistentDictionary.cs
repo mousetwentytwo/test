@@ -41,8 +41,27 @@ namespace Neurotoxin.Godspeed.Core.Caching
 
 		public T Get<T>(string key)
 		{
-		    return _persistentDictionary[key].FromJson<T>();
+		    var content = _persistentDictionary[key];
+            try
+            {
+                return content.FromJson<T>();
+            }
+            catch
+            {
+                return default(T);
+            }
 		}
+
+        public T TryGet<T>(string key)
+        {
+            return !ContainsKey(key) ? default(T) : Get<T>(key);
+        }
+
+	    public void Set<T>(string key, T value)
+        {
+            if (ContainsKey(key)) return;
+            Put(key, value);
+        }
 
 	    public void Put<T>(string key, T value)
 	    {

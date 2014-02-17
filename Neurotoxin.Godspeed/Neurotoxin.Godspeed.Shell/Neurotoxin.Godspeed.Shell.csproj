@@ -109,6 +109,7 @@
     <Compile Include="Constants\Modules.cs" />
     <Compile Include="Constants\ModuleLoadInfoCollection.cs" />
     <Compile Include="Constants\OpenStfsPackageMode.cs" />
+    <Compile Include="Constants\RecognitionState.cs" />
     <Compile Include="Constants\TitleType.cs" />
     <Compile Include="Constants\ToggleSelectionMode.cs" />
     <Compile Include="Constants\TransferErrorType.cs" />
@@ -156,6 +157,12 @@
       <DependentUpon>CaptionButtons.xaml</DependentUpon>
     </Compile>
     <Compile Include="Primitives\DialogBase.cs" />
+    <Compile Include="Reporting\RawPostData.cs" />
+    <Compile Include="Reporting\HttpForm.cs" />
+    <Compile Include="Reporting\ErrorReport.cs" />
+    <Compile Include="Reporting\FormDataBase.cs" />
+    <Compile Include="Interfaces\IFormData.cs" />
+    <Compile Include="Reporting\WindowScreenshotReport.cs" />
     <Compile Include="ViewModels\CompressedFileContentViewModel.cs" />
     <Compile Include="Constants\FileBlockHealthStatus.cs" />
     <Compile Include="ViewModels\NoMessagesViewModel.cs" />

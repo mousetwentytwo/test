@@ -16,6 +16,11 @@ namespace Neurotoxin.Godspeed.Core.Extensions
             return y;
         }
 
+        public static double ToUnixTimestamp(this DateTime time)
+        {
+            return (time - new DateTime(1970, 1, 1).ToLocalTime()).TotalSeconds;
+        }
+
         public static DateTime FromFatFileTime(int time)
         {
             var year = (int)((time & 0xFE000000) >> 25) + 1980;

@@ -12,13 +12,13 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Shell;
 using Microsoft.Practices.Unity;
+using Neurotoxin.Godspeed.Core.Caching;
 using Neurotoxin.Godspeed.Core.Exceptions;
 using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Core.Io;
 using Neurotoxin.Godspeed.Core.Net;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
-using Neurotoxin.Godspeed.Shell.Controllers;
 using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Exceptions;
 using Neurotoxin.Godspeed.Shell.Interfaces;
@@ -43,6 +43,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private CopyAction _rememberedCopyAction;
         private bool _isAborted;
         private bool _isContinued;
+        private readonly StatisticsViewModel _statistics;
 
         public bool DataGridSupportsRenaming { get; set; }
 
@@ -116,6 +117,37 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             get
             {
                 return SourcePane as FtpContentViewModel ?? TargetPane as FtpContentViewModel;
+            }
+        }
+
+        private const string UNREADMESSAGECOUNT = "UnreadMessageCount";
+        public int UnreadMessageCount
+        {
+            get { return UserMessages.Count(m => !m.IsRead); }
+        }
+
+        public ObservableCollection<IUserMessageViewModel> UserMessages { get; private set; }
+
+        private const string ISMESSAGESDROPDOWNOPEN = "IsMessagesDropdownOpen";
+        private bool _isMessagesDropdownOpen;
+        public bool IsMessagesDropdownOpen
+        {
+            get { return _isMessagesDropdownOpen; }
+            set
+            {
+                _isMessagesDropdownOpen = value;
+                NotifyPropertyChanged(ISMESSAGESDROPDOWNOPEN);
+                WorkerThread.Run(() =>
+                {
+                    Thread.Sleep(3000);
+                    return true;
+                },
+                                 b =>
+                                 {
+                                     if (!IsMessagesDropdownOpen) return;
+                                     UserMessages.ForEach(m => m.IsRead = true);
+                                     NotifyPropertyChanged(UNREADMESSAGECOUNT);
+                                 });
             }
         }
 
@@ -262,41 +294,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #endregion
 
-        #region Messaging
-
-        private const string UNREADMESSAGECOUNT = "UnreadMessageCount";
-        public int UnreadMessageCount
-        {
-            get { return UserMessages.Count(m => !m.IsRead); }
-        }
-
-        public ObservableCollection<IUserMessageViewModel> UserMessages { get; private set; }
-
-        private const string ISMESSAGESDROPDOWNOPEN = "IsMessagesDropdownOpen";
-        private bool _isMessagesDropdownOpen;
-        public bool IsMessagesDropdownOpen
-        {
-            get { return _isMessagesDropdownOpen; }
-            set
-            {
-                _isMessagesDropdownOpen = value; 
-                NotifyPropertyChanged(ISMESSAGESDROPDOWNOPEN);
-                WorkerThread.Run(() =>
-                                     {
-                                         Thread.Sleep(3000); 
-                                         return true;
-                                     },
-                                 b =>
-                                     {
-                                         if (!IsMessagesDropdownOpen) return;
-                                         UserMessages.ForEach(m => m.IsRead = true);
-                                         NotifyPropertyChanged(UNREADMESSAGECOUNT);
-                                     });
-            }
-        }
-
-        #endregion
-
         #region SwitchPaneCommand
 
         public DelegateCommand<EventInformation<KeyEventArgs>> SwitchPaneCommand { get; private set; }
@@ -426,6 +423,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
             var item = _queue.Dequeue().FileSystemItem;
             FilesTransferred++;
+            if (result)
+            {
+                _statistics.FilesTransferred++;
+                _statistics.BytesTransferred += item.Size ?? 0;
+            }
             var vm = SourcePane.SelectedItems.FirstOrDefault(i => item.Path.StartsWith(i.Path));
             if (vm != null)
             {
@@ -461,6 +463,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void CopyFinish()
         {
             FinishTransfer();
+            _statistics.TimeSpentWithTransfer += _elapsedTimeMeter.Elapsed;
             TargetPane.Refresh();
         }
 
@@ -543,6 +546,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             {
                 //if (item.Type == ItemType.File) BytesTransferred += item.Size ?? 0;
                 FilesTransferred++;
+                if (result)
+                {
+                    _statistics.FilesTransferred++;
+                    _statistics.BytesTransferred += item.Size ?? 0;
+                }
             }
             var vm = SourcePane.SelectedItems.FirstOrDefault(i => item.Path == i.Path);
             if (vm != null) vm.IsSelected = false;
@@ -575,6 +583,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void MoveFinish()
         {
             FinishTransfer();
+            _statistics.TimeSpentWithTransfer += _elapsedTimeMeter.Elapsed;
             SourcePane.Refresh();
             TargetPane.Refresh();
         }
@@ -817,8 +826,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #endregion
 
-        public FileManagerViewModel()
+        public FileManagerViewModel(StatisticsViewModel statistics)
         {
+            _statistics = statistics;
             UserMessages = new ObservableCollection<IUserMessageViewModel> { new NoMessagesViewModel() };
             UserMessages.CollectionChanged += (sender, args) => NotifyPropertyChanged(UNREADMESSAGECOUNT);
 
@@ -1087,6 +1097,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         _copyMode = copyMode;
                         ProgressState = TaskbarItemProgressState.Normal;
                         NotifyTransferStarted();
+                        _elapsedTimeMeter.Reset();
                         _elapsedTimeMeter.Start();
                         callback.Invoke();
                     });
@@ -1186,7 +1197,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             _speedMeter.Stop();
             _speedMeter.Reset();
             _elapsedTimeMeter.Stop();
-            _elapsedTimeMeter.Reset();
             ProgressState = TaskbarItemProgressState.None;
             NotifyTransferFinished();
         }

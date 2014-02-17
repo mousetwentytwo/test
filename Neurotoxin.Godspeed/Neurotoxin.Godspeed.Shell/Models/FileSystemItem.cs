@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text.RegularExpressions;
 using Neurotoxin.Godspeed.Core.Constants;
 using Neurotoxin.Godspeed.Shell.Constants;
 
@@ -18,6 +17,7 @@ namespace Neurotoxin.Godspeed.Shell.Models
         public ItemType Type { get; set; }
         public TitleType TitleType { get; set; }
         public ContentType ContentType { get; set; }
+        public RecognitionState RecognitionState { get; set; }
 
         public string Name;
         public string Path;
@@ -28,6 +28,7 @@ namespace Neurotoxin.Godspeed.Shell.Models
         public bool IsCached;
         public bool IsLocked = false;
         public string LockMessage = null;
+
         private string _title;
 
         public FileSystemItem Clone()

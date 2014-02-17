@@ -59,5 +59,10 @@ namespace Neurotoxin.Godspeed.Shell
             UIThread.Run(shell.Show);
             return shell;
         }
+
+        public T Resolve<T>()
+        {
+            return Container.Resolve<T>();
+        }
     }
 }
