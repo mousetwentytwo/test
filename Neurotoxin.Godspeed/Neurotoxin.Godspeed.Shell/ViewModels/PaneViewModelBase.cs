@@ -36,6 +36,14 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             set { _isBusy = value; NotifyPropertyChanged(ISBUSY); }
         }
 
+        private const string ISLOADED = "IsLoaded";
+        private bool _isLoaded;
+        public bool IsLoaded
+        {
+            get { return _isLoaded; }
+            set { _isLoaded = value; NotifyPropertyChanged(ISLOADED); }
+        }
+
         private const string PROGRESSMESSAGE = "ProgressMessage";
         private string _progressMessage;
         public string ProgressMessage
@@ -77,6 +85,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             var settings = cmdParam as FileListPaneSettings;
             if (settings != null) Settings = settings;
+            IsLoaded = true;
         }
 
         public virtual object Close(object data)

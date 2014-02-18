@@ -81,6 +81,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                             },
                         result =>
                             {
+                                IsLoaded = true;
                                 IsResumeSupported = result;
                                 try
                                 {

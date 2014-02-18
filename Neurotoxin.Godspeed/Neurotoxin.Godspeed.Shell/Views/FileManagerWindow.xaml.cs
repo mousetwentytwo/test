@@ -21,9 +21,10 @@ namespace Neurotoxin.Godspeed.Shell.Views
 {
     public partial class FileManagerWindow
     {
-        private IEventAggregator _eventAggregator;
+        private readonly IEventAggregator _eventAggregator;
         private bool _isAbortionInProgress;
         private TransferProgressDialog _transferProgressDialog;
+        private MigrationProgressDialog _migrationProgressDialog;
 
         public FileManagerViewModel ViewModel
         {
@@ -51,6 +52,8 @@ namespace Neurotoxin.Godspeed.Shell.Views
 
             LayoutRoot.PreviewKeyDown += LayoutRootOnPreviewKeyDown;
             Closing += OnClosing;
+
+            eventAggregator.GetEvent<CacheMigrationEvent>().Subscribe(OnCacheMigration);
         }
 
         private void OnClosing(object sender, CancelEventArgs args)
@@ -169,5 +172,21 @@ namespace Neurotoxin.Godspeed.Shell.Views
             _transferProgressDialog.Close();
         }
 
+        private void OnCacheMigration(CacheMigrationEventArgs e)
+        {
+            IsHitTestVisible = false;
+            _migrationProgressDialog = UnityInstance.Container.Resolve<MigrationProgressDialog>();
+            var vm = (CacheMigrationViewModel) _migrationProgressDialog.DataContext;
+            vm.MigrationFinished += OnMigrationFinished;
+            vm.Initialize(e);
+            _migrationProgressDialog.Show();
+        }
+
+        private void OnMigrationFinished(CacheMigrationViewModel sender)
+        {
+            sender.MigrationFinished -= OnMigrationFinished;
+            IsHitTestVisible = true;
+            _migrationProgressDialog.Close();
+        }
     }
 }

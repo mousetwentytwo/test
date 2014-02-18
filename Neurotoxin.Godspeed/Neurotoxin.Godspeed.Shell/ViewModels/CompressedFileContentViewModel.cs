@@ -57,6 +57,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                             },
                         result =>
                             {
+                                IsLoaded = true;
                                 Drives = FileManager.GetDrives().Select(d => new FileSystemItemViewModel(d)).ToObservableCollection();
                                 Drive = Drives.First();
                                 if (success != null) success.Invoke(this);

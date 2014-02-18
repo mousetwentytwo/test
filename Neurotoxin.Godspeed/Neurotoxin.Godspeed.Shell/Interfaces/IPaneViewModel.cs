@@ -8,6 +8,7 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
     public interface IPaneViewModel : IDisposable
     {
         bool IsBusy { get; }
+        bool IsLoaded { get; }
         FileListPaneSettings Settings { get; }
         string ProgressMessage { get; }
         bool IsActive { get; }

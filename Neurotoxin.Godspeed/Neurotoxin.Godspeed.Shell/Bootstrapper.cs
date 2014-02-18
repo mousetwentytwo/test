@@ -6,6 +6,7 @@ using Microsoft.Practices.Unity;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Shell.Controllers;
+using Neurotoxin.Godspeed.Shell.Helpers;
 using Neurotoxin.Godspeed.Shell.ViewModels;
 using Neurotoxin.Godspeed.Shell.Views;
 
@@ -40,6 +41,9 @@ namespace Neurotoxin.Godspeed.Shell
             Container.RegisterType<FileManagerWindow>(new ContainerControlledLifetimeManager());
             Container.RegisterType<SettingsWindow>();
             Container.RegisterType<StatisticsWindow>();
+
+            // Helpers
+            Container.RegisterType<SanityChecker>(new ContainerControlledLifetimeManager());
         }
 
         protected override IModuleCatalog GetModuleCatalog()
@@ -52,6 +56,7 @@ namespace Neurotoxin.Godspeed.Shell
 
         protected override DependencyObject CreateShell()
         {
+            var sanityChecker = Container.Resolve<SanityChecker>();
             var shell = Container.Resolve<FileManagerWindow>();
             var viewModel = (FileManagerViewModel)shell.DataContext;
             viewModel.Initialize();

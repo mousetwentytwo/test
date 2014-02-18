@@ -133,6 +133,10 @@
     <Compile Include="Events\CloseNestedPaneEvent.cs" />
     <Compile Include="Constants\MessageCommand.cs" />
     <Compile Include="Constants\MessageIcon.cs" />
+    <Compile Include="Events\CachePopulatedEvent.cs" />
+    <Compile Include="Events\MigrationFinishedEventHandler.cs" />
+    <Compile Include="Events\CacheMigrationEvent.cs" />
+    <Compile Include="Events\ShellInitializedEvent.cs" />
     <Compile Include="Events\NotifyUserMessageEvent.cs" />
     <Compile Include="Events\UsbDeviceChangedEvent.cs" />
     <Compile Include="Events\TransferActionStartedEvent.cs" />
@@ -145,6 +149,8 @@
     <Compile Include="Events\ViewModelGeneratedEvent.cs" />
     <Compile Include="Exceptions\EstablishmentFailedException.cs" />
     <Compile Include="Exceptions\TransferException.cs" />
+    <Compile Include="GlobalVariables.cs" />
+    <Compile Include="Helpers\SanityChecker.cs" />
     <Compile Include="Interfaces\IFileListPaneViewModel.cs" />
     <Compile Include="Interfaces\IFileManager.cs" />
     <Compile Include="Interfaces\IUserMessageViewModel.cs" />
@@ -163,6 +169,7 @@
     <Compile Include="Reporting\FormDataBase.cs" />
     <Compile Include="Interfaces\IFormData.cs" />
     <Compile Include="Reporting\WindowScreenshotReport.cs" />
+    <Compile Include="ViewModels\CacheMigrationViewModel.cs" />
     <Compile Include="ViewModels\CompressedFileContentViewModel.cs" />
     <Compile Include="Constants\FileBlockHealthStatus.cs" />
     <Compile Include="ViewModels\NoMessagesViewModel.cs" />
@@ -199,6 +206,9 @@
     </Compile>
     <Compile Include="Views\Controls\ProgressNotificationBar.xaml.cs">
       <DependentUpon>ProgressNotificationBar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Dialogs\MigrationProgressDialog.xaml.cs">
+      <DependentUpon>MigrationProgressDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\StatisticsWindow.xaml.cs">
       <DependentUpon>StatisticsWindow.xaml</DependentUpon>
@@ -305,6 +315,10 @@
     <Page Include="Views\Controls\ProgressNotificationBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Dialogs\MigrationProgressDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\StatisticsWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

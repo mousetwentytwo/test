@@ -55,6 +55,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         },
                         result =>
                             {
+                                IsLoaded = true;
                                 ParseStfs();
                                 if (success != null) success.Invoke(this);
                             },

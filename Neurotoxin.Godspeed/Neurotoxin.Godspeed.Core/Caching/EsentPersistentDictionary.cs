@@ -57,6 +57,11 @@ namespace Neurotoxin.Godspeed.Core.Caching
             return !ContainsKey(key) ? default(T) : Get<T>(key);
         }
 
+        public T TryGet<T>(string key, T defaultValue)
+        {
+            return !ContainsKey(key) ? defaultValue : Get<T>(key);
+        }
+
 	    public void Set<T>(string key, T value)
         {
             if (ContainsKey(key)) return;

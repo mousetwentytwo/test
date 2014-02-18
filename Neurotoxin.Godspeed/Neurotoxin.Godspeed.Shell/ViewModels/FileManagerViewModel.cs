@@ -12,7 +12,6 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Shell;
 using Microsoft.Practices.Unity;
-using Neurotoxin.Godspeed.Core.Caching;
 using Neurotoxin.Godspeed.Core.Exceptions;
 using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Core.Io;
@@ -44,8 +43,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private bool _isAborted;
         private bool _isContinued;
         private readonly StatisticsViewModel _statistics;
-
-        public bool DataGridSupportsRenaming { get; set; }
 
         #region Main window properties
 
@@ -855,65 +852,19 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             Limilabs.FTP.Log.Enabled = true;
 
-            var applicationAssembly = Assembly.GetAssembly(typeof(Application));
-            var fvi = FileVersionInfo.GetVersionInfo(applicationAssembly.Location);
-            var actualVersion = new Version(fvi.ProductVersion);
-            var requiredVersion = new Version(4, 0, 30319, 18408);
-
-            DataGridSupportsRenaming = actualVersion >= requiredVersion;
-            if (!DataGridSupportsRenaming) 
-            {
-                const string message = "<b>Warning!</b> Some of the features require .NET version 4.0.30319.18408 (October 2013) or newer. Please update .NET Framework and restart GODspeed to enable those features.";
-                OnNotifyUserMessage(new NotifyUserMessageEventArgs(message, MessageIcon.Info, MessageCommand.OpenUrl, "http://www.microsoft.com/en-us/download/details.aspx?id=40779"));
-            }
-
-            if (UserSettings.UseVersionChecker) CheckForNewerVersion();
-
             LeftPane = (IPaneViewModel)container.Resolve(GetStoredPaneType(UserSettings.LeftPaneType));
             var leftParam = UserSettings.LeftPaneFileListPaneSettings;
-            LeftPane.LoadDataAsync(LoadCommand.Load, leftParam);
+            LeftPane.LoadDataAsync(LoadCommand.Load, leftParam, PaneLoaded);
 
             RightPane = (IPaneViewModel)container.Resolve(GetStoredPaneType(UserSettings.RightPaneType));
             var rightParam = UserSettings.RightPaneFileListPaneSettings;
-            RightPane.LoadDataAsync(LoadCommand.Load, rightParam);
+            RightPane.LoadDataAsync(LoadCommand.Load, rightParam, PaneLoaded);
         }
 
-        public void CheckForNewerVersion()
+        private void PaneLoaded(PaneViewModelBase pane)
         {
-            var asm = Assembly.GetExecutingAssembly();
-            var title = asm.GetAttribute<AssemblyTitleAttribute>().Title;
-            const string url = "https://godspeed.codeplex.com/";
-            WorkerThread.Run(() =>
-                                 {
-                                     try
-                                     {
-                                         var request = HttpWebRequest.Create(url);
-                                         var response = request.GetResponse();
-                                         var titlePattern = new Regex(@"\<span class=""rating_header""\>current.*?\<td\>(.*?)\</td\>", RegexOptions.IgnoreCase | RegexOptions.Singleline);
-                                         var datePattern = new Regex(@"\<span class=""rating_header""\>date.*?\<td\>.*?LocalTimeTicks=""(.*?)""", RegexOptions.IgnoreCase | RegexOptions.Singleline);
-                                         string html;
-                                         using (var stream = response.GetResponseStream())
-                                         {
-                                             var sr = new StreamReader(stream, UTF8Encoding.UTF8);
-                                             html = sr.ReadToEnd();
-                                             sr.Close();
-                                         }
-                                         var latestTitle = titlePattern.Match(html).Groups[1].Value.Trim();
-                                         var latestDate = new DateTime(1970, 1, 1);
-                                         latestDate = latestDate.AddSeconds(long.Parse(datePattern.Match(html).Groups[1].Value)).ToLocalTime();
-                                         return new Tuple<string, DateTime>(latestTitle, latestDate);
-                                     }
-                                     catch
-                                     {
-                                         return new Tuple<string, DateTime>(string.Empty, DateTime.MinValue);
-                                     }
-                                 },
-                             info =>
-                                 {
-                                     if (string.Compare(title, info.Item1, StringComparison.InvariantCultureIgnoreCase) != -1) return;
-                                     var message = string.Format("<b>New version available!</b><br/>{0} ({1:yyyy.MM.dd HH:mm})", info.Item1, info.Item2);
-                                     OnNotifyUserMessage(new NotifyUserMessageEventArgs(message, MessageIcon.Info, MessageCommand.OpenUrl, "http://godspeed.codeplex.com", MessageFlags.None));
-                                 });
+            if (!LeftPane.IsLoaded || !RightPane.IsLoaded) return;
+            eventAggregator.GetEvent<ShellInitializedEvent>().Publish(new ShellInitializedEventArgs());
         }
 
         private static Type GetStoredPaneType(string typeName)

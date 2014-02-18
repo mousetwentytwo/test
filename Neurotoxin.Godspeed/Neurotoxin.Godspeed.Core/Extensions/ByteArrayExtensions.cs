@@ -84,5 +84,11 @@ namespace Neurotoxin.Godspeed.Core.Extensions
             while (i < encoded.Length && encoded[i] != 0) i++;
             return encoding.GetString(encoding.GetBytes(encoded.Take(i).ToArray()));
         }
+
+        public static bool EqualsWith(this byte[] a, byte[] b)
+        {
+            if (a == null || b == null || a.Length != b.Length) return false;
+            return !a.Where((t, i) => t != b[i]).Any();
+        }
     }
 }

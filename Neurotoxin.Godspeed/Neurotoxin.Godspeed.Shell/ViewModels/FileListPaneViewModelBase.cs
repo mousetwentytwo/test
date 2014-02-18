@@ -769,7 +769,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private bool CanExecuteRenameTitleCommand(object cmdParam)
         {
-            return Parent.DataGridSupportsRenaming && CurrentRow != null && !CurrentRow.IsUpDirectory && CurrentRow.IsCached;
+            return GlobalVariables.DataGridSupportsRenaming == true && CurrentRow != null && !CurrentRow.IsUpDirectory && CurrentRow.IsCached;
         }
 
         private void ExecuteRenameTitleCommand(object cmdParam)
@@ -781,7 +781,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private bool CanExecuteRenameFileSystemItemCommand(object cmdParam)
         {
-            return Parent.DataGridSupportsRenaming && CurrentRow != null && !CurrentRow.IsUpDirectory && !IsReadOnly;
+            return GlobalVariables.DataGridSupportsRenaming == true && CurrentRow != null && !CurrentRow.IsUpDirectory && !IsReadOnly;
         }
 
         private void ExecuteRenameFileSystemItemCommand(object cmdParam)

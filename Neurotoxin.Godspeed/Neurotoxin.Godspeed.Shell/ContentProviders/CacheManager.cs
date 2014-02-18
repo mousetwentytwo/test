@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
+using Microsoft.Practices.Composite.Events;
 using Neurotoxin.Godspeed.Core.Caching;
 using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
+using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Models;
 using System.Linq;
 using Microsoft.Practices.ObjectBuilder2;
@@ -16,21 +18,26 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
     {
         private bool _cachePopupated;
         private const string KeyPrefix = "CacheEntry_";
+        private readonly IEventAggregator _eventAggregator;
         private readonly EsentPersistentDictionary _cacheStore = EsentPersistentDictionary.Instance;
         private readonly Dictionary<string, CacheEntry<FileSystemItem>> _inMemoryCache = new Dictionary<string,CacheEntry<FileSystemItem>>();
 
-        public CacheManager()
+        public CacheManager(IEventAggregator eventAggregator)
         {
+            _eventAggregator = eventAggregator;
+
             //Read cache to memory to fasten access
             WorkerThread.Run(() =>
-                                 {
-                                     var sw = new Stopwatch();
-                                     sw.Start();
-                                     _cacheStore.Keys.Where(k => k.StartsWith(KeyPrefix)).ForEach(k => Get(k));
-                                     sw.Stop();
-                                     _cachePopupated = true;
-                                     Debug.WriteLine("Cache fetched [{0}]", sw.Elapsed);
-                                 });
+                {
+                    var sw = new Stopwatch();
+                    sw.Start();
+                    _cacheStore.Keys.Where(k => k.StartsWith(KeyPrefix)).ForEach(k => Get(k));
+                    sw.Stop();
+                    _cachePopupated = true;
+                    Debug.WriteLine("Cache fetched [{0}]", sw.Elapsed);
+                    return _inMemoryCache;
+                },
+                b => _eventAggregator.GetEvent<CachePopulatedEvent>().Publish(new CachePopulatedEventArgs(b, _cacheStore)));
         }
 
         private CacheEntry<FileSystemItem> Get(string hashKey)
