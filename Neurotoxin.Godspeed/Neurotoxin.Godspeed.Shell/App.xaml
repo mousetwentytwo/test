@@ -19,10 +19,9 @@
                     <SolidColorBrush x:Key="NormalBorderBrush" Color="#FF9B9999" />
                     <SolidColorBrush x:Key="DefaultedBorderBrush" Color="#FF9BB1C5" />
 
-                    <!--<SolidColorBrush x:Key="MenuGlyphBrush" Color="#444444" />-->
                     <SolidColorBrush x:Key="MenuGlyphBrush" Color="#FF9BB1C5" />
                     <SolidColorBrush x:Key="MenuHighlight1" Color="#ECEFF5"/>
-                    <SolidColorBrush x:Key="MenuHighlight2" Color="#F4F6F9"/>
+                    <SolidColorBrush x:Key="MenuHighlight2" Color="#FFD6D6D6"/>
 
                     <LinearGradientBrush x:Key="Background1" StartPoint="0,0" EndPoint="0,1">
                         <LinearGradientBrush.GradientStops>
@@ -299,7 +298,7 @@
 
                     <!-- SubmenuHeader -->
 
-                    <ControlTemplate TargetType="MenuItem" x:Key="SubmenuHeaderTemplate">
+                    <!--<ControlTemplate TargetType="MenuItem" x:Key="SubmenuHeaderTemplate">
                         <Border Name="Border">
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -334,7 +333,7 @@
                                 <Setter Property="Foreground" Value="{StaticResource DisabledForegroundBrush}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
-                    </ControlTemplate>
+                    </ControlTemplate>-->
 
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>

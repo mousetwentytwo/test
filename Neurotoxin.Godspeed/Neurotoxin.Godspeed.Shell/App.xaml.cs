@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Windows;
@@ -98,8 +99,9 @@ namespace Neurotoxin.Godspeed.Shell
             HttpForm.Post("http://www.mercenary.hu/godspeed/stats.php", new List<IFormData>
                 {
                     new RawPostData("client_id", EsentPersistentDictionary.Instance.Get<string>("ClientID")),
+                    new RawPostData("culture", CultureInfo.CurrentCulture.Name),
                     new RawPostData("date", statistics.UsageStart.ToUnixTimestamp()),
-                    new RawPostData("usage", statistics.UsageTime),
+                    new RawPostData("usage", Math.Floor(statistics.UsageTime.TotalSeconds)),
                     new RawPostData("exit_code", e.ApplicationExitCode),
                     new RawPostData("games_recognized", statistics.GamesRecognizedFully),
                     new RawPostData("partially_recognized", statistics.GamesRecognizedPartially),
@@ -107,7 +109,7 @@ namespace Neurotoxin.Godspeed.Shell
                     new RawPostData("stfs_recognized", statistics.StfsPackagesRecognized),
                     new RawPostData("transferred_bytes", statistics.BytesTransferred),
                     new RawPostData("transferred_files", statistics.FilesTransferred),
-                    new RawPostData("transfer_time", statistics.TimeSpentWithTransfer),
+                    new RawPostData("transfer_time", Math.Floor(statistics.TimeSpentWithTransfer.TotalSeconds)),
                 });
             base.OnExit(e);
         }

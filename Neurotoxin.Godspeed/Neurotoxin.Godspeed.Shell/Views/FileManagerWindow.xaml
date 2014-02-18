@@ -21,9 +21,9 @@
                                 <Setter Property="Template" Value="{StaticResource TopLevelHeaderTemplate}"/>
                                 <Setter Property="Grid.IsSharedSizeScope" Value="true"/>
                             </Trigger>
-                            <Trigger Property="Role" Value="SubmenuHeader">
+                            <!--<Trigger Property="Role" Value="SubmenuHeader">
                                 <Setter Property="Template" Value="{StaticResource SubmenuHeaderTemplate}"/>
-                            </Trigger>
+                            </Trigger>-->
                             <Trigger Property="Role" Value="SubmenuItem">
                                 <Setter Property="Template" Value="{StaticResource SubmenuItemTemplate}"/>
                             </Trigger>
@@ -45,7 +45,7 @@
                                 <Setter TargetName="Border" Property="Background" Value="{StaticResource MenuHighlight1}"/>
                             </DataTrigger>
                             <Trigger Property="IsHighlighted" Value="true">
-                                <Setter TargetName="Border" Property="Background" Value="{StaticResource MenuHighlight2}"/>
+                                <Setter TargetName="Border" Property="Background" Value="#F4F6F9"/>
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="false">
                                 <Setter Property="Foreground" Value="{StaticResource DisabledForegroundBrush}"/>

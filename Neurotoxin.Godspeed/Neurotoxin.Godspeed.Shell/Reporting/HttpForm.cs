@@ -13,23 +13,28 @@ namespace Neurotoxin.Godspeed.Shell.Reporting
 
         public static void Post(string url, IEnumerable<IFormData> formData)
         {
-            var request = (HttpWebRequest)WebRequest.Create(url);
-            request.UserAgent = "GODspeed";
-            request.Method = "POST";
-            request.ContentType = "multipart/form-data; boundary=" + Boundary;
-
             try
             {
-                var requestStream = request.GetRequestStream();
-                var sw = new StreamWriter(requestStream);
-                foreach (var data in formData)
+                using (var client = new WebClient())
                 {
-                    sw.WriteLine("--" + Boundary);
-                    data.Write(sw);
+                    byte[] body;
+                    using (var ms = new MemoryStream())
+                    {
+                        var sw = new StreamWriter(ms);
+                        foreach (var data in formData)
+                        {
+                            sw.WriteLine("--" + Boundary);
+                            data.Write(sw);
+                        }
+                        sw.WriteLine("--" + Boundary + "--");
+                        sw.Flush();
+                        body = ms.ToArray();
+                    }
+
+                    client.Headers[HttpRequestHeader.UserAgent] = "GODspeed";
+                    client.Headers[HttpRequestHeader.ContentType] = "multipart/form-data; boundary=" + Boundary;
+                    client.UploadData(new Uri(url), body);
                 }
-                sw.WriteLine("--" + Boundary + "--");
-                sw.Flush();
-                request.GetResponse();
             }
             catch
             {

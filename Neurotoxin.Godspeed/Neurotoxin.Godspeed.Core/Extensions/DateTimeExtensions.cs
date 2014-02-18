@@ -18,7 +18,7 @@ namespace Neurotoxin.Godspeed.Core.Extensions
 
         public static double ToUnixTimestamp(this DateTime time)
         {
-            return (time - new DateTime(1970, 1, 1).ToLocalTime()).TotalSeconds;
+            return Math.Floor((time - new DateTime(1970, 1, 1).ToLocalTime()).TotalSeconds);
         }
 
         public static DateTime FromFatFileTime(int time)
