@@ -156,7 +156,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             if (m.Success)
             {
                 drive = Drives.SingleOrDefault(d => d.Path == m.Value);
-                if (drive != null) PathCache.Add(drive, defaultPath);
+                if (drive != null && FileManager.FileExists(defaultPath)) PathCache.Add(drive, defaultPath);
             }
             Drive = drive ?? Drives.First();
         }
