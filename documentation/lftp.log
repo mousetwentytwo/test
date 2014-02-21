@@ -1,0 +1,3188 @@
+'Neurotoxin.Godspeed.Shell.vshost.exe' (Managed (v4.0.30319)): Loaded 'C:\Windows\Microsoft.Net\assembly\GAC_32\mscorlib\v4.0_4.0.0.0__b77a5c561934e089\mscorlib.dll', Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Neurotoxin.Godspeed.Shell.vshost.exe' (Managed (v4.0.30319)): Loaded 'C:\Windows\assembly\GAC_MSIL\Microsoft.VisualStudio.HostingProcess.Utilities\10.0.0.0__b03f5f7f11d50a3a\Microsoft.VisualStudio.HostingProcess.Utilities.dll', Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Neurotoxin.Godspeed.Shell.vshost.exe' (Managed (v4.0.30319)): Loaded 'C:\Windows\Microsoft.Net\assembly\GAC_MSIL\System.Windows.Forms\v4.0_4.0.0.0__b77a5c561934e089\System.Windows.Forms.dll', Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Neurotoxin.Godspeed.Shell.vshost.exe' (Managed (v4.0.30319)): Loaded 'C:\Windows\Microsoft.Net\assembly\GAC_MSIL\System.Drawing\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Drawing.dll', Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Neurotoxin.Godspeed.Shell.vshost.exe' (Managed (v4.0.30319)): Loaded 'C:\Windows\Microsoft.Net\assembly\GAC_MSIL\System\v4.0_4.0.0.0__b77a5c561934e089\System.dll', Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Neurotoxin.Godspeed.Shell.vshost.exe' (Managed (v4.0.30319)): Loaded 'C:\Windows\assembly\GAC_MSIL\Microsoft.VisualStudio.HostingProcess.Utilities.Sync\10.0.0.0__b03f5f7f11d50a3a\Microsoft.VisualStudio.HostingProcess.Utilities.Sync.dll', Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Neurotoxin.Godspeed.Shell.vshost.exe' (Managed (v4.0.30319)): Loaded 'C:\Windows\assembly\GAC_MSIL\Microsoft.VisualStudio.Debugger.Runtime\10.0.0.0__b03f5f7f11d50a3a\Microsoft.VisualStudio.Debugger.Runtime.dll', Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Neurotoxin.Godspeed.Shell.vshost.exe' (Managed (v4.0.30319)): Loaded 'C:\merc\svn\contour\Neurotoxin.Godspeed\Neurotoxin.Godspeed.Shell\bin\Debug\Neurotoxin.Godspeed.Shell.vshost.exe', Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Neurotoxin.Godspeed.Shell.vshost.exe' (Managed (v4.0.30319)): Loaded 'C:\Windows\Microsoft.Net\assembly\GAC_MSIL\PresentationFramework.Aero\v4.0_4.0.0.0__31bf3856ad364e35\PresentationFramework.Aero.dll', Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Neurotoxin.Godspeed.Shell.vshost.exe' (Managed (v4.0.30319)): Loaded 'C:\Windows\Microsoft.Net\assembly\GAC_MSIL\System.Xml\v4.0_4.0.0.0__b77a5c561934e089\System.Xml.dll', Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Neurotoxin.Godspeed.Shell.vshost.exe' (Managed (v4.0.30319)): Loaded 'C:\Windows\Microsoft.Net\assembly\GAC_MSIL\System.Core\v4.0_4.0.0.0__b77a5c561934e089\System.Core.dll', Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Neurotoxin.Godspeed.Shell.vshost.exe' (Managed (v4.0.30319)): Loaded 'C:\Windows\Microsoft.Net\assembly\GAC_MSIL\System.Xaml\v4.0_4.0.0.0__b77a5c561934e089\System.Xaml.dll', Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Neurotoxin.Godspeed.Shell.vshost.exe' (Managed (v4.0.30319)): Loaded 'C:\Windows\Microsoft.Net\assembly\GAC_MSIL\WindowsBase\v4.0_4.0.0.0__31bf3856ad364e35\WindowsBase.dll', Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Neurotoxin.Godspeed.Shell.vshost.exe' (Managed (v4.0.30319)): Loaded 'C:\Windows\Microsoft.Net\assembly\GAC_32\PresentationCore\v4.0_4.0.0.0__31bf3856ad364e35\PresentationCore.dll', Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Neurotoxin.Godspeed.Shell.vshost.exe' (Managed (v4.0.30319)): Loaded 'C:\Windows\Microsoft.Net\assembly\GAC_MSIL\PresentationFramework\v4.0_4.0.0.0__31bf3856ad364e35\PresentationFramework.dll', Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+The thread 'vshost.NotifyLoad' (0xfd8) has exited with code 0 (0x0).
+The thread '<No Name>' (0x1e90) has exited with code 0 (0x0).
+The thread 'vshost.LoadReference' (0xf50) has exited with code 0 (0x0).
+'Neurotoxin.Godspeed.Shell.vshost.exe' (Managed (v4.0.30319)): Loaded 'C:\merc\svn\contour\Neurotoxin.Godspeed\Neurotoxin.Godspeed.Shell\bin\Debug\Neurotoxin.Godspeed.Shell.exe', Symbols loaded.
+'Neurotoxin.Godspeed.Shell.vshost.exe' (Managed (v4.0.30319)): Loaded 'C:\Windows\Microsoft.Net\assembly\GAC_MSIL\System.Configuration\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Configuration.dll', Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+Step into: Stepping over non-user code 'Neurotoxin.Godspeed.Shell.App.App'
+Step into: Stepping over non-user code 'Neurotoxin.Godspeed.Shell.App.InitializeComponent'
+'Neurotoxin.Godspeed.Shell.vshost.exe' (Managed (v4.0.30319)): Loaded 'C:\merc\svn\contour\Neurotoxin.Godspeed\Neurotoxin.Godspeed.Shell\bin\Debug\Neurotoxin.Godspeed.Presentation.dll', Symbols loaded.
+Step into: Stepping over non-user code 'Neurotoxin.Godspeed.Presentation.Converters.EnumConverter.EnumConverter'
+Step into: Stepping over non-user code 'System.RuntimeType.CreateInstanceSlow'
+Step into: Stepping over non-user code 'System.RuntimeType.CreateInstanceImpl'
+Step into: Stepping over non-user code 'MS.Internal.Xaml.Runtime.ClrObjectRuntime.CreateInstance'
+Step into: Stepping over non-user code 'MS.Internal.Xaml.Runtime.PartialTrustTolerantRuntime.CreateInstance'
+Step into: Stepping over non-user code 'System.Xaml.XamlObjectWriter.Logic_CreateAndAssignToParentStart'
+Step into: Stepping over non-user code 'System.Xaml.XamlObjectWriter.WriteEndObject'
+Step into: Stepping over non-user code 'System.Xaml.XamlWriter.WriteNode'
+Step into: Stepping over non-user code 'System.Windows.Markup.WpfXamlLoader.TransformNodes'
+Step into: Stepping over non-user code 'Neurotoxin.Godspeed.Presentation.Converters.BoolToVisibilityConverter.BoolToVisibilityConverter'
+Step into: Stepping over non-user code 'System.RuntimeType.CreateInstanceSlow'
+Step into: Stepping over non-user code 'System.RuntimeType.CreateInstanceImpl'
+Step into: Stepping over non-user code 'MS.Internal.Xaml.Runtime.ClrObjectRuntime.CreateInstance'
+Step into: Stepping over non-user code 'MS.Internal.Xaml.Runtime.PartialTrustTolerantRuntime.CreateInstance'
+Step into: Stepping over non-user code 'System.Xaml.XamlObjectWriter.Logic_CreateAndAssignToParentStart'
+Step into: Stepping over non-user code 'System.Xaml.XamlObjectWriter.WriteEndObject'
+Step into: Stepping over non-user code 'System.Xaml.XamlWriter.WriteNode'
+Step into: Stepping over non-user code 'System.Windows.Markup.WpfXamlLoader.TransformNodes'
+Step into: Stepping over non-user code 'Neurotoxin.Godspeed.Presentation.Converters.NotNullOrEmptyConverter.NotNullOrEmptyConverter'
+Step into: Stepping over non-user code 'System.RuntimeType.CreateInstanceSlow'
+Step into: Stepping over non-user code 'System.RuntimeType.CreateInstanceImpl'
+Step into: Stepping over non-user code 'MS.Internal.Xaml.Runtime.ClrObjectRuntime.CreateInstance'
+Step into: Stepping over non-user code 'MS.Internal.Xaml.Runtime.PartialTrustTolerantRuntime.CreateInstance'
+Step into: Stepping over non-user code 'System.Xaml.XamlObjectWriter.Logic_CreateAndAssignToParentStart'
+Step into: Stepping over non-user code 'System.Xaml.XamlObjectWriter.WriteEndObject'
+Step into: Stepping over non-user code 'System.Xaml.XamlWriter.WriteNode'
+Step into: Stepping over non-user code 'System.Windows.Markup.WpfXamlLoader.TransformNodes'
+Step into: Stepping over non-user code 'Neurotoxin.Godspeed.Shell.Converters.SizeConverter.SizeConverter'
+Step into: Stepping over non-user code 'System.RuntimeType.CreateInstanceSlow'
+Step into: Stepping over non-user code 'System.RuntimeType.CreateInstanceImpl'
+Step into: Stepping over non-user code 'MS.Internal.Xaml.Runtime.ClrObjectRuntime.CreateInstance'
+Step into: Stepping over non-user code 'MS.Internal.Xaml.Runtime.PartialTrustTolerantRuntime.CreateInstance'
+Step into: Stepping over non-user code 'System.Xaml.XamlObjectWriter.Logic_CreateAndAssignToParentStart'
+Step into: Stepping over non-user code 'System.Xaml.XamlObjectWriter.WriteEndObject'
+Step into: Stepping over non-user code 'System.Xaml.XamlWriter.WriteNode'
+Step into: Stepping over non-user code 'System.Windows.Markup.WpfXamlLoader.TransformNodes'
+Step into: Stepping over non-user code 'Neurotoxin.Godspeed.Shell.Converters.SizeAlignmentConverter.SizeAlignmentConverter'
+Step into: Stepping over non-user code 'System.RuntimeType.CreateInstanceSlow'
+Step into: Stepping over non-user code 'System.RuntimeType.CreateInstanceImpl'
+Step into: Stepping over non-user code 'MS.Internal.Xaml.Runtime.ClrObjectRuntime.CreateInstance'
+Step into: Stepping over non-user code 'MS.Internal.Xaml.Runtime.PartialTrustTolerantRuntime.CreateInstance'
+Step into: Stepping over non-user code 'System.Xaml.XamlObjectWriter.Logic_CreateAndAssignToParentStart'
+Step into: Stepping over non-user code 'System.Xaml.XamlObjectWriter.WriteEndObject'
+Step into: Stepping over non-user code 'System.Xaml.XamlWriter.WriteNode'
+Step into: Stepping over non-user code 'System.Windows.Markup.WpfXamlLoader.TransformNodes'
+Step into: Stepping over non-user code 'Neurotoxin.Godspeed.Shell.Converters.TitleConverter.TitleConverter'
+Step into: Stepping over non-user code 'System.RuntimeType.CreateInstanceSlow'
+Step into: Stepping over non-user code 'System.RuntimeType.CreateInstanceImpl'
+Step into: Stepping over non-user code 'MS.Internal.Xaml.Runtime.ClrObjectRuntime.CreateInstance'
+Step into: Stepping over non-user code 'MS.Internal.Xaml.Runtime.PartialTrustTolerantRuntime.CreateInstance'
+Step into: Stepping over non-user code 'System.Xaml.XamlObjectWriter.Logic_CreateAndAssignToParentStart'
+Step into: Stepping over non-user code 'System.Xaml.XamlObjectWriter.WriteEndObject'
+Step into: Stepping over non-user code 'System.Xaml.XamlWriter.WriteNode'
+Step into: Stepping over non-user code 'System.Windows.Markup.WpfXamlLoader.TransformNodes'
+Step into: Stepping over non-user code 'Neurotoxin.Godspeed.Shell.Converters.NameConverter.NameConverter'
+Step into: Stepping over non-user code 'System.RuntimeType.CreateInstanceSlow'
+Step into: Stepping over non-user code 'System.RuntimeType.CreateInstanceImpl'
+Step into: Stepping over non-user code 'MS.Internal.Xaml.Runtime.ClrObjectRuntime.CreateInstance'
+Step into: Stepping over non-user code 'MS.Internal.Xaml.Runtime.PartialTrustTolerantRuntime.CreateInstance'
+Step into: Stepping over non-user code 'System.Xaml.XamlObjectWriter.Logic_CreateAndAssignToParentStart'
+Step into: Stepping over non-user code 'System.Xaml.XamlObjectWriter.WriteEndObject'
+Step into: Stepping over non-user code 'System.Xaml.XamlWriter.WriteNode'
+Step into: Stepping over non-user code 'System.Windows.Markup.WpfXamlLoader.TransformNodes'
+'Neurotoxin.Godspeed.Shell.vshost.exe' (Managed (v4.0.30319)): Loaded 'C:\merc\svn\contour\Neurotoxin.Godspeed\Neurotoxin.Godspeed.Shell\bin\Debug\Microsoft.Windows.Shell.dll'
+'Neurotoxin.Godspeed.Shell.vshost.exe' (Managed (v4.0.30319)): Loaded 'C:\merc\svn\contour\Neurotoxin.Godspeed\Neurotoxin.Godspeed.Shell\bin\Debug\Neurotoxin.Godspeed.Core.dll', Symbols loaded.
+'Neurotoxin.Godspeed.Shell.vshost.exe' (Managed (v4.0.30319)): Loaded 'C:\merc\svn\contour\Neurotoxin.Godspeed\Neurotoxin.Godspeed.Shell\bin\Debug\Esent.Collections.dll', Symbols loaded.
+'Neurotoxin.Godspeed.Shell.vshost.exe' (Managed (v4.0.30319)): Loaded 'C:\merc\svn\contour\Neurotoxin.Godspeed\Neurotoxin.Godspeed.Shell\bin\Debug\Esent.Interop.dll', Symbols loaded.
+'Neurotoxin.Godspeed.Shell.vshost.exe' (Managed (v4.0.30319)): Loaded 'C:\merc\svn\contour\Neurotoxin.Godspeed\Neurotoxin.Godspeed.Shell\bin\Debug\ServiceStack.Text.dll'
+'Neurotoxin.Godspeed.Shell.vshost.exe' (Managed (v4.0.30319)): Loaded 'C:\merc\svn\contour\Neurotoxin.Godspeed\Neurotoxin.Godspeed.Shell\bin\Debug\Microsoft.Practices.Composite.UnityExtensions.dll', Symbols loaded.
+'Neurotoxin.Godspeed.Shell.vshost.exe' (Managed (v4.0.30319)): Loaded 'C:\merc\svn\contour\Neurotoxin.Godspeed\Neurotoxin.Godspeed.Shell\bin\Debug\Microsoft.Practices.Composite.dll', Symbols loaded.
+'Neurotoxin.Godspeed.Shell.vshost.exe' (Managed (v4.0.30319)): Loaded 'C:\merc\svn\contour\Neurotoxin.Godspeed\Neurotoxin.Godspeed.Shell\bin\Debug\Microsoft.Practices.Unity.dll', Symbols loaded.
+'Neurotoxin.Godspeed.Shell.vshost.exe' (Managed (v4.0.30319)): Loaded 'C:\merc\svn\contour\Neurotoxin.Godspeed\Neurotoxin.Godspeed.Shell\bin\Debug\Microsoft.Practices.Composite.Presentation.dll', Symbols loaded.
+DEBUG: Creating Unity container. Priority: Low. Timestamp:2014-02-20 17:53:17Z.
+'Neurotoxin.Godspeed.Shell.vshost.exe' (Managed (v4.0.30319)): Loaded 'Anonymously Hosted DynamicMethods Assembly'
+'Neurotoxin.Godspeed.Shell.vshost.exe' (Managed (v4.0.30319)): Loaded 'C:\merc\svn\contour\Neurotoxin.Godspeed\Neurotoxin.Godspeed.Shell\bin\Debug\Microsoft.Practices.ServiceLocation.dll', Symbols loaded.
+A first chance exception of type 'System.Threading.SynchronizationLockException' occurred in Microsoft.Practices.Unity.dll
+A first chance exception of type 'System.Threading.SynchronizationLockException' occurred in Microsoft.Practices.Unity.dll
+DEBUG: Configuring container. Priority: Low. Timestamp:2014-02-20 17:53:18Z.
+DEBUG: Configuring region adapters. Priority: Low. Timestamp:2014-02-20 17:53:18Z.
+DEBUG: Creating shell. Priority: Low. Timestamp:2014-02-20 17:53:18Z.
+'Neurotoxin.Godspeed.Shell.vshost.exe' (Managed (v4.0.30319)): Loaded 'C:\Windows\Microsoft.Net\assembly\GAC_MSIL\System.Data.Linq\v4.0_4.0.0.0__b77a5c561934e089\System.Data.Linq.dll', Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Neurotoxin.Godspeed.Shell.vshost.exe' (Managed (v4.0.30319)): Loaded 'C:\Windows\Microsoft.Net\assembly\GAC_MSIL\System.Runtime.Serialization\v4.0_4.0.0.0__b77a5c561934e089\System.Runtime.Serialization.dll', Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Neurotoxin.Godspeed.Shell.vshost.exe' (Managed (v4.0.30319)): Loaded 'C:\merc\svn\contour\Neurotoxin.Godspeed\Neurotoxin.Godspeed.Shell\bin\Debug\System.Windows.Interactivity.dll'
+'Neurotoxin.Godspeed.Shell.vshost.exe' (Managed (v4.0.30319)): Loaded 'C:\merc\svn\contour\Neurotoxin.Godspeed\Neurotoxin.Godspeed.Shell\bin\Debug\Ftp.dll'
+'Neurotoxin.Godspeed.Shell.vshost.exe' (Managed (v4.0.30319)): Loaded 'C:\Windows\Microsoft.Net\assembly\GAC_MSIL\PresentationFramework-SystemXml\v4.0_4.0.0.0__b77a5c561934e089\PresentationFramework-SystemXml.dll', Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Neurotoxin.Godspeed.Shell.vshost.exe' (Managed (v4.0.30319)): Loaded 'C:\Windows\Microsoft.Net\assembly\GAC_MSIL\UIAutomationTypes\v4.0_4.0.0.0__31bf3856ad364e35\UIAutomationTypes.dll', Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+DEBUG: Initializing modules. Priority: Low. Timestamp:2014-02-20 17:53:20Z.
+[CD] Enqueued 0: 00:00:00.1479414
+DEBUG: Bootstrapper sequence completed. Priority: Low. Timestamp:2014-02-20 17:53:20Z.
+Cache fetched [00:00:02.9889286]
+'Neurotoxin.Godspeed.Shell.vshost.exe' (Managed (v4.0.30319)): Loaded 'C:\Windows\Microsoft.Net\assembly\GAC_MSIL\PresentationFramework-SystemCore\v4.0_4.0.0.0__b77a5c561934e089\PresentationFramework-SystemCore.dll', Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+System.Windows.Data Error: 40 : BindingExpression path error: 'CalculateSizeCommand' property not found on 'object' ''ConnectionsViewModel' (HashCode=37291744)'. BindingExpression:Path=ActivePane.CalculateSizeCommand; DataItem='FileManagerViewModel' (HashCode=21631708); target element is 'MenuItem' (Name=''); target property is 'Command' (type 'ICommand')
+Ftp.dll: 12 17:53:23 2.0.13217.1550
+Ftp.dll: 12 17:53:23 Control connection uses port: 17069 (66,173)
+Ftp.dll: 12 17:53:23 S: 220 F3 FTPD ready
+Ftp.dll: 12 17:53:23 C: USER xbox
+Ftp.dll: 12 17:53:23 S: 331 User name okay, need password.
+Ftp.dll: 12 17:53:23 C: PASS xbox
+Ftp.dll: 12 17:53:23 S: 230 User logged in, proceed.
+Ftp.dll: 12 17:53:23 C: FEAT
+Ftp.dll: 12 17:53:23 S: 211-Extensions supported:
+Ftp.dll: 12 17:53:23 S:  XCRC filename
+Ftp.dll: 12 17:53:23 S:  SIZE
+Ftp.dll: 12 17:53:23 S:  REST STREAM
+Ftp.dll: 12 17:53:23 S:  MDTM
+Ftp.dll: 12 17:53:23 S:  MFMT
+Ftp.dll: 12 17:53:23 S:  TVFS
+Ftp.dll: 12 17:53:23 S: 211 END
+Ftp.dll: 12 17:53:23 C: APPE
+Ftp.dll: 12 17:53:23 S: 500 command not recognized
+A first chance exception of type 'Limilabs.FTP.Client.FtpException' occurred in Ftp.dll
+Ftp.dll:  9 17:53:29 C: PWD
+Ftp.dll:  9 17:53:29 S: 257 "/"
+Ftp.dll:  9 17:53:29 C: CWD /
+Ftp.dll:  9 17:53:29 S: 250 OK
+'Neurotoxin.Godspeed.Shell.vshost.exe' (Managed (v4.0.30319)): Loaded 'C:\Windows\assembly\GAC_MSIL\Microsoft.VisualStudio.DebuggerVisualizers\10.0.0.0__b03f5f7f11d50a3a\Microsoft.VisualStudio.DebuggerVisualizers.dll', Symbols loaded.
+The thread '<No Name>' (0x1914) has exited with code 0 (0x0).
+Ftp.dll:  9 17:53:41 Binding to: 192.168.1.102:0
+Ftp.dll:  9 17:53:41 Bound to: 192.168.1.102:0
+Ftp.dll:  9 17:53:41 C: PORT 192,168,1,102,66,179
+Ftp.dll:  9 17:53:41 S: 200 PORT command successful
+Ftp.dll:  9 17:53:41 C: LIST
+Ftp.dll:  9 17:53:41 S: 150 Opening connection
+Ftp.dll:  9 17:53:41 Data connection established.
+Ftp.dll:  9 17:53:41 S: 226 Transfer Complete
+Ftp.dll:  9 17:53:41 S:
+drwxrwxrwx   1 root  root    0 Jun 25 2039 Game
+drwxrwxrwx   1 root  root    0 Jan 01 1970 OnBoardMU
+drwxrwxrwx   1 root  root    0 Jan 01 1970 Hdd1
+
+Ftp.dll:  9 17:53:41 C: CWD /
+Ftp.dll:  9 17:53:41 S: 250 OK
+Ftp.dll:  9 17:53:41 C: CWD /
+Ftp.dll:  9 17:53:41 S: 250 OK
+Ftp.dll:  9 17:53:41 Binding to: 192.168.1.102:0
+Ftp.dll:  9 17:53:41 Bound to: 192.168.1.102:0
+Ftp.dll:  9 17:53:41 C: PORT 192,168,1,102,66,180
+Ftp.dll:  9 17:53:41 S: 200 PORT command successful
+Ftp.dll:  9 17:53:41 C: LIST
+Ftp.dll:  9 17:53:41 S: 150 Opening connection
+Ftp.dll:  9 17:53:41 Data connection established.
+Ftp.dll:  9 17:53:41 S: 226 Transfer Complete
+Ftp.dll:  9 17:53:41 S:
+drwxrwxrwx   1 root  root    0 Jun 25 2039 Game
+drwxrwxrwx   1 root  root    0 Jan 01 1970 OnBoardMU
+drwxrwxrwx   1 root  root    0 Jan 01 1970 Hdd1
+
+Ftp.dll:  9 17:53:41 C: CWD /Hdd1/
+Ftp.dll:  9 17:53:41 S: 250 OK
+Ftp.dll:  9 17:53:41 C: CWD /Hdd1/
+Ftp.dll:  9 17:53:41 S: 250 OK
+Ftp.dll:  9 17:53:41 Binding to: 192.168.1.102:0
+Ftp.dll:  9 17:53:41 Bound to: 192.168.1.102:0
+Ftp.dll:  9 17:53:41 C: PORT 192,168,1,102,66,181
+Ftp.dll:  9 17:53:41 S: 200 PORT command successful
+Ftp.dll:  9 17:53:41 C: LIST
+Ftp.dll:  9 17:53:41 S: 150 Opening connection
+Ftp.dll:  9 17:53:41 Data connection established.
+Ftp.dll:  9 17:53:42 S: 226 Transfer Complete
+Ftp.dll:  9 17:53:42 S:
+..
+drwxrwxrwx   1 root  root    0 Nov 22 2005 Cache
+drwxrwxrwx   1 root  root    0 Nov 22 2005 GAMES
+drwxrwxrwx   1 root  root    0 Nov 19 2012 Content
+drwxrwxrwx   1 root  root    0 Nov 19 2012 Apps
+drwxrwxrwx   1 root  root    0 Nov 19 2012 fsdata
+-rwxrwxrwx   1 root  root    12 Nov 19 19:04 name.txt
+-rwxrwxrwx   1 root  root    106 Nov 19 18:14 debug.log
+-rwxrwxrwx   1 root  root    38912 Nov 22 12:23 swap.xex
+
+Ftp.dll:  9 17:53:42 C: CWD /Hdd1/
+Ftp.dll:  9 17:53:42 S: 250 OK
+Ftp.dll:  9 17:53:42 Binding to: 192.168.1.102:0
+Ftp.dll:  9 17:53:42 Bound to: 192.168.1.102:0
+Ftp.dll:  9 17:53:42 C: PORT 192,168,1,102,66,182
+Ftp.dll:  9 17:53:42 S: 200 PORT command successful
+Ftp.dll:  9 17:53:42 C: LIST
+Ftp.dll:  9 17:53:42 S: 150 Opening connection
+Ftp.dll:  9 17:53:42 Data connection established.
+Ftp.dll:  9 17:53:42 S: 226 Transfer Complete
+Ftp.dll:  9 17:53:42 S:
+..
+drwxrwxrwx   1 root  root    0 Nov 22 2005 Cache
+drwxrwxrwx   1 root  root    0 Nov 22 2005 GAMES
+drwxrwxrwx   1 root  root    0 Nov 19 2012 Content
+drwxrwxrwx   1 root  root    0 Nov 19 2012 Apps
+drwxrwxrwx   1 root  root    0 Nov 19 2012 fsdata
+-rwxrwxrwx   1 root  root    12 Nov 19 19:04 name.txt
+-rwxrwxrwx   1 root  root    106 Nov 19 18:14 debug.log
+-rwxrwxrwx   1 root  root    38912 Nov 22 12:23 swap.xex
+
+Ftp.dll:  9 17:53:42 C: TYPE I
+Ftp.dll:  9 17:53:42 S: 200 Type set to I
+Ftp.dll:  9 17:53:42 Binding to: 192.168.1.102:0
+Ftp.dll:  9 17:53:42 Bound to: 192.168.1.102:0
+Ftp.dll:  9 17:53:42 C: PORT 192,168,1,102,66,183
+Ftp.dll:  9 17:53:42 S: 200 PORT command successful
+Ftp.dll:  9 17:53:42 C: RETR name.txt
+Ftp.dll:  9 17:53:42 S: 150 Opening BINARY mode data connection
+Ftp.dll:  9 17:53:42 Data connection established.
+Ftp.dll:  9 17:53:42 S: 226 Transfer Complete
+Ftp.dll:  9 17:53:42 C: CWD /
+Ftp.dll:  9 17:53:42 S: 250 OK
+Ftp.dll:  9 17:53:42 C: TYPE A
+Ftp.dll:  9 17:53:42 S: 200 Type set to I
+Ftp.dll:  9 17:53:42 Binding to: 192.168.1.102:0
+Ftp.dll:  9 17:53:42 Bound to: 192.168.1.102:0
+Ftp.dll:  9 17:53:42 C: PORT 192,168,1,102,66,184
+Ftp.dll:  9 17:53:42 S: 200 PORT command successful
+Ftp.dll:  9 17:53:42 C: LIST
+Ftp.dll:  9 17:53:42 S: 150 Opening connection
+Ftp.dll:  9 17:53:42 Data connection established.
+Ftp.dll:  9 17:53:42 S: 226 Transfer Complete
+Ftp.dll:  9 17:53:42 S:
+drwxrwxrwx   1 root  root    0 Jun 25 2039 Game
+drwxrwxrwx   1 root  root    0 Jan 01 1970 OnBoardMU
+drwxrwxrwx   1 root  root    0 Jan 01 1970 Hdd1
+
+Ftp.dll: 12 17:53:42 C: CWD /Hdd1/
+Ftp.dll: 12 17:53:42 S: 250 OK
+Ftp.dll: 12 17:53:42 Binding to: 192.168.1.102:0
+Ftp.dll: 12 17:53:42 Bound to: 192.168.1.102:0
+Ftp.dll: 12 17:53:42 C: PORT 192,168,1,102,66,185
+Ftp.dll: 12 17:53:42 S: 200 PORT command successful
+Ftp.dll: 12 17:53:42 C: LIST
+Ftp.dll: 12 17:53:42 S: 150 Opening connection
+Ftp.dll: 12 17:53:42 Data connection established.
+Ftp.dll: 12 17:53:42 S: 226 Transfer Complete
+Ftp.dll: 12 17:53:42 S:
+..
+drwxrwxrwx   1 root  root    0 Nov 22 2005 Cache
+drwxrwxrwx   1 root  root    0 Nov 22 2005 GAMES
+drwxrwxrwx   1 root  root    0 Nov 19 2012 Content
+drwxrwxrwx   1 root  root    0 Nov 19 2012 Apps
+drwxrwxrwx   1 root  root    0 Nov 19 2012 fsdata
+-rwxrwxrwx   1 root  root    12 Nov 19 19:04 name.txt
+-rwxrwxrwx   1 root  root    106 Nov 19 18:14 debug.log
+-rwxrwxrwx   1 root  root    38912 Nov 22 12:23 swap.xex
+
+[CD] Enqueued 0: 00:00:00.0368716
+Ftp.dll: 12 17:53:48 C: CWD /Hdd1/GAMES/
+Ftp.dll: 12 17:53:48 S: 250 OK
+Ftp.dll: 12 17:53:48 Binding to: 192.168.1.102:0
+Ftp.dll: 12 17:53:48 Bound to: 192.168.1.102:0
+Ftp.dll: 12 17:53:48 C: PORT 192,168,1,102,66,187
+Ftp.dll: 12 17:53:48 S: 200 PORT command successful
+Ftp.dll: 12 17:53:48 C: LIST
+Ftp.dll: 12 17:53:48 S: 150 Opening connection
+Ftp.dll: 12 17:53:48 Data connection established.
+Ftp.dll: 12 17:53:48 S: 226 Transfer Complete
+Ftp.dll: 12 17:53:48 S:
+..
+drwxrwxrwx   1 root  root    0 Nov 22 2005 Driver San Francisco
+drwxrwxrwx   1 root  root    0 Nov 22 2005 DS3D2
+
+[CD] Enqueued 0: 00:00:00.0085470
+Ftp.dll: 11 17:53:49 C: CWD /Hdd1/GAMES/Driver San Francisco/
+Ftp.dll: 11 17:53:49 S: 250 OK
+Ftp.dll: 11 17:53:50 Binding to: 192.168.1.102:0
+Ftp.dll: 11 17:53:50 Bound to: 192.168.1.102:0
+Ftp.dll: 11 17:53:50 C: PORT 192,168,1,102,66,188
+Ftp.dll: 11 17:53:50 S: 200 PORT command successful
+Ftp.dll: 11 17:53:50 C: LIST
+Ftp.dll: 11 17:53:50 S: 150 Opening connection
+Ftp.dll: 11 17:53:50 Data connection established.
+Ftp.dll: 11 17:53:50 S: 226 Transfer Complete
+Ftp.dll: 11 17:53:50 S:
+..
+drwxrwxrwx   1 root  root    0 Nov 22 2005 Locale
+drwxrwxrwx   1 root  root    0 Nov 22 2005 Common
+drwxrwxrwx   1 root  root    0 Nov 22 2005 Install
+drwxrwxrwx   1 root  root    0 Nov 22 2005 media
+-rwxrwxrwx   1 root  root    13799424 Jul 11 21:39 AvatarAssetPack
+-rwxrwxrwx   1 root  root    12337152 Jul 11 21:39 Default.xex
+-rwxrwxrwx   1 root  root    7185159 Jul 11 21:39 UPlayBrowser.xex
+-rwxrwxrwx   1 root  root    360448 Jul 11 21:39 nxeart
+-rwxrwxrwx   1 root  root    8777812 Jul 11 21:39 UPlayBrowserMedia.ubf
+-rwxrwxrwx   1 root  root    22369748 Nov 19 18:13 nxebg.dds
+-rwxrwxrwx   1 root  root    1398228 Nov 19 18:13 icon.dds
+
+[CD] Enqueued 0: 00:00:00.0561159
+Ftp.dll:  9 17:53:50 C: CWD /Hdd1/
+Ftp.dll:  9 17:53:50 S: 250 OK
+Ftp.dll:  9 17:53:50 Binding to: 192.168.1.102:0
+Ftp.dll:  9 17:53:50 Bound to: 192.168.1.102:0
+Ftp.dll:  9 17:53:50 C: PORT 192,168,1,102,66,189
+Ftp.dll:  9 17:53:50 S: 200 PORT command successful
+Ftp.dll:  9 17:53:50 C: LIST
+Ftp.dll:  9 17:53:50 S: 150 Opening connection
+Ftp.dll:  9 17:53:50 Data connection established.
+Ftp.dll:  9 17:53:50 S: 226 Transfer Complete
+Ftp.dll:  9 17:53:50 S:
+..
+drwxrwxrwx   1 root  root    0 Nov 22 2005 Cache
+drwxrwxrwx   1 root  root    0 Nov 22 2005 GAMES
+drwxrwxrwx   1 root  root    0 Nov 19 2012 Content
+drwxrwxrwx   1 root  root    0 Nov 19 2012 Apps
+drwxrwxrwx   1 root  root    0 Nov 19 2012 fsdata
+-rwxrwxrwx   1 root  root    12 Nov 19 19:04 name.txt
+-rwxrwxrwx   1 root  root    106 Nov 19 18:14 debug.log
+-rwxrwxrwx   1 root  root    38912 Nov 22 12:23 swap.xex
+
+Ftp.dll: 12 17:53:50 C: CWD /Hdd1/GAMES/
+Ftp.dll: 12 17:53:50 S: 250 OK
+Ftp.dll: 12 17:53:50 Binding to: 192.168.1.102:0
+Ftp.dll: 12 17:53:50 Bound to: 192.168.1.102:0
+Ftp.dll: 12 17:53:50 C: PORT 192,168,1,102,66,190
+Ftp.dll: 12 17:53:50 S: 200 PORT command successful
+Ftp.dll: 12 17:53:50 C: LIST
+Ftp.dll: 12 17:53:50 S: 150 Opening connection
+Ftp.dll: 12 17:53:50 Data connection established.
+Ftp.dll: 12 17:53:50 S: 226 Transfer Complete
+Ftp.dll: 12 17:53:50 S:
+..
+drwxrwxrwx   1 root  root    0 Nov 22 2005 Driver San Francisco
+drwxrwxrwx   1 root  root    0 Nov 22 2005 DS3D2
+
+[CD] Enqueued 0: 00:00:00.0085352
+Ftp.dll: 12 17:53:51 C: CWD /Hdd1/GAMES/DS3D2/
+Ftp.dll: 12 17:53:51 S: 250 OK
+Ftp.dll: 12 17:53:51 Binding to: 192.168.1.102:0
+Ftp.dll: 12 17:53:51 Bound to: 192.168.1.102:0
+Ftp.dll: 12 17:53:51 C: PORT 192,168,1,102,66,191
+Ftp.dll: 12 17:53:51 S: 200 PORT command successful
+Ftp.dll: 12 17:53:51 C: LIST
+Ftp.dll: 12 17:53:51 S: 150 Opening connection
+Ftp.dll: 12 17:53:51 Data connection established.
+Ftp.dll: 12 17:53:51 S: 226 Transfer Complete
+Ftp.dll: 12 17:53:51 S:
+..
+drwxrwxrwx   1 root  root    0 Nov 22 2005 4541099D
+
+[CD] Enqueued 0: 00:00:00.0063343
+Ftp.dll:  9 17:53:52 C: CWD /Hdd1/
+Ftp.dll:  9 17:53:52 S: 250 OK
+Ftp.dll:  9 17:53:52 Binding to: 192.168.1.102:0
+Ftp.dll:  9 17:53:52 Bound to: 192.168.1.102:0
+Ftp.dll:  9 17:53:52 C: PORT 192,168,1,102,66,192
+Ftp.dll:  9 17:53:52 S: 200 PORT command successful
+Ftp.dll:  9 17:53:52 C: LIST
+Ftp.dll:  9 17:53:52 S: 150 Opening connection
+Ftp.dll:  9 17:53:52 Data connection established.
+Ftp.dll:  9 17:53:52 S: 226 Transfer Complete
+Ftp.dll:  9 17:53:52 S:
+..
+drwxrwxrwx   1 root  root    0 Nov 22 2005 Cache
+drwxrwxrwx   1 root  root    0 Nov 22 2005 GAMES
+drwxrwxrwx   1 root  root    0 Nov 19 2012 Content
+drwxrwxrwx   1 root  root    0 Nov 19 2012 Apps
+drwxrwxrwx   1 root  root    0 Nov 19 2012 fsdata
+-rwxrwxrwx   1 root  root    12 Nov 19 19:04 name.txt
+-rwxrwxrwx   1 root  root    106 Nov 19 18:14 debug.log
+-rwxrwxrwx   1 root  root    38912 Nov 22 12:23 swap.xex
+
+Ftp.dll: 12 17:53:52 C: CWD /Hdd1/GAMES/
+Ftp.dll: 12 17:53:52 S: 250 OK
+Ftp.dll: 12 17:53:52 Binding to: 192.168.1.102:0
+Ftp.dll: 12 17:53:52 Bound to: 192.168.1.102:0
+Ftp.dll: 12 17:53:52 C: PORT 192,168,1,102,66,193
+Ftp.dll: 12 17:53:52 S: 200 PORT command successful
+Ftp.dll: 12 17:53:52 C: LIST
+Ftp.dll: 12 17:53:52 S: 150 Opening connection
+Ftp.dll: 12 17:53:52 Data connection established.
+Ftp.dll: 12 17:53:52 S: 226 Transfer Complete
+Ftp.dll: 12 17:53:52 S:
+..
+drwxrwxrwx   1 root  root    0 Nov 22 2005 Driver San Francisco
+drwxrwxrwx   1 root  root    0 Nov 22 2005 DS3D2
+
+[CD] Enqueued 0: 00:00:00.0085337
+Ftp.dll: 17 17:53:53 C: CWD /Hdd1/
+Ftp.dll: 17 17:53:53 S: 250 OK
+Ftp.dll: 17 17:53:53 Binding to: 192.168.1.102:0
+Ftp.dll: 17 17:53:53 Bound to: 192.168.1.102:0
+Ftp.dll: 17 17:53:53 C: PORT 192,168,1,102,66,194
+Ftp.dll: 17 17:53:53 S: 200 PORT command successful
+Ftp.dll: 17 17:53:53 C: LIST
+Ftp.dll: 17 17:53:53 S: 150 Opening connection
+Ftp.dll: 17 17:53:53 Data connection established.
+Ftp.dll: 17 17:53:53 S: 226 Transfer Complete
+Ftp.dll: 17 17:53:53 S:
+..
+drwxrwxrwx   1 root  root    0 Nov 22 2005 Cache
+drwxrwxrwx   1 root  root    0 Nov 22 2005 GAMES
+drwxrwxrwx   1 root  root    0 Nov 19 2012 Content
+drwxrwxrwx   1 root  root    0 Nov 19 2012 Apps
+drwxrwxrwx   1 root  root    0 Nov 19 2012 fsdata
+-rwxrwxrwx   1 root  root    12 Nov 19 19:04 name.txt
+-rwxrwxrwx   1 root  root    106 Nov 19 18:14 debug.log
+-rwxrwxrwx   1 root  root    38912 Nov 22 12:23 swap.xex
+
+[CD] Enqueued 0: 00:00:00.0502999
+Ftp.dll: 11 17:53:55 C: CWD /Hdd1/GAMES/
+Ftp.dll: 11 17:53:55 S: 250 OK
+Ftp.dll: 11 17:53:55 Binding to: 192.168.1.102:0
+Ftp.dll: 11 17:53:55 Bound to: 192.168.1.102:0
+Ftp.dll: 11 17:53:55 C: PORT 192,168,1,102,66,196
+Ftp.dll: 11 17:53:55 S: 200 PORT command successful
+Ftp.dll: 11 17:53:55 C: LIST
+Ftp.dll: 11 17:53:55 S: 150 Opening connection
+Ftp.dll: 11 17:53:55 Data connection established.
+Ftp.dll: 11 17:53:55 S: 226 Transfer Complete
+Ftp.dll: 11 17:53:55 S:
+..
+drwxrwxrwx   1 root  root    0 Nov 22 2005 Driver San Francisco
+drwxrwxrwx   1 root  root    0 Nov 22 2005 DS3D2
+
+[CD] Enqueued 0: 00:00:00.0179461
+Ftp.dll: 17 17:53:56 C: CWD /Hdd1/
+Ftp.dll: 17 17:53:56 S: 250 OK
+Ftp.dll: 17 17:53:56 Binding to: 192.168.1.102:0
+Ftp.dll: 17 17:53:56 Bound to: 192.168.1.102:0
+Ftp.dll: 17 17:53:56 C: PORT 192,168,1,102,66,197
+Ftp.dll: 17 17:53:56 S: 200 PORT command successful
+Ftp.dll: 17 17:53:56 C: LIST
+Ftp.dll: 17 17:53:56 S: 150 Opening connection
+Ftp.dll: 17 17:53:56 Data connection established.
+Ftp.dll: 17 17:53:56 S: 226 Transfer Complete
+Ftp.dll: 17 17:53:56 S:
+..
+drwxrwxrwx   1 root  root    0 Nov 22 2005 Cache
+drwxrwxrwx   1 root  root    0 Nov 22 2005 GAMES
+drwxrwxrwx   1 root  root    0 Nov 19 2012 Content
+drwxrwxrwx   1 root  root    0 Nov 19 2012 Apps
+drwxrwxrwx   1 root  root    0 Nov 19 2012 fsdata
+-rwxrwxrwx   1 root  root    12 Nov 19 19:04 name.txt
+-rwxrwxrwx   1 root  root    106 Nov 19 18:14 debug.log
+-rwxrwxrwx   1 root  root    38912 Nov 22 12:23 swap.xex
+
+[CD] Enqueued 0: 00:00:00.0428600
+Ftp.dll: 11 17:53:57 C: CWD /Hdd1/Content/
+Ftp.dll: 11 17:53:57 S: 250 OK
+Ftp.dll: 11 17:53:57 Binding to: 192.168.1.102:0
+Ftp.dll: 11 17:53:57 Bound to: 192.168.1.102:0
+Ftp.dll: 11 17:53:57 C: PORT 192,168,1,102,66,198
+Ftp.dll: 11 17:53:57 S: 200 PORT command successful
+Ftp.dll: 11 17:53:57 C: LIST
+Ftp.dll: 11 17:53:57 S: 150 Opening connection
+Ftp.dll: 11 17:53:57 Data connection established.
+Ftp.dll: 11 17:53:57 S: 226 Transfer Complete
+Ftp.dll: 11 17:53:57 S:
+..
+drwxrwxrwx   1 root  root    0 Nov 19 2012 0000000000000000
+drwxrwxrwx   1 root  root    0 Nov 22 2005 E00000F68DD61FE8
+drwxrwxrwx   1 root  root    0 Nov 22 2005 E000013A8DD61FE8
+
+Ftp.dll:  9 17:53:57 C: CWD /Hdd1/Content/E00000F68DD61FE8/FFFE07D1/00010000/
+Ftp.dll:  9 17:53:57 S: 550 "Hdd1:\Content\E00000F68DD61FE8\FFFE07D1\00010000": Path not found.
+A first chance exception of type 'Limilabs.FTP.Client.FtpException' occurred in Ftp.dll
+Ftp.dll:  9 17:53:57 C: CWD /Hdd1/Content/E000013A8DD61FE8/FFFE07D1/00010000/
+Ftp.dll:  9 17:53:57 S: 250 OK
+Ftp.dll:  9 17:53:57 Binding to: 192.168.1.102:0
+Ftp.dll:  9 17:53:57 Bound to: 192.168.1.102:0
+Ftp.dll:  9 17:53:57 C: PORT 192,168,1,102,66,199
+Ftp.dll:  9 17:53:57 S: 200 PORT command successful
+Ftp.dll:  9 17:53:57 C: LIST
+Ftp.dll:  9 17:53:57 S: 150 Opening connection
+Ftp.dll:  9 17:53:57 Data connection established.
+Ftp.dll:  9 17:53:57 S: 226 Transfer Complete
+Ftp.dll:  9 17:53:57 S:
+..
+-rwxrwxrwx   1 root  root    544768 Nov 22 19:57 E000013A8DD61FE8
+
+Ftp.dll:  9 17:53:57 C: CWD /Hdd1/Content/E000013A8DD61FE8/FFFE07D1/00010000/
+Ftp.dll:  9 17:53:57 S: 250 OK
+Ftp.dll:  9 17:53:57 Binding to: 192.168.1.102:0
+Ftp.dll:  9 17:53:57 Bound to: 192.168.1.102:0
+Ftp.dll:  9 17:53:57 C: PORT 192,168,1,102,66,200
+Ftp.dll:  9 17:53:57 S: 200 PORT command successful
+Ftp.dll:  9 17:53:57 C: LIST
+Ftp.dll:  9 17:53:57 S: 150 Opening connection
+Ftp.dll:  9 17:53:57 Data connection established.
+Ftp.dll:  9 17:53:57 S: 226 Transfer Complete
+Ftp.dll:  9 17:53:57 S:
+..
+-rwxrwxrwx   1 root  root    544768 Nov 22 19:57 E000013A8DD61FE8
+
+[CD] Enqueued 1: 00:00:00.1571983
+Ftp.dll: 11 17:53:57 C: CWD /Hdd1/Content/E000013A8DD61FE8/FFFE07D1/00010000/
+Ftp.dll: 11 17:53:57 S: 250 OK
+Ftp.dll: 11 17:53:57 C: TYPE I
+Ftp.dll: 11 17:53:57 S: 200 Type set to I
+Ftp.dll: 11 17:53:57 Binding to: 192.168.1.102:0
+Ftp.dll: 11 17:53:57 Bound to: 192.168.1.102:0
+Ftp.dll: 11 17:53:57 C: PORT 192,168,1,102,66,201
+Ftp.dll: 11 17:53:57 S: 200 PORT command successful
+Ftp.dll: 11 17:53:57 C: RETR E000013A8DD61FE8
+Ftp.dll: 11 17:53:57 S: 150 Opening BINARY mode data connection
+Ftp.dll: 11 17:53:57 Data connection established.
+Ftp.dll: 11 17:53:58 S: 226 Transfer Complete
+'Neurotoxin.Godspeed.Shell.vshost.exe' (Managed (v4.0.30319)): Loaded 'C:\merc\svn\contour\Neurotoxin.Godspeed\Neurotoxin.Godspeed.Shell\bin\Debug\Castle.Core.dll'
+'Neurotoxin.Godspeed.Shell.vshost.exe' (Managed (v4.0.30319)): Loaded 'DynamicProxyGenAssembly2'
+'Neurotoxin.Godspeed.Shell.vshost.exe' (Managed (v4.0.30319)): Loaded 'DynamicProxyGenAssembly2'
+Collect hash entries: 0.0600034 sec
+Collect file entries: 0.0790045 sec
+STFS package parse: 0.1880108 sec
+Extract Account: 0.0770044 sec
+The thread '<No Name>' (0x1dc0) has exited with code 0 (0x0).
+The thread '<No Name>' (0x1ac0) has exited with code 0 (0x0).
+Ftp.dll: 11 17:54:25 C: CWD /Hdd1/
+Ftp.dll: 11 17:54:25 S: 250 OK
+Ftp.dll: 11 17:54:25 C: TYPE A
+Ftp.dll: 11 17:54:25 S: 200 Type set to I
+Ftp.dll: 11 17:54:25 Binding to: 192.168.1.102:0
+Ftp.dll: 11 17:54:25 Bound to: 192.168.1.102:0
+Ftp.dll: 11 17:54:25 C: PORT 192,168,1,102,66,214
+Ftp.dll: 11 17:54:25 S: 200 PORT command successful
+Ftp.dll: 11 17:54:25 C: LIST
+Ftp.dll: 11 17:54:25 S: 150 Opening connection
+Ftp.dll: 11 17:54:25 Data connection established.
+Ftp.dll: 11 17:54:25 S: 226 Transfer Complete
+Ftp.dll: 11 17:54:25 S:
+..
+drwxrwxrwx   1 root  root    0 Nov 22 2005 Cache
+drwxrwxrwx   1 root  root    0 Nov 22 2005 GAMES
+drwxrwxrwx   1 root  root    0 Nov 19 2012 Content
+drwxrwxrwx   1 root  root    0 Nov 19 2012 Apps
+drwxrwxrwx   1 root  root    0 Nov 19 2012 fsdata
+-rwxrwxrwx   1 root  root    12 Nov 19 19:04 name.txt
+-rwxrwxrwx   1 root  root    106 Nov 19 18:14 debug.log
+-rwxrwxrwx   1 root  root    38912 Nov 22 12:23 swap.xex
+
+[CD] Enqueued 0: 00:00:00.0381548
+'Neurotoxin.Godspeed.Shell.vshost.exe' (Managed (v4.0.30319)): Loaded 'C:\Windows\Microsoft.Net\assembly\GAC_MSIL\UIAutomationProvider\v4.0_4.0.0.0__31bf3856ad364e35\UIAutomationProvider.dll', Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+Ftp.dll:  9 17:54:28 C: CWD /OnBoardMU/
+Ftp.dll:  9 17:54:28 S: 250 OK
+Ftp.dll:  9 17:54:28 C: CWD /OnBoardMU/
+Ftp.dll:  9 17:54:28 S: 250 OK
+Ftp.dll:  9 17:54:28 Binding to: 192.168.1.102:0
+Ftp.dll:  9 17:54:28 Bound to: 192.168.1.102:0
+Ftp.dll:  9 17:54:28 C: PORT 192,168,1,102,66,216
+Ftp.dll:  9 17:54:29 S: 200 PORT command successful
+Ftp.dll:  9 17:54:29 C: LIST
+Ftp.dll:  9 17:54:29 S: 150 Opening connection
+Ftp.dll:  9 17:54:29 Data connection established.
+Ftp.dll:  9 17:54:29 S: 226 Transfer Complete
+Ftp.dll:  9 17:54:29 S:
+..
+drwxrwxrwx   1 root  root    0 Nov 22 2005 Content
+drwxrwxrwx   1 root  root    0 Nov 15 2012 360
+drwxrwxrwx   1 root  root    0 Nov 15 2012 Freestyle
+-rwxrwxrwx   1 root  root    11578 Feb 02 12:25 launch.ini
+-rwxrwxrwx   1 root  root    762 Feb 02 12:36 multi.ini
+
+Ftp.dll: 17 17:54:29 C: CWD /OnBoardMU/
+Ftp.dll: 17 17:54:29 S: 250 OK
+Ftp.dll: 17 17:54:29 Binding to: 192.168.1.102:0
+Ftp.dll: 17 17:54:29 Bound to: 192.168.1.102:0
+Ftp.dll: 17 17:54:29 C: PORT 192,168,1,102,66,217
+Ftp.dll: 17 17:54:29 S: 200 PORT command successful
+Ftp.dll: 17 17:54:29 C: LIST
+Ftp.dll: 17 17:54:29 S: 150 Opening connection
+Ftp.dll: 17 17:54:29 Data connection established.
+Ftp.dll: 17 17:54:29 S: 226 Transfer Complete
+Ftp.dll: 17 17:54:29 S:
+..
+drwxrwxrwx   1 root  root    0 Nov 22 2005 Content
+drwxrwxrwx   1 root  root    0 Nov 15 2012 360
+drwxrwxrwx   1 root  root    0 Nov 15 2012 Freestyle
+-rwxrwxrwx   1 root  root    11578 Feb 02 12:25 launch.ini
+-rwxrwxrwx   1 root  root    762 Feb 02 12:36 multi.ini
+
+[CD] Enqueued 0: 00:00:00.0295102
+Ftp.dll:  9 17:54:32 C: CWD /Hdd1/
+Ftp.dll:  9 17:54:32 S: 250 OK
+Ftp.dll:  9 17:54:32 C: CWD /
+Ftp.dll:  9 17:54:32 S: 250 OK
+Ftp.dll:  9 17:54:32 Binding to: 192.168.1.102:0
+Ftp.dll:  9 17:54:32 Bound to: 192.168.1.102:0
+Ftp.dll:  9 17:54:32 C: PORT 192,168,1,102,66,222
+Ftp.dll:  9 17:54:32 S: 200 PORT command successful
+Ftp.dll:  9 17:54:32 C: LIST
+Ftp.dll:  9 17:54:32 S: 150 Opening connection
+Ftp.dll:  9 17:54:32 Data connection established.
+Ftp.dll:  9 17:54:32 S: 226 Transfer Complete
+Ftp.dll:  9 17:54:32 S:
+drwxrwxrwx   1 root  root    0 Jun 25 2039 Game
+drwxrwxrwx   1 root  root    0 Jan 01 1970 OnBoardMU
+drwxrwxrwx   1 root  root    0 Jan 01 1970 Hdd1
+drwxrwxrwx   1 root  root    0 Jan 01 1970 Usb0
+drwxrwxrwx   1 root  root    0 Jan 01 1970 USBMU0
+drwxrwxrwx   1 root  root    0 Jan 01 1970 USBMUCache0
+
+Ftp.dll: 17 17:54:32 C: CWD /Hdd1/
+Ftp.dll: 17 17:54:32 S: 250 OK
+Ftp.dll: 17 17:54:32 Binding to: 192.168.1.102:0
+Ftp.dll: 17 17:54:32 Bound to: 192.168.1.102:0
+Ftp.dll: 17 17:54:32 C: PORT 192,168,1,102,66,223
+Ftp.dll: 17 17:54:32 S: 200 PORT command successful
+Ftp.dll: 17 17:54:32 C: LIST
+Ftp.dll: 17 17:54:32 S: 150 Opening connection
+Ftp.dll: 17 17:54:32 Data connection established.
+Ftp.dll: 17 17:54:32 S: 226 Transfer Complete
+Ftp.dll: 17 17:54:32 S:
+..
+drwxrwxrwx   1 root  root    0 Nov 22 2005 Cache
+drwxrwxrwx   1 root  root    0 Nov 22 2005 GAMES
+drwxrwxrwx   1 root  root    0 Nov 19 2012 Content
+drwxrwxrwx   1 root  root    0 Nov 19 2012 Apps
+drwxrwxrwx   1 root  root    0 Nov 19 2012 fsdata
+-rwxrwxrwx   1 root  root    12 Nov 19 19:04 name.txt
+-rwxrwxrwx   1 root  root    106 Nov 19 18:14 debug.log
+-rwxrwxrwx   1 root  root    38912 Nov 22 12:23 swap.xex
+
+[CD] Enqueued 0: 00:00:00.0409753
+Ftp.dll: 12 17:54:33 C: CWD /Hdd1/Content/
+Ftp.dll: 12 17:54:33 S: 250 OK
+Ftp.dll: 12 17:54:33 Binding to: 192.168.1.102:0
+Ftp.dll: 12 17:54:33 Bound to: 192.168.1.102:0
+Ftp.dll: 12 17:54:33 C: PORT 192,168,1,102,66,224
+Ftp.dll: 12 17:54:33 S: 200 PORT command successful
+Ftp.dll: 12 17:54:33 C: LIST
+Ftp.dll: 12 17:54:33 S: 150 Opening connection
+Ftp.dll: 12 17:54:33 Data connection established.
+Ftp.dll: 12 17:54:33 S: 226 Transfer Complete
+Ftp.dll: 12 17:54:33 S:
+..
+drwxrwxrwx   1 root  root    0 Nov 19 2012 0000000000000000
+drwxrwxrwx   1 root  root    0 Nov 22 2005 E00000F68DD61FE8
+drwxrwxrwx   1 root  root    0 Nov 22 2005 E000013A8DD61FE8
+
+[CD] Enqueued 0: 00:00:00.0180277
+Ftp.dll: 11 17:54:34 C: CWD /Hdd1/Content/0000000000000000/
+Ftp.dll: 11 17:54:34 S: 250 OK
+Ftp.dll: 11 17:54:34 Binding to: 192.168.1.102:0
+Ftp.dll: 11 17:54:34 Bound to: 192.168.1.102:0
+Ftp.dll: 11 17:54:34 C: PORT 192,168,1,102,66,225
+Ftp.dll: 11 17:54:34 S: 200 PORT command successful
+Ftp.dll: 11 17:54:34 C: LIST
+Ftp.dll: 11 17:54:34 S: 150 Opening connection
+Ftp.dll: 11 17:54:34 Data connection established.
+Ftp.dll: 11 17:54:34 S: 226 Transfer Complete
+Ftp.dll: 11 17:54:34 S:
+..
+drwxrwxrwx   1 root  root    0 Nov 19 2012 58410B92
+drwxrwxrwx   1 root  root    0 Nov 19 2012 FFFE07DF
+drwxrwxrwx   1 root  root    0 Nov 22 2005 4B4E0823
+drwxrwxrwx   1 root  root    0 Nov 29 2012 5553088C
+drwxrwxrwx   1 root  root    0 Nov 29 2012 53510804
+drwxrwxrwx   1 root  root    0 Nov 29 2012 425307e3
+drwxrwxrwx   1 root  root    0 Nov 29 2012 4B5607DA
+drwxrwxrwx   1 root  root    0 Nov 29 2012 4E4D0859
+drwxrwxrwx   1 root  root    0 Nov 29 2012 555308AE
+drwxrwxrwx   1 root  root    0 Nov 22 2005 43430819
+drwxrwxrwx   1 root  root    0 Nov 29 2012 58411289
+drwxrwxrwx   1 root  root    0 Nov 29 2012 58410A5A
+drwxrwxrwx   1 root  root    0 Nov 29 2012 58411228
+drwxrwxrwx   1 root  root    0 Nov 29 2012 58410AAD
+drwxrwxrwx   1 root  root    0 Nov 29 2012 4541093E
+drwxrwxrwx   1 root  root    0 Dec 11 2012 5451086D
+drwxrwxrwx   1 root  root    0 Nov 22 2005 443607D2
+drwxrwxrwx   1 root  root    0 Nov 22 2005 5454082B
+drwxrwxrwx   1 root  root    0 Nov 22 2005 534307E7
+drwxrwxrwx   1 root  root    0 Nov 22 2005 4343081E
+drwxrwxrwx   1 root  root    0 Nov 22 2005 43430824
+drwxrwxrwx   1 root  root    0 Nov 22 2005 5345083F
+drwxrwxrwx   1 root  root    0 Nov 22 2005 4B4E8854
+drwxrwxrwx   1 root  root    0 Nov 22 2005 4541099D
+drwxrwxrwx   1 root  root    0 Nov 22 2005 454109AB
+drwxrwxrwx   1 root  root    0 Nov 22 2005 584113CF
+drwxrwxrwx   1 root  root    0 Nov 22 2005 58410A30
+drwxrwxrwx   1 root  root    0 Nov 22 2005 58411212
+drwxrwxrwx   1 root  root    0 Nov 22 2005 584112A5
+drwxrwxrwx   1 root  root    0 Nov 22 2005 4B4D07F6
+drwxrwxrwx   1 root  root    0 Nov 22 2005 565707D6
+drwxrwxrwx   1 root  root    0 Nov 22 2005 555308C2
+
+[CD] Enqueued 3: 00:00:00.1449500
+Ftp.dll: 17 17:54:35 C: MDTM .
+Ftp.dll: 17 17:54:35 S: 550 "Hdd1:\Content\0000000000000000\.": File not found.
+Ftp.dll: 17 17:54:35 C: PWD
+Ftp.dll: 17 17:54:35 S: 257 "/Hdd1/Content/0000000000000000"
+Ftp.dll: 17 17:54:35 C: CWD /Hdd1/Content/0000000000000000/425307e3/00007000
+Ftp.dll: 17 17:54:35 S: 250 OK
+Ftp.dll: 17 17:54:35 C: CWD /Hdd1/Content/0000000000000000
+Ftp.dll: 17 17:54:35 S: 250 OK
+Ftp.dll: 17 17:54:35 C: CWD /Hdd1/Content/0000000000000000/425307e3/00007000
+Ftp.dll: 17 17:54:35 S: 250 OK
+Ftp.dll: 17 17:54:35 Binding to: 192.168.1.102:0
+Ftp.dll: 17 17:54:35 Bound to: 192.168.1.102:0
+Ftp.dll: 17 17:54:35 C: PORT 192,168,1,102,66,226
+Ftp.dll: 17 17:54:35 S: 200 PORT command successful
+Ftp.dll: 17 17:54:35 C: LIST
+Ftp.dll: 17 17:54:35 S: 150 Opening connection
+Ftp.dll: 17 17:54:35 Data connection established.
+Ftp.dll: 17 17:54:35 S: 226 Transfer Complete
+Ftp.dll: 17 17:54:35 S:
+..
+drwxrwxrwx   1 root  root    0 Nov 29 2012 27CBD8116E8483CCBBF5.data
+-rwxrwxrwx   1 root  root    45056 Nov 29 17:42 27CBD8116E8483CCBBF5
+
+Ftp.dll: 17 17:54:35 C: CWD /Hdd1/Content/0000000000000000/425307e3/00007000/
+Ftp.dll: 17 17:54:35 S: 250 OK
+Ftp.dll: 17 17:54:35 C: TYPE I
+Ftp.dll: 17 17:54:35 S: 200 Type set to I
+Ftp.dll: 17 17:54:35 Binding to: 192.168.1.102:0
+Ftp.dll: 17 17:54:35 Bound to: 192.168.1.102:0
+Ftp.dll: 17 17:54:35 C: PORT 192,168,1,102,66,227
+Ftp.dll: 17 17:54:35 S: 200 PORT command successful
+Ftp.dll: 17 17:54:35 C: RETR 27CBD8116E8483CCBBF5
+Ftp.dll: 17 17:54:35 S: 150 Opening BINARY mode data connection
+Ftp.dll: 17 17:54:35 Data connection established.
+Ftp.dll: 17 17:54:35 S: 226 Transfer Complete
+Ftp.dll: 17 17:54:35 Control connection uses port: 17124 (66,228)
+Ftp.dll: 17 17:54:35 S: 220 F3 FTPD ready
+Ftp.dll: 17 17:54:35 C: USER xbox
+Ftp.dll: 17 17:54:35 S: 331 User name okay, need password.
+Ftp.dll: 17 17:54:35 C: PASS xbox
+Ftp.dll: 17 17:54:35 S: 230 User logged in, proceed.
+Ftp.dll: 17 17:54:35 C: FEAT
+Ftp.dll: 17 17:54:35 S: 211-Extensions supported:
+Ftp.dll: 17 17:54:35 S:  XCRC filename
+Ftp.dll: 17 17:54:35 S:  SIZE
+Ftp.dll: 17 17:54:35 S:  REST STREAM
+Ftp.dll: 17 17:54:35 S:  MDTM
+Ftp.dll: 17 17:54:35 S:  MFMT
+Ftp.dll: 17 17:54:35 S:  TVFS
+Ftp.dll: 17 17:54:35 S: 211 END
+Ftp.dll: 17 17:54:35 C: APPE
+Ftp.dll: 17 17:54:35 S: 500 command not recognized
+A first chance exception of type 'Limilabs.FTP.Client.FtpException' occurred in Ftp.dll
+STFS package parse: 0 sec
+Ftp.dll: 12 17:54:35 C: MDTM .
+Ftp.dll: 12 17:54:35 S: 550 "\.": File not found.
+Ftp.dll: 12 17:54:35 C: PWD
+Ftp.dll: 12 17:54:35 S: 257 "/"
+Ftp.dll: 12 17:54:35 C: CWD /Hdd1/Content/0000000000000000/5345083F/00007000
+Ftp.dll: 12 17:54:35 S: 250 OK
+Ftp.dll: 12 17:54:35 C: CWD /
+Ftp.dll: 12 17:54:35 S: 250 OK
+Ftp.dll: 12 17:54:35 C: CWD /Hdd1/Content/0000000000000000/5345083F/00007000
+Ftp.dll: 12 17:54:35 S: 250 OK
+Ftp.dll: 12 17:54:35 C: TYPE A
+Ftp.dll: 12 17:54:35 S: 200 Type set to I
+Ftp.dll: 12 17:54:35 Binding to: 192.168.1.102:0
+Ftp.dll: 12 17:54:35 Bound to: 192.168.1.102:0
+Ftp.dll: 12 17:54:35 C: PORT 192,168,1,102,66,229
+Ftp.dll: 12 17:54:35 S: 200 PORT command successful
+Ftp.dll: 12 17:54:35 C: LIST
+Ftp.dll: 12 17:54:35 S: 150 Opening connection
+Ftp.dll: 12 17:54:35 Data connection established.
+Ftp.dll: 12 17:54:35 S: 226 Transfer Complete
+Ftp.dll: 12 17:54:35 S:
+..
+drwxrwxrwx   1 root  root    0 Nov 22 2005 D1DA159E1BBF631194D9.data
+-rwxrwxrwx   1 root  root    45056 Nov 22 12:01 D1DA159E1BBF631194D9
+
+Ftp.dll: 12 17:54:35 C: CWD /Hdd1/Content/0000000000000000/5345083F/00007000/
+Ftp.dll: 12 17:54:35 S: 250 OK
+Ftp.dll: 12 17:54:35 C: TYPE I
+Ftp.dll: 12 17:54:35 S: 200 Type set to I
+Ftp.dll: 12 17:54:35 Binding to: 192.168.1.102:0
+Ftp.dll: 12 17:54:35 Bound to: 192.168.1.102:0
+Ftp.dll: 12 17:54:35 C: PORT 192,168,1,102,66,230
+Ftp.dll: 12 17:54:35 S: 200 PORT command successful
+Ftp.dll: 12 17:54:35 C: RETR D1DA159E1BBF631194D9
+Ftp.dll: 12 17:54:35 S: 150 Opening BINARY mode data connection
+Ftp.dll: 12 17:54:35 Data connection established.
+Ftp.dll: 12 17:54:35 S: 226 Transfer Complete
+Ftp.dll: 12 17:54:35 Control connection uses port: 17127 (66,231)
+Ftp.dll: 12 17:54:35 S: 220 F3 FTPD ready
+Ftp.dll: 12 17:54:35 C: USER xbox
+Ftp.dll: 12 17:54:35 S: 331 User name okay, need password.
+Ftp.dll: 12 17:54:35 C: PASS xbox
+Ftp.dll: 12 17:54:35 S: 230 User logged in, proceed.
+Ftp.dll: 12 17:54:35 C: FEAT
+Ftp.dll: 12 17:54:35 S: 211-Extensions supported:
+Ftp.dll: 12 17:54:35 S:  XCRC filename
+Ftp.dll: 12 17:54:35 S:  SIZE
+Ftp.dll: 12 17:54:35 S:  REST STREAM
+Ftp.dll: 12 17:54:35 S:  MDTM
+Ftp.dll: 12 17:54:35 S:  MFMT
+Ftp.dll: 12 17:54:35 S:  TVFS
+Ftp.dll: 12 17:54:35 S: 211 END
+Ftp.dll: 12 17:54:35 C: APPE
+Ftp.dll: 12 17:54:35 S: 500 command not recognized
+A first chance exception of type 'Limilabs.FTP.Client.FtpException' occurred in Ftp.dll
+STFS package parse: 0 sec
+Ftp.dll: 17 17:54:35 C: MDTM .
+Ftp.dll: 17 17:54:35 S: 550 "\.": File not found.
+Ftp.dll: 17 17:54:35 C: PWD
+Ftp.dll: 17 17:54:35 S: 257 "/"
+Ftp.dll: 17 17:54:35 C: CWD /Hdd1/Content/0000000000000000/4B4E8854/00007000
+Ftp.dll: 17 17:54:35 S: 550 "Hdd1:\Content\0000000000000000\4B4E8854\00007000": Path not found.
+Ftp.dll: 17 17:54:35 C: CWD /
+Ftp.dll: 17 17:54:35 S: 250 OK
+'Neurotoxin.Godspeed.Shell.vshost.exe' (Managed (v4.0.30319)): Loaded 'C:\merc\svn\contour\Neurotoxin.Godspeed\Neurotoxin.Godspeed.Shell\bin\Debug\U2UConsult.RichHtmlTextBlock.dll', Symbols loaded.
+The thread '<No Name>' (0x7d8) has exited with code 0 (0x0).
+[CD] Enqueued 0: 00:00:00.1083545
+[CD] Enqueued 0: 00:00:00.0209832
+[CD] Enqueued 0: 00:00:00.1716054
+[CD] Enqueued 1: 00:00:00.0045019
+STFS package parse: 0 sec
+The thread '<No Name>' (0x14ac) has exited with code 0 (0x0).
+The thread '<No Name>' (0xa7c) has exited with code 0 (0x0).
+The thread '<No Name>' (0x19ec) has exited with code 0 (0x0).
+    !    
+/ #
+sed -e '/Volume_1/,/path/!d' /etc/samba/smb.conf
+[ Volume_1 ]
+comment = 
+path = /mnt/HD/HD_a2
+/ #
+lftp
+lftp :~>
+open -p 21 192.168.1.111
+lftp 192.168.1.111:~>
+user xbox xbox
+lftp xbox@192.168.1.111:~>
+Ftp.dll: 18 17:55:55 C: PWD
+Ftp.dll: 18 17:55:55 S: 257 "/"
+Ftp.dll: 18 17:55:55 C: CWD /Hdd1/Content/0000000000000000/53510803/
+Ftp.dll: 18 17:55:55 S: 550 "Hdd1:\Content\0000000000000000\53510803": Path not found.
+Ftp.dll: 18 17:55:55 C: CWD /
+Ftp.dll: 18 17:55:55 S: 250 OK
+Ftp.dll: 18 17:55:55 C: MKD /Hdd1/Content/0000000000000000/53510803/
+Ftp.dll: 18 17:55:59 S: 257 Directory created
+Ftp.dll: 18 17:55:59 C: PWD
+Ftp.dll: 18 17:55:59 S: 257 "/"
+Ftp.dll: 18 17:55:59 C: CWD /Hdd1/Content/0000000000000000/53510803/00007000/
+Ftp.dll: 18 17:55:59 S: 550 "Hdd1:\Content\0000000000000000\53510803\00007000": Path not found.
+Ftp.dll: 18 17:55:59 C: CWD /
+Ftp.dll: 18 17:55:59 S: 250 OK
+Ftp.dll: 18 17:55:59 C: MKD /Hdd1/Content/0000000000000000/53510803/00007000/
+Ftp.dll: 18 17:55:59 S: 257 Directory created
+Ftp.dll: 16 17:55:59 C: PWD
+Ftp.dll: 16 17:55:59 S: 257 "/"
+Ftp.dll: 16 17:55:59 C: CWD /Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data/
+Ftp.dll: 16 17:55:59 S: 550 "Hdd1:\Content\0000000000000000\53510803\00007000\E4ED76630F68C1B47F84.data": Path not found.
+Ftp.dll: 16 17:55:59 C: CWD /
+Ftp.dll: 16 17:55:59 S: 250 OK
+Ftp.dll: 16 17:55:59 C: MKD /Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data/
+Ftp.dll: 16 17:55:59 S: 257 Directory created
+Ftp.dll: 16 17:55:59 C: CWD /Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data/
+Ftp.dll: 16 17:55:59 S: 250 OK
+Ftp.dll: 16 17:55:59 C: TYPE A
+Ftp.dll: 16 17:55:59 S: 200 Type set to I
+Ftp.dll: 16 17:55:59 Binding to: 192.168.1.102:0
+Ftp.dll: 16 17:55:59 Bound to: 192.168.1.102:0
+Ftp.dll: 16 17:55:59 C: PORT 192,168,1,102,67,6
+Ftp.dll: 16 17:55:59 S: 200 PORT command successful
+Ftp.dll: 16 17:55:59 C: LIST
+Ftp.dll: 16 17:55:59 S: 150 Opening connection
+Ftp.dll: 16 17:55:59 Data connection established.
+Ftp.dll: 16 17:55:59 S: 226 Transfer Complete
+Ftp.dll: 16 17:55:59 S:
+..
+
+cd /Hdd1/Content/0000000000000000/53510803/00007000/E 
+4ED76630F68C1B47F84.data/
+cd `.../E4ED76630F68C1B47F84.data/' [Waiting for response...]
+                                                               
+cd ok, cwd=/Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+p
+ut -c /mnt/HD/HD_a2/P2P/transmission/[XBOX360]\ Thief/53510 
+803/00007000/E4ED76630F68C1B47F84.data/Data0011 -o Data0011
+`...Data0011' at 0 (0%)
+`...Data0011' at 3932160 (2%) [Sending data]
+`...Data0011' at 8604768 (5%) 4.12M/s eta:37s [Sending data]
+`...Data0011' at 12887208 (7%) 4.51M/s eta:33s [Sending data]
+`...Data0011' at 17942520 (10%) 4.79M/s eta:30s [Sending data]
+`...Data0011' at 23627124 (13%) 5.09M/s eta:27s [Sending data]
+`...Data0011' at 24887492 (14%) 4.40M/s eta:32s [Sending data]
+`...Data0011' at 29490288 (17%) 4.63M/s eta:29s [Sending data]
+`...Data0011' at 35139572 (20%) 4.84M/s eta:27s [Sending data]
+`...Data0011' at 41168920 (24%) 5.04M/s eta:24s [Sending data]
+`...Data0011' at 48060268 (28%) 5.30M/s eta:22s [Sending data]
+`...Data0011' at 52469444 (30%) 5.33M/s eta:21s [Sending data]
+`...Data0011' at 58094792 (34%) 5.40M/s eta:20s [Sending data]
+`...Data0011' at 63318548 (37%) 5.43M/s eta:19s [Sending data]
+`...Data0011' at 68509472 (40%) 5.49M/s eta:18s [Sending data]
+`...Data0011' at 73564148 (43%) 5.54M/s eta:17s [Sending data]
+`...Data0011' at 78678348 (46%) 5.57M/s eta:16s [Sending data]
+`...Data0011' at 83857612 (49%) 5.60M/s eta:15s [Sending data]
+`...Data0011' at 89604956 (52%) 5.60M/s eta:14s [Sending data]
+`...Data0011' at 94108040 (55%) 5.57M/s eta:13s [Sending data]
+`...Data0011' at 98511492 (57%) 5.59M/s eta:12s [Sending data]
+`...Data0011' at 104841952 (61%) 5.66M/s eta:11s [Sending data]
+`...Data0011' at 110843852 (65%) 5.73M/s eta:10s [Sending data]
+`...Data0011' at 116045460 (68%) 5.76M/s eta:9s [Sending data]
+`...Data0011' at 122399600 (71%) 5.84M/s eta:8s [Sending data]
+`...Data0011' at 128354488 (75%) 5.91M/s eta:7s [Sending data]
+`...Data0011' at 133627296 (78%) 5.93M/s eta:6s [Sending data]
+`...Data0011' at 140379100 (82%) 6.03M/s eta:5s [Sending data]
+`...Data0011' at 146844888 (86%) 6.12M/s eta:4s [Sending data]
+`...Data0011' at 153117668 (89%) 6.20M/s eta:3s [Sending data]
+`...Data0011' at 158512216 (92%) 6.20M/s eta:2s [Sending data]
+`...Data0011' at 164113644 (96%) 6.19M/s eta:1s [Sending data]
+`...Data0011' at 170459136 (100%) 6.23M/s eta:0s [Waiting for transfer to compl
+170459136 bytes transferred in 26 seconds (6.14M/s)
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+Ftp.dll: 18 17:56:26 C: CWD /Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data/
+Ftp.dll: 18 17:56:26 S: 250 OK
+Ftp.dll: 18 17:56:26 Binding to: 192.168.1.102:0
+Ftp.dll: 18 17:56:26 Bound to: 192.168.1.102:0
+Ftp.dll: 18 17:56:26 C: PORT 192,168,1,102,67,15
+Ftp.dll: 18 17:56:26 S: 200 PORT command successful
+Ftp.dll: 18 17:56:26 C: LIST
+Ftp.dll: 18 17:56:26 S: 150 Opening connection
+Ftp.dll: 18 17:56:26 Data connection established.
+Ftp.dll: 18 17:56:26 S: 226 Transfer Complete
+Ftp.dll: 18 17:56:26 S:
+..
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0011
+
+cd /Hdd1/Content/0000000000000000/53510803/0000
+7000/E4ED7663 
+0F68C1B47F84.data/
+cd ok, cwd=/Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+put -c
+/mnt/HD/HD_a2/P2P/transmission/[XBOX360]\ Thief/53510 
+803/00007000/E4ED76630F68C1B47F84.data/Data0031 -o Data0031
+`...Data0031' at 0 (0%)
+`...Data0031' at 5748156 (9%) [Sending data]
+`...Data0031' at 12341108 (19%) 5.73M/s eta:8s [Sending data]
+`...Data0031' at 17533076 (27%) 5.90M/s eta:7s [Sending data]
+`...Data0031' at 22501584 (35%) 5.85M/s eta:7s [Sending data]
+`...Data0031' at 27399816 (43%) 5.92M/s eta:6s [Sending data]
+`...Data0031' at 33837500 (53%) 6.12M/s eta:5s [Sending data]
+`...Data0031' at 40970072 (65%) 6.42M/s eta:3s [Sending data]
+`...Data0031' at 45230264 (71%) 6.30M/s eta:3s [Sending data]
+`...Data0031' at 50328988 (80%) 6.19M/s eta:2s [Sending data]
+`...Data0031' at 56203620 (89%) 6.27M/s eta:1s [Sending data]
+`...Data0031' at 61464000 (97%) 6.30M/s eta:0s [Sending data]
+62849024 bytes transferred in 9 seconds (6.57M/s)
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+Ftp.dll: 18 17:56:36 C: CWD /Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data/
+Ftp.dll: 18 17:56:36 S: 250 OK
+Ftp.dll: 18 17:56:36 Binding to: 192.168.1.102:0
+Ftp.dll: 18 17:56:36 Bound to: 192.168.1.102:0
+Ftp.dll: 18 17:56:36 C: PORT 192,168,1,102,67,20
+Ftp.dll: 18 17:56:36 S: 200 PORT command successful
+Ftp.dll: 18 17:56:36 C: LIST
+Ftp.dll: 18 17:56:36 S: 150 Opening connection
+Ftp.dll: 18 17:56:36 Data connection established.
+Ftp.dll: 18 17:56:36 S: 226 Transfer Complete
+Ftp.dll: 18 17:56:36 S:
+..
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0011
+-rwxrwxrwx   1 root  root    62849024 Feb 20 10:43 Data0031
+
+cd /Hdd1/Content/0000000000000000/53
+510803/00007000/E4ED7663 
+0F68C1B47F84.data/
+cd ok, cwd=/Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+put -c /m
+nt/HD/HD_a2/P2P/transmission/[XBOX360]\ Thief/53510 
+803/00007000/E4ED76630F68C1B47F84.data/Data0013 -o Data0013
+`...Data0013' at 0 (0%)
+`...Data0013' at 3608464 (2%) [Sending data]
+`...Data0013' at 9537620 (5%) 4.74M/s eta:32s [Sending data]
+`...Data0013' at 13499260 (7%) 4.69M/s eta:32s [Sending data]
+`...Data0013' at 19959388 (11%) 5.41M/s eta:27s [Sending data]
+`...Data0013' at 25768880 (15%) 5.72M/s eta:24s [Sending data]
+`...Data0013' at 31126812 (18%) 5.82M/s eta:23s [Sending data]
+`...Data0013' at 37540532 (22%) 6.00M/s eta:21s [Sending data]
+`...Data0013' at 42860148 (25%) 6.03M/s eta:20s [Sending data]
+`...Data0013' at 46950272 (27%) 5.88M/s eta:20s [Sending data]
+`...Data0013' at 54234932 (31%) 6.12M/s eta:18s [Sending data]
+`...Data0013' at 61293716 (35%) 6.20M/s eta:17s [Sending data]
+The thread '<No Name>' (0x1f8c) has exited with code 0 (0x0).
+`...Data0013' at 66000508 (38%) 6.15M/s eta:16s [Sending data]
+`...Data0013' at 71496748 (41%) 6.07M/s eta:16s [Sending data]
+`...Data0013' at 76488704 (44%) 6.06M/s eta:15s [Sending data]
+`...Data0013' at 82687296 (48%) 6.14M/s eta:14s [Sending data]
+`...Data0013' at 88634924 (51%) 6.16M/s eta:13s [Sending data]
+`...Data0013' at 93012116 (54%) 6.10M/s eta:12s [Sending data]
+`...Data0013' at 99275260 (58%) 6.18M/s eta:11s [Sending data]
+`...Data0013' at 105034296 (61%) 6.18M/s eta:10s [Sending data]
+`...Data0013' at 111971984 (65%) 6.30M/s eta:9s [Sending data]
+`...Data0013' at 117502280 (68%) 6.28M/s eta:8s [Sending data]
+`...Data0013' at 122759076 (72%) 6.28M/s eta:7s [Sending data]
+`...Data0013' at 128576244 (75%) 6.31M/s eta:6s [Sending data]
+`...Data0013' at 134546588 (78%) 6.35M/s eta:5s [Sending data]
+`...Data0013' at 140402684 (82%) 6.39M/s eta:5s [Sending data]
+`...Data0013' at 144636704 (84%) 6.28M/s eta:4s [Sending data]
+`...Data0013' at 150469368 (88%) 6.31M/s eta:3s [Sending data]
+`...Data0013' at 156666812 (91%) 6.36M/s eta:2s [Sending data]
+`...Data0013' at 163901280 (96%) 6.48M/s eta:1s [Sending data]
+`...Data0013' at 169657440 (99%) 6.50M/s eta:0s [Sending data]
+170459136 bytes transferred in 25 seconds (6.47M/s)
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+Ftp.dll: 12 17:57:02 C: CWD /Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data/
+Ftp.dll: 12 17:57:02 S: 250 OK
+Ftp.dll: 12 17:57:02 Binding to: 192.168.1.102:0
+Ftp.dll: 12 17:57:02 Bound to: 192.168.1.102:0
+Ftp.dll: 12 17:57:02 C: PORT 192,168,1,102,67,27
+Ftp.dll: 12 17:57:02 S: 200 PORT command successful
+Ftp.dll: 12 17:57:02 C: LIST
+Ftp.dll: 12 17:57:02 S: 150 Opening connection
+Ftp.dll: 12 17:57:02 Data connection established.
+Ftp.dll: 12 17:57:02 S: 226 Transfer Complete
+Ftp.dll: 12 17:57:02 S:
+..
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0011
+-rwxrwxrwx   1 root  root    62849024 Feb 20 10:43 Data0031
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0013
+
+cd /Hdd1/C
+ontent/0000000000000000/53510803/00007000/E4ED7663 
+0F68C1B47F84.data/
+cd ok, cwd=/Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+put -c /mnt/HD/HD_a2/P2P/transmission/[X
+BOX360]\ Thief/53510 
+803/00007000/E4ED76630F68C1B47F84.data/Data0001 -o Data0001
+`...Data0001' at 0 (0%)
+`...Data0001' at 5119364 (3%) [Sending data]
+`...Data0001' at 12436596 (7%) 6.05M/s eta:25s [Sending data]
+`...Data0001' at 18008328 (10%) 5.99M/s eta:24s [Sending data]
+`...Data0001' at 23992188 (14%) 6.38M/s eta:22s [Sending data]
+`...Data0001' at 30304324 (17%) 6.47M/s eta:21s [Sending data]
+`...Data0001' at 35760388 (20%) 6.55M/s eta:20s [Sending data]
+`...Data0001' at 42825260 (25%) 6.72M/s eta:18s [Sending data]
+`...Data0001' at 47856788 (28%) 6.63M/s eta:18s [Sending data]
+`...Data0001' at 53359304 (31%) 6.63M/s eta:17s [Sending data]
+`...Data0001' at 59346452 (34%) 6.68M/s eta:16s [Sending data]
+`...Data0001' at 65189408 (38%) 6.75M/s eta:15s [Sending data]
+`...Data0001' at 71591776 (41%) 6.77M/s eta:14s [Sending data]
+`...Data0001' at 75494684 (44%) 6.57M/s eta:14s [Sending data]
+`...Data0001' at 81884188 (48%) 6.61M/s eta:13s [Sending data]
+The thread '<No Name>' (0x1534) has exited with code 0 (0x0).
+`...Data0001' at 87345472 (51%) 6.59M/s eta:12s [Sending data]
+`...Data0001' at 91907240 (53%) 6.52M/s eta:11s [Sending data]
+`...Data0001' at 98192408 (57%) 6.54M/s eta:11s [Sending data]
+The thread '<No Name>' (0x1670) has exited with code 0 (0x0).
+`...Data0001' at 103439268 (60%) 6.52M/s eta:10s [Sending data]
+`...Data0001' at 108303644 (63%) 6.48M/s eta:9s [Sending data]
+`...Data0001' at 114187076 (66%) 6.51M/s eta:8s [Sending data]
+`...Data0001' at 118870476 (69%) 6.46M/s eta:8s [Sending data]
+`...Data0001' at 125099068 (73%) 6.48M/s eta:7s [Sending data]
+`...Data0001' at 131712968 (77%) 6.53M/s eta:6s [Sending data]
+`...Data0001' at 138068304 (80%) 6.57M/s eta:5s [Sending data]
+`...Data0001' at 143929756 (84%) 6.60M/s eta:4s [Sending data]
+`...Data0001' at 148809544 (87%) 6.56M/s eta:3s [Sending data]
+`...Data0001' at 154045580 (90%) 6.54M/s eta:2s [Sending data]
+`...Data0001' at 160900016 (94%) 6.62M/s eta:1s [Sending data]
+`...Data0001' at 167141664 (98%) 6.65M/s eta:0s [Sending data]
+170459136 bytes transferred in 24 seconds (6.72M/s)
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+Ftp.dll:  3 17:57:27 C: CWD /Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data/
+Ftp.dll:  3 17:57:27 S: 250 OK
+Ftp.dll:  3 17:57:27 Binding to: 192.168.1.102:0
+Ftp.dll:  3 17:57:27 Bound to: 192.168.1.102:0
+Ftp.dll:  3 17:57:27 C: PORT 192,168,1,102,67,37
+Ftp.dll:  3 17:57:27 S: 200 PORT command successful
+Ftp.dll:  3 17:57:27 C: LIST
+Ftp.dll:  3 17:57:27 S: 150 Opening connection
+Ftp.dll:  3 17:57:27 Data connection established.
+Ftp.dll:  3 17:57:27 S: 226 Transfer Complete
+Ftp.dll:  3 17:57:27 S:
+..
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0011
+-rwxrwxrwx   1 root  root    62849024 Feb 20 10:43 Data0031
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0013
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0001
+
+cd /Hdd1/Content/0000000000000000/53510
+803/00007000/E4ED7663 
+0F68C1B47F84.data/
+cd ok, cwd=/Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+put -c /mnt
+/HD/HD_a2/P2P/transmission/[XBOX360]\ Thief/53510 
+803/00007000/E4ED76630F68C1B47F84.data/Data0025 -o Data0025
+`...Data0025' at 0 (0%)
+`...Data0025' at 5527132 (3%) [Sending data]
+`...Data0025' at 11363648 (6%) 5.17M/s eta:29s [Sending data]
+`...Data0025' at 17929496 (10%) 6.08M/s eta:24s [Sending data]
+`...Data0025' at 25709100 (15%) 6.79M/s eta:20s [Sending data]
+`...Data0025' at 32970420 (19%) 7.14M/s eta:18s [Sending data]
+`...Data0025' at 39320536 (23%) 7.10M/s eta:18s [Sending data]
+`...Data0025' at 44412928 (26%) 6.95M/s eta:17s [Sending data]
+`...Data0025' at 50894444 (29%) 7.04M/s eta:16s [Sending data]
+`...Data0025' at 59219056 (34%) 7.35M/s eta:14s [Sending data]
+`...Data0025' at 65663672 (38%) 7.39M/s eta:14s [Sending data]
+`...Data0025' at 72610572 (42%) 7.48M/s eta:12s [Sending data]
+`...Data0025' at 79979840 (46%) 7.52M/s eta:11s [Sending data]
+`...Data0025' at 86988612 (51%) 7.58M/s eta:11s [Sending data]
+`...Data0025' at 89431192 (52%) 7.26M/s eta:11s [Sending data]
+`...Data0025' at 95405460 (55%) 7.28M/s eta:10s [Sending data]
+`...Data0025' at 101839988 (59%) 7.25M/s eta:9s [Sending data]
+`...Data0025' at 109215128 (64%) 7.33M/s eta:8s [Sending data]
+`...Data0025' at 114985192 (67%) 7.29M/s eta:7s [Sending data]
+`...Data0025' at 120026740 (70%) 7.22M/s eta:7s [Sending data]
+`...Data0025' at 125395856 (73%) 7.20M/s eta:6s [Sending data]
+`...Data0025' at 132139776 (77%) 7.20M/s eta:5s [Sending data]
+`...Data0025' at 140140744 (82%) 7.32M/s eta:4s [Sending data]
+`...Data0025' at 146632496 (86%) 7.30M/s eta:3s [Sending data]
+`...Data0025' at 151154748 (88%) 7.19M/s eta:3s [Sending data]
+`...Data0025' at 159017960 (93%) 7.30M/s eta:1s [Sending data]
+`...Data0025' at 164474748 (96%) 7.25M/s eta:1s [Sending data]
+170459136 bytes transferred in 22 seconds (7.37M/s)
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+Ftp.dll: 12 17:57:50 C: CWD /Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data/
+Ftp.dll: 12 17:57:50 S: 250 OK
+Ftp.dll: 12 17:57:50 Binding to: 192.168.1.102:0
+Ftp.dll: 12 17:57:50 Bound to: 192.168.1.102:0
+Ftp.dll: 12 17:57:50 C: PORT 192,168,1,102,67,44
+Ftp.dll: 12 17:57:50 S: 200 PORT command successful
+Ftp.dll: 12 17:57:50 C: LIST
+Ftp.dll: 12 17:57:50 S: 150 Opening connection
+Ftp.dll: 12 17:57:50 Data connection established.
+Ftp.dll: 12 17:57:50 S: 226 Transfer Complete
+Ftp.dll: 12 17:57:50 S:
+..
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0011
+-rwxrwxrwx   1 root  root    62849024 Feb 20 10:43 Data0031
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0013
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0001
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0025
+
+cd /Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663 
+0F68C1
+B47F84.data/
+cd ok, cwd=/Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+put -c /mnt/HD/HD_a2/P
+2P/transmission/[XBOX360]\ Thief/53510 
+803/00007000/E4ED76630F68C1B47F84.data/Data0004 -o Data0004
+`...Data0004' at 0 (0%)
+`...Data0004' at 5197884 (3%) [Sending data]
+`...Data0004' at 10999180 (6%) 5.22M/s eta:29s [Sending data]
+`...Data0004' at 17167604 (10%) 5.82M/s eta:25s [Sending data]
+`...Data0004' at 23506836 (13%) 6.09M/s eta:23s [Sending data]
+`...Data0004' at 29108368 (17%) 6.19M/s eta:22s [Sending data]
+`...Data0004' at 36222724 (21%) 6.57M/s eta:19s [Sending data]
+`...Data0004' at 43183928 (25%) 6.81M/s eta:18s [Sending data]
+`...Data0004' at 48785364 (28%) 6.83M/s eta:17s [Sending data]
+`...Data0004' at 54836768 (32%) 6.81M/s eta:16s [Sending data]
+`...Data0004' at 61445816 (36%) 6.91M/s eta:15s [Sending data]
+`...Data0004' at 67504560 (39%) 6.98M/s eta:14s [Sending data]
+`...Data0004' at 73306572 (43%) 6.97M/s eta:13s [Sending data]
+`...Data0004' at 79366580 (46%) 6.92M/s eta:13s [Sending data]
+`...Data0004' at 84962332 (49%) 6.89M/s eta:12s [Sending data]
+`...Data0004' at 91130728 (53%) 6.93M/s eta:11s [Sending data]
+`...Data0004' at 96997864 (56%) 6.93M/s eta:10s [Sending data]
+`...Data0004' at 102548900 (60%) 6.91M/s eta:9s [Sending data]
+`...Data0004' at 107955696 (63%) 6.88M/s eta:9s [Sending data]
+`...Data0004' at 115183220 (67%) 6.97M/s eta:8s [Sending data]
+`...Data0004' at 120101416 (70%) 6.91M/s eta:7s [Sending data]
+`...Data0004' at 126199452 (74%) 6.89M/s eta:6s [Sending data]
+`...Data0004' at 133281116 (78%) 6.97M/s eta:5s [Sending data]
+`...Data0004' at 140910772 (82%) 7.08M/s eta:4s [Sending data]
+`...Data0004' at 147470856 (86%) 7.14M/s eta:3s [Sending data]
+`...Data0004' at 153376696 (89%) 7.11M/s eta:2s [Sending data]
+`...Data0004' at 159089496 (93%) 6.90M/s eta:2s [Sending data]
+`...Data0004' at 165341976 (96%) 6.93M/s eta:1s [Sending data]
+170459136 bytes transferred in 23 seconds (7.09M/s)
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+Ftp.dll: 12 17:58:14 C: CWD /Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data/
+Ftp.dll: 12 17:58:14 S: 250 OK
+Ftp.dll: 12 17:58:14 Binding to: 192.168.1.102:0
+Ftp.dll: 12 17:58:14 Bound to: 192.168.1.102:0
+Ftp.dll: 12 17:58:14 C: PORT 192,168,1,102,67,52
+Ftp.dll: 12 17:58:14 S: 200 PORT command successful
+Ftp.dll: 12 17:58:14 C: LIST
+Ftp.dll: 12 17:58:14 S: 150 Opening connection
+Ftp.dll: 12 17:58:14 Data connection established.
+Ftp.dll: 12 17:58:14 S: 226 Transfer Complete
+Ftp.dll: 12 17:58:14 S:
+..
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0011
+-rwxrwxrwx   1 root  root    62849024 Feb 20 10:43 Data0031
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0013
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0001
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0025
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0004
+
+cd /Hdd1/Content/0000000000000000/53510803/00007000/E4ED7
+663 
+0F68C1B47F84.data/
+cd ok, cwd=/Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+put -c /mnt/HD/HD_a2/P2P/transmission/[XBOX360]\ Th
+ief/53510 
+803/00007000/E4ED76630F68C1B47F84.data/Data0008 -o Data0008
+`...Data0008' at 0 (0%)
+`...Data0008' at 3974924 (2%) [Sending data]
+The thread '<No Name>' (0x1af0) has exited with code 0 (0x0).
+`...Data0008' at 9623400 (5%) 4.11M/s eta:37s [Sending data]
+`...Data0008' at 16475224 (9%) 5.38M/s eta:27s [Sending data]
+`...Data0008' at 22703832 (13%) 5.84M/s eta:24s [Sending data]
+`...Data0008' at 29355916 (17%) 6.26M/s eta:21s [Sending data]
+`...Data0008' at 35046896 (20%) 6.34M/s eta:20s [Sending data]
+`...Data0008' at 40282280 (23%) 6.32M/s eta:20s [Sending data]
+`...Data0008' at 45690452 (26%) 6.34M/s eta:19s [Sending data]
+`...Data0008' at 51741004 (30%) 6.43M/s eta:18s [Sending data]
+`...Data0008' at 58493156 (34%) 6.59M/s eta:16s [Sending data]
+`...Data0008' at 65082980 (38%) 6.68M/s eta:15s [Sending data]
+`...Data0008' at 70112580 (41%) 6.55M/s eta:15s [Sending data]
+`...Data0008' at 76170228 (44%) 6.60M/s eta:14s [Sending data]
+`...Data0008' at 82081160 (48%) 6.62M/s eta:13s [Sending data]
+`...Data0008' at 89439996 (52%) 6.70M/s eta:12s [Sending data]
+`...Data0008' at 96091760 (56%) 6.78M/s eta:10s [Sending data]
+`...Data0008' at 100675920 (59%) 6.70M/s eta:10s [Sending data]
+The thread '<No Name>' (0x1b08) has exited with code 0 (0x0).
+`...Data0008' at 106308832 (62%) 6.72M/s eta:9s [Sending data]
+`...Data0008' at 112450784 (65%) 6.73M/s eta:8s [Sending data]
+`...Data0008' at 118345756 (69%) 6.74M/s eta:7s [Sending data]
+`...Data0008' at 123903248 (72%) 6.71M/s eta:7s [Sending data]
+`...Data0008' at 129121432 (75%) 6.65M/s eta:6s [Sending data]
+`...Data0008' at 134606960 (78%) 6.67M/s eta:5s [Sending data]
+`...Data0008' at 140993544 (82%) 6.71M/s eta:4s [Sending data]
+`...Data0008' at 147724948 (86%) 6.74M/s eta:3s [Sending data]
+`...Data0008' at 154264004 (90%) 6.77M/s eta:2s [Sending data]
+`...Data0008' at 162150368 (95%) 6.90M/s eta:1s [Sending data]
+`...Data0008' at 168851768 (99%) 6.92M/s eta:0s [Sending data]
+170459136 bytes transferred in 23 seconds (6.98M/s)
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+Ftp.dll: 12 17:58:38 C: CWD /Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data/
+Ftp.dll: 12 17:58:38 S: 250 OK
+Ftp.dll: 12 17:58:38 Binding to: 192.168.1.102:0
+Ftp.dll: 12 17:58:38 Bound to: 192.168.1.102:0
+Ftp.dll: 12 17:58:38 C: PORT 192,168,1,102,67,62
+Ftp.dll: 12 17:58:38 S: 200 PORT command successful
+Ftp.dll: 12 17:58:38 C: LIST
+Ftp.dll: 12 17:58:38 S: 150 Opening connection
+Ftp.dll: 12 17:58:38 Data connection established.
+Ftp.dll: 12 17:58:38 S: 226 Transfer Complete
+Ftp.dll: 12 17:58:38 S:
+..
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0011
+-rwxrwxrwx   1 root  root    62849024 Feb 20 10:43 Data0031
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0013
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0001
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0025
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0004
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0008
+
+cd /Hdd1/Con
+tent/0000000000000000/53510803/00007000/E4ED7663 
+0F68C1B47F84.data/
+cd ok, cwd=/Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+put -c /mnt/HD/HD_a2/P2P/transmission/[XB
+OX360]\ Thief/53510 
+803/00007000/E4ED76630F68C1B47F84.data/Data0002 -o Data0002
+`...Data0002' at 0 (0%) [Making data connection...]
+`...Data0002' at 5677936 (3%) [Sending data]
+`...Data0002' at 11524416 (6%) 5.26M/s eta:29s [Sending data]
+`...Data0002' at 17258708 (10%) 5.65M/s eta:26s [Sending data]
+`...Data0002' at 24290120 (14%) 6.29M/s eta:22s [Sending data]
+`...Data0002' at 31352016 (18%) 6.75M/s eta:20s [Sending data]
+`...Data0002' at 38338140 (22%) 6.89M/s eta:18s [Sending data]
+`...Data0002' at 46241656 (27%) 7.14M/s eta:17s [Sending data]
+`...Data0002' at 52844460 (31%) 7.25M/s eta:15s [Sending data]
+`...Data0002' at 58058256 (34%) 7.08M/s eta:15s [Sending data]
+`...Data0002' at 63412028 (37%) 7.01M/s eta:15s [Sending data]
+`...Data0002' at 70260924 (41%) 7.12M/s eta:13s [Sending data]
+`...Data0002' at 74357392 (43%) 6.92M/s eta:13s [Sending data]
+`...Data0002' at 79967228 (46%) 6.89M/s eta:13s [Sending data]
+`...Data0002' at 85696960 (50%) 6.88M/s eta:12s [Sending data]
+`...Data0002' at 91592704 (53%) 6.83M/s eta:11s [Sending data]
+`...Data0002' at 95832696 (56%) 6.73M/s eta:11s [Sending data]
+`...Data0002' at 100038236 (58%) 6.62M/s eta:10s [Sending data]
+The thread '<No Name>' (0x410) has exited with code 0 (0x0).
+`...Data0002' at 106110516 (62%) 6.66M/s eta:9s [Sending data]
+`...Data0002' at 111811348 (65%) 6.70M/s eta:8s [Sending data]
+`...Data0002' at 119216476 (69%) 6.77M/s eta:7s [Sending data]
+`...Data0002' at 125925848 (73%) 6.86M/s eta:6s [Sending data]
+`...Data0002' at 132252952 (77%) 6.86M/s eta:5s [Sending data]
+`...Data0002' at 138178252 (81%) 6.86M/s eta:4s [Sending data]
+`...Data0002' at 144191144 (84%) 6.88M/s eta:4s [Sending data]
+`...Data0002' at 151902016 (89%) 6.99M/s eta:3s [Sending data]
+`...Data0002' at 157932528 (92%) 7.03M/s eta:2s [Sending data]
+`...Data0002' at 163794796 (96%) 6.99M/s eta:1s [Sending data]
+170459136 bytes transferred in 23 seconds (7.09M/s)
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+Ftp.dll:  3 17:59:02 C: CWD /Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data/
+Ftp.dll:  3 17:59:02 S: 250 OK
+Ftp.dll:  3 17:59:02 Binding to: 192.168.1.102:0
+Ftp.dll:  3 17:59:02 Bound to: 192.168.1.102:0
+Ftp.dll:  3 17:59:02 C: PORT 192,168,1,102,67,106
+Ftp.dll:  3 17:59:02 S: 200 PORT command successful
+Ftp.dll:  3 17:59:02 C: LIST
+Ftp.dll:  3 17:59:02 S: 150 Opening connection
+Ftp.dll:  3 17:59:02 Data connection established.
+Ftp.dll:  3 17:59:02 S: 226 Transfer Complete
+Ftp.dll:  3 17:59:02 S:
+..
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0011
+-rwxrwxrwx   1 root  root    62849024 Feb 20 10:43 Data0031
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0013
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0001
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0025
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0004
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0008
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:41 Data0002
+
+cd /Hdd1/Content/0000000000000000/53510803/00
+007000/E4ED7663 
+0F68C1B47F84.data/
+cd ok, cwd=/Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+put -c /mnt/HD/HD_a2/P2P/transmi
+ssion/[XBOX360]\ Thief/53510 
+803/00007000/E4ED76630F68C1B47F84.data/Data0022 -o Data0022
+`...Data0022' at 0 (0%) [Waiting for response...]
+`...Data0022' at 6872332 (4%) [Sending data]
+`...Data0022' at 13182192 (7%) 6.22M/s eta:24s [Sending data]
+`...Data0022' at 19393404 (11%) 6.41M/s eta:22s [Sending data]
+`...Data0022' at 25231456 (14%) 6.54M/s eta:21s [Sending data]
+`...Data0022' at 31524900 (18%) 6.73M/s eta:20s [Sending data]
+`...Data0022' at 37236996 (21%) 6.76M/s eta:19s [Sending data]
+`...Data0022' at 43055840 (25%) 6.77M/s eta:18s [Sending data]
+`...Data0022' at 50590004 (29%) 7.04M/s eta:16s [Sending data]
+`...Data0022' at 57281040 (33%) 7.18M/s eta:15s [Sending data]
+`...Data0022' at 62515284 (36%) 7.07M/s eta:15s [Sending data]
+`...Data0022' at 68795908 (40%) 7.04M/s eta:14s [Sending data]
+`...Data0022' at 74486332 (43%) 7.02M/s eta:13s [Sending data]
+`...Data0022' at 81679072 (47%) 7.17M/s eta:12s [Sending data]
+`...Data0022' at 83659328 (49%) 6.76M/s eta:12s [Sending data]
+`...Data0022' at 88685708 (52%) 6.72M/s eta:12s [Sending data]
+`...Data0022' at 95476268 (56%) 6.81M/s eta:11s [Sending data]
+`...Data0022' at 100946352 (59%) 6.75M/s eta:10s [Sending data]
+`...Data0022' at 106346656 (62%) 6.72M/s eta:9s [Sending data]
+`...Data0022' at 112259748 (65%) 6.74M/s eta:8s [Sending data]
+`...Data0022' at 116532224 (68%) 6.63M/s eta:8s [Sending data]
+`...Data0022' at 121856696 (71%) 6.63M/s eta:7s [Sending data]
+`...Data0022' at 128773544 (75%) 6.67M/s eta:6s [Sending data]
+`...Data0022' at 132636940 (77%) 6.56M/s eta:5s [Sending data]
+`...Data0022' at 138458200 (81%) 6.58M/s eta:5s [Sending data]
+`...Data0022' at 142703472 (83%) 6.47M/s eta:4s [Sending data]
+`...Data0022' at 147588208 (86%) 6.43M/s eta:3s [Sending data]
+`...Data0022' at 154552252 (90%) 6.53M/s eta:2s [Sending data]
+`...Data0022' at 159950728 (93%) 6.52M/s eta:2s [Sending data]
+`...Data0022' at 165958388 (97%) 6.56M/s eta:1s [Sending data]
+170459136 bytes transferred in 24 seconds (6.64M/s)
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+Ftp.dll: 12 17:59:28 C: CWD /Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data/
+Ftp.dll: 12 17:59:28 S: 250 OK
+Ftp.dll: 12 17:59:28 Binding to: 192.168.1.102:0
+Ftp.dll: 12 17:59:28 Bound to: 192.168.1.102:0
+Ftp.dll: 12 17:59:28 C: PORT 192,168,1,102,67,128
+Ftp.dll: 12 17:59:28 S: 200 PORT command successful
+Ftp.dll: 12 17:59:28 C: LIST
+Ftp.dll: 12 17:59:28 S: 150 Opening connection
+Ftp.dll: 12 17:59:28 Data connection established.
+Ftp.dll: 12 17:59:28 S: 226 Transfer Complete
+Ftp.dll: 12 17:59:28 S:
+..
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0011
+-rwxrwxrwx   1 root  root    62849024 Feb 20 10:43 Data0031
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0013
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0001
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0025
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0004
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0008
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:41 Data0002
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:39 Data0022
+
+cd /Hdd1/Content/0000000000000000/53510803/00
+007000/E4ED7663 
+0F68C1B47F84.data/
+cd ok, cwd=/Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+put -c /mnt/HD/HD_a2/P2P/transmission/[XBOX360]\ Thief/53510 
+803/0000
+7000/E4ED76630F68C1B47F84.data/Data0018 -o Data0018
+`...Data0018' at 0 (0%)
+`...Data0018' at 5188776 (3%) [Sending data]
+`...Data0018' at 10249964 (6%) 4.75M/s eta:32s [Sending data]
+`...Data0018' at 17541632 (10%) 5.91M/s eta:25s [Sending data]
+`...Data0018' at 24359904 (14%) 6.48M/s eta:22s [Sending data]
+`...Data0018' at 30402204 (17%) 6.63M/s eta:20s [Sending data]
+`...Data0018' at 34380608 (20%) 6.39M/s eta:20s [Sending data]
+`...Data0018' at 40713484 (23%) 6.46M/s eta:19s [Sending data]
+`...Data0018' at 46316276 (27%) 6.49M/s eta:18s [Sending data]
+`...Data0018' at 52322624 (30%) 6.57M/s eta:17s [Sending data]
+`...Data0018' at 58336580 (34%) 6.68M/s eta:16s [Sending data]
+`...Data0018' at 63254668 (37%) 6.47M/s eta:16s [Sending data]
+The thread '<No Name>' (0x204) has exited with code 0 (0x0).
+`...Data0018' at 68696912 (40%) 6.52M/s eta:15s [Sending data]
+`...Data0018' at 75036820 (44%) 6.54M/s eta:14s [Sending data]
+`...Data0018' at 82048768 (48%) 6.68M/s eta:13s [Sending data]
+`...Data0018' at 89214868 (52%) 6.79M/s eta:11s [Sending data]
+`...Data0018' at 93338360 (54%) 6.68M/s eta:11s [Sending data]
+`...Data0018' at 97562328 (57%) 6.54M/s eta:11s [Sending data]
+The thread '<No Name>' (0x1580) has exited with code 0 (0x0).
+`...Data0018' at 100960060 (59%) 6.44M/s eta:10s [Sending data]
+`...Data0018' at 106849492 (62%) 6.44M/s eta:9s [Sending data]
+`...Data0018' at 113119932 (66%) 6.47M/s eta:8s [Sending data]
+`...Data0018' at 117533776 (68%) 6.43M/s eta:8s [Sending data]
+`...Data0018' at 121408108 (71%) 6.23M/s eta:7s [Sending data]
+`...Data0018' at 126968116 (74%) 6.25M/s eta:7s [Sending data]
+`...Data0018' at 133194544 (78%) 6.31M/s eta:6s [Sending data]
+`...Data0018' at 139041980 (81%) 6.34M/s eta:5s [Sending data]
+`...Data0018' at 146293756 (85%) 6.43M/s eta:4s [Sending data]
+`...Data0018' at 151541064 (88%) 6.43M/s eta:3s [Sending data]
+`...Data0018' at 157278548 (92%) 6.42M/s eta:2s [Sending data]
+`...Data0018' at 161728580 (94%) 6.35M/s eta:1s [Sending data]
+`...Data0018' at 167504260 (98%) 6.42M/s eta:0s [Sending data]
+170459136 bytes transferred in 25 seconds (6.50M/s)
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+Ftp.dll: 17 17:59:53 C: CWD /Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data/
+Ftp.dll: 17 17:59:53 S: 250 OK
+Ftp.dll: 17 17:59:53 Binding to: 192.168.1.102:0
+Ftp.dll: 17 17:59:53 Bound to: 192.168.1.102:0
+Ftp.dll: 17 17:59:53 C: PORT 192,168,1,102,67,161
+Ftp.dll: 17 17:59:53 S: 200 PORT command successful
+Ftp.dll: 17 17:59:53 C: LIST
+Ftp.dll: 17 17:59:53 S: 150 Opening connection
+Ftp.dll: 17 17:59:53 Data connection established.
+Ftp.dll: 17 17:59:53 S: 226 Transfer Complete
+Ftp.dll: 17 17:59:53 S:
+..
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0011
+-rwxrwxrwx   1 root  root    62849024 Feb 20 10:43 Data0031
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0013
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0001
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0025
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0004
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0008
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:41 Data0002
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:39 Data0022
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0018
+
+cd /Hdd1/Content/0000000000000000/5351
+0803/00007000/E4ED7663 
+0F68C1B47F84.data/
+cd ok, cwd=/Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+put -c /mnt/HD/HD_a2/P2P/transmission/[XBOX360]\ Thief/53510 
+803/00
+007000/E4ED76630F68C1B47F84.data/Data0007 -o Data0007
+`...Data0007' at 0 (0%)
+`...Data0007' at 5274856 (3%) [Sending data]
+`...Data0007' at 11328932 (6%) 5.23M/s eta:29s [Sending data]
+`...Data0007' at 17081512 (10%) 5.92M/s eta:25s [Sending data]
+`...Data0007' at 21830388 (12%) 5.72M/s eta:25s [Sending data]
+`...Data0007' at 27766220 (16%) 5.99M/s eta:23s [Sending data]
+`...Data0007' at 34833604 (20%) 6.39M/s eta:20s [Sending data]
+`...Data0007' at 41696428 (24%) 6.65M/s eta:18s [Sending data]
+`...Data0007' at 48728456 (28%) 6.86M/s eta:17s [Sending data]
+`...Data0007' at 51781236 (30%) 6.56M/s eta:17s [Sending data]
+`...Data0007' at 57631232 (33%) 6.53M/s eta:16s [Sending data]
+`...Data0007' at 65401808 (38%) 6.77M/s eta:15s [Sending data]
+`...Data0007' at 71087520 (41%) 6.80M/s eta:14s [Sending data]
+`...Data0007' at 75990040 (44%) 6.70M/s eta:13s [Sending data]
+`...Data0007' at 80293864 (47%) 6.59M/s eta:13s [Sending data]
+`...Data0007' at 87279900 (51%) 6.70M/s eta:12s [Sending data]
+`...Data0007' at 94084068 (55%) 6.79M/s eta:11s [Sending data]
+`...Data0007' at 100541276 (58%) 6.88M/s eta:10s [Sending data]
+The thread '<No Name>' (0xe40) has exited with code 0 (0x0).
+`...Data0007' at 107085824 (62%) 6.89M/s eta:9s [Sending data]
+`...Data0007' at 112680352 (66%) 6.87M/s eta:8s [Sending data]
+`...Data0007' at 117932444 (69%) 6.84M/s eta:7s [Sending data]
+`...Data0007' at 122701204 (71%) 6.78M/s eta:7s [Sending data]
+`...Data0007' at 129137828 (75%) 6.84M/s eta:6s [Sending data]
+`...Data0007' at 135827068 (79%) 6.87M/s eta:5s [Sending data]
+`...Data0007' at 138171232 (81%) 6.64M/s eta:5s [Sending data]
+`...Data0007' at 144926696 (85%) 6.72M/s eta:4s [Sending data]
+`...Data0007' at 149673320 (87%) 6.66M/s eta:3s [Sending data]
+`...Data0007' at 155329860 (91%) 6.65M/s eta:2s [Sending data]
+`...Data0007' at 163337376 (95%) 6.77M/s eta:1s [Sending data]
+`...Data0007' at 170459136 (100%) 6.87M/s eta:0s [Waiting for transfer to compl
+                                                                               
+170459136 bytes transferred in 23 seconds (6.93M/s)
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+Ftp.dll: 17 18:00:18 C: CWD /Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data/
+Ftp.dll: 17 18:00:18 S: 250 OK
+Ftp.dll: 17 18:00:18 Binding to: 192.168.1.102:0
+Ftp.dll: 17 18:00:18 Bound to: 192.168.1.102:0
+Ftp.dll: 17 18:00:18 C: PORT 192,168,1,102,67,176
+Ftp.dll: 17 18:00:18 S: 200 PORT command successful
+Ftp.dll: 17 18:00:18 C: LIST
+Ftp.dll: 17 18:00:18 S: 150 Opening connection
+Ftp.dll: 17 18:00:18 Data connection established.
+Ftp.dll: 17 18:00:18 S: 226 Transfer Complete
+Ftp.dll: 17 18:00:18 S:
+..
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0011
+-rwxrwxrwx   1 root  root    62849024 Feb 20 10:43 Data0031
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0013
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0001
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0025
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0004
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0008
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:41 Data0002
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:39 Data0022
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0018
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0007
+
+cd /Hdd1/Content/000000
+0000000000/53510803/00007000/E4ED7663 
+0F68C1B47F84.data/
+cd ok, cwd=/Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+put -c /mnt/HD/HD_a2/P2P/transmission/[XBOX360]\ Thief
+/53510 
+803/00007000/E4ED76630F68C1B47F84.data/Data0027 -o Data0027
+`...Data0027' at 0 (0%)
+`...Data0027' at 7168016 (4%) [Sending data]
+`...Data0027' at 13166984 (7%) 5.83M/s eta:26s [Sending data]
+`...Data0027' at 19875072 (11%) 6.57M/s eta:22s [Sending data]
+`...Data0027' at 25197584 (14%) 6.51M/s eta:21s [Sending data]
+`...Data0027' at 32253660 (18%) 6.88M/s eta:19s [Sending data]
+`...Data0027' at 38392860 (22%) 7.01M/s eta:18s [Sending data]
+`...Data0027' at 44569676 (26%) 6.95M/s eta:17s [Sending data]
+`...Data0027' at 50960708 (29%) 7.04M/s eta:16s [Sending data]
+`...Data0027' at 57575688 (33%) 7.13M/s eta:15s [Sending data]
+`...Data0027' at 63574260 (37%) 7.13M/s eta:14s [Sending data]
+`...Data0027' at 70526348 (41%) 7.25M/s eta:13s [Sending data]
+`...Data0027' at 76183012 (44%) 7.14M/s eta:13s [Sending data]
+`...Data0027' at 80700244 (47%) 7.01M/s eta:12s [Sending data]
+`...Data0027' at 84818296 (49%) 6.86M/s eta:12s [Sending data]
+`...Data0027' at 89830652 (52%) 6.80M/s eta:11s [Sending data]
+`...Data0027' at 96851264 (56%) 6.91M/s eta:10s [Sending data]
+`...Data0027' at 102217912 (59%) 6.86M/s eta:9s [Sending data]
+The thread '<No Name>' (0x1498) has exited with code 0 (0x0).
+`...Data0027' at 108650588 (63%) 6.91M/s eta:9s [Sending data]
+`...Data0027' at 115583548 (67%) 6.98M/s eta:7s [Sending data]
+`...Data0027' at 121439024 (71%) 7.02M/s eta:7s [Sending data]
+`...Data0027' at 127391648 (74%) 6.98M/s eta:6s [Sending data]
+`...Data0027' at 133311992 (78%) 6.98M/s eta:5s [Sending data]
+`...Data0027' at 139946020 (82%) 7.01M/s eta:4s [Sending data]
+`...Data0027' at 148125116 (86%) 7.12M/s eta:3s [Sending data]
+`...Data0027' at 152333296 (89%) 7.00M/s eta:2s [Sending data]
+`...Data0027' at 157357456 (92%) 6.92M/s eta:2s [Sending data]
+`...Data0027' at 162499072 (95%) 6.87M/s eta:1s [Sending data]
+`...Data0027' at 167867792 (98%) 6.85M/s eta:0s [Sending data]
+170459136 bytes transferred in 23 seconds (7.04M/s)
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+Ftp.dll: 12 18:00:42 C: CWD /Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data/
+Ftp.dll: 12 18:00:42 S: 250 OK
+Ftp.dll: 12 18:00:42 Binding to: 192.168.1.102:0
+Ftp.dll: 12 18:00:42 Bound to: 192.168.1.102:0
+Ftp.dll: 12 18:00:42 C: PORT 192,168,1,102,67,195
+Ftp.dll: 12 18:00:42 S: 200 PORT command successful
+Ftp.dll: 12 18:00:42 C: LIST
+Ftp.dll: 12 18:00:42 S: 150 Opening connection
+Ftp.dll: 12 18:00:42 Data connection established.
+Ftp.dll: 12 18:00:42 S: 226 Transfer Complete
+Ftp.dll: 12 18:00:42 S:
+..
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0011
+-rwxrwxrwx   1 root  root    62849024 Feb 20 10:43 Data0031
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0013
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0001
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0025
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0004
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0008
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:41 Data0002
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:39 Data0022
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0018
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0007
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0027
+
+cd /Hdd1/Content/00000
+00000000000/53510803/00007000/E4ED7663 
+0F68C1B47F84.data/
+cd ok, cwd=/Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+p
+ut -c /mnt/HD/HD_a2/P2P/transmission/[XBOX360]\ Thief/53510 
+803/00007000/E4ED76630F68C1B47F84.data/Data0015 -o Data0015
+`...Data0015' at 0 (0%)
+`...Data0015' at 8203440 (4%) [Sending data]
+`...Data0015' at 12871772 (7%) 5.51M/s eta:27s [Sending data]
+`...Data0015' at 19570956 (11%) 6.32M/s eta:23s [Sending data]
+`...Data0015' at 27593340 (16%) 7.12M/s eta:19s [Sending data]
+`...Data0015' at 31355508 (18%) 6.86M/s eta:19s [Sending data]
+`...Data0015' at 38260796 (22%) 6.83M/s eta:18s [Sending data]
+`...Data0015' at 43812120 (25%) 6.80M/s eta:18s [Sending data]
+`...Data0015' at 49499544 (29%) 6.80M/s eta:17s [Sending data]
+`...Data0015' at 56083264 (32%) 6.91M/s eta:16s [Sending data]
+`...Data0015' at 62100316 (36%) 6.94M/s eta:15s [Sending data]
+`...Data0015' at 67772264 (39%) 6.92M/s eta:14s [Sending data]
+`...Data0015' at 73732756 (43%) 6.96M/s eta:13s [Sending data]
+`...Data0015' at 79070588 (46%) 6.87M/s eta:13s [Sending data]
+`...Data0015' at 87900356 (51%) 7.08M/s eta:11s [Sending data]
+`...Data0015' at 95138332 (55%) 7.18M/s eta:10s [Sending data]
+`...Data0015' at 102088016 (59%) 7.25M/s eta:9s [Sending data]
+`...Data0015' at 107484952 (63%) 7.16M/s eta:8s [Sending data]
+`...Data0015' at 112562512 (66%) 7.09M/s eta:8s [Sending data]
+`...Data0015' at 117704004 (69%) 7.05M/s eta:7s [Sending data]
+`...Data0015' at 123586624 (72%) 7.04M/s eta:6s [Sending data]
+`...Data0015' at 130062340 (76%) 7.07M/s eta:5s [Sending data]
+`...Data0015' at 135791044 (79%) 7.06M/s eta:5s [Sending data]
+`...Data0015' at 141754512 (83%) 7.08M/s eta:4s [Sending data]
+`...Data0015' at 148217444 (86%) 7.07M/s eta:3s [Sending data]
+The thread '<No Name>' (0x17a8) has exited with code 0 (0x0).
+The thread '<No Name>' (0x14bc) has exited with code 0 (0x0).
+`...Data0015' at 153259800 (89%) 7.02M/s eta:2s [Sending data]
+`...Data0015' at 159221564 (93%) 7.02M/s eta:2s [Sending data]
+`...Data0015' at 163342908 (95%) 6.73M/s eta:1s [Sending data]
+`...Data0015' at 169702816 (99%) 6.78M/s eta:0s [Sending data]
+170459136 bytes transferred in 23 seconds (6.99M/s)
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+Ftp.dll: 12 18:01:06 C: CWD /Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data/
+Ftp.dll: 12 18:01:06 S: 250 OK
+Ftp.dll: 12 18:01:06 Binding to: 192.168.1.102:0
+Ftp.dll: 12 18:01:06 Bound to: 192.168.1.102:0
+Ftp.dll: 12 18:01:06 C: PORT 192,168,1,102,67,205
+Ftp.dll: 12 18:01:06 S: 200 PORT command successful
+Ftp.dll: 12 18:01:06 C: LIST
+Ftp.dll: 12 18:01:06 S: 150 Opening connection
+Ftp.dll: 12 18:01:06 Data connection established.
+Ftp.dll: 12 18:01:06 S: 226 Transfer Complete
+Ftp.dll: 12 18:01:06 S:
+..
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0011
+-rwxrwxrwx   1 root  root    62849024 Feb 20 10:43 Data0031
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0013
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0001
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0025
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0004
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0008
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:41 Data0002
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:39 Data0022
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0018
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0007
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0027
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0015
+
+cd /Hdd1/Content/0000000000000000
+/53510803/00007000/E4ED7663 
+0F68C1B47F84.data/
+cd ok, cwd=/Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+put
+-c /mnt/HD/HD_a2/P2P/transmission/[XBOX360]\ Thief/53510 
+803/00007000/E4ED76630F68C1B47F84.data/Data0020 -o Data0020
+`...Data0020' at 0 (0%)
+`...Data0020' at 5910528 (3%) [Sending data]
+`...Data0020' at 11830904 (6%) 5.28M/s eta:29s [Sending data]
+`...Data0020' at 18917292 (11%) 6.32M/s eta:23s [Sending data]
+`...Data0020' at 25085264 (14%) 6.57M/s eta:21s [Sending data]
+`...Data0020' at 31554412 (18%) 6.78M/s eta:20s [Sending data]
+`...Data0020' at 37567256 (22%) 6.85M/s eta:19s [Sending data]
+`...Data0020' at 43918440 (25%) 6.98M/s eta:17s [Sending data]
+`...Data0020' at 50092952 (29%) 6.94M/s eta:17s [Sending data]
+`...Data0020' at 56415712 (33%) 7.01M/s eta:16s [Sending data]
+`...Data0020' at 62023836 (36%) 6.97M/s eta:15s [Sending data]
+`...Data0020' at 69321296 (40%) 7.11M/s eta:14s [Sending data]
+`...Data0020' at 73430724 (43%) 6.93M/s eta:13s [Sending data]
+`...Data0020' at 79443608 (46%) 6.97M/s eta:12s [Sending data]
+`...Data0020' at 85798232 (50%) 6.97M/s eta:12s [Sending data]
+`...Data0020' at 91991304 (53%) 6.99M/s eta:11s [Sending data]
+`...Data0020' at 99387788 (58%) 7.11M/s eta:10s [Sending data]
+`...Data0020' at 105281168 (61%) 7.09M/s eta:9s [Sending data]
+The thread '<No Name>' (0x14b0) has exited with code 0 (0x0).
+`...Data0020' at 111380576 (65%) 7.11M/s eta:8s [Sending data]
+`...Data0020' at 117195992 (68%) 7.10M/s eta:7s [Sending data]
+`...Data0020' at 124978648 (73%) 7.20M/s eta:6s [Sending data]
+`...Data0020' at 131449520 (77%) 7.23M/s eta:5s [Sending data]
+`...Data0020' at 138289772 (81%) 7.25M/s eta:4s [Sending data]
+`...Data0020' at 146017128 (85%) 7.35M/s eta:3s [Sending data]
+`...Data0020' at 151403840 (88%) 7.26M/s eta:3s [Sending data]
+`...Data0020' at 158827536 (93%) 7.36M/s eta:2s [Sending data]
+`...Data0020' at 164835936 (96%) 7.31M/s eta:1s [Sending data]
+170459136 bytes transferred in 22 seconds (7.43M/s)
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+Ftp.dll:  6 18:01:29 C: CWD /Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data/
+Ftp.dll:  6 18:01:29 S: 250 OK
+Ftp.dll:  6 18:01:29 Binding to: 192.168.1.102:0
+Ftp.dll:  6 18:01:29 Bound to: 192.168.1.102:0
+Ftp.dll:  6 18:01:29 C: PORT 192,168,1,102,67,210
+Ftp.dll:  6 18:01:29 S: 200 PORT command successful
+Ftp.dll:  6 18:01:29 C: LIST
+Ftp.dll:  6 18:01:29 S: 150 Opening connection
+Ftp.dll:  6 18:01:29 Data connection established.
+Ftp.dll:  6 18:01:29 S: 226 Transfer Complete
+Ftp.dll:  6 18:01:29 S:
+..
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0011
+-rwxrwxrwx   1 root  root    62849024 Feb 20 10:43 Data0031
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0013
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0001
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0025
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0004
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0008
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:41 Data0002
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:39 Data0022
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0018
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0007
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0027
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0015
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0020
+
+c
+d /Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663 
+0F68C1B47F84.data/
+cd ok, cwd=/Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+put -c /mnt/HD/HD_a2/P2P/transm
+ission/[XBOX360]\ Thief/53510 
+803/00007000/E4ED76630F68C1B47F84.data/Data0003 -o Data0003
+`...Data0003' at 0 (0%)
+`...Data0003' at 7121624 (4%) [Sending data]
+`...Data0003' at 13631432 (7%) 6.00M/s eta:25s [Sending data]
+`...Data0003' at 19772896 (11%) 6.57M/s eta:22s [Sending data]
+`...Data0003' at 26995440 (15%) 6.91M/s eta:20s [Sending data]
+`...Data0003' at 32950428 (19%) 6.94M/s eta:19s [Sending data]
+`...Data0003' at 38025288 (22%) 6.83M/s eta:18s [Sending data]
+`...Data0003' at 44832768 (26%) 6.98M/s eta:17s [Sending data]
+`...Data0003' at 50349376 (29%) 6.94M/s eta:17s [Sending data]
+`...Data0003' at 55215240 (32%) 6.80M/s eta:16s [Sending data]
+`...Data0003' at 61489268 (36%) 6.86M/s eta:15s [Sending data]
+`...Data0003' at 67955688 (39%) 6.93M/s eta:14s [Sending data]
+`...Data0003' at 74895584 (43%) 7.05M/s eta:13s [Sending data]
+`...Data0003' at 80640972 (47%) 7.04M/s eta:12s [Sending data]
+`...Data0003' at 86757480 (50%) 7.00M/s eta:11s [Sending data]
+`...Data0003' at 93390912 (54%) 7.06M/s eta:10s [Sending data]
+`...Data0003' at 99084544 (58%) 7.01M/s eta:10s [Sending data]
+`...Data0003' at 105636788 (61%) 7.06M/s eta:9s [Sending data]
+The thread '<No Name>' (0x774) has exited with code 0 (0x0).
+`...Data0003' at 111317900 (65%) 7.00M/s eta:8s [Sending data]
+`...Data0003' at 118068664 (69%) 7.05M/s eta:7s [Sending data]
+`...Data0003' at 122774176 (72%) 6.98M/s eta:7s [Sending data]
+`...Data0003' at 124896576 (73%) 6.75M/s eta:6s [Sending data]
+`...Data0003' at 129601992 (76%) 6.66M/s eta:6s [Sending data]
+`...Data0003' at 136121884 (79%) 6.71M/s eta:5s [Sending data]
+`...Data0003' at 143149612 (83%) 6.80M/s eta:4s [Sending data]
+`...Data0003' at 149159936 (87%) 6.84M/s eta:3s [Sending data]
+`...Data0003' at 155789256 (91%) 6.86M/s eta:2s [Sending data]
+`...Data0003' at 161288060 (94%) 6.80M/s eta:1s [Sending data]
+`...Data0003' at 167354860 (98%) 6.83M/s eta:0s [Sending data]
+170459136 bytes transferred in 23 seconds (7.00M/s)
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+Ftp.dll:  6 18:01:53 C: CWD /Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data/
+Ftp.dll:  6 18:01:53 S: 250 OK
+Ftp.dll:  6 18:01:53 Binding to: 192.168.1.102:0
+Ftp.dll:  6 18:01:53 Bound to: 192.168.1.102:0
+Ftp.dll:  6 18:01:53 C: PORT 192,168,1,102,67,249
+Ftp.dll:  6 18:01:53 S: 200 PORT command successful
+Ftp.dll:  6 18:01:53 C: LIST
+Ftp.dll:  6 18:01:53 S: 150 Opening connection
+Ftp.dll:  6 18:01:53 Data connection established.
+Ftp.dll:  6 18:01:53 S: 226 Transfer Complete
+Ftp.dll:  6 18:01:53 S:
+..
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0011
+-rwxrwxrwx   1 root  root    62849024 Feb 20 10:43 Data0031
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0013
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0001
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0025
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0004
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0008
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:41 Data0002
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:39 Data0022
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0018
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0007
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0027
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0015
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0020
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0003
+
+cd /Hdd1/Content/0000000000000000/5351080
+3/00007000/E4ED7663 
+0F68C1B47F84.data/
+cd ok, cwd=/Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+put -c /mnt/H
+D/HD_a2/P2P/transmission/[XBOX360]\ Thief/53510 
+803/00007000/E4ED76630F68C1B47F84.data/Data0006 -o Data0006
+`...Data0006' at 0 (0%)
+`...Data0006' at 5464436 (3%) [Sending data]
+`...Data0006' at 11649332 (6%) 5.35M/s eta:28s [Sending data]
+`...Data0006' at 17354960 (10%) 5.85M/s eta:25s [Sending data]
+`...Data0006' at 21804132 (12%) 5.70M/s eta:25s [Sending data]
+`...Data0006' at 28963840 (16%) 6.28M/s eta:21s [Sending data]
+`...Data0006' at 33645916 (19%) 6.07M/s eta:21s [Sending data]
+`...Data0006' at 38445720 (22%) 6.01M/s eta:21s [Sending data]
+`...Data0006' at 44997524 (26%) 6.17M/s eta:19s [Sending data]
+`...Data0006' at 50622924 (29%) 6.21M/s eta:18s [Sending data]
+`...Data0006' at 57115572 (33%) 6.30M/s eta:17s [Sending data]
+`...Data0006' at 63538000 (37%) 6.41M/s eta:16s [Sending data]
+`...Data0006' at 69071120 (40%) 6.43M/s eta:15s [Sending data]
+`...Data0006' at 75993336 (44%) 6.56M/s eta:14s [Sending data]
+`...Data0006' at 83256504 (48%) 6.73M/s eta:12s [Sending data]
+`...Data0006' at 88760212 (52%) 6.73M/s eta:12s [Sending data]
+`...Data0006' at 95323908 (55%) 6.75M/s eta:11s [Sending data]
+`...Data0006' at 102113908 (59%) 6.82M/s eta:10s [Sending data]
+The thread '<No Name>' (0x1424) has exited with code 0 (0x0).
+`...Data0006' at 108372312 (63%) 6.85M/s eta:9s [Sending data]
+`...Data0006' at 113240868 (66%) 6.80M/s eta:8s [Sending data]
+`...Data0006' at 119808472 (70%) 6.85M/s eta:7s [Sending data]
+`...Data0006' at 125518484 (73%) 6.85M/s eta:6s [Sending data]
+`...Data0006' at 131057148 (76%) 6.83M/s eta:5s [Sending data]
+`...Data0006' at 136756332 (80%) 6.84M/s eta:5s [Sending data]
+`...Data0006' at 142352224 (83%) 6.80M/s eta:4s [Sending data]
+`...Data0006' at 148439040 (87%) 6.77M/s eta:3s [Sending data]
+`...Data0006' at 153496556 (90%) 6.73M/s eta:2s [Sending data]
+`...Data0006' at 157865248 (92%) 6.64M/s eta:2s [Sending data]
+`...Data0006' at 163582768 (95%) 6.64M/s eta:1s [Sending data]
+`...Data0006' at 168259652 (98%) 6.58M/s eta:0s [Sending data]
+170459136 bytes transferred in 24 seconds (6.76M/s)
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+Ftp.dll: 12 18:02:18 C: CWD /Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data/
+Ftp.dll: 12 18:02:18 S: 250 OK
+Ftp.dll: 12 18:02:18 Binding to: 192.168.1.102:0
+Ftp.dll: 12 18:02:18 Bound to: 192.168.1.102:0
+Ftp.dll: 12 18:02:18 C: PORT 192,168,1,102,67,254
+Ftp.dll: 12 18:02:18 S: 200 PORT command successful
+Ftp.dll: 12 18:02:18 C: LIST
+Ftp.dll: 12 18:02:18 S: 150 Opening connection
+Ftp.dll: 12 18:02:18 Data connection established.
+Ftp.dll: 12 18:02:18 S: 226 Transfer Complete
+Ftp.dll: 12 18:02:18 S:
+..
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0011
+-rwxrwxrwx   1 root  root    62849024 Feb 20 10:43 Data0031
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0013
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0001
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0025
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0004
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0008
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:41 Data0002
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:39 Data0022
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0018
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0007
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0027
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0015
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0020
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0003
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0006
+
+cd /Hdd1/Content/000
+0000000000000/53510803/00007000/E4ED7663 
+0F68C1B47F84.data/
+cd ok, cwd=/Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+put -c /mnt/HD/HD_a2/P2P/tr
+ansmission/[XBOX360]\ Thief/53510 
+803/00007000/E4ED76630F68C1B47F84.data/Data0005 -o Data0005
+`...Data0005' at 0 (0%) [Making data connection...]
+`...Data0005' at 5357712 (3%) [Sending data]
+`...Data0005' at 11576032 (6%) 5.63M/s eta:27s [Sending data]
+`...Data0005' at 17846944 (10%) 6.04M/s eta:24s [Sending data]
+`...Data0005' at 23825916 (13%) 6.29M/s eta:22s [Sending data]
+`...Data0005' at 28587768 (16%) 6.12M/s eta:22s [Sending data]
+`...Data0005' at 30816440 (18%) 5.58M/s eta:24s [Sending data]
+`...Data0005' at 36186904 (21%) 5.69M/s eta:22s [Sending data]
+`...Data0005' at 43384564 (25%) 6.05M/s eta:20s [Sending data]
+`...Data0005' at 50448616 (29%) 6.31M/s eta:18s [Sending data]
+`...Data0005' at 55088744 (32%) 6.20M/s eta:18s [Sending data]
+`...Data0005' at 60665132 (35%) 6.24M/s eta:17s [Sending data]
+`...Data0005' at 66481024 (39%) 6.29M/s eta:16s [Sending data]
+`...Data0005' at 73809004 (43%) 6.48M/s eta:14s [Sending data]
+`...Data0005' at 81543468 (47%) 6.67M/s eta:13s [Sending data]
+`...Data0005' at 87447444 (51%) 6.70M/s eta:12s [Sending data]
+`...Data0005' at 92394256 (54%) 6.65M/s eta:11s [Sending data]
+`...Data0005' at 99328916 (58%) 6.74M/s eta:10s [Sending data]
+`...Data0005' at 104868280 (61%) 6.73M/s eta:9s [Sending data]
+`...Data0005' at 112592028 (66%) 6.86M/s eta:8s [Sending data]
+`...Data0005' at 120245708 (70%) 6.97M/s eta:7s [Sending data]
+`...Data0005' at 127386880 (74%) 7.07M/s eta:6s [Sending data]
+`...Data0005' at 132239328 (77%) 6.96M/s eta:5s [Sending data]
+`...Data0005' at 138144064 (81%) 6.98M/s eta:4s [Sending data]
+The thread '<No Name>' (0x18b4) has exited with code 0 (0x0).
+`...Data0005' at 145295620 (85%) 7.01M/s eta:3s [Sending data]
+`...Data0005' at 153767592 (90%) 7.17M/s eta:2s [Sending data]
+`...Data0005' at 160022484 (93%) 7.18M/s eta:1s [Sending data]
+`...Data0005' at 165437656 (97%) 7.15M/s eta:1s [Sending data]
+170459136 bytes transferred in 22 seconds (7.23M/s)
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+Ftp.dll: 12 18:02:42 C: CWD /Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data/
+Ftp.dll: 12 18:02:42 S: 250 OK
+Ftp.dll: 12 18:02:42 Binding to: 192.168.1.102:0
+Ftp.dll: 12 18:02:42 Bound to: 192.168.1.102:0
+Ftp.dll: 12 18:02:42 C: PORT 192,168,1,102,68,7
+Ftp.dll: 12 18:02:42 S: 200 PORT command successful
+Ftp.dll: 12 18:02:42 C: LIST
+Ftp.dll: 12 18:02:42 S: 150 Opening connection
+Ftp.dll: 12 18:02:42 Data connection established.
+Ftp.dll: 12 18:02:42 S: 226 Transfer Complete
+Ftp.dll: 12 18:02:42 S:
+..
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0011
+-rwxrwxrwx   1 root  root    62849024 Feb 20 10:43 Data0031
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0013
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0001
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0025
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0004
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0008
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:41 Data0002
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:39 Data0022
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0018
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0007
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0027
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0015
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0020
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0003
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0006
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0005
+
+cd /Hdd1/Content/0000000000000000/53510803/0
+0007000/E4ED7663 
+0F68C1B47F84.data/
+cd ok, cwd=/Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+put -c /mnt/HD/HD_a2/P2P/transmission/[XBOX360]\ Thief/53510 
+8
+03/00007000/E4ED76630F68C1B47F84.data/Data0026 -o Data0026
+`...Data0026' at 0 (0%)
+`...Data0026' at 7104772 (4%) [Sending data]
+`...Data0026' at 12590840 (7%) 5.55M/s eta:27s [Sending data]
+`...Data0026' at 20264984 (11%) 6.77M/s eta:21s [Sending data]
+`...Data0026' at 24954228 (14%) 5.28M/s eta:26s [Sending data]
+`...Data0026' at 31549144 (18%) 5.74M/s eta:23s [Sending data]
+`...Data0026' at 36728636 (21%) 5.82M/s eta:22s [Sending data]
+`...Data0026' at 42611684 (24%) 5.96M/s eta:20s [Sending data]
+`...Data0026' at 49156116 (28%) 6.16M/s eta:19s [Sending data]
+`...Data0026' at 54028456 (31%) 6.14M/s eta:18s [Sending data]
+`...Data0026' at 57618772 (33%) 5.95M/s eta:18s [Sending data]
+`...Data0026' at 63841280 (37%) 6.09M/s eta:17s [Sending data]
+`...Data0026' at 70029020 (41%) 6.20M/s eta:15s [Sending data]
+`...Data0026' at 75474524 (44%) 6.17M/s eta:15s [Sending data]
+`...Data0026' at 82313216 (48%) 6.30M/s eta:13s [Sending data]
+`...Data0026' at 86102944 (50%) 6.22M/s eta:13s [Sending data]
+`...Data0026' at 91907388 (53%) 6.21M/s eta:12s [Sending data]
+The thread '<No Name>' (0x1d7c) has exited with code 0 (0x0).
+`...Data0026' at 99398760 (58%) 6.36M/s eta:11s [Sending data]
+`...Data0026' at 105431464 (61%) 6.40M/s eta:10s [Sending data]
+`...Data0026' at 108849096 (63%) 6.39M/s eta:9s [Sending data]
+`...Data0026' at 115228932 (67%) 6.33M/s eta:8s [Sending data]
+`...Data0026' at 121234592 (71%) 6.34M/s eta:7s [Sending data]
+`...Data0026' at 127961360 (75%) 6.42M/s eta:6s [Sending data]
+`...Data0026' at 134449980 (78%) 6.49M/s eta:5s [Sending data]
+`...Data0026' at 140557992 (82%) 6.53M/s eta:4s [Sending data]
+`...Data0026' at 147421868 (86%) 6.57M/s eta:3s [Sending data]
+`...Data0026' at 154159996 (90%) 6.65M/s eta:2s [Sending data]
+`...Data0026' at 159326656 (93%) 6.63M/s eta:2s [Sending data]
+`...Data0026' at 167506844 (98%) 6.79M/s eta:0s [Sending data]
+170459136 bytes transferred in 24 seconds (6.83M/s)
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+Ftp.dll: 12 18:03:06 C: CWD /Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data/
+Ftp.dll: 12 18:03:06 S: 250 OK
+Ftp.dll: 12 18:03:06 Binding to: 192.168.1.102:0
+Ftp.dll: 12 18:03:06 Bound to: 192.168.1.102:0
+Ftp.dll: 12 18:03:06 C: PORT 192,168,1,102,68,17
+Ftp.dll: 12 18:03:06 S: 200 PORT command successful
+Ftp.dll: 12 18:03:06 C: LIST
+Ftp.dll: 12 18:03:06 S: 150 Opening connection
+Ftp.dll: 12 18:03:06 Data connection established.
+Ftp.dll: 12 18:03:06 S: 226 Transfer Complete
+Ftp.dll: 12 18:03:06 S:
+..
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0011
+-rwxrwxrwx   1 root  root    62849024 Feb 20 10:43 Data0031
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0013
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0001
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0025
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0004
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0008
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:41 Data0002
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:39 Data0022
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0018
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0007
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0027
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0015
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0020
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0003
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0006
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0005
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:40 Data0026
+
+cd /Hdd1/Content/00000000
+00000000/53510803/00007000/E4ED7663 
+0F68C1B47F84.data/
+cd ok, cwd=/Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+put -c /mnt/HD/HD_a2/P2P/transmission/[XBOX360]\ T
+hief/53510 
+803/00007000/E4ED76630F68C1B47F84.data/Data0029 -o Data0029
+`...Data0029' at 0 (0%) [Making data connection...]
+`...Data0029' at 6235296 (3%) [Sending data]
+`...Data0029' at 11050008 (6%) 4.95M/s eta:31s [Sending data]
+`...Data0029' at 17049944 (10%) 5.63M/s eta:26s [Sending data]
+`...Data0029' at 24409324 (14%) 6.35M/s eta:22s [Sending data]
+`...Data0029' at 30949796 (18%) 6.70M/s eta:20s [Sending data]
+`...Data0029' at 37095296 (21%) 6.68M/s eta:19s [Sending data]
+`...Data0029' at 41639804 (24%) 6.49M/s eta:19s [Sending data]
+`...Data0029' at 47997872 (28%) 6.62M/s eta:18s [Sending data]
+`...Data0029' at 52867228 (31%) 6.53M/s eta:17s [Sending data]
+`...Data0029' at 60187440 (35%) 6.78M/s eta:15s [Sending data]
+`...Data0029' at 67396984 (39%) 6.88M/s eta:14s [Sending data]
+`...Data0029' at 73021960 (42%) 6.90M/s eta:13s [Sending data]
+`...Data0029' at 79927380 (46%) 6.96M/s eta:12s [Sending data]
+`...Data0029' at 84730072 (49%) 6.87M/s eta:12s [Sending data]
+`...Data0029' at 92259696 (54%) 7.01M/s eta:11s [Sending data]
+`...Data0029' at 99115996 (58%) 7.08M/s eta:10s [Sending data]
+`...Data0029' at 107054460 (62%) 7.22M/s eta:8s [Sending data]
+The thread '<No Name>' (0x1b74) has exited with code 0 (0x0).
+`...Data0029' at 112654184 (66%) 7.18M/s eta:8s [Sending data]
+`...Data0029' at 118483084 (69%) 7.17M/s eta:7s [Sending data]
+`...Data0029' at 124590504 (73%) 7.18M/s eta:6s [Sending data]
+`...Data0029' at 130770944 (76%) 7.19M/s eta:5s [Sending data]
+`...Data0029' at 137468536 (80%) 7.22M/s eta:4s [Sending data]
+`...Data0029' at 144027008 (84%) 7.25M/s eta:3s [Sending data]
+`...Data0029' at 149813052 (87%) 7.23M/s eta:3s [Sending data]
+`...Data0029' at 155472400 (91%) 7.22M/s eta:2s [Sending data]
+`...Data0029' at 163505004 (95%) 7.31M/s eta:1s [Sending data]
+`...Data0029' at 169605152 (99%) 7.31M/s eta:0s [Sending data]
+170459136 bytes transferred in 22 seconds (7.40M/s)
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+Ftp.dll: 17 18:03:29 C: CWD /Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data/
+Ftp.dll: 17 18:03:29 S: 250 OK
+Ftp.dll: 17 18:03:29 Binding to: 192.168.1.102:0
+Ftp.dll: 17 18:03:29 Bound to: 192.168.1.102:0
+Ftp.dll: 17 18:03:29 C: PORT 192,168,1,102,68,30
+Ftp.dll: 17 18:03:29 S: 200 PORT command successful
+Ftp.dll: 17 18:03:29 C: LIST
+Ftp.dll: 17 18:03:29 S: 150 Opening connection
+Ftp.dll: 17 18:03:29 Data connection established.
+Ftp.dll: 17 18:03:29 S: 226 Transfer Complete
+Ftp.dll: 17 18:03:29 S:
+..
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0011
+-rwxrwxrwx   1 root  root    62849024 Feb 20 10:43 Data0031
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0013
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0001
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0025
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0004
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0008
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:41 Data0002
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:39 Data0022
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0018
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0007
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0027
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0015
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0020
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0003
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0006
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0005
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:40 Data0026
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0029
+
+c
+d /Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663 
+0F68C1B47F84.data/
+cd ok, cwd=/Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+put -c /mnt/HD/HD_a2/P2P/transmission/[XBO
+X360]\ Thief/53510 
+803/00007000/E4ED76630F68C1B47F84.data/Data0009 -o Data0009
+`...Data0009' at 0 (0%)
+`...Data0009' at 6662900 (3%) [Sending data]
+`...Data0009' at 12096372 (7%) 5.66M/s eta:27s [Sending data]
+`...Data0009' at 17746184 (10%) 5.64M/s eta:26s [Sending data]
+`...Data0009' at 24212284 (14%) 6.17M/s eta:23s [Sending data]
+`...Data0009' at 29772132 (17%) 6.14M/s eta:22s [Sending data]
+`...Data0009' at 35430588 (20%) 6.22M/s eta:21s [Sending data]
+`...Data0009' at 41833264 (24%) 6.39M/s eta:19s [Sending data]
+`...Data0009' at 48085092 (28%) 6.44M/s eta:18s [Sending data]
+`...Data0009' at 50073184 (29%) 5.95M/s eta:19s [Sending data]
+`...Data0009' at 56930992 (33%) 6.17M/s eta:18s [Sending data]
+`...Data0009' at 63143776 (37%) 6.28M/s eta:16s [Sending data]
+`...Data0009' at 69462608 (40%) 6.39M/s eta:15s [Sending data]
+`...Data0009' at 75379280 (44%) 6.44M/s eta:14s [Sending data]
+`...Data0009' at 81241268 (47%) 6.47M/s eta:13s [Sending data]
+`...Data0009' at 86796904 (50%) 6.48M/s eta:12s [Sending data]
+`...Data0009' at 93168760 (54%) 6.51M/s eta:11s [Sending data]
+`...Data0009' at 97994456 (57%) 6.47M/s eta:11s [Sending data]
+`...Data0009' at 103044708 (60%) 6.45M/s eta:10s [Sending data]
+`...Data0009' at 108560480 (63%) 6.43M/s eta:9s [Sending data]
+`...Data0009' at 113810964 (66%) 6.42M/s eta:8s [Sending data]
+`...Data0009' at 118686312 (69%) 6.39M/s eta:8s [Sending data]
+`...Data0009' at 125025676 (73%) 6.45M/s eta:7s [Sending data]
+`...Data0009' at 129370940 (75%) 6.40M/s eta:6s [Sending data]
+`...Data0009' at 135728240 (79%) 6.43M/s eta:5s [Sending data]
+`...Data0009' at 141267440 (82%) 6.44M/s eta:4s [Sending data]
+`...Data0009' at 146810736 (86%) 6.44M/s eta:4s [Sending data]
+`...Data0009' at 152973684 (89%) 6.49M/s eta:3s [Sending data]
+`...Data0009' at 158586176 (93%) 6.50M/s eta:2s [Sending data]
+`...Data0009' at 163859724 (96%) 6.51M/s eta:1s [Sending data]
+`...Data0009' at 170315748 (99%) 6.54M/s eta:0s [Sending data]
+170459136 bytes transferred in 25 seconds (6.61M/s)
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+Ftp.dll: 19 18:03:54 C: CWD /Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data/
+Ftp.dll: 19 18:03:54 S: 250 OK
+Ftp.dll: 19 18:03:54 Binding to: 192.168.1.102:0
+Ftp.dll: 19 18:03:54 Bound to: 192.168.1.102:0
+Ftp.dll: 19 18:03:54 C: PORT 192,168,1,102,68,41
+Ftp.dll: 19 18:03:54 S: 200 PORT command successful
+Ftp.dll: 19 18:03:54 C: LIST
+Ftp.dll: 19 18:03:54 S: 150 Opening connection
+Ftp.dll: 19 18:03:54 Data connection established.
+Ftp.dll: 19 18:03:54 S: 226 Transfer Complete
+Ftp.dll: 19 18:03:54 S:
+..
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0011
+-rwxrwxrwx   1 root  root    62849024 Feb 20 10:43 Data0031
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0013
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0001
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0025
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0004
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0008
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:41 Data0002
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:39 Data0022
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0018
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0007
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0027
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0015
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0020
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0003
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0006
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0005
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:40 Data0026
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0029
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:41 Data0009
+
+cd /Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663 
+0F
+68C1B47F84.data/
+cd ok, cwd=/Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+put -c /mnt/HD/HD_a2/P2P/transmission/[XBOX360]
+\ Thief/53510 
+803/00007000/E4ED76630F68C1B47F84.data/Data0030 -o Data0030
+`...Data0030' at 0 (0%)
+`...Data0030' at 4863952 (2%) [Sending data]
+The thread '<No Name>' (0xc0c) has exited with code 0 (0x0).
+`...Data0030' at 10632028 (6%) 4.79M/s eta:32s [Sending data]
+`...Data0030' at 16790836 (9%) 5.64M/s eta:26s [Sending data]
+`...Data0030' at 23159936 (13%) 6.24M/s eta:23s [Sending data]
+`...Data0030' at 29391484 (17%) 6.35M/s eta:21s [Sending data]
+`...Data0030' at 34484848 (20%) 6.30M/s eta:21s [Sending data]
+`...Data0030' at 40455820 (23%) 6.41M/s eta:19s [Sending data]
+`...Data0030' at 47369884 (27%) 6.64M/s eta:18s [Sending data]
+`...Data0030' at 54509556 (31%) 6.86M/s eta:16s [Sending data]
+`...Data0030' at 60950008 (35%) 6.88M/s eta:15s [Sending data]
+`...Data0030' at 67830652 (39%) 7.01M/s eta:14s [Sending data]
+`...Data0030' at 71799804 (42%) 6.82M/s eta:14s [Sending data]
+`...Data0030' at 78446420 (46%) 6.85M/s eta:13s [Sending data]
+`...Data0030' at 85897264 (50%) 6.98M/s eta:12s [Sending data]
+`...Data0030' at 93738208 (54%) 7.08M/s eta:10s [Sending data]
+`...Data0030' at 99876864 (58%) 7.12M/s eta:9s [Sending data]
+`...Data0030' at 105739584 (62%) 7.08M/s eta:9s [Sending data]
+The thread '<No Name>' (0x1f40) has exited with code 0 (0x0).
+`...Data0030' at 110210840 (64%) 6.98M/s eta:8s [Sending data]
+`...Data0030' at 116679352 (68%) 7.04M/s eta:7s [Sending data]
+`...Data0030' at 123635140 (72%) 7.06M/s eta:6s [Sending data]
+`...Data0030' at 129672156 (76%) 7.10M/s eta:5s [Sending data]
+`...Data0030' at 134365724 (78%) 6.95M/s eta:5s [Sending data]
+`...Data0030' at 141469008 (82%) 7.03M/s eta:4s [Sending data]
+`...Data0030' at 148300884 (87%) 7.08M/s eta:3s [Sending data]
+`...Data0030' at 155130552 (91%) 7.10M/s eta:2s [Sending data]
+`...Data0030' at 162059708 (95%) 7.15M/s eta:1s [Sending data]
+`...Data0030' at 167225940 (98%) 7.09M/s eta:0s [Sending data]
+170459136 bytes transferred in 22 seconds (7.23M/s)
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+Ftp.dll: 19 18:04:18 C: CWD /Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data/
+Ftp.dll: 19 18:04:18 S: 250 OK
+Ftp.dll: 19 18:04:18 Binding to: 192.168.1.102:0
+Ftp.dll: 19 18:04:18 Bound to: 192.168.1.102:0
+Ftp.dll: 19 18:04:18 C: PORT 192,168,1,102,68,50
+Ftp.dll: 19 18:04:18 S: 200 PORT command successful
+Ftp.dll: 19 18:04:18 C: LIST
+Ftp.dll: 19 18:04:18 S: 150 Opening connection
+Ftp.dll: 19 18:04:18 Data connection established.
+Ftp.dll: 19 18:04:18 S: 226 Transfer Complete
+Ftp.dll: 19 18:04:18 S:
+..
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0011
+-rwxrwxrwx   1 root  root    62849024 Feb 20 10:43 Data0031
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0013
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0001
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0025
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0004
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0008
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:41 Data0002
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:39 Data0022
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0018
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0007
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0027
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0015
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0020
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0003
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0006
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0005
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:40 Data0026
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0029
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:41 Data0009
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0030
+
+cd /Hdd1/Content/0000000000000000/53510
+803/00007000/E4ED7663 
+0F68C1B47F84.data/
+cd ok, cwd=/Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+pu
+t -c /mnt/HD/HD_a2/P2P/transmission/[XBOX360]\ Thief/53510 
+803/00007000/E4ED76630F68C1B47F84.data/Data0028 -o Data0028
+`...Data0028' at 0 (0%)
+`...Data0028' at 8089500 (4%) [Sending data]
+`...Data0028' at 14156344 (8%) 6.29M/s eta:24s [Sending data]
+`...Data0028' at 19427180 (11%) 6.25M/s eta:23s [Sending data]
+`...Data0028' at 24888928 (14%) 6.27M/s eta:22s [Sending data]
+`...Data0028' at 29163560 (17%) 6.33M/s eta:21s [Sending data]
+`...Data0028' at 33334128 (19%) 5.82M/s eta:22s [Sending data]
+`...Data0028' at 39367904 (23%) 5.37M/s eta:23s [Sending data]
+`...Data0028' at 46087428 (27%) 5.67M/s eta:21s [Sending data]
+`...Data0028' at 51057504 (29%) 5.69M/s eta:20s [Sending data]
+`...Data0028' at 53097508 (31%) 5.41M/s eta:21s [Sending data]
+`...Data0028' at 58707396 (34%) 5.39M/s eta:20s [Sending data]
+`...Data0028' at 64091224 (37%) 5.47M/s eta:19s [Sending data]
+`...Data0028' at 70248640 (41%) 5.57M/s eta:17s [Sending data]
+`...Data0028' at 75684924 (44%) 5.63M/s eta:16s [Sending data]
+`...Data0028' at 81180112 (47%) 5.68M/s eta:15s [Sending data]
+`...Data0028' at 87301808 (51%) 5.75M/s eta:14s [Sending data]
+`...Data0028' at 94021324 (55%) 5.88M/s eta:12s [Sending data]
+`...Data0028' at 99324040 (58%) 5.90M/s eta:11s [Sending data]
+`...Data0028' at 104887436 (61%) 5.94M/s eta:11s [Sending data]
+`...Data0028' at 110937252 (65%) 6.00M/s eta:9s [Sending data]
+`...Data0028' at 116136244 (68%) 6.02M/s eta:9s [Sending data]
+`...Data0028' at 121634816 (71%) 6.03M/s eta:8s [Sending data]
+`...Data0028' at 126742272 (74%) 6.04M/s eta:7s [Sending data]
+`...Data0028' at 132986464 (78%) 6.11M/s eta:6s [Sending data]
+`...Data0028' at 138947048 (81%) 6.17M/s eta:5s [Sending data]
+`...Data0028' at 143961464 (84%) 6.18M/s eta:4s [Sending data]
+`...Data0028' at 149692308 (87%) 6.17M/s eta:3s [Sending data]
+`...Data0028' at 154437048 (90%) 6.11M/s eta:3s [Sending data]
+`...Data0028' at 159861264 (93%) 6.13M/s eta:2s [Sending data]
+`...Data0028' at 166157420 (97%) 6.20M/s eta:1s [Sending data]
+170459136 bytes transferred in 26 seconds (6.34M/s)
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+Ftp.dll: 12 18:04:45 C: CWD /Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data/
+Ftp.dll: 12 18:04:45 S: 250 OK
+Ftp.dll: 12 18:04:45 Binding to: 192.168.1.102:0
+Ftp.dll: 12 18:04:45 Bound to: 192.168.1.102:0
+Ftp.dll: 12 18:04:45 C: PORT 192,168,1,102,68,58
+Ftp.dll: 12 18:04:45 S: 200 PORT command successful
+Ftp.dll: 12 18:04:45 C: LIST
+Ftp.dll: 12 18:04:45 S: 150 Opening connection
+Ftp.dll: 12 18:04:45 Data connection established.
+Ftp.dll: 12 18:04:45 S: 226 Transfer Complete
+Ftp.dll: 12 18:04:45 S:
+..
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0011
+-rwxrwxrwx   1 root  root    62849024 Feb 20 10:43 Data0031
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0013
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0001
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0025
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0004
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0008
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:41 Data0002
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:39 Data0022
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0018
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0007
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0027
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0015
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0020
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0003
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0006
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0005
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:40 Data0026
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0029
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:41 Data0009
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0030
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0028
+
+cd /Hdd1/Content/0000000000000000/53510803/00007000/E4ED76
+63 
+0F68C1B47F84.data/
+cd ok, cwd=/Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+put -c /mnt/HD/HD_a2/P2P/transmissi
+on/[XBOX360]\ Thief/53510 
+803/00007000/E4ED76630F68C1B47F84.data/Data0010 -o Data0010
+`...Data0010' at 0 (0%)
+`...Data0010' at 5204748 (3%) [Sending data]
+`...Data0010' at 10878516 (6%) 5.08M/s eta:30s [Sending data]
+`...Data0010' at 16511208 (9%) 5.42M/s eta:27s [Sending data]
+`...Data0010' at 22485184 (13%) 5.85M/s eta:24s [Sending data]
+`...Data0010' at 29308548 (17%) 6.30M/s eta:21s [Sending data]
+`...Data0010' at 33343744 (19%) 6.06M/s eta:22s [Sending data]
+`...Data0010' at 39409912 (23%) 6.21M/s eta:20s [Sending data]
+`...Data0010' at 44951016 (26%) 6.25M/s eta:19s [Sending data]
+`...Data0010' at 50591548 (29%) 6.28M/s eta:18s [Sending data]
+`...Data0010' at 55478500 (32%) 6.20M/s eta:18s [Sending data]
+`...Data0010' at 61621300 (36%) 6.24M/s eta:17s [Sending data]
+`...Data0010' at 66153468 (38%) 6.17M/s eta:16s [Sending data]
+`...Data0010' at 71940032 (42%) 6.25M/s eta:15s [Sending data]
+`...Data0010' at 79209492 (46%) 6.39M/s eta:14s [Sending data]
+`...Data0010' at 84552860 (49%) 6.35M/s eta:13s [Sending data]
+`...Data0010' at 90526996 (53%) 6.40M/s eta:12s [Sending data]
+`...Data0010' at 96448924 (56%) 6.43M/s eta:11s [Sending data]
+The thread '<No Name>' (0x194c) has exited with code 0 (0x0).
+`...Data0010' at 102598024 (60%) 6.47M/s eta:10s [Sending data]
+`...Data0010' at 110369640 (64%) 6.63M/s eta:9s [Sending data]
+`...Data0010' at 116362284 (68%) 6.63M/s eta:8s [Sending data]
+`...Data0010' at 123407796 (72%) 6.72M/s eta:7s [Sending data]
+`...Data0010' at 129738636 (76%) 6.76M/s eta:6s [Sending data]
+`...Data0010' at 136220928 (79%) 6.81M/s eta:5s [Sending data]
+`...Data0010' at 143277120 (84%) 6.89M/s eta:4s [Sending data]
+`...Data0010' at 149812612 (87%) 6.89M/s eta:3s [Sending data]
+`...Data0010' at 156192928 (91%) 6.93M/s eta:2s [Sending data]
+`...Data0010' at 161466800 (94%) 6.90M/s eta:1s [Sending data]
+`...Data0010' at 167236036 (98%) 6.90M/s eta:0s [Sending data]
+170459136 bytes transferred in 23 seconds (6.95M/s)
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+Ftp.dll: 19 18:05:09 C: CWD /Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data/
+Ftp.dll: 19 18:05:09 S: 250 OK
+Ftp.dll: 19 18:05:09 Binding to: 192.168.1.102:0
+Ftp.dll: 19 18:05:09 Bound to: 192.168.1.102:0
+Ftp.dll: 19 18:05:09 C: PORT 192,168,1,102,68,82
+Ftp.dll: 19 18:05:09 S: 200 PORT command successful
+Ftp.dll: 19 18:05:09 C: LIST
+Ftp.dll: 19 18:05:09 S: 150 Opening connection
+Ftp.dll: 19 18:05:09 Data connection established.
+Ftp.dll: 19 18:05:09 S: 226 Transfer Complete
+Ftp.dll: 19 18:05:09 S:
+..
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0011
+-rwxrwxrwx   1 root  root    62849024 Feb 20 10:43 Data0031
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0013
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0001
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0025
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0004
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0008
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:41 Data0002
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:39 Data0022
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0018
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0007
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0027
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0015
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0020
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0003
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0006
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0005
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:40 Data0026
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0029
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:41 Data0009
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0030
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0028
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0010
+
+cd /Hdd1/Content/0000000000000000/53510803/0000700
+0/E4ED7663 
+0F68C1B47F84.data/
+cd ok, cwd=/Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+put -c /mnt/HD/HD_a
+2/P2P/transmission/[XBOX360]\ Thief/53510 
+803/00007000/E4ED76630F68C1B47F84.data/Data0014 -o Data0014
+`...Data0014' at 0 (0%) [Making data connection...]
+`...Data0014' at 5698720 (3%) [Sending data]
+`...Data0014' at 13013376 (7%) 6.41M/s eta:23s [Sending data]
+`...Data0014' at 19766744 (11%) 6.76M/s eta:21s [Sending data]
+`...Data0014' at 26596472 (15%) 7.25M/s eta:19s [Sending data]
+`...Data0014' at 33452624 (19%) 7.37M/s eta:18s [Sending data]
+`...Data0014' at 40341148 (23%) 7.39M/s eta:17s [Sending data]
+`...Data0014' at 45428948 (26%) 7.20M/s eta:17s [Sending data]
+`...Data0014' at 51651556 (30%) 7.22M/s eta:16s [Sending data]
+`...Data0014' at 56906800 (33%) 7.12M/s eta:15s [Sending data]
+`...Data0014' at 63094372 (37%) 7.14M/s eta:14s [Sending data]
+`...Data0014' at 70401304 (41%) 7.21M/s eta:13s [Sending data]
+`...Data0014' at 76197696 (44%) 7.18M/s eta:13s [Sending data]
+`...Data0014' at 82711312 (48%) 7.23M/s eta:12s [Sending data]
+`...Data0014' at 89881760 (52%) 7.29M/s eta:11s [Sending data]
+`...Data0014' at 94317408 (55%) 7.15M/s eta:10s [Sending data]
+`...Data0014' at 100373868 (58%) 7.16M/s eta:9s [Sending data]
+`...Data0014' at 106584356 (62%) 7.17M/s eta:8s [Sending data]
+`...Data0014' at 112634672 (66%) 7.17M/s eta:8s [Sending data]
+`...Data0014' at 119118188 (69%) 7.20M/s eta:7s [Sending data]
+`...Data0014' at 124990580 (73%) 7.19M/s eta:6s [Sending data]
+`...Data0014' at 132277088 (77%) 7.28M/s eta:5s [Sending data]
+`...Data0014' at 138192740 (81%) 7.23M/s eta:4s [Sending data]
+`...Data0014' at 143764216 (84%) 7.24M/s eta:4s [Sending data]
+`...Data0014' at 149465536 (87%) 7.19M/s eta:3s [Sending data]
+`...Data0014' at 157407568 (92%) 7.27M/s eta:2s [Sending data]
+`...Data0014' at 164491264 (96%) 7.33M/s eta:1s [Sending data]
+170459136 bytes transferred in 22 seconds (7.48M/s)
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+Ftp.dll: 12 18:05:32 C: CWD /Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data/
+Ftp.dll: 12 18:05:32 S: 250 OK
+Ftp.dll: 12 18:05:32 Binding to: 192.168.1.102:0
+Ftp.dll: 12 18:05:32 Bound to: 192.168.1.102:0
+Ftp.dll: 12 18:05:32 C: PORT 192,168,1,102,68,91
+Ftp.dll: 12 18:05:32 S: 200 PORT command successful
+Ftp.dll: 12 18:05:32 C: LIST
+Ftp.dll: 12 18:05:32 S: 150 Opening connection
+Ftp.dll: 12 18:05:32 Data connection established.
+Ftp.dll: 12 18:05:32 S: 226 Transfer Complete
+Ftp.dll: 12 18:05:32 S:
+..
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0011
+-rwxrwxrwx   1 root  root    62849024 Feb 20 10:43 Data0031
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0013
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0001
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0025
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0004
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0008
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:41 Data0002
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:39 Data0022
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0018
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0007
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0027
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0015
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0020
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0003
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0006
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0005
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:40 Data0026
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0029
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:41 Data0009
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0030
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0028
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0010
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0014
+
+cd /Hdd1/Content/0000000000000000/53510803/000070
+00/E4ED7663 
+0F68C1B47F84.data/
+cd ok, cwd=/Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+put -c /mnt/HD/HD_a2/P2P/tr
+ansmission/[XBOX360]\ Thief/53510 
+803/00007000/E4ED76630F68C1B47F84.data/Data0012 -o Data0012
+`...Data0012' at 0 (0%)
+`...Data0012' at 7046608 (4%) [Sending data]
+`...Data0012' at 13304204 (7%) 6.11M/s eta:25s [Sending data]
+`...Data0012' at 19104648 (11%) 6.16M/s eta:23s [Sending data]
+`...Data0012' at 26236188 (15%) 6.74M/s eta:20s [Sending data]
+`...Data0012' at 31647064 (18%) 6.67M/s eta:20s [Sending data]
+`...Data0012' at 38033448 (22%) 6.87M/s eta:18s [Sending data]
+`...Data0012' at 45223396 (26%) 7.02M/s eta:17s [Sending data]
+`...Data0012' at 51026408 (29%) 7.00M/s eta:16s [Sending data]
+`...Data0012' at 57222792 (33%) 7.02M/s eta:15s [Sending data]
+`...Data0012' at 62821300 (36%) 6.99M/s eta:15s [Sending data]
+`...Data0012' at 67984456 (39%) 6.91M/s eta:14s [Sending data]
+`...Data0012' at 72516868 (42%) 6.79M/s eta:14s [Sending data]
+`...Data0012' at 79486388 (46%) 6.90M/s eta:13s [Sending data]
+`...Data0012' at 85151908 (49%) 6.87M/s eta:12s [Sending data]
+`...Data0012' at 90863376 (53%) 6.86M/s eta:11s [Sending data]
+`...Data0012' at 97534328 (57%) 6.93M/s eta:10s [Sending data]
+`...Data0012' at 102548172 (60%) 6.88M/s eta:9s [Sending data]
+The thread '<No Name>' (0x196c) has exited with code 0 (0x0).
+`...Data0012' at 109863220 (64%) 6.99M/s eta:8s [Sending data]
+`...Data0012' at 114821080 (67%) 6.89M/s eta:8s [Sending data]
+`...Data0012' at 120592940 (70%) 6.86M/s eta:7s [Sending data]
+`...Data0012' at 128401100 (75%) 6.98M/s eta:6s [Sending data]
+`...Data0012' at 133687196 (78%) 6.98M/s eta:5s [Sending data]
+`...Data0012' at 140239664 (82%) 6.99M/s eta:4s [Sending data]
+`...Data0012' at 146819920 (86%) 7.03M/s eta:3s [Sending data]
+`...Data0012' at 153328432 (89%) 7.03M/s eta:2s [Sending data]
+`...Data0012' at 160825992 (94%) 7.12M/s eta:1s [Sending data]
+`...Data0012' at 165556120 (97%) 7.04M/s eta:1s [Sending data]
+170459136 bytes transferred in 23 seconds (7.11M/s)
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+Ftp.dll: 17 18:05:55 C: CWD /Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data/
+Ftp.dll: 17 18:05:55 S: 250 OK
+Ftp.dll: 17 18:05:55 Binding to: 192.168.1.102:0
+Ftp.dll: 17 18:05:55 Bound to: 192.168.1.102:0
+Ftp.dll: 17 18:05:55 C: PORT 192,168,1,102,68,99
+Ftp.dll: 17 18:05:55 S: 200 PORT command successful
+Ftp.dll: 17 18:05:55 C: LIST
+Ftp.dll: 17 18:05:55 S: 150 Opening connection
+Ftp.dll: 17 18:05:55 Data connection established.
+Ftp.dll: 17 18:05:55 S: 226 Transfer Complete
+Ftp.dll: 17 18:05:55 S:
+..
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0011
+-rwxrwxrwx   1 root  root    62849024 Feb 20 10:43 Data0031
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0013
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0001
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0025
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0004
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0008
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:41 Data0002
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:39 Data0022
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0018
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0007
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0027
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0015
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0020
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0003
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0006
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0005
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:40 Data0026
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0029
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:41 Data0009
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0030
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0028
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0010
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0014
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0012
+
+cd /Hdd1/Content/0000000000000000/53510803/0000700
+0/E4ED7663 
+0F68C1B47F84.data/
+cd ok, cwd=/Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+put -c /mnt/HD/HD_a2/P2P/transm
+ission/[XBOX360]\ Thief/53510 
+803/00007000/E4ED76630F68C1B47F84.data/Data0019 -o Data0019
+`...Data0019' at 0 (0%)
+`...Data0019' at 6639340 (3%) [Sending data]
+`...Data0019' at 13817564 (8%) 6.38M/s eta:23s [Sending data]
+`...Data0019' at 20981796 (12%) 7.10M/s eta:20s [Sending data]
+`...Data0019' at 26641688 (15%) 7.01M/s eta:20s [Sending data]
+`...Data0019' at 32887484 (19%) 7.09M/s eta:19s [Sending data]
+`...Data0019' at 39150476 (22%) 7.14M/s eta:18s [Sending data]
+`...Data0019' at 44002408 (25%) 7.02M/s eta:17s [Sending data]
+`...Data0019' at 50126848 (29%) 6.94M/s eta:17s [Sending data]
+`...Data0019' at 54582192 (32%) 6.75M/s eta:16s [Sending data]
+`...Data0019' at 60391156 (35%) 6.76M/s eta:16s [Sending data]
+`...Data0019' at 66785840 (39%) 6.84M/s eta:14s [Sending data]
+`...Data0019' at 71342472 (41%) 6.74M/s eta:14s [Sending data]
+`...Data0019' at 78725704 (46%) 6.85M/s eta:13s [Sending data]
+`...Data0019' at 84321212 (49%) 6.82M/s eta:12s [Sending data]
+`...Data0019' at 88781356 (52%) 6.74M/s eta:12s [Sending data]
+`...Data0019' at 95815880 (56%) 6.79M/s eta:10s [Sending data]
+`...Data0019' at 101122252 (59%) 6.73M/s eta:10s [Sending data]
+`...Data0019' at 107754876 (63%) 6.78M/s eta:9s [Sending data]
+`...Data0019' at 112240904 (65%) 6.70M/s eta:8s [Sending data]
+`...Data0019' at 118158452 (69%) 6.72M/s eta:7s [Sending data]
+`...Data0019' at 124450260 (73%) 6.76M/s eta:6s [Sending data]
+`...Data0019' at 130691564 (76%) 6.79M/s eta:6s [Sending data]
+`...Data0019' at 135944400 (79%) 6.74M/s eta:5s [Sending data]
+The thread '<No Name>' (0x1908) has exited with code 0 (0x0).
+`...Data0019' at 142344668 (83%) 6.78M/s eta:4s [Sending data]
+`...Data0019' at 146814556 (86%) 6.70M/s eta:3s [Sending data]
+`...Data0019' at 151414160 (88%) 6.64M/s eta:3s [Sending data]
+`...Data0019' at 156636236 (91%) 6.61M/s eta:2s [Sending data]
+`...Data0019' at 163336568 (95%) 6.69M/s eta:1s [Sending data]
+`...Data0019' at 170459136 (100%) 6.57M/s eta:0s [Waiting for transfer to compl
+170459136 bytes transferred in 24 seconds (6.74M/s)
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+Ftp.dll: 12 18:06:21 C: CWD /Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data/
+Ftp.dll: 12 18:06:22 S: 250 OK
+Ftp.dll: 12 18:06:22 Binding to: 192.168.1.102:0
+Ftp.dll: 12 18:06:22 Bound to: 192.168.1.102:0
+Ftp.dll: 12 18:06:22 C: PORT 192,168,1,102,68,111
+Ftp.dll: 12 18:06:22 S: 200 PORT command successful
+Ftp.dll: 12 18:06:22 C: LIST
+Ftp.dll: 12 18:06:22 S: 150 Opening connection
+Ftp.dll: 12 18:06:22 Data connection established.
+Ftp.dll: 12 18:06:22 S: 226 Transfer Complete
+Ftp.dll: 12 18:06:22 S:
+..
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0011
+-rwxrwxrwx   1 root  root    62849024 Feb 20 10:43 Data0031
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0013
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0001
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0025
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0004
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0008
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:41 Data0002
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:39 Data0022
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0018
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0007
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0027
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0015
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0020
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0003
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0006
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0005
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:40 Data0026
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0029
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:41 Data0009
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0030
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0028
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0010
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0014
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0012
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0019
+
+cd /Hdd1/Content/000000000
+0000000/53510803/00007000/E4ED7663 
+0F68C1B47F84.data/
+cd ok, cwd=/Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+put -c /mnt/HD/HD_a2/P2P/transmission/[XBOX360
+]\ Thief/53510 
+803/00007000/E4ED76630F68C1B47F84.data/Data0024 -o Data0024
+`...Data0024' at 0 (0%) [Waiting for response...]
+`...Data0024' at 6400740 (3%) [Sending data]
+`...Data0024' at 12243864 (7%) 5.49M/s eta:27s [Sending data]
+`...Data0024' at 18093184 (10%) 5.82M/s eta:25s [Sending data]
+`...Data0024' at 23778600 (13%) 6.02M/s eta:23s [Sending data]
+`...Data0024' at 30689824 (18%) 6.39M/s eta:21s [Sending data]
+`...Data0024' at 35792964 (20%) 6.40M/s eta:20s [Sending data]
+`...Data0024' at 41343848 (24%) 6.33M/s eta:19s [Sending data]
+`...Data0024' at 45893536 (26%) 6.28M/s eta:19s [Sending data]
+`...Data0024' at 51181412 (30%) 5.96M/s eta:19s [Sending data]
+`...Data0024' at 56890076 (33%) 5.99M/s eta:18s [Sending data]
+`...Data0024' at 61873912 (36%) 5.92M/s eta:17s [Sending data]
+`...Data0024' at 67277820 (39%) 5.94M/s eta:17s [Sending data]
+`...Data0024' at 73391556 (43%) 6.01M/s eta:15s [Sending data]
+`...Data0024' at 77951444 (45%) 5.94M/s eta:15s [Sending data]
+`...Data0024' at 83737256 (49%) 6.01M/s eta:14s [Sending data]
+`...Data0024' at 88689448 (52%) 5.98M/s eta:13s [Sending data]
+The thread '<No Name>' (0x1f88) has exited with code 0 (0x0).
+`...Data0024' at 93563624 (54%) 5.97M/s eta:12s [Sending data]
+`...Data0024' at 98934612 (58%) 6.00M/s eta:11s [Sending data]
+`...Data0024' at 103896892 (60%) 5.99M/s eta:11s [Sending data]
+`...Data0024' at 110173520 (64%) 6.07M/s eta:9s [Sending data]
+`...Data0024' at 116049028 (68%) 6.12M/s eta:9s [Sending data]
+`...Data0024' at 122116224 (71%) 6.14M/s eta:8s [Sending data]
+`...Data0024' at 128718804 (75%) 6.23M/s eta:6s [Sending data]
+`...Data0024' at 134767700 (79%) 6.29M/s eta:5s [Sending data]
+`...Data0024' at 140843600 (82%) 6.31M/s eta:5s [Sending data]
+`...Data0024' at 146766668 (86%) 6.34M/s eta:4s [Sending data]
+`...Data0024' at 152730836 (89%) 6.36M/s eta:3s [Sending data]
+`...Data0024' at 157617252 (92%) 6.29M/s eta:2s [Sending data]
+`...Data0024' at 163722128 (96%) 6.36M/s eta:1s [Sending data]
+170459136 bytes transferred in 25 seconds (6.45M/s)
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+Ftp.dll: 17 18:06:48 C: CWD /Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data/
+Ftp.dll: 17 18:06:48 S: 250 OK
+Ftp.dll: 17 18:06:48 Binding to: 192.168.1.102:0
+Ftp.dll: 17 18:06:48 Bound to: 192.168.1.102:0
+Ftp.dll: 17 18:06:48 C: PORT 192,168,1,102,68,120
+Ftp.dll: 17 18:06:48 S: 200 PORT command successful
+Ftp.dll: 17 18:06:48 C: LIST
+Ftp.dll: 17 18:06:48 S: 150 Opening connection
+Ftp.dll: 17 18:06:48 Data connection established.
+Ftp.dll: 17 18:06:48 S: 226 Transfer Complete
+Ftp.dll: 17 18:06:48 S:
+..
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0011
+-rwxrwxrwx   1 root  root    62849024 Feb 20 10:43 Data0031
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0013
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0001
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0025
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0004
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0008
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:41 Data0002
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:39 Data0022
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0018
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0007
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0027
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0015
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0020
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0003
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0006
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0005
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:40 Data0026
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0029
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:41 Data0009
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0030
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0028
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0010
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0014
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0012
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0019
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0024
+
+cd /Hdd1/Content/000000000000000
+0/53510803/00007000/E4ED7663 
+0F68C1B47F84.data/
+cd ok, cwd=/Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+put -c /mnt/HD/HD_a2/P2
+P/transmission/[XBOX360]\ Thief/53510 
+803/00007000/E4ED76630F68C1B47F84.data/Data0021 -o Data0021
+`...Data0021' at 0 (0%)
+`...Data0021' at 6539280 (3%) [Sending data]
+`...Data0021' at 13877888 (8%) 6.29M/s eta:24s [Sending data]
+`...Data0021' at 19055132 (11%) 6.42M/s eta:22s [Sending data]
+`...Data0021' at 24559464 (14%) 6.27M/s eta:22s [Sending data]
+`...Data0021' at 30383976 (17%) 6.25M/s eta:21s [Sending data]
+`...Data0021' at 35981756 (21%) 6.32M/s eta:20s [Sending data]
+`...Data0021' at 43871220 (25%) 6.75M/s eta:18s [Sending data]
+`...Data0021' at 50894472 (29%) 7.01M/s eta:16s [Sending data]
+`...Data0021' at 57572788 (33%) 6.96M/s eta:15s [Sending data]
+`...Data0021' at 65711132 (38%) 7.23M/s eta:14s [Sending data]
+`...Data0021' at 70750880 (41%) 7.06M/s eta:13s [Sending data]
+`...Data0021' at 74772808 (43%) 6.88M/s eta:13s [Sending data]
+`...Data0021' at 82694144 (48%) 7.07M/s eta:12s [Sending data]
+`...Data0021' at 87722676 (51%) 6.97M/s eta:11s [Sending data]
+`...Data0021' at 94402668 (55%) 7.06M/s eta:10s [Sending data]
+`...Data0021' at 99642144 (58%) 6.97M/s eta:10s [Sending data]
+`...Data0021' at 103584372 (60%) 6.87M/s eta:9s [Sending data]
+`...Data0021' at 109493664 (64%) 6.86M/s eta:8s [Sending data]
+`...Data0021' at 113939912 (66%) 6.75M/s eta:8s [Sending data]
+`...Data0021' at 118894884 (69%) 6.70M/s eta:7s [Sending data]
+`...Data0021' at 126332800 (74%) 6.73M/s eta:6s [Sending data]
+`...Data0021' at 132516092 (77%) 6.79M/s eta:5s [Sending data]
+`...Data0021' at 137927448 (80%) 6.74M/s eta:5s [Sending data]
+`...Data0021' at 142520320 (83%) 6.68M/s eta:4s [Sending data]
+`...Data0021' at 149260328 (87%) 6.74M/s eta:3s [Sending data]
+`...Data0021' at 155414408 (91%) 6.77M/s eta:2s [Sending data]
+`...Data0021' at 161441804 (94%) 6.80M/s eta:1s [Sending data]
+`...Data0021' at 167229628 (98%) 6.77M/s eta:0s [Sending data]
+170459136 bytes transferred in 23 seconds (6.92M/s)
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+Ftp.dll: 17 18:07:12 C: CWD /Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data/
+Ftp.dll: 17 18:07:12 S: 250 OK
+Ftp.dll: 17 18:07:12 Binding to: 192.168.1.102:0
+Ftp.dll: 17 18:07:12 Bound to: 192.168.1.102:0
+Ftp.dll: 17 18:07:12 C: PORT 192,168,1,102,68,127
+Ftp.dll: 17 18:07:12 S: 200 PORT command successful
+Ftp.dll: 17 18:07:12 C: LIST
+Ftp.dll: 17 18:07:12 S: 150 Opening connection
+Ftp.dll: 17 18:07:12 Data connection established.
+Ftp.dll: 17 18:07:12 S: 226 Transfer Complete
+Ftp.dll: 17 18:07:12 S:
+..
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0011
+-rwxrwxrwx   1 root  root    62849024 Feb 20 10:43 Data0031
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0013
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0001
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0025
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0004
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0008
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:41 Data0002
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:39 Data0022
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0018
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0007
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0027
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0015
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0020
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0003
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0006
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0005
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:40 Data0026
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0029
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:41 Data0009
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0030
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0028
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0010
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0014
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0012
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0019
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0024
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0021
+
+cd /Hdd1/Co
+ntent/0000000000000000/53510803/00007000/E4ED7663 
+0F68C1B47F84.data/
+cd ok, cwd=/Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+put -c /mnt
+/HD/HD_a2/P2P/transmission/[XBOX360]\ Thief/53510 
+803/00007000/E4ED76630F68C1B47F84.data/Data0016 -o Data0016
+`...Data0016' at 0 (0%) [Connection idle]
+`...Data0016' at 4663660 (2%) [Sending data]
+`...Data0016' at 8587372 (5%) 4.01M/s eta:39s [Sending data]
+`...Data0016' at 16392788 (9%) 5.65M/s eta:26s [Sending data]
+`...Data0016' at 21890980 (12%) 5.70M/s eta:25s [Sending data]
+`...Data0016' at 27690468 (16%) 5.95M/s eta:23s [Sending data]
+`...Data0016' at 30193000 (17%) 5.46M/s eta:24s [Sending data]
+`...Data0016' at 35913432 (21%) 5.65M/s eta:23s [Sending data]
+`...Data0016' at 42603048 (24%) 5.94M/s eta:21s [Sending data]
+`...Data0016' at 49587220 (29%) 6.20M/s eta:19s [Sending data]
+`...Data0016' at 54330212 (31%) 6.02M/s eta:18s [Sending data]
+`...Data0016' at 60394884 (35%) 6.15M/s eta:17s [Sending data]
+`...Data0016' at 66098664 (38%) 6.18M/s eta:16s [Sending data]
+`...Data0016' at 72720444 (42%) 6.26M/s eta:15s [Sending data]
+`...Data0016' at 80348052 (47%) 6.45M/s eta:13s [Sending data]
+`...Data0016' at 88390504 (51%) 6.66M/s eta:12s [Sending data]
+`...Data0016' at 94707288 (55%) 6.71M/s eta:11s [Sending data]
+`...Data0016' at 101079064 (59%) 6.79M/s eta:10s [Sending data]
+The thread '<No Name>' (0x1658) has exited with code 0 (0x0).
+`...Data0016' at 105655912 (61%) 6.69M/s eta:9s [Sending data]
+`...Data0016' at 112610408 (66%) 6.76M/s eta:8s [Sending data]
+`...Data0016' at 117687268 (69%) 6.77M/s eta:7s [Sending data]
+`...Data0016' at 121427664 (71%) 6.51M/s eta:7s [Sending data]
+`...Data0016' at 127988944 (75%) 6.59M/s eta:6s [Sending data]
+`...Data0016' at 133603128 (78%) 6.59M/s eta:5s [Sending data]
+`...Data0016' at 139834916 (82%) 6.66M/s eta:4s [Sending data]
+`...Data0016' at 146917248 (86%) 6.72M/s eta:3s [Sending data]
+`...Data0016' at 151332580 (88%) 6.64M/s eta:3s [Sending data]
+`...Data0016' at 155683208 (91%) 6.56M/s eta:2s [Sending data]
+`...Data0016' at 161942060 (95%) 6.61M/s eta:1s [Sending data]
+`...Data0016' at 169086640 (99%) 6.71M/s eta:0s [Sending data]
+170459136 bytes transferred in 24 seconds (6.79M/s)
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+Ftp.dll:  3 18:07:37 C: CWD /Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data/
+Ftp.dll:  3 18:07:37 S: 250 OK
+Ftp.dll:  3 18:07:37 Binding to: 192.168.1.102:0
+Ftp.dll:  3 18:07:37 Bound to: 192.168.1.102:0
+Ftp.dll:  3 18:07:37 C: PORT 192,168,1,102,68,137
+Ftp.dll:  3 18:07:37 S: 200 PORT command successful
+Ftp.dll:  3 18:07:37 C: LIST
+Ftp.dll:  3 18:07:37 S: 150 Opening connection
+Ftp.dll:  3 18:07:37 Data connection established.
+Ftp.dll:  3 18:07:37 S: 226 Transfer Complete
+Ftp.dll:  3 18:07:37 S:
+..
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0011
+-rwxrwxrwx   1 root  root    62849024 Feb 20 10:43 Data0031
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0013
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0001
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0025
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0004
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0008
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:41 Data0002
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:39 Data0022
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0018
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0007
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0027
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0015
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0020
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0003
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0006
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0005
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:40 Data0026
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0029
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:41 Data0009
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0030
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0028
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0010
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0014
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0012
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0019
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0024
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0021
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:40 Data0016
+
+cd /Hdd1/Content/00000000
+00000000/53510803/00007000/E4ED7663 
+0F68C1B47F84.data/
+cd ok, cwd=/Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+put -c /mnt/HD/HD_a2/P2P/transmission/[XBOX360]\ Th
+ief/53510 
+803/00007000/E4ED76630F68C1B47F84.data/Data0017 -o Data0017
+`...Data0017' at 0 (0%)
+`...Data0017' at 5933828 (3%) [Sending data]
+`...Data0017' at 12385996 (7%) 5.57M/s eta:27s [Sending data]
+`...Data0017' at 18213116 (10%) 5.80M/s eta:25s [Sending data]
+`...Data0017' at 24116012 (14%) 6.09M/s eta:23s [Sending data]
+`...Data0017' at 30041508 (17%) 6.38M/s eta:21s [Sending data]
+`...Data0017' at 37128948 (21%) 6.62M/s eta:19s [Sending data]
+`...Data0017' at 44025112 (25%) 6.82M/s eta:18s [Sending data]
+`...Data0017' at 47800008 (28%) 6.54M/s eta:18s [Sending data]
+`...Data0017' at 51343428 (30%) 6.28M/s eta:18s [Sending data]
+`...Data0017' at 58259812 (34%) 6.41M/s eta:17s [Sending data]
+`...Data0017' at 65587564 (38%) 6.62M/s eta:15s [Sending data]
+`...Data0017' at 72144524 (42%) 6.72M/s eta:14s [Sending data]
+`...Data0017' at 78020504 (45%) 6.75M/s eta:13s [Sending data]
+`...Data0017' at 83647752 (49%) 6.62M/s eta:12s [Sending data]
+`...Data0017' at 91407760 (53%) 6.79M/s eta:11s [Sending data]
+`...Data0017' at 97929244 (57%) 6.80M/s eta:10s [Sending data]
+`...Data0017' at 104902132 (61%) 6.88M/s eta:9s [Sending data]
+`...Data0017' at 111051676 (65%) 6.90M/s eta:8s [Sending data]
+`...Data0017' at 115645300 (67%) 6.82M/s eta:8s [Sending data]
+`...Data0017' at 122142740 (71%) 6.83M/s eta:7s [Sending data]
+`...Data0017' at 129991524 (76%) 6.96M/s eta:6s [Sending data]
+`...Data0017' at 136021340 (79%) 6.98M/s eta:5s [Sending data]
+`...Data0017' at 142834832 (83%) 7.03M/s eta:4s [Sending data]
+`...Data0017' at 148196164 (86%) 6.99M/s eta:3s [Sending data]
+`...Data0017' at 154790836 (90%) 7.07M/s eta:2s [Sending data]
+The thread '<No Name>' (0x12d8) has exited with code 0 (0x0).
+`...Data0017' at 161784612 (94%) 7.10M/s eta:1s [Sending data]
+`...Data0017' at 168984168 (99%) 7.14M/s eta:0s [Sending data]
+170459136 bytes transferred in 23 seconds (7.22M/s)
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+Ftp.dll: 12 18:08:00 C: CWD /Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data/
+Ftp.dll: 12 18:08:00 S: 250 OK
+Ftp.dll: 12 18:08:00 Binding to: 192.168.1.102:0
+Ftp.dll: 12 18:08:00 Bound to: 192.168.1.102:0
+Ftp.dll: 12 18:08:00 C: PORT 192,168,1,102,68,141
+Ftp.dll: 12 18:08:00 S: 200 PORT command successful
+Ftp.dll: 12 18:08:00 C: LIST
+Ftp.dll: 12 18:08:00 S: 150 Opening connection
+Ftp.dll: 12 18:08:00 Data connection established.
+Ftp.dll: 12 18:08:00 S: 226 Transfer Complete
+Ftp.dll: 12 18:08:00 S:
+..
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0011
+-rwxrwxrwx   1 root  root    62849024 Feb 20 10:43 Data0031
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0013
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0001
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0025
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0004
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0008
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:41 Data0002
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:39 Data0022
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0018
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0007
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0027
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0015
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0020
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0003
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0006
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0005
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:40 Data0026
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0029
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:41 Data0009
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0030
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0028
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0010
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0014
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0012
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0019
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0024
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0021
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:40 Data0016
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:41 Data0017
+
+cd /Hdd1/Content/0000000000000000/535
+10803/00007000/E4ED7663 
+0F68C1B47F84.data/
+cd ok, cwd=/Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+put -c /mnt/HD/HD_a2/P2P/t
+ransmission/[XBOX360]\ Thief/53510 
+803/00007000/E4ED76630F68C1B47F84.data/Data0023 -o Data0023
+`...Data0023' at 0 (0%)
+`...Data0023' at 4002292 (2%) [Sending data]
+`...Data0023' at 8782560 (5%) 4.21M/s eta:37s [Sending data]
+`...Data0023' at 15699700 (9%) 5.52M/s eta:27s [Sending data]
+`...Data0023' at 23819440 (13%) 6.47M/s eta:22s [Sending data]
+`...Data0023' at 30817404 (18%) 6.72M/s eta:20s [Sending data]
+`...Data0023' at 36169564 (21%) 6.75M/s eta:19s [Sending data]
+`...Data0023' at 41492868 (24%) 6.60M/s eta:19s [Sending data]
+`...Data0023' at 46728208 (27%) 6.64M/s eta:18s [Sending data]
+`...Data0023' at 52982160 (31%) 6.65M/s eta:17s [Sending data]
+`...Data0023' at 58447616 (34%) 6.71M/s eta:16s [Sending data]
+`...Data0023' at 64652404 (37%) 6.74M/s eta:15s [Sending data]
+`...Data0023' at 69880340 (40%) 6.64M/s eta:14s [Sending data]
+`...Data0023' at 75667564 (44%) 6.66M/s eta:14s [Sending data]
+`...Data0023' at 80777628 (47%) 6.61M/s eta:13s [Sending data]
+`...Data0023' at 87190464 (51%) 6.63M/s eta:12s [Sending data]
+`...Data0023' at 92222576 (54%) 6.59M/s eta:11s [Sending data]
+`...Data0023' at 97679172 (57%) 6.61M/s eta:10s [Sending data]
+The thread '<No Name>' (0x1b68) has exited with code 0 (0x0).
+`...Data0023' at 103584408 (60%) 6.60M/s eta:10s [Sending data]
+`...Data0023' at 108157040 (63%) 6.54M/s eta:9s [Sending data]
+`...Data0023' at 112385296 (65%) 6.46M/s eta:9s [Sending data]
+`...Data0023' at 118434632 (69%) 6.50M/s eta:8s [Sending data]
+`...Data0023' at 123054836 (72%) 6.46M/s eta:7s [Sending data]
+`...Data0023' at 126919816 (74%) 6.35M/s eta:7s [Sending data]
+`...Data0023' at 131611384 (77%) 6.30M/s eta:6s [Sending data]
+`...Data0023' at 137263868 (80%) 6.32M/s eta:5s [Sending data]
+`...Data0023' at 142505144 (83%) 6.35M/s eta:4s [Sending data]
+`...Data0023' at 150614304 (88%) 6.49M/s eta:3s [Sending data]
+`...Data0023' at 155161556 (91%) 6.46M/s eta:2s [Sending data]
+`...Data0023' at 159785712 (93%) 6.37M/s eta:2s [Sending data]
+`...Data0023' at 165234516 (96%) 6.38M/s eta:1s [Sending data]
+170459136 bytes transferred in 25 seconds (6.46M/s)
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+Ftp.dll:  3 18:08:26 C: CWD /Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data/
+Ftp.dll:  3 18:08:26 S: 250 OK
+Ftp.dll:  3 18:08:26 Binding to: 192.168.1.102:0
+Ftp.dll:  3 18:08:26 Bound to: 192.168.1.102:0
+Ftp.dll:  3 18:08:26 C: PORT 192,168,1,102,68,152
+Ftp.dll:  3 18:08:26 S: 200 PORT command successful
+Ftp.dll:  3 18:08:26 C: LIST
+Ftp.dll:  3 18:08:26 S: 150 Opening connection
+Ftp.dll:  3 18:08:26 Data connection established.
+Ftp.dll:  3 18:08:26 S: 226 Transfer Complete
+Ftp.dll:  3 18:08:26 S:
+..
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0011
+-rwxrwxrwx   1 root  root    62849024 Feb 20 10:43 Data0031
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0013
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0001
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0025
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0004
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0008
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:41 Data0002
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:39 Data0022
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0018
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0007
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0027
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0015
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0020
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0003
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0006
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0005
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:40 Data0026
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:43 Data0029
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:41 Data0009
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0030
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0028
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:42 Data0010
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0014
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0012
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:44 Data0019
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0024
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0021
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:40 Data0016
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:41 Data0017
+-rwxrwxrwx   1 root  root    170459136 Feb 20 10:45 Data0023
+
+cd /Hdd1/Content/0000000000000000/53510803/0000700
+0/E4ED7663 
+0F68C1B47F84.data/
+cd ok, cwd=/Hdd1/Content/0000000000000000/53510803/00007000/E4ED76630F68C1B47F84.data
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+put -c /mnt/HD/HD_a2/P2P/transmission/[XBOX360]\ Thief/5
+3510 
+803/00007000/E4ED76630F68C1B47F84.data/Data0000 -o Data0000
+`...Data0000' at 0 (0%)
+`...Data0000' at 5153276 (3%) [Sending data]
+`...Data0000' at 11122308 (6%) 5.34M/s eta:28s [Sending data]
+`...Data0000' at 16393492 (9%) 5.48M/s eta:27s [Sending data]
+`...Data0000' at 20688628 (12%) 5.32M/s eta:27s [Sending data]
+`...Data0000' at 25472176 (14%) 5.42M/s eta:26s [Sending data]
+`...Data0000' at 31075808 (18%) 5.62M/s eta:24s [Sending data]
+`...Data0000' at 36288552 (21%) 5.70M/s eta:22s [Sending data]
+`...Data0000' at 43050480 (25%) 5.98M/s eta:20s [Sending data]
+`...Data0000' at 49861304 (29%) 6.23M/s eta:18s [Sending data]
+`...Data0000' at 56099016 (32%) 6.35M/s eta:17s [Sending data]
+`...Data0000' at 63054472 (36%) 6.52M/s eta:16s [Sending data]
+`...Data0000' at 69236112 (40%) 6.63M/s eta:15s [Sending data]
+`...Data0000' at 74681044 (43%) 6.56M/s eta:14s [Sending data]
+`...Data0000' at 81460124 (47%) 6.66M/s eta:13s [Sending data]
+`...Data0000' at 87987404 (51%) 6.73M/s eta:12s [Sending data]
+`...Data0000' at 94522956 (55%) 6.80M/s eta:11s [Sending data]
+`...Data0000' at 100759832 (59%) 6.84M/s eta:10s [Sending data]
+`...Data0000' at 106846364 (62%) 6.86M/s eta:9s [Sending data]
+`...Data0000' at 113657208 (66%) 6.92M/s eta:8s [Sending data]
+`...Data0000' at 119545564 (70%) 6.93M/s eta:7s [Sending data]
+`...Data0000' at 124699280 (73%) 6.88M/s eta:6s [Sending data]
+`...Data0000' at 131515696 (77%) 6.96M/s eta:5s [Sending data]
+`...Data0000' at 137825332 (80%) 6.95M/s eta:4s [Sending data]
+`...Data0000' at 142517332 (83%) 6.84M/s eta:4s [Sending data]
+`...Data0000' at 148859324 (87%) 6.87M/s eta:3s [Sending data]
+`...Data0000' at 154822824 (90%) 6.88M/s eta:2s [Sending data]
+`...Data0000' at 160300972 (94%) 6.86M/s eta:1s [Sending data]
+`...Data0000' at 164661356 (96%) 6.77M/s eta:1s [Sending data]
+170459136 bytes transferred in 23 seconds (6.92M/s)
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000/E4ED7663
+30F68C1B47F84.data>
+Ftp.dll: 12 18:08:51 C: CWD /Hdd1/Content/0000000000000000/53510803/00007000/
+Ftp.dll: 12 18:08:51 S: 250 OK
+Ftp.dll: 12 18:08:51 Binding to: 192.168.1.102:0
+Ftp.dll: 12 18:08:51 Bound to: 192.168.1.102:0
+Ftp.dll: 12 18:08:51 C: PORT 192,168,1,102,68,158
+Ftp.dll: 12 18:08:51 S: 200 PORT command successful
+Ftp.dll: 12 18:08:51 C: LIST
+Ftp.dll: 12 18:08:51 S: 150 Opening connection
+Ftp.dll: 12 18:08:51 Data connection established.
+Ftp.dll: 12 18:08:51 S: 226 Transfer Complete
+Ftp.dll: 12 18:08:51 S:
+..
+drwxrwxrwx   1 root  root    0 Feb 20 2014 E4ED76630F68C1B47F84.data
+
+cd /Hdd1/Content/00000000000
+00000/53510803/00007000/
+cd ok, cwd=/Hdd1/Content/0000000000000000/53510803/00007000
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000>
+put -c 
+ /mnt/HD/HD_a2/P2P/transmission/[XBOX360]
+\ Thief/53510803/00007000/E4ED76630F68C 
+1B47F84 -o E4ED76630F68C1B47F84
+`.../E4ED76630F68C1B47F84' at 0 (0%)
+                                       
+45056 bytes transferred
+lftp xbox@192.168.1.111:/Hdd1/Content/0000000000000000/53510803/00007000>
+exit
+/ #
+Ftp.dll:  3 18:08:52 C: CWD /Hdd1/Content/0000000000000000/
+Ftp.dll:  3 18:08:52 S: 250 OK
+Ftp.dll:  3 18:08:52 Binding to: 192.168.1.102:0
+Ftp.dll:  3 18:08:52 Bound to: 192.168.1.102:0
+Ftp.dll:  3 18:08:52 C: PORT 192,168,1,102,68,159
+Ftp.dll:  3 18:08:52 S: 200 PORT command successful
+Ftp.dll:  3 18:08:52 C: LIST
+Ftp.dll:  3 18:08:52 S: 150 Opening connection
+Ftp.dll:  3 18:08:52 Data connection established.
+Ftp.dll:  3 18:08:52 S: 226 Transfer Complete
+Ftp.dll:  3 18:08:52 S:
+..
+drwxrwxrwx   1 root  root    0 Nov 19 2012 58410B92
+drwxrwxrwx   1 root  root    0 Nov 19 2012 FFFE07DF
+drwxrwxrwx   1 root  root    0 Nov 22 2005 4B4E0823
+drwxrwxrwx   1 root  root    0 Nov 29 2012 5553088C
+drwxrwxrwx   1 root  root    0 Nov 29 2012 53510804
+drwxrwxrwx   1 root  root    0 Nov 29 2012 425307e3
+drwxrwxrwx   1 root  root    0 Nov 29 2012 4B5607DA
+drwxrwxrwx   1 root  root    0 Nov 29 2012 4E4D0859
+drwxrwxrwx   1 root  root    0 Nov 29 2012 555308AE
+drwxrwxrwx   1 root  root    0 Nov 22 2005 43430819
+drwxrwxrwx   1 root  root    0 Nov 29 2012 58411289
+drwxrwxrwx   1 root  root    0 Nov 29 2012 58410A5A
+drwxrwxrwx   1 root  root    0 Nov 29 2012 58411228
+drwxrwxrwx   1 root  root    0 Nov 29 2012 58410AAD
+drwxrwxrwx   1 root  root    0 Nov 29 2012 4541093E
+drwxrwxrwx   1 root  root    0 Dec 11 2012 5451086D
+drwxrwxrwx   1 root  root    0 Nov 22 2005 443607D2
+drwxrwxrwx   1 root  root    0 Nov 22 2005 5454082B
+drwxrwxrwx   1 root  root    0 Nov 22 2005 534307E7
+drwxrwxrwx   1 root  root    0 Nov 22 2005 4343081E
+drwxrwxrwx   1 root  root    0 Nov 22 2005 43430824
+drwxrwxrwx   1 root  root    0 Nov 22 2005 5345083F
+drwxrwxrwx   1 root  root    0 Nov 22 2005 4B4E8854
+drwxrwxrwx   1 root  root    0 Nov 22 2005 4541099D
+drwxrwxrwx   1 root  root    0 Nov 22 2005 454109AB
+drwxrwxrwx   1 root  root    0 Nov 22 2005 584113CF
+drwxrwxrwx   1 root  root    0 Nov 22 2005 58410A30
+drwxrwxrwx   1 root  root    0 Nov 22 2005 58411212
+drwxrwxrwx   1 root  root    0 Nov 22 2005 584112A5
+drwxrwxrwx   1 root  root    0 Nov 22 2005 4B4D07F6
+drwxrwxrwx   1 root  root    0 Nov 22 2005 565707D6
+drwxrwxrwx   1 root  root    0 Nov 22 2005 555308C2
+drwxrwxrwx   1 root  root    0 Feb 20 2014 53510803
+
+[CD] Enqueued 0: 00:00:00.1398106
+The thread '<No Name>' (0x16c8) has exited with code 0 (0x0).
+The thread '<No Name>' (0x1510) has exited with code 0 (0x0).
+The thread '<No Name>' (0x1218) has exited with code 0 (0x0).
+Ftp.dll:  9 18:31:18 C: QUIT
+Ftp.dll:  9 18:31:18 S: 221 goodbye (connection timed out)
+System.Windows.Data Error: 40 : BindingExpression path error: 'CalculateSizeCommand' property not found on 'object' ''ConnectionsViewModel' (HashCode=37291744)'. BindingExpression:Path=ActivePane.CalculateSizeCommand; DataItem='FileManagerViewModel' (HashCode=21631708); target element is 'MenuItem' (Name=''); target property is 'Command' (type 'ICommand')
+A first chance exception of type 'Limilabs.FTP.Client.FtpException' occurred in Ftp.dll
+The thread 'vshost.RunParkingWindow' (0x1ea8) has exited with code 0 (0x0).
+The thread '<No Name>' (0x1e74) has exited with code 0 (0x0).
+The program '[4532] Neurotoxin.Godspeed.Shell.vshost.exe: Program Trace' has exited with code 0 (0x0).
+The program '[4532] Neurotoxin.Godspeed.Shell.vshost.exe: Managed (v4.0.30319)' has exited with code 0 (0x0).

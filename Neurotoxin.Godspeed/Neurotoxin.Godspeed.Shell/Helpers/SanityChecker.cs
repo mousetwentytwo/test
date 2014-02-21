@@ -107,6 +107,11 @@ namespace Neurotoxin.Godspeed.Shell.Helpers
 
         private static void MigrateCacheItemVersion1ToVersion2(string key, CacheEntry<FileSystemItem> value, EsentPersistentDictionary cacheStore, object payload)
         {
+            if (value.Content == null)
+            {
+                cacheStore.Remove(key);
+                return;
+            }
             if (value.Content.TitleType != TitleType.Game || value.Content.RecognitionState != RecognitionState.NotRecognized) return;
 
             value.Content.RecognitionState = value.Content.Thumbnail.EqualsWith((byte[]) payload)

@@ -908,7 +908,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
             try
             {
-                var folder = FileManager.GetFolderInfo(parentPath);
+                var folder = FileManager.GetItemInfo(parentPath, ItemType.Directory);
                 return new FileSystemItemViewModel(folder);
             }
             catch(TransferException ex)
@@ -1024,7 +1024,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 var path = PathCache[Drive];
                 var clearPath = new Regex(@"^(.*)[\\/].*(:[\\/]).*$");
                 path = clearPath.Replace(path, "$1");
-                var model = FileManager.GetFolderInfo(path, path == Drive.Path ? ItemType.Drive : ItemType.Directory);
+                var model = FileManager.GetItemInfo(path, path == Drive.Path ? ItemType.Drive : ItemType.Directory);
                 CurrentFolder = model != null ? new FileSystemItemViewModel(model) : Drive;
             }
             else
@@ -1059,7 +1059,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 return;
             }
 
-            WorkerThread.Run(() => FileManager.GetFileInfo(itemPath), (item) =>
+            WorkerThread.Run(() => FileManager.GetItemInfo(itemPath, ItemType.File), (item) =>
                 {
                     var vm = new FileSystemItemViewModel(item);
                     RecognitionInner(item, i => PublishItemViewModel(vm));

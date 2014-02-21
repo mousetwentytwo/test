@@ -2,17 +2,20 @@
 using System.Text.RegularExpressions;
 using System.Globalization;
 
-namespace Neurotoxin.Godspeed.Core.Net {
+namespace Neurotoxin.Godspeed.Core.Net
+{
     /// <summary>
     /// Extension methods related to FTP tasks
     /// </summary>
-    public static class FtpExtensions {
+    public static class FtpExtensions
+    {
         /// <summary>
         /// Converts the specified path into a valid FTP file system path
         /// </summary>
         /// <param name="path">The file system path</param>
         /// <returns>A path formatted for FTP</returns>
-        public static string GetFtpPath(this string path) {
+        public static string GetFtpPath(this string path)
+        {
             if (String.IsNullOrEmpty(path))
                 return "./";
 
@@ -29,12 +32,15 @@ namespace Neurotoxin.Godspeed.Core.Net {
         /// <param name="path">This string</param>
         /// <param name="segments">The path segments to append</param>
         /// <returns>A valid FTP path</returns>
-        public static string GetFtpPath(this string path, params string[] segments) {
+        public static string GetFtpPath(this string path, params string[] segments)
+        {
             if (String.IsNullOrEmpty(path))
                 path = "./";
 
-            foreach (string part in segments) {
-                if (part != null) {
+            foreach (string part in segments)
+            {
+                if (part != null)
+                {
                     if (path.Length > 0 && !path.EndsWith("/"))
                         path += "/";
                     path += Regex.Replace(part.Replace('\\', '/'), "[/]+", "/").TrimEnd('/');
@@ -53,7 +59,8 @@ namespace Neurotoxin.Godspeed.Core.Net {
         /// </summary>
         /// <param name="path">The path</param>
         /// <returns>The parent directory path</returns>
-        public static string GetFtpDirectoryName(this string path) {
+        public static string GetFtpDirectoryName(this string path)
+        {
             if (path == null || path.Length == 0 || path.GetFtpPath() == "/")
                 return "/";
 
@@ -65,7 +72,8 @@ namespace Neurotoxin.Godspeed.Core.Net {
         /// </summary>
         /// <param name="path">The full path to the file</param>
         /// <returns>The file name</returns>
-        public static string GetFtpFileName(this string path) {
+        public static string GetFtpFileName(this string path)
+        {
             return System.IO.Path.GetFileName(path).GetFtpPath();
         }
 
@@ -75,20 +83,23 @@ namespace Neurotoxin.Godspeed.Core.Net {
         /// <param name="date">The date</param>
         /// <param name="style">UTC/Local Time</param>
         /// <returns>A date time object representing the date, DateTime.MinValue if there was a problem</returns>
-        public static DateTime GetFtpDate(this string date, DateTimeStyles style) {
-            string[] formats = new string[] { 
-                "yyyyMMddHHmmss", 
-                "yyyyMMddHHmmss.fff",
-                "MMM dd  yyyy", 
-                "MMM dd HH:mm"
-            };
+        public static DateTime GetFtpDate(this string date, DateTimeStyles style)
+        {
+            var formats = new[]
+                              {
+                                  "yyyyMMddHHmmss",
+                                  "yyyyMMddHHmmss.fff",
+                                  "MMM dd  yyyy",
+                                  "MMM dd yyyy",
+                                  "MMM dd HH:mm",
+                                  "YYYY-MM-DD-HH:mm"
+                              };
             DateTime parsed;
 
-            if (DateTime.TryParseExact(date, formats, CultureInfo.InvariantCulture, style, out parsed)) {
-                return parsed;
-            }
-
-            return DateTime.MinValue;
+            return DateTime.TryParseExact(date, formats, CultureInfo.InvariantCulture, style, out parsed) ||
+                   DateTime.TryParseExact(date, formats, CultureInfo.CurrentUICulture, style, out parsed)
+                       ? parsed
+                       : DateTime.MinValue;
         }
     }
 }

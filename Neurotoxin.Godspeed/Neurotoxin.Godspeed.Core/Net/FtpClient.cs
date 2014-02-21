@@ -1811,35 +1811,22 @@ namespace Neurotoxin.Godspeed.Core.Net {
         /// <returns>An array of FtpListItem objects</returns>
         /// <example><code source="..\Examples\GetListing.cs" lang="cs" /></example>
         public FtpListItem[] GetListing(string path, FtpListOption options) {
-            FtpListItem item = null;
-            List<FtpListItem> lst = new List<FtpListItem>();
-            List<string> rawlisting = new List<string>();
-            string listcmd = null;
-            string pwd = GetWorkingDirectory();
-            string buf = null;
+            var lst = new List<FtpListItem>();
+            var rawlisting = new List<string>();
+            string listcmd;
+            string buf;
 
-            // old path cleanup code
-            /*path = path.GetFtpPath();
-            if (path == null || path.GetFtpPath().Trim().Length == 0 || path.StartsWith(".")) {
-                if (pwd == null || pwd.Length == 0) // couldn't get the working directory
-                    path = "./";
-                else if (path.StartsWith("./"))
-                    path = string.Format("{0}/{1}", pwd, path.Remove(0, 2));
-                else
-                    path = pwd;
-            }*/
-
-            path = path.GetFtpPath();
-            if (path == null || path.Trim().Length == 0) {
-                if (pwd != null && pwd.Trim().Length > 0)
-                    path = pwd;
-                else
-                    path = "./";
-            }
-            else if (!path.StartsWith("/") && pwd != null && pwd.Trim().Length > 0) {
-                if (path.StartsWith("./"))
-                    path = path.Remove(0, 2);
-                path = string.Format("{0}/{1}", pwd, path).GetFtpPath();
+            if (!string.IsNullOrEmpty(path))
+            {
+                var pwd = GetWorkingDirectory();
+                path = path.GetFtpPath();
+                if (!path.StartsWith("/") && pwd != null && pwd.Trim().Length > 0)
+                {
+                    if (path.StartsWith("./"))
+                        path = path.Remove(0, 2);
+                    path = string.Format("{0}/{1}", pwd, path).GetFtpPath();
+                    SetWorkingDirectory(path);
+                }
             }
 
             // MLSD provides a machine parsable format with more
@@ -1871,7 +1858,8 @@ namespace Neurotoxin.Godspeed.Core.Net {
                 Execute("TYPE I");
 
                 // read in raw file listing
-                using (FtpDataStream stream = OpenDataStream(string.Format("{0} {1}", listcmd, path.GetFtpPath()), 0)) {
+                using (FtpDataStream stream = OpenDataStream(listcmd, 0))
+                {
                     try {
                         while ((buf = stream.ReadLine(Encoding)) != null) {
                             if (buf.Length > 0) {
@@ -1889,9 +1877,12 @@ namespace Neurotoxin.Godspeed.Core.Net {
                 m_lock.ReleaseMutex();
             }
 
+            FtpListItem.Parser parser = null;
             for (int i = 0; i < rawlisting.Count; i++) {
                 buf = rawlisting[i];
+                if (buf == "..") continue;
 
+                FtpListItem item;
                 if ((options & FtpListOption.NameList) == FtpListOption.NameList) {
                     // if NLST was used we only have a file name so
                     // there is nothing to parse.
@@ -1912,7 +1903,9 @@ namespace Neurotoxin.Godspeed.Core.Net {
                     if (i + 1 < rawlisting.Count && (rawlisting[i + 1].StartsWith("\t") || rawlisting[i + 1].StartsWith(" ")))
                         buf += rawlisting[++i];
 
-                    item = FtpListItem.Parse(path, buf, Capabilities);
+                    item = parser == null
+                               ? FtpListItem.Parse(path, buf, Capabilities, out parser)
+                               : FtpListItem.ParseWith(path, buf, Capabilities, parser);
                     // FtpListItem.Parse() returns null if the line
                     // could not be parsed
                     if (item != null)

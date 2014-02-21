@@ -29,6 +29,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         private const char SLASH = '/';
         private const char BACKSLASH = '\\';
+
         public char Slash
         {
             get { return _archive is RarArchive ? BACKSLASH : SLASH; }
@@ -60,20 +61,23 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             return _fileStructure.GetChildren(path);
         }
 
-        public FileSystemItem GetFolderInfo(string path)
+        public FileSystemItem GetItemInfo(string path)
         {
-            return GetFolderInfo(path, ItemType.Drive);
+            return GetItemInfo(path, null);
         }
 
-        public FileSystemItem GetFolderInfo(string path, ItemType type)
+        public FileSystemItem GetItemInfo(string path, ItemType? type)
         {
-            if (_archive is RarArchive && path[path.Length -1] != BACKSLASH) path += BACKSLASH;
-            return _fileStructure.GetItem(path);
-        }
-
-        public FileSystemItem GetFileInfo(string path)
-        {
-            return _fileStructure.GetItem(path);
+            if (type.HasValue && type.Value == ItemType.Directory && _archive is RarArchive && path[path.Length -1] != BACKSLASH) path += BACKSLASH;
+            FileSystemItem item;
+            if (!_fileStructure.TryGetItem(path, out item)) return null;
+            if (type != null)
+            {
+                if ((type == ItemType.File && item.Type != ItemType.File) ||
+                    (type != ItemType.File && item.Type != ItemType.Directory)) return null;
+                item.Type = type.Value;
+            }
+            return item;
         }
 
         private FileSystemItem CreateModel(IArchiveEntry entry)

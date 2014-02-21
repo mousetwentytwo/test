@@ -34,28 +34,30 @@ namespace Neurotoxin.Godspeed.Core.Extensions
         /// <returns></returns>
         public static T GetField<T>(string stringValue)
         {
+            T value;
+            if (TryGetField(stringValue, out value)) return value;
+            var exceptionString = string.Format("None of the fields in '{0}' match search value '{1}'", typeof(T).FullName, stringValue);
+            throw new ArgumentException(exceptionString);
+        }
+
+        public static bool TryGetField<T>(string stringValue, out T value)
+        {
             var type = typeof(T);
             var fields = type.GetFields();
 
             foreach (var fieldInfo in fields)
             {
-                var stringValueAttribute =
-                    (StringValueAttribute)
-                    fieldInfo.GetCustomAttributes(typeof(StringValueAttribute), false).FirstOrDefault();
+                var stringValueAttribute = (StringValueAttribute)fieldInfo.GetCustomAttributes(typeof(StringValueAttribute), false).FirstOrDefault();
 
-                if (stringValueAttribute != null && stringValueAttribute.Value == stringValue)
+                if ((stringValueAttribute != null && stringValueAttribute.Value == stringValue) ||
+                    (fieldInfo.Name.ToLower().Equals(SanitiseString(stringValue).ToLower())))
                 {
-                    return (T)fieldInfo.GetValue(type);
-                }
-
-                if (fieldInfo.Name.ToLower().Equals(SanitiseString(stringValue).ToLower()))
-                {
-                    return (T)fieldInfo.GetValue(type);
+                    value = (T) fieldInfo.GetValue(type);
+                    return true;
                 }
             }
-            var exceptionString = string.Format("None of the fields in '{0}' match search value '{1}'", type.FullName,
-                                                stringValue);
-            throw new ArgumentException(exceptionString);
+            value = default(T);
+            return false;
         }
 
         private static string SanitiseString(string text)

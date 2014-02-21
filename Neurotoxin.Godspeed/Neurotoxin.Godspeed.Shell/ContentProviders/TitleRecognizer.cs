@@ -228,16 +228,16 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             string message = null;
             if (!_profileFileCache.ContainsKey(profilePath))
             {
-                FileSystemItem profileItem = null;
-                if (_fileManager.FileExists(profilePath))
+                var profileItem = _fileManager.GetItemInfo(profilePath);
+                if (profileItem != null)
                 {
-                    profileItem = _fileManager.GetFileInfo(profilePath);
-                    if (profileItem != null)
+                    if (profileItem.Type == ItemType.File)
                     {
                         RecognizeType(profileItem);
-                    } 
+                    }
                     else
                     {
+                        profileItem = null;
                         message = "Profile is currently in use. Please sign out.";
                     }
                 } 

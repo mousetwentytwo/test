@@ -7,6 +7,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Timers;
 using Microsoft.Practices.Composite.Events;
+using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Core.Io.Stfs;
 using Neurotoxin.Godspeed.Core.Net;
 using Neurotoxin.Godspeed.Presentation.Extensions;
@@ -43,7 +44,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             set { _keepAliveTimer.Enabled = value; }
         }
 
-        public bool IsPlayStation3 { get; private set; }
+        public FtpServerType ServerType { get; private set; }
 
         private FtpClient _ftpClient;
         private FtpClient FtpClient
@@ -79,7 +80,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                     DataConnectionType = connection.UsePassiveMode ? FtpDataConnectionType.PASV : FtpDataConnectionType.AutoActive,
                     Host = connection.Address, 
                     Port = connection.Port,
-                    Credentials = string.IsNullOrEmpty(connection.Username)
+                    Credentials = !string.IsNullOrEmpty(connection.Username)
                         ? new NetworkCredential(connection.Username, connection.Password)
                         : new NetworkCredential("anonymous", "no@email.com")
                 };
@@ -89,21 +90,18 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             _connectionLostMessage = string.Format("The connection with {0} has been lost.", connection.Name);
             _ftpClient.Connect();
 
-            //TODO: doesn't work right now
-            IsPlayStation3 = Log.Peek().Contains("220 multiMAN");
-
-            var isAppendSupported = true;
-            try
+            foreach (var log in Log.Where(e => e.StartsWith("220")))
             {
-                FtpClient.Execute("APPE");
-            } 
-            catch(FtpException ex)
-            {
-                //TODO: text might be different
-                isAppendSupported = ex.Message != "command not recognized";
+                FtpServerType type;
+                if (EnumHelper.TryGetField(log.Trim(), out type))
+                {
+                    ServerType = type;
+                    break;
+                }
             }
 
-            return isAppendSupported;
+            var r = FtpClient.Execute("APPE");
+            return r.Code != "500";
         }
 
         internal void Disconnect()
@@ -121,7 +119,6 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 FtpClient.SetWorkingDirectory("/");
 
                 var result = FtpClient.GetListing()
-                                       .Where(item => item.Name != "." && item.Name != "..")
                                        .Select(item => new FileSystemItem
                                            {
                                                Name = item.Name,
@@ -156,9 +153,8 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                     currentPath = FtpClient.GetWorkingDirectory();
                 if (!currentPath.EndsWith("/")) currentPath += "/";
                 var result = FtpClient.GetListing()
-                                       .Where(item => item.Name != "." && item.Name != "..")
-                                       .Select(item => CreateModel(item, string.Format("{0}{1}{2}", currentPath, item.Name, item.Type == FtpFileSystemObjectType.Directory ? "/" : string.Empty)))
-                                       .ToList();
+                                      .Select(item => CreateModel(item, string.Format("{0}{1}{2}", currentPath, item.Name, item.Type == FtpFileSystemObjectType.Directory ? "/" : string.Empty)))
+                                      .ToList();
                 NotifyFtpOperationFinished();
                 return result;
             }
@@ -179,59 +175,54 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             return filename;
         }
 
-        public FileSystemItem GetFolderInfo(string path)
+        public FileSystemItem GetItemInfo(string path)
         {
-            return GetFolderInfo(path, ItemType.Directory);
+            return GetItemInfo(path, null);
         }
 
-        public FileSystemItem GetFolderInfo(string path, ItemType type)
+        public FileSystemItem GetItemInfo(string path, ItemType? type)
         {
             NotifyFtpOperationStarted(false);
             try
             {
-                var folderName = LocateDirectory(path);
-                var folder = FtpClient.GetListing().FirstOrDefault(item => item.Name == folderName);
+                var itemName = LocateDirectory(path);
+                var item = FtpClient.GetListing().FirstOrDefault(i => i.Name == itemName);
                 NotifyFtpOperationFinished();
-                if (folder != null && folder.Type == FtpFileSystemObjectType.Directory)
+                if (item == null) return null;
+                if (type != null)
                 {
-                    var m = CreateModel(folder, path);
-                    m.Type = type;
-                    return m;
+                    FtpFileSystemObjectType ftpItemType;
+                    switch (type)
+                    {
+                        case ItemType.File:
+                            ftpItemType = FtpFileSystemObjectType.File;
+                            break;
+                        case ItemType.Directory:
+                        case ItemType.Drive:
+                            ftpItemType = FtpFileSystemObjectType.Directory;
+                            break;
+                        default:
+                            throw new NotSupportedException("Invalid item type:" + type);
+                    }
+                    if (item.Type != ftpItemType) return null;
                 }
+                var m = CreateModel(item, path);
+                if (type != null) m.Type = type.Value;
+                return m;
+            }
+            catch
+            {
+                NotifyFtpOperationFinished();
                 return null;
             }
-            catch (FtpException ex)
-            {
-                NotifyFtpOperationFinished();
-                if (FtpClient.IsConnected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message, ex);
-                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage, ex);
-            }
         }
 
-        public FileSystemItem GetFileInfo(string path)
+        private FileSystemItem CreateModel(IFtpListItem item, string path)
         {
-            NotifyFtpOperationStarted(false);
-            try
-            {
-                var filename = LocateDirectory(path);
-                var file = FtpClient.GetListing().FirstOrDefault(item => item.Name == filename);
-                NotifyFtpOperationFinished();
-                return file != null && file.Type == FtpFileSystemObjectType.File ? CreateModel(file, path) : null;
-            }
-            catch (FtpException ex)
-            {
-                NotifyFtpOperationFinished();
-                if (FtpClient.IsConnected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message, ex);
-                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage, ex);
-            }
-        }
-
-        private FileSystemItem CreateModel(FtpListItem item, string path)
-        {
+            if (item.Type == FtpFileSystemObjectType.Directory && !path.EndsWith("/")) path += "/";
             return new FileSystemItem
                        {
                            Name = item.Name,
-                           //TODO: create mapper
                            Type = item.Type == FtpFileSystemObjectType.Directory ? ItemType.Directory : ItemType.File,
                            Date = item.Modified,
                            Path = path,
@@ -293,13 +284,6 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             return result;
         }
 
-        private long GetFileSize(string path)
-        {
-            var filename = LocateDirectory(path);
-            var list = FtpClient.GetListing();
-            return list.First(file => file.Name == filename).Size;
-        }
-
         public byte[] ReadFileHeader(string path)
         {
             var ms = new MemoryStream(StfsPackage.DefaultHeaderSizeVersion1);
@@ -313,7 +297,6 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         {
             var ms = new MemoryStream();
             DownloadFile(path, ms, 0, fileSize);
-            ms.Flush();
             var result = ms.ToArray();
             ms.Close();
             if (saveToTempFile)
@@ -329,13 +312,18 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             NotifyFtpOperationStarted(true);
             try
             {
-                if (fileSize == -1) fileSize = GetFileSize(remotePath);
+                var filename = LocateDirectory(remotePath);
+                if (fileSize == -1)
+                {
+                    var list = FtpClient.GetListing();
+                    fileSize = list.First(file => file.Name == filename).Size;
+                }
                 _isIdle = false;
                 _isAborted = false;
                 if (remoteStartPosition != 0) NotifyFtpOperationResumeStart(remoteStartPosition);
 
                 long transferred = 0;
-                using (var ftpStream = FtpClient.OpenRead(remotePath, remoteStartPosition))
+                using (var ftpStream = FtpClient.OpenRead(filename, remoteStartPosition))
                 {
                     var buffer = new byte[0x8000];
                     int bufferSize;
@@ -357,26 +345,6 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             }
         }
 
-        //internal void UploadFile(string remotePath, string localPath, bool append = false)
-        //{
-        //    NotifyFtpOperationStarted(true);
-        //    try
-        //    {
-        //        _isIdle = false;
-        //        var fi = new FileInfo(localPath);
-        //        _fileSize = fi.Length;
-
-        //        FtpClient.Upload(LocateDirectory(remotePath), localPath);
-        //        NotifyFtpOperationFinished();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        NotifyFtpOperationFinished();
-        //        if (FtpClient.IsConnected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message, ex);
-        //        throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage, ex);
-        //    }
-        //}
-
         internal void UploadFile(string remotePath, string localPath, bool append = false)
         {
             NotifyFtpOperationStarted(true);
@@ -388,14 +356,16 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 var fileSize = new FileInfo(localPath).Length;
                 fs = new FileStream(localPath, FileMode.Open);
                 long resumeStartPosition = 0;
+                var filename = LocateDirectory(remotePath);
                 if (append)
                 {
-                    transferred = GetFileSize(remotePath);
+                    var list = FtpClient.GetListing();
+                    transferred = list.First(file => file.Name == filename).Size;
                     resumeStartPosition = transferred;
                     fs.Seek(transferred, SeekOrigin.Begin);
                     NotifyFtpOperationResumeStart(transferred);
                 }
-                using (var ftpStream = append ? FtpClient.OpenAppend(remotePath) : FtpClient.OpenWrite(remotePath))
+                using (var ftpStream = append ? FtpClient.OpenAppend(filename) : FtpClient.OpenWrite(filename))
                 {
                     var buffer = new byte[0x8000];
                     int bufferSize;
@@ -475,11 +445,10 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         public FileSystemItem Rename(string path, string newName)
         {
             var oldName = LocateDirectory(path);
-            var isFolder = FolderExists(path);
             FtpClient.Rename(oldName, newName);
             var r = new Regex(string.Format("{0}{1}?$", Regex.Escape(oldName), Slash), RegexOptions.IgnoreCase);
             path = r.Replace(path, newName);
-            return isFolder ? GetFolderInfo(path + Slash) : GetFileInfo(path);
+            return GetItemInfo(path);
         }
 
         public void RestoreConnection()

@@ -2,19 +2,15 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.Mime;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Windows;
 using Neurotoxin.Godspeed.Core.Io;
 using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Exceptions;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
-using ContentType = Neurotoxin.Godspeed.Core.Constants.ContentType;
-using DirectoryInfo = System.IO.DirectoryInfo;
 
 namespace Neurotoxin.Godspeed.Shell.ContentProviders
 {
@@ -79,48 +75,52 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         {
             if (path == null) throw new NotSupportedException();
 
-            var di = new DirectoryInfo(path);
+            var di = new System.IO.DirectoryInfo(path);
             if (di.Attributes.HasFlag(FileAttributes.ReparsePoint))
                 path = new ReparsePoint(path).Target;
-            var list = Directory.GetDirectories(path).Select(GetFolderInfo).ToList();
+            var list = Directory.GetDirectories(path).Select(GetDirectoryInfo).ToList();
             list.AddRange(Directory.GetFiles(path).Select(GetFileInfo));
 
             return list;
         }
 
-        public FileSystemItem GetFolderInfo(string path)
+        public FileSystemItem GetItemInfo(string path)
         {
-            return GetFolderInfo(path, ItemType.Directory);
+            return GetItemInfo(path, null);
         }
 
-        public FileSystemItem GetFolderInfo(string path, ItemType type)
+        public FileSystemItem GetItemInfo(string path, ItemType? type)
         {
-            var p = path.EndsWith("\\") ? path : path + "\\";
-            return Directory.Exists(p)
-                       ? new FileSystemItem
-                           {
-                               Name = Path.GetFileName(path),
-                               Type = type,
-                               Date = Directory.GetLastWriteTime(path),
-                               Path = p,
-                               FullPath = p
-                           }
-                       : null;
+            if (path.EndsWith("\\") && Directory.Exists(path)) return GetDirectoryInfo(path);
+            if (File.Exists(path)) return GetFileInfo(path);
+            path += SLASH;
+            return Directory.Exists(path) ? GetDirectoryInfo(path) : null;
         }
 
-        public FileSystemItem GetFileInfo(string path)
+        private static FileSystemItem GetDirectoryInfo(string path)
         {
-            return File.Exists(path)
-                       ? new FileSystemItem
-                           {
-                               Name = Path.GetFileName(path),
-                               Type = ItemType.File,
-                               Date = File.GetLastWriteTime(path),
-                               Path = path,
-                               FullPath = path,
-                               Size = new FileInfo(path).Length,
-                           }
-                       : null;
+            if (!path.EndsWith("\\")) path += SLASH;
+            return new FileSystemItem
+                       {
+                           Name = Path.GetFileName(path.TrimEnd(SLASH)),
+                           Type = ItemType.Directory,
+                           Date = Directory.GetLastWriteTime(path),
+                           Path = path,
+                           FullPath = path
+                       };
+        }
+
+        private static FileSystemItem GetFileInfo(string path)
+        {
+            return new FileSystemItem
+                       {
+                           Name = Path.GetFileName(path),
+                           Type = ItemType.File,
+                           Date = File.GetLastWriteTime(path),
+                           Path = path,
+                           FullPath = path,
+                           Size = new FileInfo(path).Length,
+                       };
         }
 
         public DateTime GetFileModificationTime(string path)
@@ -226,7 +226,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             if (FolderExists(path))
             {
                 Directory.Move(path, newPath + Slash);
-                return GetFolderInfo(newPath);
+                return GetDirectoryInfo(newPath);
             }
             else
             {

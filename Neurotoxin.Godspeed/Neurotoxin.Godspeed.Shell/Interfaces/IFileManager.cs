@@ -13,9 +13,12 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
 
         List<FileSystemItem> GetList(string path = null);
 
-        FileSystemItem GetFolderInfo(string itemPath);
-        FileSystemItem GetFolderInfo(string itemPath, ItemType type);
-        FileSystemItem GetFileInfo(string itemPath);
+        FileSystemItem GetItemInfo(string itemPath);
+        FileSystemItem GetItemInfo(string itemPath, ItemType? type);
+
+        //FileSystemItem GetFolderInfo(string itemPath);
+        //FileSystemItem GetFolderInfo(string itemPath, ItemType type);
+        //FileSystemItem GetFileInfo(string itemPath);
         DateTime GetFileModificationTime(string path);
 
         bool DriveIsReady(string drive);

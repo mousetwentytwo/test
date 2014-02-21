@@ -63,12 +63,25 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             return list;
         }
 
-        public FileSystemItem GetFolderInfo(string path)
+        public FileSystemItem GetItemInfo(string path)
         {
-            return GetFolderInfo(path, ItemType.Drive);
+            return GetItemInfo(path, null);
         }
 
-        public FileSystemItem GetFolderInfo(string path, ItemType type)
+        public FileSystemItem GetItemInfo(string path, ItemType? type)
+        {
+            var item = GetFileInfo(path) ?? GetFolderInfo(path);
+            if (item == null) return null;
+            if (type != null)
+            {
+                if ((type == ItemType.File && item.Type != ItemType.File) || 
+                    (type != ItemType.File && item.Type != ItemType.Directory)) return null;
+                item.Type = type.Value;
+            }
+            return item;
+        }
+
+        private FileSystemItem GetFolderInfo(string path)
         {
             if (!path.EndsWith("\\")) path += "\\";
             return CreateModel(_stfs.GetFolderEntry(path), path);

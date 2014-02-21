@@ -92,7 +92,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                                     if (error != null)
                                     {
                                         var somethingWentWrong = string.Format("Something went wrong while trying to establish connection. Please try again, and if the error persists try to turn {0} Passive Mode.", Connection.UsePassiveMode ? "off" : "on");
-                                        error.Invoke(this, new EstablishmentFailedException(somethingWentWrong, ex));
+                                        throw new EstablishmentFailedException(somethingWentWrong, ex);
                                     }
                                     CloseCommand.Execute();
                                     return;
@@ -137,26 +137,16 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             Drives = FileManager.GetDrives().Select(d => new FileSystemItemViewModel(d)).ToObservableCollection();
             var r = new Regex("^/[A-Z0-9_-]+/", RegexOptions.IgnoreCase);
-            var defaultPath = Connection.Model.DefaultPath;
-            if (string.IsNullOrEmpty(Connection.Model.DefaultPath))
-            {
-                switch (Connection.ConnectionImage)
-                {
-                    case ConnectionImage.PlayStation3:
-                        defaultPath = "/dev_hdd0/";
-                        break;
-                    default:
-                        defaultPath = "/Hdd1/";
-                        break;
-                }
-            }
+            var defaultPath = string.IsNullOrEmpty(Connection.Model.DefaultPath)
+                                  ? FileManager.ServerType == FtpServerType.MultiMan ? "/dev_hdd0/" : "/Hdd1/"
+                                  : Connection.Model.DefaultPath;
 
             var m = r.Match(defaultPath);
             FileSystemItemViewModel drive = null;
             if (m.Success)
             {
                 drive = Drives.SingleOrDefault(d => d.Path == m.Value);
-                if (drive != null && FileManager.FileExists(defaultPath)) PathCache.Add(drive, defaultPath);
+                if (drive != null && FileManager.FolderExists(defaultPath)) PathCache.Add(drive, defaultPath);
             }
             Drive = drive ?? Drives.First();
         }
@@ -190,14 +180,15 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         protected override List<FileSystemItem> ChangeDirectoryInner(string selectedPath)
         {
-            return FileManager.IsPlayStation3 ? FileManager.GetList(selectedPath) : base.ChangeDirectoryInner(selectedPath);
+            return FileManager.ServerType == FtpServerType.MultiMan ? FileManager.GetList(selectedPath) : base.ChangeDirectoryInner(selectedPath);
         }
 
         protected override void ChangeDirectoryCallback(List<FileSystemItem> result)
         {
             base.ChangeDirectoryCallback(result);
-            if (!FileManager.IsPlayStation3) return;
+            if (FileManager.ServerType != FtpServerType.MultiMan) return;
 
+            //TODO: recheck
             //PS3 Transfer complete response string
             var r = new Regex(string.Format(@"226 Transfer complete \[{0}\] \[ ([0-9]+.*?free) \]", Drive.Path.TrimEnd('/')));
             var m = r.Match(FileManager.Log.ElementAt(1));
@@ -288,7 +279,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     FileManager.DeleteFile(savePath);
                     break;
                 case CopyAction.Resume:
-                    var fi = FileManager.GetFileInfo(savePath);
+                    var fi = FileManager.GetItemInfo(savePath, ItemType.File);
                     resumeStartPosition = fi.Size ?? 0;
                     break;
             }
