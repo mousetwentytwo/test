@@ -53,9 +53,6 @@
     </Reference>
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
-    <Reference Include="U2UConsult.RichHtmlTextBlock">
-      <HintPath>..\packages\U2UConsult.RichHtmlTextBlock\U2UConsult.RichHtmlTextBlock.dll</HintPath>
-    </Reference>
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
@@ -98,6 +95,13 @@
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\IconExtensions.cs" />
     <Compile Include="Extensions\StfsPackageExtensions.cs" />
+    <Compile Include="Formatters\HtmlConverter\HtmlCssParser.cs" />
+    <Compile Include="Formatters\HtmlConverter\HtmlFromXamlConverter.cs" />
+    <Compile Include="Formatters\HtmlConverter\HtmlLexicalAnalyzer.cs" />
+    <Compile Include="Formatters\HtmlConverter\HtmlParser.cs" />
+    <Compile Include="Formatters\HtmlConverter\HtmlSchema.cs" />
+    <Compile Include="Formatters\HtmlConverter\HtmlTokenType.cs" />
+    <Compile Include="Formatters\HtmlConverter\HtmlToXamlConverter.cs" />
     <Compile Include="Formatters\HtmlFormatter.cs" />
     <Compile Include="Formatters\ITextFormatter.cs" />
     <Compile Include="Formatters\PlainTextFormatter.cs" />

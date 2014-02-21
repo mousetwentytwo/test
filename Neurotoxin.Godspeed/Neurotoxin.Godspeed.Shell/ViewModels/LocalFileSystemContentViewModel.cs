@@ -132,16 +132,19 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         protected override void CreateFile(string targetPath, string sourcePath)
         {
+            //TODO: local2local
             throw new NotImplementedException();
         }
 
         protected override void OverwriteFile(string targetPath, string sourcePath)
         {
+            //TODO: local2local
             throw new NotImplementedException();
         }
 
         protected override void ResumeFile(string targetPath, string sourcePath)
         {
+            //TODO: local2local
             throw new NotImplementedException();
         }
 

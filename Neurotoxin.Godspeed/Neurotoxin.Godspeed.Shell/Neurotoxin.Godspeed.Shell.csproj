@@ -54,9 +54,6 @@
     <ApplicationIcon>Resources\app.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Ftp, Version=2.0.13217.1550, Culture=neutral, PublicKeyToken=6dc438ab78a525b3, processorArchitecture=MSIL">
-      <HintPath>..\packages\Ftp.dll.2.0.13217.1550\lib\Ftp.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Practices.Composite">
       <HintPath>..\packages\Prism\Microsoft.Practices.Composite.dll</HintPath>
     </Reference>
@@ -117,6 +114,7 @@
     <Compile Include="ContentProviders\CacheManager.cs" />
     <Compile Include="ContentProviders\CompressedFileContent.cs" />
     <Compile Include="ContentProviders\FtpContent.cs" />
+    <None Include="ContentProviders\FtpContent.cs.oldLimilabs" />
     <Compile Include="ContentProviders\LocalFileSystemContent.cs" />
     <Compile Include="ContentProviders\UserSettings.cs" />
     <Compile Include="ContentProviders\StfsPackageContent.cs" />

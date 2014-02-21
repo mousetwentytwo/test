@@ -154,9 +154,30 @@
     <Compile Include="Io\Stfs\Data\StfsVolumeDescriptor.cs" />
     <Compile Include="Models\OffsetTable.cs" />
     <Compile Include="Models\Tree.cs" />
+    <Compile Include="Net\FtpClient.cs" />
+    <Compile Include="Net\FtpDataStream.cs" />
+    <Compile Include="Net\FtpEnums.cs" />
+    <Compile Include="Net\FtpExceptions.cs" />
+    <Compile Include="Net\FtpExtensionAttribute.cs" />
+    <Compile Include="Net\FtpExtensions.cs" />
+    <Compile Include="Net\FtpHash.cs" />
+    <Compile Include="Net\FtpListItem.cs" />
+    <Compile Include="Net\FtpReply.cs" />
+    <Compile Include="Net\FtpSocketStream.cs" />
+    <Compile Include="Net\FtpTrace.cs" />
+    <Compile Include="Net\IFtpClient.cs" />
+    <Compile Include="Net\IFtpListItem.cs" />
+    <Compile Include="Net\IFtpReply.cs" />
     <Compile Include="Net\Telnet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Security\GetChecksum.cs" />
+    <Compile Include="Security\MD5.cs" />
     <Compile Include="Security\RC4.cs" />
+    <Compile Include="Security\XCRC.cs" />
+    <Compile Include="Security\XMD5.cs" />
+    <Compile Include="Security\XSHA1.cs" />
+    <Compile Include="Security\XSHA256.cs" />
+    <Compile Include="Security\XSHA512.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

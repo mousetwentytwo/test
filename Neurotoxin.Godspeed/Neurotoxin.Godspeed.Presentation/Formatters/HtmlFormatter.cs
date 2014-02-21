@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Documents;
-using HTMLConverter;
+using Neurotoxin.Godspeed.Presentation.Formatters.HtmlConverter;
 using Xceed.Wpf.Toolkit;
 
 namespace Neurotoxin.Godspeed.Presentation.Formatters
@@ -18,7 +18,7 @@ namespace Neurotoxin.Godspeed.Presentation.Formatters
             try
             {
                 tr.Save(ms, DataFormats.Xaml);
-                //html = HtmlFromXamlConverter.ConvertXamlToHtml(Encoding.Default.GetString(ms.ToArray()));
+                html = HtmlFromXamlConverter.ConvertXamlToHtml(Encoding.Default.GetString(ms.ToArray()));
             }
             finally
             {

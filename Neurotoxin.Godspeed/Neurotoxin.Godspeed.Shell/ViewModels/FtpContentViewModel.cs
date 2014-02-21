@@ -226,7 +226,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         protected override void ResumeFile(string targetPath, string sourcePath)
         {
-            FileManager.AppendFile(targetPath, sourcePath);
+            //FileManager.AppendFile(targetPath, sourcePath);
+            FileManager.UploadFile(targetPath, sourcePath, true);
         }
 
         //protected override string OpenCompressedFile(FileSystemItem item)

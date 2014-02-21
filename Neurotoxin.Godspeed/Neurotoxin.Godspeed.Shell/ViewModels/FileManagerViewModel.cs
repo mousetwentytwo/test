@@ -850,8 +850,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public void Initialize()
         {
-            Limilabs.FTP.Log.Enabled = true;
-
             LeftPane = (IPaneViewModel)container.Resolve(GetStoredPaneType(UserSettings.LeftPaneType));
             var leftParam = UserSettings.LeftPaneFileListPaneSettings;
             LeftPane.LoadDataAsync(LoadCommand.Load, leftParam, PaneLoaded);

@@ -14,6 +14,8 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
 {
     public abstract class StfsPackage : Package<StfsVolumeDescriptor>
     {
+        public static int DefaultHeaderSizeVersion1 = 0x971A;
+
         public FileEntry FileStructure { get; private set; }
         public List<FileEntry> FlatFileList { get; private set; }
         public Dictionary<FileEntry, GameFile> Games { get; protected set; }
