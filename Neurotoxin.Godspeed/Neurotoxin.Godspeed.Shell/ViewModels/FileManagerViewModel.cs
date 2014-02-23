@@ -3,12 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
-using System.Net;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Windows;
 using System.Windows.Input;
 using System.Windows.Shell;
 using Microsoft.Practices.Unity;
@@ -33,6 +30,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
     public class FileManagerViewModel : ViewModelBase
     {
+        private const string REMOTE_COPY_CANNOT_BE_USED = "Remote Copy cannot be used for files with non-ASCII characters in their paths. These files have been copied with the standard transfer methods.";
         private const string RenameFromPattern = @"([\/]){0}$";
         private const string RenameToPattern = @"$1{0}";
         private readonly Stopwatch _speedMeter = new Stopwatch();
@@ -194,7 +192,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     case TransferType.Delete:
                         return FilesTransferred*100/FileCount;
                     default:
-                        return (int)(BytesTransferred * 100 / TotalBytes);
+                        return TotalBytes != 0 ? (int)(BytesTransferred * 100 / TotalBytes) : 0;
                 }
             }
         }
@@ -399,8 +397,18 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                             File.Delete(tempFile);
                             return result;
                         case CopyMode.RemoteExport:
+                            if (new Regex(@"[^\x20-\x7f]").IsMatch(targetPath))
+                            {
+                                eventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(new NotifyUserMessageEventArgs(REMOTE_COPY_CANNOT_BE_USED, MessageIcon.Info));
+                                return SourcePane.Export(item, targetPath, a);
+                            }
                             return ((FtpContentViewModel)SourcePane).RemoteDownload(item, targetPath, a);
                         case CopyMode.RemoteImport:
+                            if (new Regex(@"[^\x20-\x7f]").IsMatch(item.Path))
+                            {
+                                eventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(new NotifyUserMessageEventArgs(REMOTE_COPY_CANNOT_BE_USED, MessageIcon.Info));
+                                return TargetPane.Import(item, targetPath, a);
+                            }
                             return ((FtpContentViewModel)TargetPane).RemoteUpload(item, targetPath, a);
                         default:
                             throw new NotSupportedException("Invalid Copy Mode: " + _copyMode);
@@ -963,6 +971,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void OnNotifyUserMessage(NotifyUserMessageEventArgs e)
         {
+            if (!UIThread.IsUIThread)
+            {
+                UIThread.Run(() => OnNotifyUserMessage(e));
+                return;
+            }
             if (UserSettings.IsMessageIgnored(e.Message)) return;
             var i = UserMessages.IndexOf(m => m.Message == e.Message);
             if (i == -1)

@@ -246,7 +246,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             sw.Start();
             foreach (var item in result.Where(item => !TitleRecognizer.MergeWithCachedEntry(item)))
             {
-                if (CurrentFolder.ContentType == ContentType.Unknown && !TitleRecognizer.IsXboxFolder(item)) continue;
+                if (CurrentFolder.ContentType == ContentType.Unknown && !TitleRecognizer.IsXboxItem(item)) continue;
                 _queue.Enqueue(item);
             }
             sw.Stop();
@@ -1170,15 +1170,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 default:
                     throw new ArgumentException("Invalid Copy action: " + action);
             }
-            var fs = new FileStream(savePath, mode);
-            try
+            using (var fs = new FileStream(savePath, mode))
             {
                 SaveToFileStream(item, fs, remoteStartPosition);
-            }
-            finally
-            {
-                fs.Flush();
-                fs.Close();
             }
             return true;
         }

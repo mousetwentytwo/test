@@ -41,6 +41,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 new RecognitionInformation("^[1-9A-E][0-9A-F]{7}.gpd$", "Unknown Game", TitleType.Game, ItemType.File),
                 new RecognitionInformation("^[0-9A-F]{8}$", "Unknown Content", TitleType.Content),
                 new RecognitionInformation("^E0000[0-9A-F]{11}$", "Unknown Profile", TitleType.Profile, ItemType.Directory | ItemType.File),
+                new RecognitionInformation("^TU[\\w\\.]+$|^[0-9A-F]+$", "Unknown Data File", TitleType.Unknown, ItemType.File),
             };
 
         public TitleRecognizer(IFileManager fileManager, CacheManager cacheManager, IEventAggregator eventAggregator)
@@ -50,11 +51,9 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             _eventAggregator = eventAggregator;
         }
 
-        public static bool IsXboxFolder(FileSystemItem item)
+        public static bool IsXboxItem(FileSystemItem item)
         {
-            if (string.IsNullOrEmpty(item.Name)) return false;
-            if (item.Type != ItemType.Directory) return false;
-            return RecognizeByName(item.Name) != null;
+            return RecognizeByName(item.Name, item.Type) != null;
         }
 
         public static bool RecognizeType(FileSystemItem item)

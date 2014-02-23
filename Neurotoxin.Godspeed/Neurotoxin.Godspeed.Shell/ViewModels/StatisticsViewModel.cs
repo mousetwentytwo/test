@@ -21,21 +21,18 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         }
 
         private const string GAMESRECOGNIZEDPARTIALLY = "GamesRecognizedPartially";
-        private int _gamesRecognizedPartially;
         public int GamesRecognizedPartially
         {
             get { return _cacheManager.EntryCount(c => c.TitleType == TitleType.Game && c.RecognitionState == RecognitionState.PartiallyRecognized); }
         }
 
         private const string SVODPACKAGESRECOGNIZED = "SvodPackagesRecognized";
-        private int _svodPackagesRecognized;
         public int SvodPackagesRecognized
         {
             get { return _cacheManager.EntryCount(c => c.TitleType == TitleType.Unknown && c.ContentType != ContentType.Unknown); }
         }
 
         private const string STFSPACKAGESRECOGNIZED = "StfsPackagesRecognized";
-        private int _stfsPacakgesRecognized;
         public int StfsPackagesRecognized
         {
             get { return _cacheManager.EntryCount(c => c.TitleType == TitleType.Profile); }
@@ -103,7 +100,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private TimeSpan _totalUsageTime;
         public TimeSpan TotalUsageTime
         {
-            get { return _totalUsageTime + UsageTime; } //TODO: sure?
+            get { return _totalUsageTime + UsageTime; }
             set { _totalUsageTime = value; NotifyPropertyChanged(TOTALUSAGETIME); }
         }
 

@@ -101,12 +101,12 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             }
 
             var r = FtpClient.Execute("APPE");
-            return r.Code != "500";
+            return !r.Message.Contains("command not recognized");
         }
 
         internal void Disconnect()
         {
-            //TODO: remove tracelistener
+            FtpTrace.RemoveListener(this);
             FtpClient.Dispose();
         }
 
@@ -259,12 +259,6 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="path"></param>
-        /// <remarks>Unfortunately the FTP server in FSD2 doesn't support the FileExists command</remarks>
-        /// <returns></returns>
         public bool FileExists(string path)
         {
             NotifyFtpOperationStarted(false);
@@ -272,9 +266,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             try
             {
                 var filename = LocateDirectory(path);
-                //TODO: Check FtpClient.FileExists();
-                var list = FtpClient.GetListing();
-                result = list.Any(file => file.Name == filename);
+                result = FtpClient.FileExists(filename);
             }
             catch
             {
@@ -309,6 +301,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         internal void DownloadFile(string remotePath, Stream fs, long remoteStartPosition = 0, long fileSize = -1)
         {
+            long transferred = 0;
             NotifyFtpOperationStarted(true);
             try
             {
@@ -322,13 +315,17 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 _isAborted = false;
                 if (remoteStartPosition != 0) NotifyFtpOperationResumeStart(remoteStartPosition);
 
-                long transferred = 0;
                 using (var ftpStream = FtpClient.OpenRead(filename, remoteStartPosition))
                 {
                     var buffer = new byte[0x8000];
                     int bufferSize;
                     while (!_isAborted && (bufferSize = ftpStream.Read(buffer, 0, 0x8000)) > 0)
                     {
+                        if (transferred + bufferSize > fileSize)
+                        {
+                            bufferSize = (int)(fileSize - transferred);
+                            _isAborted = true;
+                        }
                         fs.Write(buffer, 0, bufferSize);
                         transferred += bufferSize;
                         NotifyFtpOperationProgressChanged((int)(transferred * 100 /fileSize), bufferSize, transferred, remoteStartPosition);
@@ -340,6 +337,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             catch (Exception ex)
             {
                 NotifyFtpOperationFinished();
+                if (_isAborted && ex.Message == "Broken pipe") return;
                 if (FtpClient.IsConnected) throw new TransferException(TransferErrorType.ReadAccessError, ex.Message, ex);
                 throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage, ex);
             }

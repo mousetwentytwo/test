@@ -674,16 +674,18 @@ namespace Neurotoxin.Godspeed.Core.Net {
         public FtpReply Execute(string command) {
             FtpReply reply;
 
-            try {
+            try 
+            {
                 m_lock.WaitOne();
-
-                if (m_stream != null && m_stream.SocketDataAvailable > 0) {
+                if (m_stream != null && m_stream.SocketDataAvailable > 0)
+                {
                     // Data shouldn't be on the socket, if it is it probably
                     // means we've been disconnected. Read and discard
                     // whatever is there and close the connection.
 
                     FtpTrace.WriteLine("There is stale data on the socket, maybe our connection timed out. Re-connecting.");
-                    if (m_stream.IsConnected && !m_stream.IsEncrypted) {
+                    if (m_stream.IsConnected && !m_stream.IsEncrypted)
+                    {
                         byte[] buf = new byte[m_stream.SocketDataAvailable];
                         m_stream.RawSocketRead(buf);
                         FtpTrace.Write("The data was: ");
@@ -693,15 +695,10 @@ namespace Neurotoxin.Godspeed.Core.Net {
                     m_stream.Close();
                 }
 
-                if (!IsConnected) {
-                    if (command == "QUIT") {
+                if (!IsConnected)
+                {
+                    if (command == "QUIT")
                         FtpTrace.WriteLine("Not sending QUIT because the connection has already been closed.");
-                        return new FtpReply() {
-                            Code = "200",
-                            Message = "Connection already closed."
-                        };
-                    }
-
                     Connect();
                 }
 
@@ -709,7 +706,8 @@ namespace Neurotoxin.Godspeed.Core.Net {
                 m_stream.WriteLine(m_textEncoding, command);
                 reply = GetReply();
             }
-            finally {
+            finally 
+            {
                 m_lock.ReleaseMutex();
             }
 
@@ -1299,11 +1297,9 @@ namespace Neurotoxin.Godspeed.Core.Net {
                         // the server will send a reply when the data connection
                         // is closed.
                         if (stream.CommandStatus.Type == FtpResponseType.PositivePreliminary) {
-                            FtpReply reply;
-
-                            if (!(reply = GetReply()).Success) {
+                            var reply = GetReply();
+                            if (!reply.Success && reply.Code != "426") 
                                 throw new FtpCommandException(reply);
-                            }
                         }
                     }
                 }
@@ -1820,11 +1816,10 @@ namespace Neurotoxin.Godspeed.Core.Net {
             {
                 var pwd = GetWorkingDirectory();
                 path = path.GetFtpPath();
-                if (!path.StartsWith("/") && pwd != null && pwd.Trim().Length > 0)
+                if (path != "." && !path.StartsWith("/") && pwd != null && pwd.Trim().Length > 0)
                 {
-                    if (path.StartsWith("./"))
-                        path = path.Remove(0, 2);
-                    path = string.Format("{0}/{1}", pwd, path).GetFtpPath();
+                    if (path.StartsWith("./")) path = path.Remove(0, 2);
+                    path = string.Format("{0}/{1}", pwd, path.TrimEnd('.')).GetFtpPath();
                     SetWorkingDirectory(path);
                 }
             }

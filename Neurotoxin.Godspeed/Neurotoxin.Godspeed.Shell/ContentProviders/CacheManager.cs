@@ -45,7 +45,16 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             lock (_inMemoryCache)
             {
                 if (!_inMemoryCache.ContainsKey(hashKey))
-                    _inMemoryCache.Add(hashKey, _cacheStore.Get<CacheEntry<FileSystemItem>>(hashKey));
+                {
+                    var entry = _cacheStore.Get<CacheEntry<FileSystemItem>>(hashKey);
+                    if (entry.Content == null || string.IsNullOrEmpty(entry.Content.Title))
+                    {
+                        Debugger.Break();
+                        _cacheStore.Remove(hashKey);
+                        Debug.WriteLine("[!] Invalid Cache Entry Removed: " + hashKey);
+                    }
+                    _inMemoryCache.Add(hashKey, entry);
+                }
                 return _inMemoryCache[hashKey];
             }
         }
@@ -75,6 +84,10 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public void SaveEntry(string key, FileSystemItem content, DateTime? expiration = null, DateTime? date = null, long? size = null, string tmpPath = null)
         {
+            if (content == null)
+            {
+                Debugger.Break();
+            }
             var entry = new CacheEntry<FileSystemItem>
                 {
                     Expiration = expiration,
@@ -89,6 +102,10 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public void UpdateEntry(string key, FileSystemItem content)
         {
+            if (content == null)
+            {
+                Debugger.Break();
+            }
             var hashKey = HashKey(key);
             if (!_cacheStore.ContainsKey(hashKey)) 
             {

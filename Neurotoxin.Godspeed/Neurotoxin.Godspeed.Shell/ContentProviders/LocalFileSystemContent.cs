@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -78,9 +79,9 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             var di = new System.IO.DirectoryInfo(path);
             if (di.Attributes.HasFlag(FileAttributes.ReparsePoint))
                 path = new ReparsePoint(path).Target;
+
             var list = Directory.GetDirectories(path).Select(GetDirectoryInfo).ToList();
             list.AddRange(Directory.GetFiles(path).Select(GetFileInfo));
-
             return list;
         }
 
@@ -112,14 +113,15 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         private static FileSystemItem GetFileInfo(string path)
         {
+            var fileInfo = new FileInfo(path);
             return new FileSystemItem
                        {
-                           Name = Path.GetFileName(path),
+                           Name = fileInfo.Name,
                            Type = ItemType.File,
-                           Date = File.GetLastWriteTime(path),
+                           Date = fileInfo.LastWriteTime,
                            Path = path,
                            FullPath = path,
-                           Size = new FileInfo(path).Length,
+                           Size = fileInfo.Length,
                        };
         }
 

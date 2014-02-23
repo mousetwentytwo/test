@@ -21,7 +21,7 @@ namespace Neurotoxin.Godspeed.Core.Net
         private static readonly Regex ShareParser = new Regex(@"^\\\\(?<host>.*?)\\(?<sharename>.*?)(?<directory>\\.*)?$");
         private static readonly Regex RootPathParser = new Regex(@"path\s*=\s*(?<path>.*)\s*$", RegexOptions.IgnoreCase | RegexOptions.Multiline);
         private static readonly Regex ProgressParser = new Regex(@"' at (?<totalTransferred>[0-9]+)", RegexOptions.Multiline);
-        private static readonly Regex FinishParser = new Regex(@"(?<totalTransferred>[0-9]+) bytes transferred in", RegexOptions.Multiline);
+        private static readonly Regex FinishParser = new Regex(@"(?<totalTransferred>[0-9]+) bytes transferred", RegexOptions.Multiline);
 
         public static void OpenSession(string networkDrive, string sambaShare, string ftpHost, int port, string ftpUser, string ftpPwd)
         {
@@ -135,26 +135,27 @@ namespace Neurotoxin.Godspeed.Core.Net
 
         private static void NotifyProgressChange(string s, long resumeStartPosition, Action<int, long, long, long> progressChanged)
         {
-            var m = ProgressParser.Matches(s).Cast<Match>().LastOrDefault();
-            if (m != null)
+            var summary = FinishParser.Match(s);
+            if (summary.Success)
             {
-                var t = Int64.Parse(m.Groups["totalTransferred"].Value);
+                var t = Int64.Parse(summary.Groups["totalTransferred"].Value);
                 var transferred = t - _totalTransferred;
                 _totalTransferred = t;
-                var percentage = (int)(_totalTransferred*100/_totalSize);
-                progressChanged.Invoke(percentage, transferred, _totalTransferred, resumeStartPosition);
+                progressChanged.Invoke(100, transferred, _totalTransferred, resumeStartPosition);
             }
             else
             {
-                m = FinishParser.Match(s);
-                if (m.Success)
+                var progress = ProgressParser.Matches(s).Cast<Match>().LastOrDefault();
+                if (progress != null)
                 {
-                    var t = Int64.Parse(m.Groups["totalTransferred"].Value);
-                    var transferred = _totalTransferred - _totalTransferred;
+                    var t = Int64.Parse(progress.Groups["totalTransferred"].Value);
+                    var transferred = t - _totalTransferred;
                     _totalTransferred = t;
-                    progressChanged.Invoke(100, transferred, _totalTransferred, resumeStartPosition);
+                    var percentage = (int)(_totalTransferred * 100 / _totalSize);
+                    progressChanged.Invoke(percentage, transferred, _totalTransferred, resumeStartPosition);
                 }
             }
+                
         }
 
         private static string Read()

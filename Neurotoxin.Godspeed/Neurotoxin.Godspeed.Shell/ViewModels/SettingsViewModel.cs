@@ -129,8 +129,13 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void ExecuteClearCacheCommand()
         {
-            NotificationMessage.ShowMessage("Application is busy", "Please wait...", NotificationMessageFlags.NonClosable);
-            //WorkerThread.Run(() => { _cacheManager.ClearCache(); return true; }, r => NotificationMessage.CloseMessage());
+            WorkerThread.Run(() =>
+                                 {
+                                     UIThread.Run(() => NotificationMessage.ShowMessage("Application is busy", "Please wait...", NotificationMessageFlags.NonClosable));
+                                     _cacheManager.ClearCache(); 
+                                     return true;
+                                 }, 
+                             r => NotificationMessage.CloseMessage());
         }
 
         #endregion
