@@ -909,6 +909,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             try
             {
                 var folder = FileManager.GetItemInfo(parentPath, ItemType.Directory);
+                if (folder == null) throw new ApplicationException("Item not exists on path: " + parentPath);
                 return new FileSystemItemViewModel(folder);
             }
             catch(TransferException ex)
@@ -1059,8 +1060,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 return;
             }
 
-            WorkerThread.Run(() => FileManager.GetItemInfo(itemPath, ItemType.File), (item) =>
+            WorkerThread.Run(() => FileManager.GetItemInfo(itemPath, ItemType.File), item =>
                 {
+                    if (item == null) throw new ApplicationException("Item not exists on path: " + itemPath);
                     var vm = new FileSystemItemViewModel(item);
                     RecognitionInner(item, i => PublishItemViewModel(vm));
                 });

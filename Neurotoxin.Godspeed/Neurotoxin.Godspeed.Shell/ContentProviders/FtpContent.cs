@@ -446,7 +446,9 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             FtpClient.Rename(oldName, newName);
             var r = new Regex(string.Format("{0}{1}?$", Regex.Escape(oldName), Slash), RegexOptions.IgnoreCase);
             path = r.Replace(path, newName);
-            return GetItemInfo(path);
+            var item = GetItemInfo(path);
+            if (item == null) throw new ApplicationException("Item not exists on path: " + path);
+            return item;
         }
 
         public void RestoreConnection()
