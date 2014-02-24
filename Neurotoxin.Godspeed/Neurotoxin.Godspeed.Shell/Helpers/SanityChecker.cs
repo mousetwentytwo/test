@@ -35,9 +35,16 @@ namespace Neurotoxin.Godspeed.Shell.Helpers
             var actualCacheVersion = e.CacheStore.TryGet("CacheVersion", 1);
             if (actualCacheVersion == requiredCacheVersion) return;
 
+            Action setCacheVersion = () => e.CacheStore.Update("CacheVersion", requiredCacheVersion);
+            if (e.InMemoryCacheItems.Count == 0)
+            {
+                setCacheVersion();
+                return;
+            }
+
             var payload = ApplicationExtensions.GetContentByteArray("/Resources/xbox_logo.png");
             var args = new CacheMigrationEventArgs(MigrateCacheItemVersion1ToVersion2, 
-                                                   () => e.CacheStore.Update("CacheVersion", requiredCacheVersion), 
+                                                   setCacheVersion, 
                                                    e.InMemoryCacheItems,
                                                    e.CacheStore, 
                                                    payload);

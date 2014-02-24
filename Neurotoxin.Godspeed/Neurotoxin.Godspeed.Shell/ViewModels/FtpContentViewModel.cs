@@ -92,7 +92,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                                     if (error != null)
                                     {
                                         var somethingWentWrong = string.Format("Something went wrong while trying to establish connection. Please try again, and if the error persists try to turn {0} Passive Mode.", Connection.UsePassiveMode ? "off" : "on");
-                                        throw new EstablishmentFailedException(somethingWentWrong, ex);
+                                        error.Invoke(this, new EstablishmentFailedException(somethingWentWrong, ex));
                                     }
                                     CloseCommand.Execute();
                                     return;
@@ -135,6 +135,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void ConnectCallback()
         {
+            throw new NotSupportedException();
             Drives = FileManager.GetDrives().Select(d => new FileSystemItemViewModel(d)).ToObservableCollection();
             var r = new Regex("^/[A-Z0-9_-]+/", RegexOptions.IgnoreCase);
             var defaultPath = string.IsNullOrEmpty(Connection.Model.DefaultPath)
