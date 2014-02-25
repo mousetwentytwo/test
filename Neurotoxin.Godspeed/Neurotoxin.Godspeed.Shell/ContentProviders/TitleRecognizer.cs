@@ -27,6 +27,8 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         private readonly Dictionary<string, FileSystemItem> _profileFileCache = new Dictionary<string, FileSystemItem>();
 
         private const string ACCESSERRORMESSAGE = "Inaccessible file. Please check the corresponding permissions.";
+        private const string PROFILEISINUSE = "Profile is currently in use. Please sign out.";
+        private const string PROFILEFILEDOESNTEXIST = "Profile file does not exists.";
 
         private static readonly List<RecognitionInformation> RecognitionKeywords = new List<RecognitionInformation>
             {
@@ -41,7 +43,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 new RecognitionInformation("^[1-9A-E][0-9A-F]{7}.gpd$", "Unknown Game", TitleType.Game, ItemType.File),
                 new RecognitionInformation("^[0-9A-F]{8}$", "Unknown Content", TitleType.Content),
                 new RecognitionInformation("^E0000[0-9A-F]{11}$", "Unknown Profile", TitleType.Profile, ItemType.Directory | ItemType.File),
-                new RecognitionInformation("^TU[\\w\\.]+$|^[0-9A-F]+$", "Unknown Data File", TitleType.Unknown, ItemType.File),
+                new RecognitionInformation("^TU[\\w\\.]+$|^[0-9A-F]+$", "Unknown Data File", TitleType.DataFile, ItemType.File),
             };
 
         public TitleRecognizer(IFileManager fileManager, CacheManager cacheManager, IEventAggregator eventAggregator)
@@ -49,11 +51,6 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             _cacheManager = cacheManager;
             _fileManager = fileManager;
             _eventAggregator = eventAggregator;
-        }
-
-        public static bool IsXboxItem(FileSystemItem item)
-        {
-            return RecognizeByName(item.Name, item.Type) != null;
         }
 
         public static bool RecognizeType(FileSystemItem item)
@@ -106,7 +103,12 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public bool MergeWithCachedEntry(FileSystemItem item)
         {
-            if (item.TitleType == TitleType.SystemDir || item.TitleType == TitleType.SystemFile) return true;
+            if (item.TitleType == TitleType.Unknown ||
+                item.TitleType == TitleType.SystemDir || 
+                item.TitleType == TitleType.SystemFile)
+            {
+                return true;
+            }
 
             var cacheKey = GetCacheKey(item);
             var storedItem = _cacheManager.GetEntry(cacheKey.Key);
@@ -177,7 +179,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                     _cacheManager.SaveEntry(cacheKey.Key, item);
                     item.IsCached = true;
                     break;
-                case TitleType.Unknown:
+                case TitleType.DataFile:
                     if (item.Type == ItemType.File)
                     {
                         try
@@ -201,7 +203,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                             }
                             else
                             {
-                                _cacheManager.SaveEntry(cacheKey.Key, null, GetExpirationFrom(UserSettings.UnknownContentExpiration));
+                                _cacheManager.SaveEntry(cacheKey.Key, item, GetExpirationFrom(UserSettings.UnknownContentExpiration));
                             }
                         } 
                         catch
@@ -237,12 +239,12 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                     else
                     {
                         profileItem = null;
-                        message = "Profile is currently in use. Please sign out.";
+                        message = PROFILEISINUSE;
                     }
                 } 
                 else
                 {
-                    message = "Profile file does not exists.";
+                    message = PROFILEFILEDOESNTEXIST;
                 }
                 _profileFileCache.Add(profilePath, profileItem);
             }
@@ -304,8 +306,10 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 item.RecognitionState = RecognitionState.Recognized;
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
+                item.IsLocked = true;
+                item.LockMessage = ex.Message == "Permission denied" ? PROFILEISINUSE : ex.Message;
                 return false;
             }
         }

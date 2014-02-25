@@ -7,11 +7,11 @@ using Neurotoxin.Godspeed.Shell.Models;
 
 namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
 {
-    public partial class FileTransferErrorDialog : ITransferErrorDialog
+    public partial class IoErrorDialog : ITransferErrorDialog
     {
         public TransferErrorDialogResult Result { get; private set; }
 
-        public FileTransferErrorDialog(Exception exception)
+        public IoErrorDialog(Exception exception)
         {
             Owner = Application.Current.MainWindow;
             InitializeComponent();

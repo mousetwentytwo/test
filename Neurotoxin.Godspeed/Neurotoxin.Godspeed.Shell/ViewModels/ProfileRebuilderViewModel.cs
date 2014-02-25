@@ -7,6 +7,7 @@ using Neurotoxin.Godspeed.Core.Models;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
 using Neurotoxin.Godspeed.Shell.Constants;
+using Neurotoxin.Godspeed.Shell.Models;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
@@ -41,15 +42,16 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
         }
 
-        public override void LoadDataAsync(LoadCommand cmd, object cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase, Exception> error = null)
+        public override void LoadDataAsync(LoadCommand cmd, LoadDataAsyncParameters cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase, Exception> error = null)
         {
+            base.LoadDataAsync(cmd, cmdParam, success, error);
             switch (cmd)
             {
                 case LoadCommand.Load:
                     WorkerThread.Run(
                         () =>
                         {
-                            _packageContent = (BinaryContent)cmdParam;
+                            _packageContent = (BinaryContent)cmdParam.Payload;
                             _stfs = ModelFactory.GetModel<StfsPackage>(_packageContent.Content);
                             return true;
                         },

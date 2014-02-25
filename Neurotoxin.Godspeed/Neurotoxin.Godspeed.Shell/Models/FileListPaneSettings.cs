@@ -16,5 +16,10 @@ namespace Neurotoxin.Godspeed.Shell.Models
             SortByField = sortByField;
             SortDirection = sortDirection;
         }
+
+        public FileListPaneSettings Clone(string directory = null)
+        {
+            return new FileListPaneSettings(directory ?? Directory, SortByField, SortDirection);
+        }
     }
 }

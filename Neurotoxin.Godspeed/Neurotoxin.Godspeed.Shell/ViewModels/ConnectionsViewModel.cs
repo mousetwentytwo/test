@@ -96,7 +96,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             Items = new ObservableCollection<IStoredConnectionViewModel>();
         }
 
-        public override void LoadDataAsync(LoadCommand cmd, object cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase, Exception> error = null)
+        public override void LoadDataAsync(LoadCommand cmd, LoadDataAsyncParameters cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase, Exception> error = null)
         {
             base.LoadDataAsync(cmd, cmdParam, success, error);
             switch (cmd)
@@ -112,7 +112,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     Items.Add(add);
                     break;
                 case LoadCommand.Restore:
-                    Save(cmdParam as FtpConnectionItemViewModel);
+                    Save(cmdParam.Payload as FtpConnectionItemViewModel);
                     ConnectedFtp = null;
                     break;
             }
@@ -194,10 +194,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             IsBusy = true;
             ProgressMessage = string.Format("Connecting to {0}...", connection.Name);
             var connectedFtp = container.Resolve<FtpContentViewModel>();
-            var dir = Settings.Directory.StartsWith(connection.Name)
-                          ? Settings.Directory.Replace(string.Format("{0}:/", connection.Name), string.Empty)
-                          : "/Hdd1";
-            connectedFtp.LoadDataAsync(LoadCommand.Load, new Tuple<IStoredConnectionViewModel, FileListPaneSettings>(connection, new FileListPaneSettings(dir, Settings.SortByField, Settings.SortDirection)), FtpConnectSuccess, FtpConnectError);
+            connectedFtp.LoadDataAsync(LoadCommand.Load, new LoadDataAsyncParameters(Settings.Clone("/"), connection), FtpConnectSuccess, FtpConnectError);
             return connectedFtp;
         }
 

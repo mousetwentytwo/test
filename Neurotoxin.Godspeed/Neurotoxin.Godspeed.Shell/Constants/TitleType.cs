@@ -7,6 +7,7 @@
         SystemFile,
         Content,
         Game,
-        Profile
+        Profile,
+        DataFile
     }
 }

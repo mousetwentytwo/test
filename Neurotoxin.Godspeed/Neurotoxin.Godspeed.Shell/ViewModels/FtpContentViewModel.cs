@@ -75,17 +75,16 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             CloseCommand = new DelegateCommand(ExecuteCloseCommand);
         }
 
-        public override void LoadDataAsync(LoadCommand cmd, object cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase, Exception> error = null)
+        public override void LoadDataAsync(LoadCommand cmd, LoadDataAsyncParameters cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase, Exception> error = null)
         {
+            base.LoadDataAsync(cmd, cmdParam, success, error);
             switch (cmd)
             {
                 case LoadCommand.Load:
                     WorkerThread.Run(
                         () =>
                             {
-                                var p = (Tuple<IStoredConnectionViewModel, FileListPaneSettings>) cmdParam;
-                                Settings = p.Item2;
-                                Connection = (FtpConnectionItemViewModel) p.Item1;
+                                Connection = (FtpConnectionItemViewModel)cmdParam.Payload;
                                 return Connect();
                             },
                         result =>
@@ -114,7 +113,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                             });
                     break;
                 case LoadCommand.Restore:
-                    var payload = cmdParam as BinaryContent;
+                    var payload = cmdParam.Payload as BinaryContent;
                     if (payload == null) return;
                     WorkerThread.Run(
                         () =>

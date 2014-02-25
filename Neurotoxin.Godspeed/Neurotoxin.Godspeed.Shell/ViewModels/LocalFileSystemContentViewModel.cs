@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.Practices.Composite.Events;
-using Neurotoxin.Godspeed.Core.Constants;
 using Neurotoxin.Godspeed.Core.Models;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Constants;
@@ -48,7 +47,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             _eventAggregator.GetEvent<UsbDeviceChangedEvent>().Subscribe(OnUsbDeviceChanged);
         }
 
-        public override void LoadDataAsync(LoadCommand cmd, object cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase, Exception> error = null)
+        public override void LoadDataAsync(LoadCommand cmd, LoadDataAsyncParameters cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase, Exception> error = null)
         {
             base.LoadDataAsync(cmd, cmdParam, success, error);
             switch (cmd)
@@ -61,7 +60,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     Drive = drive ?? GetDefaultDrive();
                     break;
                 case LoadCommand.Restore:
-                    var payload = cmdParam as BinaryContent;
+                    var payload = cmdParam.Payload as BinaryContent;
                     if (payload == null) return;
                     WorkerThread.Run(
                         () =>
@@ -135,9 +134,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         protected override Exception WrapTransferRelatedExceptions(Exception exception)
         {
             if (exception is IOException)
-            {
                 return new TransferException(TransferErrorType.NotSpecified, exception.Message, exception);
-            }
+
             return base.WrapTransferRelatedExceptions(exception);
         }
 

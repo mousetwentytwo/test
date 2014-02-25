@@ -155,6 +155,7 @@
     <Compile Include="Interfaces\IUserMessageViewModel.cs" />
     <Compile Include="Models\CacheComplexKey.cs" />
     <Compile Include="Models\FileListPaneSettings.cs" />
+    <Compile Include="Models\LoadDataAsyncParameters.cs" />
     <Compile Include="Models\ProfileItemWrapper.cs" />
     <Compile Include="Models\UserMessageCommandParameter.cs" />
     <Compile Include="Primitives\BorderlessWindow.cs" />
@@ -239,8 +240,8 @@
     <Compile Include="Views\Dialogs\NewConnectionDialog.xaml.cs">
       <DependentUpon>NewConnectionDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Dialogs\FileTransferErrorDialog.xaml.cs">
-      <DependentUpon>FileTransferErrorDialog.xaml</DependentUpon>
+    <Compile Include="Views\Dialogs\IoErrorDialog.xaml.cs">
+      <DependentUpon>IoErrorDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Dialogs\ReconnectionDialog.xaml.cs">
       <DependentUpon>ReconnectionDialog.xaml</DependentUpon>
@@ -359,7 +360,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Dialogs\FileTransferErrorDialog.xaml">
+    <Page Include="Views\Dialogs\IoErrorDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -563,6 +564,11 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\warning.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\pause.png" />
+    <Resource Include="Resources\play.png" />
+    <Resource Include="Resources\stop.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

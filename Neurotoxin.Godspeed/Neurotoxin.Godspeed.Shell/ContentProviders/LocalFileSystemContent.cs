@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -9,7 +8,6 @@ using System.Text.RegularExpressions;
 using Neurotoxin.Godspeed.Core.Io;
 using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Shell.Constants;
-using Neurotoxin.Godspeed.Shell.Exceptions;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
 

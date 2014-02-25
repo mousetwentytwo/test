@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Reflection;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -26,25 +27,29 @@ namespace Neurotoxin.Godspeed.Shell.Views
 
             Grid.ItemContainerGenerator.StatusChanged += ItemContainerGeneratorStatusChanged;
             Grid.Sorting += GridOnSorting;
-            Grid.Loaded += GridOnLoaded;
             Grid.SelectionChanged += GridOnSelectionChanged;
+            Grid.DataContextChanged += GridOnDataContextChanged;
+        }
+
+        private void GridOnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            //To make sure it runs only after the Grid has been successfully rendered
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                var m = Grid.GetType().GetMethod("PerformSort", BindingFlags.Instance | BindingFlags.NonPublic);
+                var vm = (IPaneViewModel)DataContext;
+                if (vm == null) return;
+                var settings = vm.Settings;
+                var column = Grid.Columns.Single(c => c.SortMemberPath == settings.SortByField);
+                column.SortDirection = settings.SortDirection == ListSortDirection.Ascending ? ListSortDirection.Descending : ListSortDirection.Ascending;
+                m.Invoke(Grid, new object[] { column });
+            }));
         }
 
         private void ActivePaneChanged(ActivePaneChangedEventArgs e)
         {
             if (DataContext != e.ActivePane) return;
             SetFocusToTheFirstCellOfCurrentRow();
-        }
-
-        private void GridOnLoaded(object sender, RoutedEventArgs routedEventArgs)
-        {
-            var m = Grid.GetType().GetMethod("PerformSort", BindingFlags.Instance | BindingFlags.NonPublic);
-            var vm = (IPaneViewModel) DataContext;
-            var settings = vm.Settings;
-            var column = Grid.Columns.Single(c => c.SortMemberPath == settings.SortByField);
-            column.SortDirection = settings.SortDirection;
-            m.Invoke(Grid, new object[] { column });
-            Grid.Loaded -= GridOnLoaded;
         }
 
         private static void GridOnSorting(object sender, DataGridSortingEventArgs e)

@@ -60,17 +60,16 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             IsResumeSupported = true;
         }
 
-        public override void LoadDataAsync(LoadCommand cmd, object cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase, Exception> error = null)
+        public override void LoadDataAsync(LoadCommand cmd, LoadDataAsyncParameters cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase, Exception> error = null)
         {
+            base.LoadDataAsync(cmd, cmdParam, success, error);
             switch (cmd)
             {
                 case LoadCommand.Load:
                     WorkerThread.Run(
                         () =>
                             {
-                                var p = (Tuple<BinaryContent, FileListPaneSettings>) cmdParam;
-                                _packageContent = p.Item1;
-                                Settings = p.Item2;
+                                _packageContent = (BinaryContent)cmdParam.Payload;
                                 FileManager.LoadPackage(_packageContent);
                                 return true;
                             },

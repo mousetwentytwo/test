@@ -51,6 +51,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                     {
                         Debugger.Break();
                         _cacheStore.Remove(hashKey);
+                        _inMemoryCache.Remove(hashKey);
                         Debug.WriteLine("[!] Invalid Cache Entry Removed: " + hashKey);
                     }
                     _inMemoryCache.Add(hashKey, entry);

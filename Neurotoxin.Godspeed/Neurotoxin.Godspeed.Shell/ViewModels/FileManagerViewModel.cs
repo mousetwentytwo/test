@@ -860,11 +860,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             LeftPane = (IPaneViewModel)container.Resolve(GetStoredPaneType(UserSettings.LeftPaneType));
             var leftParam = UserSettings.LeftPaneFileListPaneSettings;
-            LeftPane.LoadDataAsync(LoadCommand.Load, leftParam, PaneLoaded);
+            LeftPane.LoadDataAsync(LoadCommand.Load, new LoadDataAsyncParameters(leftParam), PaneLoaded);
 
             RightPane = (IPaneViewModel)container.Resolve(GetStoredPaneType(UserSettings.RightPaneType));
             var rightParam = UserSettings.RightPaneFileListPaneSettings;
-            RightPane.LoadDataAsync(LoadCommand.Load, rightParam, PaneLoaded);
+            RightPane.LoadDataAsync(LoadCommand.Load, new LoadDataAsyncParameters(rightParam), PaneLoaded);
         }
 
         private void PaneLoaded(PaneViewModelBase pane)
@@ -945,16 +945,18 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             if (LeftPane == args.Pane)
             {
+                var settings = LeftPane.Settings;
                 LeftPane.Dispose();
                 LeftPane = _leftPaneStack.Pop();
-                LeftPane.LoadDataAsync(LoadCommand.Restore, args.Payload);
+                LeftPane.LoadDataAsync(LoadCommand.Restore, new LoadDataAsyncParameters(settings, args.Payload));
                 LeftPane.SetActive();
             }
             else if (RightPane == args.Pane)
             {
+                var settings = LeftPane.Settings;
                 RightPane.Dispose();
                 RightPane = _rightPaneStack.Pop();
-                RightPane.LoadDataAsync(LoadCommand.Restore, args.Payload);
+                RightPane.LoadDataAsync(LoadCommand.Restore, new LoadDataAsyncParameters(settings, args.Payload));
                 RightPane.SetActive();
             }
         }
@@ -1073,7 +1075,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         {
                             if (resultMatters)
                             {
-                                var dialog = new FileTransferErrorDialog(exception);
+                                var dialog = new IoErrorDialog(exception);
                                 if (dialog.ShowDialog() == true) result = dialog.Result;
                             } 
                             else

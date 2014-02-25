@@ -342,6 +342,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             try
             {
                 _isIdle = false;
+                _isAborted = false;
                 long transferred = 0;
                 var fileSize = new FileInfo(localPath).Length;
                 fs = new FileStream(localPath, FileMode.Open);

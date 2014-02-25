@@ -244,9 +244,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             _queue = new Queue<FileSystemItem>();
             var sw = new Stopwatch();
             sw.Start();
-            foreach (var item in result.Where(item => !TitleRecognizer.MergeWithCachedEntry(item)))
+            foreach (var item in result.Where(item => item.TitleType != TitleType.Unknown && !TitleRecognizer.MergeWithCachedEntry(item)))
             {
-                if (CurrentFolder.ContentType == ContentType.Unknown && !TitleRecognizer.IsXboxItem(item)) continue;
                 _queue.Enqueue(item);
             }
             sw.Stop();
@@ -314,21 +313,18 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void OpenStfsPackageCallback(BinaryContent content, OpenStfsPackageMode mode)
         {
             PaneViewModelBase stfs;
-            object data;
+            var data = new LoadDataAsyncParameters(Settings.Clone("/"), content);
             switch (mode)
             {
                 case OpenStfsPackageMode.Browsing:
                     stfs = container.Resolve<StfsPackageContentViewModel>();
-                    data = new Tuple<BinaryContent, FileListPaneSettings>(content, new FileListPaneSettings("/", Settings.SortByField, Settings.SortDirection));
                     break;
                 case OpenStfsPackageMode.Repair:
                     stfs = container.Resolve<ProfileRebuilderViewModel>();
-                    data = content;
                     break;
                 default:
                     throw new NotSupportedException("Invalid mode: " + mode);
             }
-            
             stfs.LoadDataAsync(LoadCommand.Load, data, OpenStfsPackageSuccess, OpenStfsPackageError);
         }
 
@@ -370,7 +366,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void OpenCompressedFileCallback(string path)
         {
             var archive = container.Resolve<CompressedFileContentViewModel>();
-            archive.LoadDataAsync(LoadCommand.Load, new Tuple<string, FileListPaneSettings>(path, new FileListPaneSettings("/", Settings.SortByField, Settings.SortDirection)), OpenCompressedFileSuccess, OpenCompressedFileError);
+            archive.LoadDataAsync(LoadCommand.Load, new LoadDataAsyncParameters(Settings.Clone("/"), path), OpenCompressedFileSuccess, OpenCompressedFileError);
         }
 
         private void OpenCompressedFileSuccess(PaneViewModelBase pane)
@@ -1085,7 +1081,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 {
                     if (item == null) throw new ApplicationException("Item not exists on path: " + itemPath);
                     var vm = new FileSystemItemViewModel(item);
-                    RecognitionInner(item, i => PublishItemViewModel(vm));
+                    RecognitionInner(item, i => PublishItemViewModel(vm), null);
                 });
         }
 
@@ -1095,7 +1091,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             {
                 var item = _queue.Dequeue();
                 ProgressMessage = string.Format("Recognizing item {0} ({1} left)...", item.Name, _queue.Count);
-                RecognitionInner(item, RecognitionSuccess);
+                RecognitionInner(item, RecognitionSuccess, RecognitionError);
             }
             else
             {
@@ -1103,18 +1099,25 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
         }
 
-        private void RecognitionInner(FileSystemItem item, Action<FileSystemItem> callback)
+        private void RecognitionInner(FileSystemItem item, Action<FileSystemItem> success, Action<Exception> error)
         {
             WorkerThread.Run(() =>
             {
                 TitleRecognizer.RecognizeTitle(item);
                 return item;
-            }, callback);
+            }, 
+            success,
+            error);
         }
 
         private void RecognitionSuccess(FileSystemItem item)
         {
             Items.Single(i => i.Model == item).NotifyModelChanges();
+            RecognitionStart();
+        }
+
+        private void RecognitionError(Exception exception)
+        {
             RecognitionStart();
         }
 
