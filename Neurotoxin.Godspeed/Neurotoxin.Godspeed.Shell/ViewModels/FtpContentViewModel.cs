@@ -23,6 +23,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private readonly Dictionary<string, string> _driveLabelCache = new Dictionary<string, string>();
 
         public FtpConnectionItemViewModel Connection { get; private set; }
+
         public Stack<string> Log { get { return FileManager.Log; } } 
 
         public bool IsKeepAliveEnabled
@@ -44,6 +45,14 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         protected override string ImportActionDescription
         {
             get { return "Upload"; }
+        }
+
+        private string ConnectionLostMessage
+        {
+            get
+            {
+                return string.Format("The connection with {0} has been lost.", Connection.Name);
+            }
         }
 
         #region Commands
@@ -203,6 +212,17 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         protected override void SaveToFileStream(FileSystemItem item, FileStream fs, long remoteStartPosition)
         {
             FileManager.DownloadFile(item.Path, fs, remoteStartPosition, item.Size ?? 0);
+        }
+
+        protected override Exception WrapTransferRelatedExceptions(Exception exception)
+        {
+            if (exception is IOException || exception is FtpException)
+            {
+                return FileManager.IsConnected
+                           ? new TransferException(TransferErrorType.NotSpecified, exception.Message, exception)
+                           : new TransferException(TransferErrorType.LostConnection, ConnectionLostMessage, exception);
+            }
+            return base.WrapTransferRelatedExceptions(exception);
         }
 
         protected override void CreateFile(string targetPath, string sourcePath)

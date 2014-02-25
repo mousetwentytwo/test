@@ -888,11 +888,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             DeleteCommand.RaiseCanExecuteChanged();
         }
 
-        private void FtpDisconnect()
-        {
-            RightPane = container.Resolve<ConnectionsViewModel>();
-        }
-
         private void OnTransferActionStarted(string action)
         {
             UIThread.Run(() => { TransferAction = action ?? TransferType.ToString(); });
@@ -1099,10 +1094,10 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         break;
                     case TransferErrorType.LostConnection:
                         result = new TransferErrorDialogResult(ErrorResolutionBehavior.Cancel);
+                        var ftp = LeftPane as FtpContentViewModel ?? RightPane as FtpContentViewModel;
                         var reconnectionDialog = new ReconnectionDialog(exception);
                         if (reconnectionDialog.ShowDialog() == true)
                         {
-                            var ftp = LeftPane as FtpContentViewModel ?? RightPane as FtpContentViewModel;
                             try
                             {
                                 ftp.RestoreConnection();
@@ -1111,12 +1106,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                             catch (Exception ex)
                             {
                                 NotificationMessage.ShowMessage("Connection failed", string.Format("Cannot reestablish connection because: {0}", ex.Message));
-                                FtpDisconnect();
+                                ftp.CloseCommand.Execute();
                             }
                         }
                         else
                         {
-                            FtpDisconnect();
+                            ftp.CloseCommand.Execute();
                         }
                         break;
                     default:

@@ -333,16 +333,20 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 var file = _fileManager.GetList(gamePath).FirstOrDefault(i => i.Type == ItemType.File);
                 if (file != null)
                 {
-                    var fileContent = _fileManager.ReadFileHeader(file.Path);
-                    var svod = ModelFactory.GetModel<SvodPackage>(fileContent);
-                    if (svod.IsValid)
+                    try
                     {
-                        item.Title = svod.TitleName;
-                        item.Thumbnail = svod.ThumbnailImage;
-                        item.ContentType = svod.ContentType;
-                        item.RecognitionState = RecognitionState.Recognized;
-                        infoFileFound = true;
+                        var fileContent = _fileManager.ReadFileHeader(file.Path);
+                        var svod = ModelFactory.GetModel<SvodPackage>(fileContent);
+                        if (svod.IsValid)
+                        {
+                            item.Title = svod.TitleName;
+                            item.Thumbnail = svod.ThumbnailImage;
+                            item.ContentType = svod.ContentType;
+                            item.RecognitionState = RecognitionState.Recognized;
+                            infoFileFound = true;
+                        }
                     }
+                    catch {}
                 }
             }
             return infoFileFound;
@@ -384,14 +388,22 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             return result;
         }
 
-        private void GetGameDataFromGpd(FileSystemItem item)
+        private bool GetGameDataFromGpd(FileSystemItem item)
         {
-            var fileContent = _fileManager.ReadFileContent(item.Path, false, item.Size ?? 0);
-            var gpd = ModelFactory.GetModel<GameFile>(fileContent);
-            gpd.Parse();
-            if (gpd.Strings.Count > 0) item.Title = gpd.Strings.First().Text;
-            item.Thumbnail = gpd.Thumbnail;
-            item.RecognitionState = RecognitionState.Recognized;
+            try
+            {
+                var fileContent = _fileManager.ReadFileContent(item.Path, false, item.Size ?? 0);
+                var gpd = ModelFactory.GetModel<GameFile>(fileContent);
+                gpd.Parse();
+                if (gpd.Strings.Count > 0) item.Title = gpd.Strings.First().Text;
+                item.Thumbnail = gpd.Thumbnail;
+                item.RecognitionState = RecognitionState.Recognized;
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public void UpdateCache(FileSystemItem item)

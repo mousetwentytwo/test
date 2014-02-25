@@ -6,10 +6,12 @@ using Microsoft.Practices.Composite.Events;
 using Neurotoxin.Godspeed.Core.Constants;
 using Neurotoxin.Godspeed.Core.Models;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
+using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
 using Neurotoxin.Godspeed.Shell.Events;
+using Neurotoxin.Godspeed.Shell.Exceptions;
 using Neurotoxin.Godspeed.Shell.Models;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
@@ -128,6 +130,15 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(percentage, bytesRead, totalBytesTransferred, remoteStartPosition));
             }
             readStream.Close();
+        }
+
+        protected override Exception WrapTransferRelatedExceptions(Exception exception)
+        {
+            if (exception is IOException)
+            {
+                return new TransferException(TransferErrorType.NotSpecified, exception.Message, exception);
+            }
+            return base.WrapTransferRelatedExceptions(exception);
         }
 
         protected override void CreateFile(string targetPath, string sourcePath)

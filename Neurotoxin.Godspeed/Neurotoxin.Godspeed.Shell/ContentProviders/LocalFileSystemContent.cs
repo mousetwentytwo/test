@@ -127,14 +127,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public DateTime GetFileModificationTime(string path)
         {
-            try
-            {
-                return File.GetLastWriteTime(path);
-            }
-            catch (IOException ex)
-            {
-                throw new TransferException(TransferErrorType.NotSpecified, ex.Message);
-            }
+            return File.GetLastWriteTime(path);
         }
 
         public bool DriveIsReady(string drive)
@@ -155,68 +148,31 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public void DeleteFolder(string path)
         {
-            try
-            {
-                Directory.Delete(path);
-            }
-            catch (IOException ex)
-            {
-                //TODO: not read
-                throw new TransferException(TransferErrorType.NotSpecified, ex.Message);
-            }
+            Directory.Delete(path);
         }
 
         public void DeleteFile(string path)
         {
-            try {
-                File.Delete(path);
-            }
-            catch (IOException ex)
-            {
-                //TODO: not read
-                throw new TransferException(TransferErrorType.NotSpecified, ex.Message);
-            }
+            File.Delete(path);
         }
 
         public void CreateFolder(string path)
         {
-            try
-            {
-                Directory.CreateDirectory(path);
-            }
-            catch (IOException ex)
-            {
-                //TODO: not read
-                throw new TransferException(TransferErrorType.NotSpecified, ex.Message);
-            }
+            Directory.CreateDirectory(path);
         }
 
         public byte[] ReadFileContent(string path, bool saveTempFile, long fileSize)
         {
-            try
-            {
-                return File.ReadAllBytes(path);
-            }
-            catch (IOException ex)
-            {
-                throw new TransferException(TransferErrorType.NotSpecified, ex.Message);
-            }
+            return File.ReadAllBytes(path);
         }
 
         public byte[] ReadFileHeader(string path)
         {
-            try
-            {
-                var fs = new FileStream(path, FileMode.Open);
-                var bytes = new byte[0x971A];
-                fs.Read(bytes, 0, bytes.Length);
-                fs.Close();
-                return bytes;
-            }
-            catch (Exception ex)
-            {
-                throw new TransferException(TransferErrorType.NotSpecified, ex.Message);
-            }
+            var fs = new FileStream(path, FileMode.Open);
+            var bytes = new byte[0x971A];
+            fs.Read(bytes, 0, bytes.Length);
+            fs.Close();
+            return bytes;
         }
 
         public FileSystemItem Rename(string path, string newName)

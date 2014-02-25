@@ -13,7 +13,6 @@ using Neurotoxin.Godspeed.Core.Net;
 using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Events;
-using Neurotoxin.Godspeed.Shell.Exceptions;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
 
@@ -28,10 +27,11 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         }
 
         private FtpConnection _connection;
-        private string _connectionLostMessage;
         private readonly IEventAggregator _eventAggregator;
         private bool _isIdle = true;
         private bool _isAborted;
+        private readonly Stopwatch _notificationTimer = new Stopwatch();
+        private long _aggregatedTransferredValue;
 
         public readonly Stack<string> Log = new Stack<string>();
 
@@ -58,6 +58,11 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 }
                 return _ftpClient;
             }
+        }
+
+        public bool IsConnected
+        {
+            get { return FtpClient.IsConnected; }
         }
 
         public FtpContent(IEventAggregator eventAggregator)
@@ -87,7 +92,6 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             FtpTrace.AddListener(this);
 
             _connection = connection;
-            _connectionLostMessage = string.Format("The connection with {0} has been lost.", connection.Name);
             _ftpClient.Connect();
 
             foreach (var log in Log.Where(e => e.StartsWith("220")))
@@ -112,58 +116,55 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public List<FileSystemItem> GetDrives()
         {
+            List<FileSystemItem> result;
             NotifyFtpOperationStarted(false);
             try
             {
                 var currentFolder = FtpClient.GetWorkingDirectory();
                 FtpClient.SetWorkingDirectory("/");
 
-                var result = FtpClient.GetListing()
-                                       .Select(item => new FileSystemItem
-                                           {
-                                               Name = item.Name,
-                                               Type = ItemType.Drive,
-                                               Date = item.Modified,
-                                               Path = string.Format("/{0}/", item.Name),
-                                               FullPath = string.Format("{0}://{1}/", _connection.Name, item.Name),
-                                               Thumbnail = ApplicationExtensions.GetContentByteArray("/Resources/drive.png")
-                                           })
-                                       .ToList();
+                result = FtpClient.GetListing()
+                                  .Select(item => new FileSystemItem
+                                      {
+                                          Name = item.Name,
+                                          Type = ItemType.Drive,
+                                          Date = item.Modified,
+                                          Path = string.Format("/{0}/", item.Name),
+                                          FullPath = string.Format("{0}://{1}/", _connection.Name, item.Name),
+                                          Thumbnail = ApplicationExtensions.GetContentByteArray("/Resources/drive.png")
+                                      })
+                                  .ToList();
                 FtpClient.SetWorkingDirectory(currentFolder);
-                NotifyFtpOperationFinished();
-                return result;
             }
-            catch (FtpException ex)
+            finally
             {
                 NotifyFtpOperationFinished();
-                if (FtpClient.IsConnected) throw new TransferException(TransferErrorType.NotSpecified, ex.Message, ex);
-                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage, ex);
-            } 
+            }
+            return result;
         }
 
         public List<FileSystemItem> GetList(string path = null)
         {
+
+            List<FileSystemItem> result;
             NotifyFtpOperationStarted(false);
             try
             {
                 var currentPath = path;
-                if (path != null) 
+                if (path != null)
                     FtpClient.SetWorkingDirectory(path);
                 else
                     currentPath = FtpClient.GetWorkingDirectory();
                 if (!currentPath.EndsWith("/")) currentPath += "/";
-                var result = FtpClient.GetListing()
-                                      .Select(item => CreateModel(item, string.Format("{0}{1}{2}", currentPath, item.Name, item.Type == FtpFileSystemObjectType.Directory ? "/" : string.Empty)))
-                                      .ToList();
-                NotifyFtpOperationFinished();
-                return result;
+                result = FtpClient.GetListing()
+                                  .Select(item => CreateModel(item, string.Format("{0}{1}{2}", currentPath, item.Name, item.Type == FtpFileSystemObjectType.Directory ? "/" : string.Empty)))
+                                  .ToList();
             }
-            catch (FtpException ex)
+            finally
             {
                 NotifyFtpOperationFinished();
-                if (FtpClient.IsConnected) throw new TransferException(TransferErrorType.NotSpecified, ex.Message, ex);
-                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage, ex);
-            }          
+            }
+            return result;
         }
 
         private string LocateDirectory(string path)
@@ -233,16 +234,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public DateTime GetFileModificationTime(string path)
         {
-            try
-            {
-                return FtpClient.GetModifiedTime(path);
-            }
-            catch (FtpException ex)
-            {
-                NotifyFtpOperationFinished();
-                if (FtpClient.IsConnected) throw new TransferException(TransferErrorType.NotSpecified, ex.Message, ex);
-                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage, ex);
-            }
+            return FtpClient.GetModifiedTime(path);
         }
 
         public bool DriveIsReady(string drive)
@@ -252,9 +244,9 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 FtpClient.SetWorkingDirectory(drive);
                 return true;
             }
-            catch (FtpException ex)
+            catch (FtpException)
             {
-                if (!FtpClient.IsConnected) throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage, ex);
+                if (!FtpClient.IsConnected) throw;
                 return false;
             }
         }
@@ -323,12 +315,13 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                     {
                         if (transferred + bufferSize > fileSize)
                         {
-                            bufferSize = (int)(fileSize - transferred);
+                            bufferSize = (int) (fileSize - transferred);
                             _isAborted = true;
                         }
                         stream.Write(buffer, 0, bufferSize);
                         transferred += bufferSize;
-                        NotifyFtpOperationProgressChanged((int)(transferred * 100 /fileSize), bufferSize, transferred, remoteStartPosition);
+                        NotifyFtpOperationProgressChanged((int) (transferred*100/fileSize), bufferSize, transferred,
+                                                          remoteStartPosition);
                     }
                 }
                 stream.Flush();
@@ -338,8 +331,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             {
                 NotifyFtpOperationFinished();
                 if (_isAborted && ex.Message == "Broken pipe") return;
-                if (FtpClient.IsConnected) throw new TransferException(TransferErrorType.NotSpecified, ex.Message, ex);
-                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage, ex);
+                throw;
             }
         }
 
@@ -374,21 +366,10 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                         NotifyFtpOperationProgressChanged((int)(transferred * 100 / fileSize), bufferSize, transferred, resumeStartPosition);
                     }
                 }
-                NotifyFtpOperationFinished();
-            }
-            catch (IOException ex)
-            {
-                NotifyFtpOperationFinished();
-                throw new TransferException(TransferErrorType.NotSpecified, ex.Message, ex);
-            }
-            catch (FtpException ex)
-            {
-                NotifyFtpOperationFinished();
-                if (FtpClient.IsConnected) throw new TransferException(TransferErrorType.NotSpecified, ex.Message, ex);
-                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage, ex);
             }
             finally
             {
+                NotifyFtpOperationFinished();
                 if (fs != null) fs.Close();
             }
         }
@@ -400,41 +381,17 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public void DeleteFolder(string path)
         {
-            try
-            {
-                FtpClient.DeleteDirectory(ServerType == FtpServerType.MinFTPD ? LocateDirectory(path) : path);
-            }
-            catch (FtpException ex)
-            {
-                if (FtpClient.IsConnected) throw new TransferException(TransferErrorType.NotSpecified, ex.Message, ex);
-                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage, ex);
-            }
+            FtpClient.DeleteDirectory(ServerType == FtpServerType.MinFTPD ? LocateDirectory(path) : path);
         }
 
         public void DeleteFile(string path)
         {
-            try
-            {
-                FtpClient.DeleteFile(ServerType == FtpServerType.MinFTPD ? LocateDirectory(path) : path);
-            }
-            catch (FtpException ex)
-            {
-                if (FtpClient.IsConnected) throw new TransferException(TransferErrorType.NotSpecified, ex.Message, ex);
-                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage, ex);
-            }
+            FtpClient.DeleteFile(ServerType == FtpServerType.MinFTPD ? LocateDirectory(path) : path);
         }
 
         public void CreateFolder(string path)
         {
-            try
-            {
-                FtpClient.CreateDirectory(ServerType == FtpServerType.MinFTPD ? LocateDirectory(path) : path);
-            }
-            catch (FtpException ex)
-            {
-                if (FtpClient.IsConnected) throw new TransferException(TransferErrorType.NotSpecified, ex.Message, ex);
-                throw new TransferException(TransferErrorType.LostConnection, _connectionLostMessage, ex);
-            }
+            FtpClient.CreateDirectory(ServerType == FtpServerType.MinFTPD ? LocateDirectory(path) : path);
         }
 
         public FileSystemItem Rename(string path, string newName)
@@ -466,7 +423,13 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         private void NotifyFtpOperationProgressChanged(int percentage, long transferred, long totalBytesTransferred, long resumeStartPosition)
         {
-            _eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(percentage, transferred, totalBytesTransferred, resumeStartPosition));
+            _aggregatedTransferredValue += transferred;
+            if (_notificationTimer.Elapsed.TotalMilliseconds < 100 && percentage != 100) return;
+
+            _eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(percentage, _aggregatedTransferredValue, totalBytesTransferred, resumeStartPosition));
+
+            _notificationTimer.Restart();
+            _aggregatedTransferredValue = 0;
         }
 
         private void NotifyFtpOperationResumeStart(long resumeStartPosition)
