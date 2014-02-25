@@ -1153,7 +1153,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             {
                 case CopyAction.CreateNew:
                     if (File.Exists(savePath))
-                        throw new TransferException(TransferErrorType.WriteAccessError, item.Path, savePath, "Target already exists");
+                        throw new TransferException(TransferErrorType.WriteAccessError, item.Path, savePath,
+                                                    "Target already exists");
                     mode = FileMode.CreateNew;
                     break;
                 case CopyAction.Overwrite:
@@ -1172,10 +1173,25 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 default:
                     throw new ArgumentException("Invalid Copy action: " + action);
             }
-            using (var fs = new FileStream(savePath, mode))
+            var fs = new FileStream(savePath, mode);
+            Exception exception = null;
+            try
             {
                 SaveToFileStream(item, fs, remoteStartPosition);
             }
+            catch (Exception ex)
+            {
+                exception = ex;
+            }
+            finally
+            {
+                try
+                {
+                    fs.Dispose();
+                }
+                catch { }
+            }
+            if (exception != null) throw exception;
             return true;
         }
 

@@ -239,8 +239,8 @@
     <Compile Include="Views\Dialogs\NewConnectionDialog.xaml.cs">
       <DependentUpon>NewConnectionDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Dialogs\ReadErrorDialog.xaml.cs">
-      <DependentUpon>ReadErrorDialog.xaml</DependentUpon>
+    <Compile Include="Views\Dialogs\FileTransferErrorDialog.xaml.cs">
+      <DependentUpon>FileTransferErrorDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Dialogs\ReconnectionDialog.xaml.cs">
       <DependentUpon>ReconnectionDialog.xaml</DependentUpon>
@@ -359,7 +359,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Dialogs\ReadErrorDialog.xaml">
+    <Page Include="Views\Dialogs\FileTransferErrorDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

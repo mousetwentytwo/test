@@ -1074,11 +1074,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             {
                 switch (transferException.Type)
                 {
-                    case TransferErrorType.ReadAccessError:
+                    case TransferErrorType.NotSpecified:
                         {
                             if (resultMatters)
                             {
-                                var dialog = new ReadErrorDialog(exception);
+                                var dialog = new FileTransferErrorDialog(exception);
                                 if (dialog.ShowDialog() == true) result = dialog.Result;
                             } 
                             else
