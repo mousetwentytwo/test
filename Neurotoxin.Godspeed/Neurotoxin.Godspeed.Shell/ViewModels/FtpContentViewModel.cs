@@ -135,7 +135,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void ConnectCallback()
         {
-            throw new NotSupportedException();
             Drives = FileManager.GetDrives().Select(d => new FileSystemItemViewModel(d)).ToObservableCollection();
             var r = new Regex("^/[A-Z0-9_-]+/", RegexOptions.IgnoreCase);
             var defaultPath = string.IsNullOrEmpty(Connection.Model.DefaultPath)

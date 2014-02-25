@@ -14,9 +14,12 @@
 * FIXED: PASV usage
 * FIXED: UTF-8 error reporting
 * FIXED: Special characters in path screws up Remote Copy
-* ADDED: New FTP client library (thanks to J.P. Trosclair, https://netftp.codeplex.com/), the dependency to Limilabs' Ftp.dll has been finally removed
+* FIXED: Black screen at startup on certain machines
+* FIXED: Remember last used sort order
+* ADDED: New FTP client library (Based on the work of J.P. Trosclair, https://netftp.codeplex.com/), the dependency to Limilabs' Ftp.dll has been finally removed
 * ADDED: User Notification Service
 * ADDED: Sanity checker - checks dependencies, migrates cached data from an old version if needed
 * ADDED: User Statistics
 * ADDED: Partial recognition notification
-* ADDED: New version detection
+* ADDED: New new version detection
+* ADDED: FSD 1.x (MinFTPD) support

@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Neurotoxin.Godspeed.Shell.Constants
+﻿namespace Neurotoxin.Godspeed.Shell.Constants
 {
     public enum TransferErrorType
     {
-        ReadAccessError,
+        NotSpecified,
         WriteAccessError,
         LostConnection
     }

@@ -133,7 +133,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             }
             catch (IOException ex)
             {
-                throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
+                throw new TransferException(TransferErrorType.NotSpecified, ex.Message);
             }
         }
 
@@ -162,7 +162,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             catch (IOException ex)
             {
                 //TODO: not read
-                throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
+                throw new TransferException(TransferErrorType.NotSpecified, ex.Message);
             }
         }
 
@@ -174,7 +174,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             catch (IOException ex)
             {
                 //TODO: not read
-                throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
+                throw new TransferException(TransferErrorType.NotSpecified, ex.Message);
             }
         }
 
@@ -187,7 +187,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             catch (IOException ex)
             {
                 //TODO: not read
-                throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
+                throw new TransferException(TransferErrorType.NotSpecified, ex.Message);
             }
         }
 
@@ -199,7 +199,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             }
             catch (IOException ex)
             {
-                throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
+                throw new TransferException(TransferErrorType.NotSpecified, ex.Message);
             }
         }
 
@@ -215,7 +215,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             }
             catch (Exception ex)
             {
-                throw new TransferException(TransferErrorType.ReadAccessError, ex.Message);
+                throw new TransferException(TransferErrorType.NotSpecified, ex.Message);
             }
         }
 

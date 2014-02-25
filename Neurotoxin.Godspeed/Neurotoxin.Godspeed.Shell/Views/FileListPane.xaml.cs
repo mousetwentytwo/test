@@ -1,17 +1,16 @@
 ﻿using System;
-using System.IO;
+using System.ComponentModel;
 using System.Reflection;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Input;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
 using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Interfaces;
+using System.Linq;
 
 namespace Neurotoxin.Godspeed.Shell.Views
 {
@@ -29,27 +28,6 @@ namespace Neurotoxin.Godspeed.Shell.Views
             Grid.Sorting += GridOnSorting;
             Grid.Loaded += GridOnLoaded;
             Grid.SelectionChanged += GridOnSelectionChanged;
-            Grid.PreviewTextInput += GridOnTextInput;
-        }
-
-        private void GridOnTextInput(object sender, TextCompositionEventArgs e)
-        {
-            // && (e.OriginalSource == Grid || ItemsControl.ItemsControlFromItemContainer(e.OriginalSource as DependencyObject) == Grid)
-            if (string.IsNullOrEmpty(e.Text) || !Grid.IsTextSearchEnabled || ((IFileListPaneViewModel)DataContext).IsInEditMode) return;
-            var type = typeof (TextSearch);
-            var ensureInstance = type.GetMethod("EnsureInstance", BindingFlags.Static | BindingFlags.NonPublic);
-            var textSearch = ensureInstance.Invoke(null, new object[] {Grid }) as TextSearch;
-            if (textSearch != null)
-            {
-                var doSearch = type.GetMethod("DoSearch", BindingFlags.Instance | BindingFlags.NonPublic);
-                if ((bool)doSearch.Invoke(textSearch, new object[] { e.Text }))
-                {
-                    var matchedItemIndex = type.GetProperty("MatchedItemIndex", BindingFlags.Instance | BindingFlags.NonPublic);
-                    var i = (int) matchedItemIndex.GetValue(textSearch, null);
-                    Grid.SelectedItem = Grid.Items.GetItemAt(i);
-                }
-                e.Handled = true;
-            }
         }
 
         private void ActivePaneChanged(ActivePaneChangedEventArgs e)
@@ -61,11 +39,15 @@ namespace Neurotoxin.Godspeed.Shell.Views
         private void GridOnLoaded(object sender, RoutedEventArgs routedEventArgs)
         {
             var m = Grid.GetType().GetMethod("PerformSort", BindingFlags.Instance | BindingFlags.NonPublic);
-            m.Invoke(Grid, new object[] { Grid.Columns[0] });
+            var vm = (IPaneViewModel) DataContext;
+            var settings = vm.Settings;
+            var column = Grid.Columns.Single(c => c.SortMemberPath == settings.SortByField);
+            column.SortDirection = settings.SortDirection;
+            m.Invoke(Grid, new object[] { column });
             Grid.Loaded -= GridOnLoaded;
         }
 
-        private void GridOnSorting(object sender, DataGridSortingEventArgs e)
+        private static void GridOnSorting(object sender, DataGridSortingEventArgs e)
         {
             e.Handled = true;
         }

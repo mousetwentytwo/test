@@ -304,7 +304,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             {
                 var recognition = TitleRecognizer.GetProfileItem(item);
                 item = recognition.Item;
-                if (item == null) throw new TransferException(TransferErrorType.ReadAccessError, recognition.ErrorMessage);
+                if (item == null) throw new TransferException(TransferErrorType.NotSpecified, recognition.ErrorMessage);
             }
 
             var tempFilePath = TitleRecognizer.GetTempFilePath(item) ?? item.Path;
