@@ -106,7 +106,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <ComboBox Grid.Column="0" ItemsSource="{Binding Drives}" SelectedItem="{Binding Drive}" Margin="0,0,3,0" x:Name="DriveDropdown">
+            <ComboBox Grid.Column="0" ItemsSource="{Binding Drives}" SelectedItem="{Binding Drive}" Margin="0,0,3,0">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <DockPanel>
@@ -115,6 +115,11 @@
                         </DockPanel>
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
+                <e:Interaction.Triggers>
+                    <e:EventTrigger EventName="PreviewKeyDown">
+                        <inf:MapKeyboardEventToCommand Command="{Binding SelectDriveByInitialLetterCommand}"/>
+                    </e:EventTrigger>
+                </e:Interaction.Triggers>
             </ComboBox>
             <TextBlock Grid.Column="1" Text="{Binding DriveLabel}" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,5,0"/>
             <TextBlock Grid.Column="2" Text="{Binding FreeSpace}" VerticalAlignment="Center" 
@@ -198,14 +203,21 @@
                             <Binding Path="Size"/>
                             <Binding Path="Type"/>
                             <Binding Path="TitleType"/>
+                            <Binding Path="IsRefreshing"/>
                         </MultiBinding>
                     </DataGridTextColumn.Binding>
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
-                            <Setter Property="HorizontalAlignment" Value="{Binding Path=Size, Converter={StaticResource SizeAlignmentConverter}}"/>
+                            <Setter Property="HorizontalAlignment" Value="Right"/>
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding IsSelected}" Value="True">
                                     <Setter Property="Foreground" Value="Red"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Size}" Value="{x:Null}">
+                                    <Setter Property="HorizontalAlignment" Value="Left"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsRefreshing}" Value="{StaticResource True}">
+                                    <Setter Property="HorizontalAlignment" Value="Center"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>

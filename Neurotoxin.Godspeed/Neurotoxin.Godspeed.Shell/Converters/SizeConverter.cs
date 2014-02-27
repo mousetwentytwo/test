@@ -25,10 +25,13 @@ namespace Neurotoxin.Godspeed.Shell.Converters
             
             var type = (ItemType) values[1];
             var contentType = (TitleType)values[2];
+            var isRefreshing = (bool) values[3];
 
-            return values[0] == null
-                       ? string.Format("<{0}>", contentType != TitleType.Unknown ? contentType.ToString().ToUpper() : type.ToString().ToUpper())
-                       : Convert(values[0], targetType, parameter, culture);
+            return isRefreshing
+                       ? "?"
+                       : values[0] == null
+                             ? string.Format("<{0}>", contentType != TitleType.Unknown ? contentType.ToString().ToUpper() : type.ToString().ToUpper())
+                             : Convert(values[0], targetType, parameter, culture);
         }
 
         public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)

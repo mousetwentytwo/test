@@ -44,7 +44,6 @@
                     <co:BoolToVisibilityConverter x:Key="BoolToVis"/>
                     <co:NotNullOrEmptyConverter x:Key="NotNullOrEmptyConverter"/>
                     <converters:SizeConverter x:Key="SizeConverter"/>
-                    <converters:SizeAlignmentConverter x:Key="SizeAlignmentConverter"/>
                     <converters:TitleConverter x:Key="TitleConverter"/>
                     <converters:NameConverter x:Key="NameConverter"/>
                     <converters:PaneHeaderBackgroundConverter x:Key="PaneHeaderBackgroundConverter"

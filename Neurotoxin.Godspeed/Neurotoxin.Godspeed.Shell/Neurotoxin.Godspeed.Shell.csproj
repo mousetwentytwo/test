@@ -124,7 +124,6 @@
     <Compile Include="Converters\ExpirationConverter.cs" />
     <Compile Include="Converters\NameConverter.cs" />
     <Compile Include="Converters\PaneHeaderBackgroundConverter.cs" />
-    <Compile Include="Converters\SizeAlignmentConverter.cs" />
     <Compile Include="Converters\SizeConverter.cs" />
     <Compile Include="Converters\TitleConverter.cs" />
     <Compile Include="Converters\TransferTypeConverter.cs" />

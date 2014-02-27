@@ -11,7 +11,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Microsoft.Practices.Unity;
 using Microsoft.Win32;
-using Neurotoxin.Godspeed.Core.Constants;
 using Neurotoxin.Godspeed.Core.Io.Stfs;
 using Neurotoxin.Godspeed.Core.Models;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
@@ -923,6 +922,22 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #endregion
 
+        #region SelectDriveByInitialLetterCommand
+
+        public DelegateCommand<EventInformation<KeyEventArgs>> SelectDriveByInitialLetterCommand { get; protected set; }
+
+        public void ExecuteSelectDriveByInitialLetterCommand(EventInformation<KeyEventArgs> e)
+        {
+            if (e.EventArgs.Key < Key.A || e.EventArgs.Key > Key.Z) return;
+            var key = e.EventArgs.Key.ToString();
+            var drive = Drives.FirstOrDefault(d => d.Name.StartsWith(key, StringComparison.InvariantCultureIgnoreCase));
+            if (drive == null) return;
+            e.EventArgs.Handled = true;
+            Drive = drive;
+        }
+
+        #endregion
+
         protected FileListPaneViewModelBase(FileManagerViewModel parent) : base(parent)
         {
             FileManager = container.Resolve<T>();
@@ -948,6 +963,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             RenameFileSystemItemCommand = new DelegateCommand<object>(ExecuteRenameFileSystemItemCommand, CanExecuteRenameFileSystemItemCommand);
             RefreshCommand = new DelegateCommand(ExecuteRefreshCommand, CanExecuteRefreshCommand);
             UpCommand = new DelegateCommand(ExecuteUpCommand, CanExecuteUpCommand);
+            SelectDriveByInitialLetterCommand = new DelegateCommand<EventInformation<KeyEventArgs>>(ExecuteSelectDriveByInitialLetterCommand);
 
             Items = new ObservableCollection<FileSystemItemViewModel>();
 

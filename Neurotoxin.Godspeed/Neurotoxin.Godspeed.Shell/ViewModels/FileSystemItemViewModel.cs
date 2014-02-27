@@ -146,6 +146,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             get { return _model.LockMessage; }
         }
 
+        private const string ISREFRESHING = "IsRefreshing";
         private bool _isRefreshing;
         public bool IsRefreshing
         {
@@ -155,6 +156,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 _isRefreshing = value;
                 _thumbnail = null;
                 NotifyPropertyChanged(THUMBNAIL);
+                NotifyPropertyChanged(ISREFRESHING);
             }
         }
 

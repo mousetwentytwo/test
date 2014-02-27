@@ -9,12 +9,12 @@
         <TaskbarItemInfo ProgressValue="{Binding TotalProgressDouble}" ProgressState="{Binding ProgressState}">
             <TaskbarItemInfo.ThumbButtonInfos>
                 <ThumbButtonInfoCollection>
-                    <ThumbButtonInfo Description="Pause" DismissWhenClicked="False" 
-                                     Command="{Binding PauseCommand}" CommandTarget="{Binding ElementName=PauseButton}" ImageSource="/Resources/pause.png"
+                    <ThumbButtonInfo Description="Pause"
+                                     Command="{Binding PauseCommand}" ImageSource="/Resources/pause.png"
                                      Visibility="{Binding Path=IsPaused, Converter={StaticResource BoolToVis}, ConverterParameter=True}"
                                      IsEnabled="{Binding Path=TargetPane.IsResumeSupported}"/>
-                    <ThumbButtonInfo Description="Continue" DismissWhenClicked="False" 
-                                     Command="{Binding ContinueCommand}" CommandTarget="{Binding ElementName=ContinueButton}" ImageSource="/Resources/play.png"
+                    <ThumbButtonInfo Description="Continue" 
+                                     Command="{Binding ContinueCommand}" ImageSource="/Resources/play.png"
                                      Visibility="{Binding Path=IsPaused, Converter={StaticResource BoolToVis}}" />
                 </ThumbButtonInfoCollection>
             </TaskbarItemInfo.ThumbButtonInfos>
@@ -90,10 +90,10 @@
         </DockPanel>
 
         <StackPanel Grid.Row="5" HorizontalAlignment="Right" Orientation="Horizontal">
-            <Button Width="75" Content="Pause" Command="{Binding PauseCommand}" Margin="0,0,5,0" x:Name="PauseButton"
+            <Button Width="75" Content="Pause" Command="{Binding PauseCommand}" Margin="0,0,5,0"
                     Visibility="{Binding Path=IsPaused, Converter={StaticResource BoolToVis}, ConverterParameter=True}"
                     IsEnabled="{Binding Path=TargetPane.IsResumeSupported}"/>
-            <Button Width="75" Content="Continue" Command="{Binding ContinueCommand}" Margin="0,0,5,0" x:Name="ContinueButton"
+            <Button Width="75" Content="Continue" Command="{Binding ContinueCommand}" Margin="0,0,5,0"
                     Visibility="{Binding Path=IsPaused, Converter={StaticResource BoolToVis}}"/>
             <Button Width="75" Content="Abort" Click="CancelButtonClick" x:Name="Abort"/>
         </StackPanel>

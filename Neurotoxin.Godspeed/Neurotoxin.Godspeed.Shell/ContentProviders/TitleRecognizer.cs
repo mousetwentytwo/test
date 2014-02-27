@@ -280,7 +280,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                         key.ErrorMessage = recognition.ErrorMessage;
                     }
                     break;
-                case TitleType.Unknown:
+                case TitleType.DataFile:
                     key.Item = item;
                     key.Key = item.FullPath;
                     break;
