@@ -293,7 +293,9 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         internal void DownloadFile(string remotePath, Stream stream, long remoteStartPosition = 0, long fileSize = -1)
         {
+            var downloadStarted = false;
             long transferred = 0;
+            var bufferSize = 0;
             NotifyFtpOperationStarted(true);
             try
             {
@@ -305,12 +307,12 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 }
                 _isIdle = false;
                 _isAborted = false;
-                if (remoteStartPosition != 0) NotifyFtpOperationResumeStart(remoteStartPosition);
+                if (remoteStartPosition != 0) NotifyFtpOperationResumeStart((int) (remoteStartPosition*100/fileSize), remoteStartPosition);
 
                 using (var ftpStream = FtpClient.OpenRead(filename, remoteStartPosition))
                 {
+                    downloadStarted = true;
                     var buffer = new byte[0x8000];
-                    int bufferSize;
                     while (!_isAborted && (bufferSize = ftpStream.Read(buffer, 0, 0x8000)) > 0)
                     {
                         if (transferred + bufferSize > fileSize)
@@ -320,8 +322,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                         }
                         stream.Write(buffer, 0, bufferSize);
                         transferred += bufferSize;
-                        NotifyFtpOperationProgressChanged((int) (transferred*100/fileSize), bufferSize, transferred,
-                                                          remoteStartPosition);
+                        NotifyFtpOperationProgressChanged((int) (transferred*100/fileSize), bufferSize, transferred, remoteStartPosition);
                     }
                 }
                 stream.Flush();
@@ -329,6 +330,8 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             }
             catch (Exception ex)
             {
+                if (downloadStarted)
+                    NotifyFtpOperationProgressChanged((int)(transferred * 100 / fileSize), bufferSize, transferred, remoteStartPosition, true);
                 NotifyFtpOperationFinished();
                 if (_isAborted && ex.Message == "Broken pipe") return;
                 throw;
@@ -339,14 +342,17 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         {
             NotifyFtpOperationStarted(true);
             FileStream fs = null;
+            var uploadedStarted = false;
+            long fileSize = 0;
+            long transferred = 0;
+            var bufferSize = 0;
+            long resumeStartPosition = 0;
             try
             {
                 _isIdle = false;
                 _isAborted = false;
-                long transferred = 0;
-                var fileSize = new FileInfo(localPath).Length;
+                fileSize = new FileInfo(localPath).Length;
                 fs = new FileStream(localPath, FileMode.Open);
-                long resumeStartPosition = 0;
                 var filename = LocateDirectory(remotePath);
                 if (append)
                 {
@@ -354,19 +360,26 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                     transferred = list.First(file => file.Name == filename).Size;
                     resumeStartPosition = transferred;
                     fs.Seek(transferred, SeekOrigin.Begin);
-                    NotifyFtpOperationResumeStart(transferred);
+                    NotifyFtpOperationResumeStart((int) (transferred*100/fileSize), transferred);
                 }
                 using (var ftpStream = append ? FtpClient.OpenAppend(filename) : FtpClient.OpenWrite(filename))
                 {
+                    uploadedStarted = true;
                     var buffer = new byte[0x8000];
-                    int bufferSize;
                     while (!_isAborted && (bufferSize = fs.Read(buffer, 0, 0x8000)) > 0)
                     {
+                        //if ((int)(transferred * 100 / fileSize) == 50) throw new FtpException("[TESTING] Intentional error at 50%");
                         ftpStream.Write(buffer, 0, bufferSize);
                         transferred += bufferSize;
-                        NotifyFtpOperationProgressChanged((int)(transferred * 100 / fileSize), bufferSize, transferred, resumeStartPosition);
+                        NotifyFtpOperationProgressChanged((int) (transferred*100/fileSize), bufferSize, transferred, resumeStartPosition);
                     }
                 }
+            }
+            catch
+            {
+                if (uploadedStarted)
+                    NotifyFtpOperationProgressChanged((int) (transferred*100/fileSize), bufferSize, transferred, resumeStartPosition, true);
+                throw;
             }
             finally
             {
@@ -422,10 +435,10 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             _eventAggregator.GetEvent<FtpOperationFinishedEvent>().Publish(new FtpOperationFinishedEventArgs(streamLength));
         }
 
-        private void NotifyFtpOperationProgressChanged(int percentage, long transferred, long totalBytesTransferred, long resumeStartPosition)
+        private void NotifyFtpOperationProgressChanged(int percentage, long transferred, long totalBytesTransferred, long resumeStartPosition, bool force = false)
         {
             _aggregatedTransferredValue += transferred;
-            if (_notificationTimer.Elapsed.TotalMilliseconds < 100 && percentage != 100) return;
+            if (!force && _notificationTimer.Elapsed.TotalMilliseconds < 100 && percentage != 100) return;
 
             _eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(percentage, _aggregatedTransferredValue, totalBytesTransferred, resumeStartPosition));
 
@@ -433,9 +446,9 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             _aggregatedTransferredValue = 0;
         }
 
-        private void NotifyFtpOperationResumeStart(long resumeStartPosition)
+        private void NotifyFtpOperationResumeStart(int percentage, long resumeStartPosition)
         {
-            _eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(-1, resumeStartPosition, resumeStartPosition, resumeStartPosition));
+            _eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(percentage, resumeStartPosition, resumeStartPosition, resumeStartPosition));
         }
 
         public void Abort()

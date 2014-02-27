@@ -38,6 +38,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private Queue<QueueItem> _queue;
         private CopyMode _copyMode;
         private CopyAction _rememberedCopyAction;
+        private long _currentFileBytesTransferred;
         private bool _isAborted;
         private bool _isContinued;
         private readonly StatisticsViewModel _statistics;
@@ -439,6 +440,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 if (vm.Type == ItemType.File || !_queue.Any(q => q.FileSystemItem.Path.StartsWith(vm.Path)))
                     vm.IsSelected = false;
             }
+            _currentFileBytesTransferred = 0;
             CopyStart();
         }
 
@@ -451,12 +453,15 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             switch (result.Behavior)
             {
                 case ErrorResolutionBehavior.Retry:
+                    BytesTransferred -= _currentFileBytesTransferred;
+                    _currentFileBytesTransferred = 0;
                     CopyStart(result.Action);
                     break;
                 case ErrorResolutionBehavior.Rename:
                     RenameExistingFile((TransferException)exception, CopyAction.Rename, CopyStart, CopyError);
                     break;
                 case ErrorResolutionBehavior.Skip:
+                    BytesTransferred += (_queue.Peek().FileSystemItem.Size ?? 0) - _currentFileBytesTransferred;
                     CopySuccess(false);
                     break;
                 case ErrorResolutionBehavior.Cancel:
@@ -549,7 +554,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             var item = queueitem.FileSystemItem;
             if (queueitem.TransferType == TransferType.Copy)
             {
-                //if (item.Type == ItemType.File) BytesTransferred += item.Size ?? 0;
                 FilesTransferred++;
                 if (result)
                 {
@@ -559,6 +563,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
             var vm = SourcePane.SelectedItems.FirstOrDefault(i => item.Path == i.Path);
             if (vm != null) vm.IsSelected = false;
+            _currentFileBytesTransferred = 0;
             MoveStart();
         }
 
@@ -571,12 +576,15 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             switch (result.Behavior)
             {
                 case ErrorResolutionBehavior.Retry:
+                    BytesTransferred -= _currentFileBytesTransferred;
+                    _currentFileBytesTransferred = 0;
                     MoveStart(result.Action);
                     break;
                 case ErrorResolutionBehavior.Rename:
                     RenameExistingFile((TransferException)exception, CopyAction.Rename, MoveStart, MoveError);
                     break;
                 case ErrorResolutionBehavior.Skip:
+                    BytesTransferred += _queue.Peek().FileSystemItem.Size ?? 0 - _currentFileBytesTransferred;
                     MoveSuccess(false);
                     break;
                 case ErrorResolutionBehavior.Cancel:
@@ -895,7 +903,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void OnTransferProgressChanged(TransferProgressChangedEventArgs args)
         {
-            if (args.Percentage == -1 && _isContinued)
+            if (_isContinued)
             {
                 _isContinued = false;
                 return;
@@ -923,6 +931,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     var ms = _speedMeter.Elapsed.TotalMilliseconds;
                     if (ms > 100) Speed = (int)Math.Floor((args.TotalBytesTransferred - args.ResumeStartPosition)/ms*1000/1024);
                     CurrentFileProgress = args.Percentage > 0 ? args.Percentage : 0;
+                    _currentFileBytesTransferred += args.Transferred;
                     BytesTransferred += args.Transferred;
                 });
         }
@@ -991,6 +1000,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             TransferType = mode;
             TransferAction = mode.ToString();
             _rememberedCopyAction = CopyAction.CreateNew;
+            _currentFileBytesTransferred = 0;
             CurrentFileProgress = 0;
             FilesTransferred = 0;
             FileCount = _queue.Count;
@@ -1076,7 +1086,13 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                             if (resultMatters)
                             {
                                 var dialog = new IoErrorDialog(exception);
-                                if (dialog.ShowDialog() == true) result = dialog.Result;
+                                if (dialog.ShowDialog() == true)
+                                {
+                                    result = dialog.Result;
+                                    result.Action = TargetPane.IsResumeSupported
+                                                        ? CopyAction.Resume
+                                                        : CopyAction.Overwrite;
+                                }
                             } 
                             else
                             {

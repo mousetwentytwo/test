@@ -253,29 +253,36 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             if (item.Type != ItemType.File) throw new NotSupportedException();
             eventAggregator.GetEvent<TransferActionStartedEvent>().Publish(ExportActionDescription);
             long resumeStartPosition = 0;
-            switch (action)
+            try
             {
-                case CopyAction.CreateNew:
-                    if (File.Exists(savePath))
-                        throw new TransferException(TransferErrorType.WriteAccessError, item.Path, savePath, "Target already exists");
-                    break;
-                case CopyAction.Overwrite:
-                    File.Delete(savePath);
-                    break;
-                case CopyAction.OverwriteOlder:
-                    var fileDate = File.GetLastWriteTime(savePath);
-                    if (fileDate > item.Date) return false;
-                    File.Delete(savePath);
-                    break;
-                case CopyAction.Resume:
-                    var fi = new FileInfo(savePath);
-                    resumeStartPosition = fi.Length;
-                    break;
-            }
+                switch (action)
+                {
+                    case CopyAction.CreateNew:
+                        if (File.Exists(savePath))
+                            throw new TransferException(TransferErrorType.WriteAccessError, item.Path, savePath, "Target already exists");
+                        break;
+                    case CopyAction.Overwrite:
+                        File.Delete(savePath);
+                        break;
+                    case CopyAction.OverwriteOlder:
+                        var fileDate = File.GetLastWriteTime(savePath);
+                        if (fileDate > item.Date) return false;
+                        File.Delete(savePath);
+                        break;
+                    case CopyAction.Resume:
+                        var fi = new FileInfo(savePath);
+                        resumeStartPosition = fi.Length;
+                        break;
+                }
 
-            var name = RemoteChangeDirectory(item.Path);
-            Telnet.Download(name, savePath, item.Size ?? 0, resumeStartPosition, TelnetProgressChanged);
-            return true;
+                var name = RemoteChangeDirectory(item.Path);
+                Telnet.Download(name, savePath, item.Size ?? 0, resumeStartPosition, TelnetProgressChanged);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw WrapTransferRelatedExceptions(ex);
+            }
         }
 
         public bool RemoteUpload(FileSystemItem item, string savePath, CopyAction action)
@@ -283,28 +290,35 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             if (item.Type != ItemType.File) throw new NotSupportedException();
             eventAggregator.GetEvent<TransferActionStartedEvent>().Publish(ImportActionDescription);
             long resumeStartPosition = 0;
-            switch (action)
+            try
             {
-                case CopyAction.CreateNew:
-                    if (FileManager.FileExists(savePath))
-                        throw new TransferException(TransferErrorType.WriteAccessError, item.Path, savePath, "Target already exists");
-                    break;
-                case CopyAction.Overwrite:
-                    FileManager.DeleteFile(savePath);
-                    break;
-                case CopyAction.OverwriteOlder:
-                    var fileDate = FileManager.GetFileModificationTime(savePath);
-                    if (fileDate > item.Date) return false;
-                    FileManager.DeleteFile(savePath);
-                    break;
-                case CopyAction.Resume:
-                    var fi = FileManager.GetItemInfo(savePath, ItemType.File);
-                    resumeStartPosition = fi.Size ?? 0;
-                    break;
+                switch (action)
+                {
+                    case CopyAction.CreateNew:
+                        if (FileManager.FileExists(savePath))
+                            throw new TransferException(TransferErrorType.WriteAccessError, item.Path, savePath, "Target already exists");
+                        break;
+                    case CopyAction.Overwrite:
+                        FileManager.DeleteFile(savePath);
+                        break;
+                    case CopyAction.OverwriteOlder:
+                        var fileDate = FileManager.GetFileModificationTime(savePath);
+                        if (fileDate > item.Date) return false;
+                        FileManager.DeleteFile(savePath);
+                        break;
+                    case CopyAction.Resume:
+                        var fi = FileManager.GetItemInfo(savePath, ItemType.File);
+                        resumeStartPosition = fi.Size ?? 0;
+                        break;
+                }
+                var name = RemoteChangeDirectory(savePath);
+                Telnet.Upload(item.Path, name, item.Size ?? 0, resumeStartPosition, TelnetProgressChanged);
+                return true;
             }
-            var name = RemoteChangeDirectory(savePath);
-            Telnet.Upload(item.Path, name, item.Size ?? 0, resumeStartPosition, TelnetProgressChanged);
-            return true;
+            catch (Exception ex)
+            {
+                throw WrapTransferRelatedExceptions(ex);
+            }
         }
 
         private void TelnetProgressChanged(int p, long t, long total, long resumeStartPosition)

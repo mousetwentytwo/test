@@ -15,6 +15,8 @@
 * FIXED: UTF-8 error reporting
 * FIXED: Special characters in path screws up Remote Copy
 * FIXED: Remember last used sort order
+* FIXED: Close FTP pane if connection cannot be reestablished or user decides to do so
+* FIXED: Progress indication fix in case of skipping/retrying partially transferred files
 * ADDED: New FTP client library (Based on the work of J.P. Trosclair, https://netftp.codeplex.com/), the dependency to Limilabs' Ftp.dll has been finally removed
 * ADDED: User Notification Service
 * ADDED: Sanity checker - checks dependencies, migrates cached data from an old version if needed
