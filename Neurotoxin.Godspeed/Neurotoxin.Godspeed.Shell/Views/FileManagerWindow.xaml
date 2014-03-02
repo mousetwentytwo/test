@@ -106,8 +106,9 @@
                     <MenuItem Command="{x:Static commands:FileManagerCommands.StatisticsCommand}"/>
                 </MenuItem>
                 <MenuItem Header="Help">
-                    <MenuItem Command="{x:Static commands:FileManagerCommands.AboutCommand}"/>
                     <MenuItem Command="{x:Static commands:FileManagerCommands.VisitWebsiteCommand}" CommandParameter="http://godspeed.codeplex.com"/>
+                    <MenuItem Command="{x:Static commands:FileManagerCommands.UserStatisticsParticipationCommand}"/>
+                    <MenuItem Command="{x:Static commands:FileManagerCommands.AboutCommand}"/>
                 </MenuItem>
             </Menu>
             

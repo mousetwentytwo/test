@@ -1,16 +1,29 @@
 ﻿using System;
+using System.Threading;
+using Microsoft.Practices.Composite.Events;
 using Neurotoxin.Godspeed.Core.Caching;
 using Neurotoxin.Godspeed.Core.Constants;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
+using Neurotoxin.Godspeed.Shell.Events;
+using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
     public class StatisticsViewModel : ViewModelBase
     {
+        private const string PARTICIPATIONMESSAGE = "<b>Help improve GODspeed!</b> Click to set your participation in its User Statistics.";
+        private const string FACEBOOKMESSAGE = "<b>Do you like GODspeed?</b> Do you want to get news about it first hand, share your ideas and/or be a part of its growing community? Then please like its Facebook page!";
+        private const string CODEPLEXMESSAGE = "<b>Thank you for using GODspeed!</b> Do you think you've got an opinion about the current version? Rate and review it on CodePlex! Thanks!";
+
+        //private readonly Timer _debugTimer;
+        private readonly Timer _participationTimer;
+        private readonly Timer _facebookTimer;
+        private readonly Timer _codeplexTimer;
         private readonly CacheManager _cacheManager;
         private readonly EsentPersistentDictionary _cacheStore = EsentPersistentDictionary.Instance;
+        private readonly IEventAggregator _eventAggregator;
 
         public DateTime UsageStart { get; private set; }
 
@@ -122,16 +135,36 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             set { _applicationCrashed = value; NotifyPropertyChanged(APPLICATIONCRASHED); }
         }
 
-        public StatisticsViewModel(CacheManager cacheManager)
+        public StatisticsViewModel(CacheManager cacheManager, IEventAggregator eventAggregator)
         {
             UsageStart = DateTime.Now;
             _cacheManager = cacheManager;
+            _eventAggregator = eventAggregator;
             _totalFilesTransferred = _cacheStore.TryGet<int>(STAT_TOTALFILESTRANSFERRED);
             _totalBytesTransferred = _cacheStore.TryGet<long>(STAT_TOTALBYTESTRANSFERRED);
-            _totalTimeSpentWithTransfer = _cacheStore.TryGet<TimeSpan>(STAT_TOTALBYTESTRANSFERRED);
+            _totalTimeSpentWithTransfer = _cacheStore.TryGet<TimeSpan>(STAT_TOTALTIMESPENTWITHTRANSFER);
             _totalUsageTime = _cacheStore.TryGet<TimeSpan>(STAT_TOTALUSAGETIME);
             _applicationStarted = _cacheStore.TryGet<int>(STAT_APPLICATIONSTARTED) + 1;
             _applicationCrashed = _cacheStore.TryGet<int>(STAT_APPLICATIONCRASHED);
+
+            if (!UserSettings.DisableUserStatisticsParticipation.HasValue)
+            {
+                _participationTimer = new Timer(ParticipationMessage, null, 60000, -1);
+            }
+            if (!UserSettings.IsMessageIgnored(FACEBOOKMESSAGE))
+            {
+                _facebookTimer = new Timer(FacebookMessage, null, 600000, -1);
+            }
+            if (!UserSettings.IsMessageIgnored(CODEPLEXMESSAGE) && ApplicationStarted > 9 && TotalUsageTime > new TimeSpan(0, 2, 0, 0))
+            {
+                _codeplexTimer = new Timer(CodeplexMessage, null, 60000, -1);
+            }
+
+            //_debugTimer = new Timer(o =>
+            //                            {
+            //                                var message = DateTime.Now.ToString();
+            //                                _eventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(new NotifyUserMessageEventArgs(message, MessageIcon.Info));
+            //                            }, null, 1000, 10);
         }
 
         public void PersistData()
@@ -142,6 +175,27 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             _cacheStore.Update(STAT_TOTALUSAGETIME, TotalUsageTime);
             _cacheStore.Update(STAT_APPLICATIONSTARTED, ApplicationStarted);
             _cacheStore.Update(STAT_APPLICATIONCRASHED, ApplicationCrashed);
+        }
+
+        private void ParticipationMessage(object state)
+        {
+            _participationTimer.Dispose();
+            var args = new NotifyUserMessageEventArgs(PARTICIPATIONMESSAGE, MessageIcon.Info, MessageCommand.OpenDialog, typeof(UserStatisticsParticipationDialog));
+            _eventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(args);
+        }
+
+        private void FacebookMessage(object state)
+        {
+            _facebookTimer.Dispose();
+            var args = new NotifyUserMessageEventArgs(FACEBOOKMESSAGE, MessageIcon.Info, MessageCommand.OpenUrl, "http://www.facebook.com/godspeedftp", MessageFlags.Ignorable | MessageFlags.IgnoreAfterOpen);
+            _eventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(args);
+        }
+
+        private void CodeplexMessage(object state)
+        {
+            _codeplexTimer.Dispose();
+            var args = new NotifyUserMessageEventArgs(CODEPLEXMESSAGE, MessageIcon.Info, MessageCommand.OpenUrl, "http://godspeed.codeplex.com", MessageFlags.Ignorable | MessageFlags.IgnoreAfterOpen);
+            _eventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(args);
         }
     }
 }

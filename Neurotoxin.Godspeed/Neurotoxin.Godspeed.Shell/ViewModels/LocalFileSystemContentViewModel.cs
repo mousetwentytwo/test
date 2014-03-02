@@ -115,7 +115,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             _isAborted = false;
             var totalBytesTransferred = remoteStartPosition;
-            var readStream = File.Open(item.Path, FileMode.Open);
+            var readStream = File.Open(item.Path, FileMode.Open, FileAccess.Read);
             var totalBytes = readStream.Length;
             readStream.Seek(remoteStartPosition, SeekOrigin.Begin);
             var buffer = new byte[32768];

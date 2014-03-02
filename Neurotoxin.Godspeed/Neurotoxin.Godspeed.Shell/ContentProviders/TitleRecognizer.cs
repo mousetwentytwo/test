@@ -350,7 +350,11 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                             infoFileFound = true;
                         }
                     }
-                    catch {}
+                    catch (Exception ex)
+                    {
+                        item.IsLocked = true;
+                        item.LockMessage = ex.Message;
+                    }
                 }
             }
             return infoFileFound;

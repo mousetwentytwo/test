@@ -7,6 +7,6 @@ namespace Neurotoxin.Godspeed.Shell.Constants
     {
         None = 0x0,
         Ignorable = 0x1,
-        RemoveAfterOpen = 0x2,
+        IgnoreAfterOpen = 0x2,
     }
 }

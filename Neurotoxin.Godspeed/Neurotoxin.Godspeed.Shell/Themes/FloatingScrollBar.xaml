@@ -43,8 +43,7 @@
                 <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
             </Trigger>
             <Trigger Property="IsMouseOver" Value="true">
-                <Setter Property="HorizontalScrollBarVisibility" Value="Visible"/>
-                <Setter Property="VerticalScrollBarVisibility" Value="Visible"/>
+                <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
             </Trigger>
         </Style.Triggers>
     </Style>

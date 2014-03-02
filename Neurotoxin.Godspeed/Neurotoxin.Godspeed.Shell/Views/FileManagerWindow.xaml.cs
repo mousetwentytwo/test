@@ -50,6 +50,7 @@ namespace Neurotoxin.Godspeed.Shell.Views
             CommandBindings.Add(new CommandBinding(FileManagerCommands.StatisticsCommand, ExecuteStatisticsCommand));
             CommandBindings.Add(new CommandBinding(FileManagerCommands.AboutCommand, ExecuteAboutCommand));
             CommandBindings.Add(new CommandBinding(FileManagerCommands.VisitWebsiteCommand, ExecuteVisitWebsiteCommand));
+            CommandBindings.Add(new CommandBinding(FileManagerCommands.UserStatisticsParticipationCommand, ExecuteUserStatisticsParticipationCommand));
             CommandBindings.Add(new CommandBinding(FileManagerCommands.ExitCommand, ExecuteExitCommand));
 
             LayoutRoot.PreviewKeyDown += LayoutRootOnPreviewKeyDown;
@@ -127,6 +128,11 @@ namespace Neurotoxin.Godspeed.Shell.Views
         private void ExecuteVisitWebsiteCommand(object sender, ExecutedRoutedEventArgs e)
         {
             Process.Start(e.Parameter.ToString());
+        }
+
+        private void ExecuteUserStatisticsParticipationCommand(object sender, ExecutedRoutedEventArgs e)
+        {
+            new UserStatisticsParticipationDialog().ShowDialog();
         }
 
         private void ExecuteExitCommand(object sender, ExecutedRoutedEventArgs e)

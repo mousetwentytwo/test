@@ -1,4 +1,7 @@
 <?php
+ini_set("display_errors", "On");
+ini_set("error_reporting", 2047);
+if ($_SERVER['HTTP_USER_AGENT'] != 'GODspeed') exit;
 
 function visitor_country()
 {
@@ -29,8 +32,29 @@ function visitor_country()
     return $result;
 }
 
-print_r($_POST);
+include('db.php');
 
-echo visitor_country();
+$columns = '`country`';
+$values = "'".visitor_country()."'";
+
+foreach ($_POST as $k => $v) {
+	$columns .= ', `'.mysql_real_escape_string($k).'`';
+	$values .= ', ';
+	$v = trim($v);
+	if (is_numeric($v)) {
+		$values .= mysql_real_escape_string($v);
+	} else {
+		$values .= "'".mysql_real_escape_string($v)."'";
+	}
+}
+
+$query = "INSERT INTO godspeed_stats ($columns) VALUES ($values)";
+
+echo $query;
+if (!mysql_query($query)) {
+	echo mysql_error();
+}
+
+mysql_close();
 
 ?>

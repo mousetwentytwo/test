@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -7,9 +8,11 @@ using System.Windows;
 using System.Windows.Threading;
 using Neurotoxin.Godspeed.Core.Caching;
 using Neurotoxin.Godspeed.Core.Extensions;
+using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Reporting;
 using Neurotoxin.Godspeed.Shell.ViewModels;
+using Neurotoxin.Godspeed.Shell.Views;
 using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 
 namespace Neurotoxin.Godspeed.Shell
@@ -83,8 +86,7 @@ namespace Neurotoxin.Godspeed.Shell
         {
             ex = ex is TargetInvocationException ? ex.InnerException : ex;
             ErrorMessage.Show(ex);
-            //TODO: ex to exitCode
-            Shutdown(1);
+            Shutdown(ex.GetType().Name.GetHashCode());
         }
 
         protected override void OnExit(ExitEventArgs e)
@@ -96,9 +98,14 @@ namespace Neurotoxin.Godspeed.Shell
 
             statistics.PersistData();
 
-            HttpForm.Post("http://www.mercenary.hu/godspeed/stats.php", new List<IFormData>
+            if (UserSettings.DisableUserStatisticsParticipation != false)
+            {
+                HttpForm.Post("http://www.mercenary.hu/godspeed/stats.php", new List<IFormData>
                 {
                     new RawPostData("client_id", EsentPersistentDictionary.Instance.Get<string>("ClientID")),
+                    new RawPostData("version", GetApplicationVersion()),
+                    new RawPostData("wpf", GetFrameworkVersion()),
+                    new RawPostData("os", Environment.OSVersion.VersionString),
                     new RawPostData("culture", CultureInfo.CurrentCulture.Name),
                     new RawPostData("date", statistics.UsageStart.ToUnixTimestamp()),
                     new RawPostData("usage", Math.Floor(statistics.UsageTime.TotalSeconds)),
@@ -111,7 +118,22 @@ namespace Neurotoxin.Godspeed.Shell
                     new RawPostData("transferred_files", statistics.FilesTransferred),
                     new RawPostData("transfer_time", Math.Floor(statistics.TimeSpentWithTransfer.TotalSeconds)),
                 });
+            }
             base.OnExit(e);
+        }
+
+        public static string GetApplicationVersion()
+        {
+            var assembly = Assembly.GetAssembly(typeof(FileManagerWindow));
+            var assemblyName = assembly.GetName();
+            return assemblyName.Version.ToString();
+        }
+
+        public static string GetFrameworkVersion()
+        {
+            var applicationAssembly = Assembly.GetAssembly(typeof(Application));
+            var fvi = FileVersionInfo.GetVersionInfo(applicationAssembly.Location);
+            return fvi.ProductVersion;
         }
 
     }

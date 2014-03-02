@@ -6,6 +6,7 @@ using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Shell;
 using Microsoft.Practices.Unity;
@@ -788,14 +789,22 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void ExecuteOpenUserMessageCommand(UserMessageCommandParameter p)
         {
-            p.ViewModel.IsRead = true;
-            p.ViewModel.IsChecked = true;
+            var message = p.ViewModel;
+            message.IsRead = true;
+            message.IsChecked = true;
             NotifyPropertyChanged(UNREADMESSAGECOUNT);
 
             switch (p.Command)
             {
                 case MessageCommand.OpenUrl:
                     Process.Start((string)p.Parameter);
+                    if (message.Flags.HasFlag(MessageFlags.IgnoreAfterOpen)) UserSettings.IgnoreMessage(message.Message);
+                    break;
+                case MessageCommand.OpenDialog:
+                    var dialogType = (Type) p.Parameter;
+                    var c = dialogType.GetConstructor(Type.EmptyTypes);
+                    var d = c.Invoke(new object[0]) as Window;
+                    if (d.ShowDialog() == true) UserSettings.IgnoreMessage(message.Message);
                     break;
             }
         }

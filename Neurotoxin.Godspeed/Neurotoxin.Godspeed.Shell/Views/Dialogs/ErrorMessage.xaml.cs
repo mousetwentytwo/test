@@ -56,9 +56,9 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
                     {
                         Name = "log",
                         ClientId = EsentPersistentDictionary.Instance.Get<string>("ClientID"),
-                        ApplicationVersion = GetApplicationVersion(),
-                        FrameworkVersion = GetFrameworkVersion(),
-                        OperatingSystemVersion = Environment.OSVersion.ToString(),
+                        ApplicationVersion = App.GetApplicationVersion(),
+                        FrameworkVersion = App.GetFrameworkVersion(),
+                        OperatingSystemVersion = Environment.OSVersion.VersionString,
                         Exception = _exception,
                         FtpLog = GetFtpLog()
                     }
@@ -76,20 +76,6 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
 
             HttpForm.Post("http://www.mercenary.hu/godspeed/report.php", formData);
             OkButtonClick(sender, e);
-        }
-
-        private static string GetApplicationVersion()
-        {
-            var assembly = Assembly.GetAssembly(typeof(FileManagerWindow));
-            var assemblyName = assembly.GetName();
-            return assemblyName.Version.ToString();
-        }
-
-        private static string GetFrameworkVersion()
-        {
-            var applicationAssembly = Assembly.GetAssembly(typeof(Application));
-            var fvi = FileVersionInfo.GetVersionInfo(applicationAssembly.Location);
-            return fvi.ProductVersion;
         }
 
         private static Stack<string> GetFtpLog()

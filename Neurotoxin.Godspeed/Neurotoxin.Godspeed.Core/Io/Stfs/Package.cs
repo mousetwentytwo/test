@@ -195,7 +195,7 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
         public void Resign(string kvPath = null)
         {
             var kv = !string.IsNullOrEmpty(kvPath)
-                         ? (Stream) new FileStream(kvPath, FileMode.Open)
+                         ? (Stream) new FileStream(kvPath, FileMode.Open, FileAccess.Read)
                          : GetDefaultKeyvault();
             Resign(kv);
             kv.Close();

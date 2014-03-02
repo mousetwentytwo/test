@@ -122,6 +122,13 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             set { Set(RightPaneFileListPaneSettingsKey, value); }
         }
 
+        private const string DisableUserStatisticsParticipationKey = "DisableUserStatisticsParticipation";
+        public static bool? DisableUserStatisticsParticipation
+        {
+            get { return Get<bool?>(DisableUserStatisticsParticipationKey); }
+            set { Set(DisableUserStatisticsParticipationKey, value); }
+        }
+
         public static bool IsMessageIgnored(string message)
         {
             return CacheStore.ContainsKey("UserMessage_" + message.Hash());

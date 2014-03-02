@@ -352,7 +352,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 _isIdle = false;
                 _isAborted = false;
                 fileSize = new FileInfo(localPath).Length;
-                fs = new FileStream(localPath, FileMode.Open);
+                fs = new FileStream(localPath, FileMode.Open, FileAccess.Read);
                 var filename = LocateDirectory(remotePath);
                 if (append)
                 {

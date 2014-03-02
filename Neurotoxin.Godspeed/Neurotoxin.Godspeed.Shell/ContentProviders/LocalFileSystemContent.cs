@@ -166,7 +166,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public byte[] ReadFileHeader(string path)
         {
-            var fs = new FileStream(path, FileMode.Open);
+            var fs = new FileStream(path, FileMode.Open, FileAccess.Read);
             var bytes = new byte[0x971A];
             fs.Read(bytes, 0, bytes.Length);
             fs.Close();
