@@ -42,7 +42,11 @@ foreach ($_POST as $k => $v) {
 	$values .= ', ';
 	$v = trim($v);
 	if (is_numeric($v)) {
-		$values .= mysql_real_escape_string($v);
+		if ($k == 'date') {
+			$values .= "'".date('Y-m-d H:i:s', $v)."'";
+		} else {
+			$values .= mysql_real_escape_string($v);
+		}
 	} else {
 		$values .= "'".mysql_real_escape_string($v)."'";
 	}
