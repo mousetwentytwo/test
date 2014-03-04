@@ -10,12 +10,14 @@
 
 	$name = './charts/usage.png';
 	
-	//TODO: last 30 days
+	$todayminus30 = date('Y-m-d', strtotime("-30 days"));
+	
 	$query = "SELECT UNIX_TIMESTAMP(DATE(date)) as `date`, 
 				     SUM(TIME_TO_SEC(`usage`)) as `usage`,
 				     SUM(TIME_TO_SEC(`transfer_time`)) as `transfer`,
 			 	     (SELECT COUNT(DISTINCT client_id) FROM `godspeed_stats` WHERE DATE(date) = DATE(M.date)) as `clients`
 			  FROM `godspeed_stats` M
+			  WHERE date >= '$todayminus30'
 			  GROUP BY DATE(date) 
 			  ORDER BY DATE(date) 
 			  LIMIT 0, 30";
@@ -48,9 +50,8 @@
 		$lastdate = $row['date'];
 	} 
 	
-	//TODO: reduce 30 days
 	$data = array(
-		"yformat" => "number",
+		"yformat" => "time",
 		"values" => array($date, $diff, $transfer, $usage)
 	);	
 	

@@ -100,6 +100,7 @@ namespace Neurotoxin.Godspeed.Shell
 
             if (UserSettings.DisableUserStatisticsParticipation != false)
             {
+                var utcOffset = TimeZone.CurrentTimeZone.GetUtcOffset(statistics.UsageStart);
                 HttpForm.Post("http://www.mercenary.hu/godspeed/stats.php", new List<IFormData>
                 {
                     new RawPostData("client_id", EsentPersistentDictionary.Instance.Get<string>("ClientID")),
@@ -107,7 +108,10 @@ namespace Neurotoxin.Godspeed.Shell
                     new RawPostData("wpf", GetFrameworkVersion()),
                     new RawPostData("os", Environment.OSVersion.VersionString),
                     new RawPostData("culture", CultureInfo.CurrentCulture.Name),
+                    new RawPostData("uiculture", CultureInfo.CurrentUICulture.Name),
+                    new RawPostData("osculture", CultureInfo.InstalledUICulture.Name),
                     new RawPostData("date", statistics.UsageStart.ToUnixTimestamp()),
+                    new RawPostData("timezone", string.Format("{0}{1:D2}:{2:D2}", utcOffset.Hours >= 0 ? "+" : string.Empty, utcOffset.Hours, utcOffset.Minutes)),
                     new RawPostData("usage", Math.Floor(statistics.UsageTime.TotalSeconds)),
                     new RawPostData("exit_code", e.ApplicationExitCode),
                     new RawPostData("games_recognized", statistics.GamesRecognizedFully),

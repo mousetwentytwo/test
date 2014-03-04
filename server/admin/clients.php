@@ -10,7 +10,8 @@
 
 	$name = './charts/clients.png';
 	
-	//TODO: last 30 days
+	$todayminus30 = date('Y-m-d', strtotime("-30 days"));
+	
 	$query = "SELECT UNIX_TIMESTAMP(date) as `date`,
 				     COUNT(`client_id`) as `totalusers`,
 				     SUM(`new`) as `newusers`
@@ -19,7 +20,8 @@
 				           COUNT(*) as `num`,
 				          (SELECT IF(DATE(MIN(date)) = DATE(M.date), 1, 0) FROM `godspeed_stats` X WHERE X.client_id = M.client_id) as `new`
 			        FROM `godspeed_stats` M
-				    GROUP BY M.date, M.client_id
+					WHERE date >= '$todayminus30'
+				    GROUP BY DATE(M.date), M.client_id
 					ORDER BY DATE(M.date)) S
 			  GROUP BY date";
 	$rs = mysql_query($query);
@@ -51,7 +53,6 @@
 		$lastdate = $row['date'];
 	} 
 	
-	//TODO: reduce 30 days
 	$data = array(
 		"yformat" => "number",
 		"values" => array($date, $diff, $newusers, $totalusers)
