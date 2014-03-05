@@ -38,6 +38,21 @@ $columns = '`country`';
 $values = "'".visitor_country()."'";
 
 foreach ($_POST as $k => $v) {
+	if ($k == 'command_usage') {
+		$rows = explode("\n", trim($v));
+		$c = $_POST['client_id'];
+		$d = date('Y-m-d H:i:s', trim($_POST['date']));
+		foreach($rows as $row) {
+			$r = explode('=', trim($row));
+			$query = sprintf("INSERT INTO godspeed_command_usage (client_id, date, command, count) VALUES ('%s','%s','%s','%s')", $c, $d, $r[0], $r[1]);
+			echo $query."\r\n";
+			if (!mysql_query($query)) {
+				echo mysql_error()."\r\n";
+			}
+		}
+		continue;
+	}
+
 	$columns .= ', `'.mysql_real_escape_string($k).'`';
 	$values .= ', ';
 	$v = trim($v);
@@ -66,9 +81,9 @@ foreach ($_POST as $k => $v) {
 
 $query = "INSERT INTO godspeed_stats ($columns) VALUES ($values)";
 
-echo $query;
+echo $query."\r\n";
 if (!mysql_query($query)) {
-	echo mysql_error();
+	echo mysql_error()."\r\n";
 }
 
 mysql_close();

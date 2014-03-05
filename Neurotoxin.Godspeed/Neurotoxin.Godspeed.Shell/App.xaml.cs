@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Text;
 using System.Windows;
 using System.Windows.Threading;
 using Neurotoxin.Godspeed.Core.Caching;
@@ -100,6 +101,12 @@ namespace Neurotoxin.Godspeed.Shell
 
             if (UserSettings.DisableUserStatisticsParticipation != false)
             {
+                var commandUsage = new StringBuilder();
+                foreach (var kvp in statistics.CommandUsage)
+                {
+                    commandUsage.AppendLine(string.Format("{0}={1}", kvp.Key, kvp.Value));
+                }
+
                 var utcOffset = TimeZone.CurrentTimeZone.GetUtcOffset(statistics.UsageStart);
                 HttpForm.Post("http://www.mercenary.hu/godspeed/stats.php", new List<IFormData>
                 {
@@ -121,6 +128,7 @@ namespace Neurotoxin.Godspeed.Shell
                     new RawPostData("transferred_bytes", statistics.BytesTransferred),
                     new RawPostData("transferred_files", statistics.FilesTransferred),
                     new RawPostData("transfer_time", Math.Floor(statistics.TimeSpentWithTransfer.TotalSeconds)),
+                    new RawPostData("command_usage", commandUsage)
                 });
             }
             base.OnExit(e);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Threading;
 using Microsoft.Practices.Composite.Events;
 using Neurotoxin.Godspeed.Core.Caching;
@@ -149,13 +150,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             _applicationStarted = _cacheStore.TryGet<int>(STAT_APPLICATIONSTARTED) + 1;
             _applicationCrashed = _cacheStore.TryGet<int>(STAT_APPLICATIONCRASHED);
 
-            DelegateCommand.BeforeAction = command =>
-                {
-                    if (CommandUsage.ContainsKey(command))
-                        CommandUsage[command]++;
-                    else
-                        CommandUsage.Add(command, 1);
-                };
+            //TODO: event?
+            DelegateCommand.BeforeAction = CountCommandUsage;
 
             //TODO: not sure this is the right place to implement
             if (!UserSettings.DisableUserStatisticsParticipation.HasValue)
@@ -180,6 +176,30 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             _cacheStore.Update(STAT_TOTALUSAGETIME, TotalUsageTime);
             _cacheStore.Update(STAT_APPLICATIONSTARTED, ApplicationStarted);
             _cacheStore.Update(STAT_APPLICATIONCRASHED, ApplicationCrashed);
+        }
+
+        private void CountCommandUsage(MethodInfo commandAction)
+        {
+            var declaringType = commandAction.DeclaringType;
+            var className = string.Empty;
+            if (declaringType != null)
+            {
+                className = declaringType.Name;
+                var genericArgs = declaringType.GetGenericArguments();
+                for (var i = 0; i < genericArgs.Length; i++)
+                {
+                    var genericType = genericArgs[i];
+                    var prefix = i == 0 ? "<" : ",";
+                    var suffix = i == genericArgs.Length - 1 ? ">" : string.Empty;
+                    className = className.Replace(string.Format("`{0}", i + 1), string.Format("{0}{1}{2}", prefix, genericType.Name, suffix));
+                }
+                className += ".";
+            }
+            var command = className + commandAction.Name;
+            if (CommandUsage.ContainsKey(command))
+                CommandUsage[command]++;
+            else
+                CommandUsage.Add(command, 1);
         }
 
         private void ParticipationMessage(object state)

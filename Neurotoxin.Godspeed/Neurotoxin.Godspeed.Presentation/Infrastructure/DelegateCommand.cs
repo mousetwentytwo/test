@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Reflection;
 
 namespace Neurotoxin.Godspeed.Presentation.Infrastructure
 {
     public class DelegateCommand : IDelegateCommand
     {
-        public static Action<string> BeforeAction = null;
+        public static Action<MethodInfo> BeforeAction;
 
         private readonly Action _executeAction;
         private readonly Func<bool> _canExecuteAction;
@@ -23,7 +24,7 @@ namespace Neurotoxin.Godspeed.Presentation.Infrastructure
         public void Execute(object parameter = null)
         {
             if (!CanExecute(parameter)) return;
-            if (BeforeAction != null) BeforeAction(_executeAction.Method.Name);
+            if (BeforeAction != null) BeforeAction(_executeAction.Method);
             _executeAction();
         }
 
@@ -60,7 +61,7 @@ namespace Neurotoxin.Godspeed.Presentation.Infrastructure
         public void Execute(object parameter)
         {
             if (!CanExecute(parameter)) return;
-            if (DelegateCommand.BeforeAction != null) DelegateCommand.BeforeAction(_executeAction.Method.Name);
+            if (DelegateCommand.BeforeAction != null) DelegateCommand.BeforeAction(_executeAction.Method);
             _executeAction((T)parameter);
         }
 
