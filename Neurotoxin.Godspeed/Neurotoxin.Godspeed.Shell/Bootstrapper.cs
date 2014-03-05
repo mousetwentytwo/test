@@ -56,7 +56,7 @@ namespace Neurotoxin.Godspeed.Shell
 
         protected override DependencyObject CreateShell()
         {
-            var sanityChecker = Container.Resolve<SanityChecker>();
+            Container.Resolve<SanityChecker>();
             var shell = Container.Resolve<FileManagerWindow>();
             var viewModel = (FileManagerViewModel)shell.DataContext;
             viewModel.Initialize();

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using Microsoft.Practices.Composite.Events;
 using Neurotoxin.Godspeed.Core.Caching;
@@ -17,7 +18,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private const string FACEBOOKMESSAGE = "<b>Do you like GODspeed?</b> Do you want to get news about it first hand, share your ideas and/or be a part of its growing community? Then please like its Facebook page!";
         private const string CODEPLEXMESSAGE = "<b>Thank you for using GODspeed!</b> Do you think you've got an opinion about the current version? Rate and review it on CodePlex! Thanks!";
 
-        //private readonly Timer _debugTimer;
         private readonly Timer _participationTimer;
         private readonly Timer _facebookTimer;
         private readonly Timer _codeplexTimer;
@@ -26,6 +26,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private readonly IEventAggregator _eventAggregator;
 
         public DateTime UsageStart { get; private set; }
+        public Dictionary<string, int> CommandUsage { get; private set; }
 
         private const string GAMESRECOGNIZEDFULLY = "GamesRecognizedFully";
         public int GamesRecognizedFully
@@ -138,6 +139,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public StatisticsViewModel(CacheManager cacheManager, IEventAggregator eventAggregator)
         {
             UsageStart = DateTime.Now;
+            CommandUsage = new Dictionary<string, int>();
             _cacheManager = cacheManager;
             _eventAggregator = eventAggregator;
             _totalFilesTransferred = _cacheStore.TryGet<int>(STAT_TOTALFILESTRANSFERRED);
@@ -147,6 +149,15 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             _applicationStarted = _cacheStore.TryGet<int>(STAT_APPLICATIONSTARTED) + 1;
             _applicationCrashed = _cacheStore.TryGet<int>(STAT_APPLICATIONCRASHED);
 
+            DelegateCommand.BeforeAction = command =>
+                {
+                    if (CommandUsage.ContainsKey(command))
+                        CommandUsage[command]++;
+                    else
+                        CommandUsage.Add(command, 1);
+                };
+
+            //TODO: not sure this is the right place to implement
             if (!UserSettings.DisableUserStatisticsParticipation.HasValue)
             {
                 _participationTimer = new Timer(ParticipationMessage, null, 60000, -1);
@@ -159,12 +170,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             {
                 _codeplexTimer = new Timer(CodeplexMessage, null, 60000, -1);
             }
-
-            //_debugTimer = new Timer(o =>
-            //                            {
-            //                                var message = DateTime.Now.ToString();
-            //                                _eventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(new NotifyUserMessageEventArgs(message, MessageIcon.Info));
-            //                            }, null, 1000, 10);
         }
 
         public void PersistData()

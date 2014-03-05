@@ -4,6 +4,8 @@ namespace Neurotoxin.Godspeed.Presentation.Infrastructure
 {
     public class DelegateCommand : IDelegateCommand
     {
+        public static Action<string> BeforeAction = null;
+
         private readonly Action _executeAction;
         private readonly Func<bool> _canExecuteAction;
 
@@ -13,28 +15,16 @@ namespace Neurotoxin.Godspeed.Presentation.Infrastructure
             _canExecuteAction = canExecuteAction;
         }
 
-        /// <summary>
-        /// Defines the method that determines whether the command can execute in its current state.
-        /// </summary>
-        /// <returns>
-        /// true if this command can be executed; otherwise, false.
-        /// </returns>
-        /// <param name="parameter">Data used by the command. If the command does not require data to be passed, this object can be set to null. </param>
         public bool CanExecute(object parameter = null)
         {
             return _canExecuteAction == null || _canExecuteAction();
         }
 
-        /// <summary>
-        /// Defines the method to be called when the command is invoked.
-        /// </summary>
-        /// <param name="parameter">Data used by the command. If the command does not require data to be passed, this object can be set to null. </param>
         public void Execute(object parameter = null)
         {
-            if (CanExecute(parameter))
-            {
-                _executeAction();
-            }
+            if (!CanExecute(parameter)) return;
+            if (BeforeAction != null) BeforeAction(_executeAction.Method.Name);
+            _executeAction();
         }
 
         private void OnCanExecuteChanged(object sender, EventArgs args)
@@ -62,28 +52,16 @@ namespace Neurotoxin.Godspeed.Presentation.Infrastructure
             _canExecuteAction = canExecuteAction;
         }
 
-        /// <summary>
-        /// Defines the method that determines whether the command can execute in its current state.
-        /// </summary>
-        /// <returns>
-        /// true if this command can be executed; otherwise, false.
-        /// </returns>
-        /// <param name="parameter">Data used by the command. If the command does not require data to be passed, this object can be set to null. </param>
         public bool CanExecute(object parameter)
         {
             return _canExecuteAction == null || _canExecuteAction((T)parameter);
         }
 
-        /// <summary>
-        /// Defines the method to be called when the command is invoked.
-        /// </summary>
-        /// <param name="parameter">Data used by the command. If the command does not require data to be passed, this object can be set to null. </param>
         public void Execute(object parameter)
         {
-            if (CanExecute(parameter))
-            {
-                _executeAction((T)parameter);
-            }
+            if (!CanExecute(parameter)) return;
+            if (DelegateCommand.BeforeAction != null) DelegateCommand.BeforeAction(_executeAction.Method.Name);
+            _executeAction((T)parameter);
         }
 
         private void OnCanExecuteChanged(object sender, EventArgs args)
