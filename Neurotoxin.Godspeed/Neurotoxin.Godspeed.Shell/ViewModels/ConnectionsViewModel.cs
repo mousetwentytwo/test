@@ -208,7 +208,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             IsBusy = false;
             var connectionName = ((FtpContentViewModel)pane).Connection.Name;
-            if (exception is EstablishmentFailedException)
+            if (exception is SomethingWentWrongException)
             {
                 ErrorMessage.Show(exception);
             } 

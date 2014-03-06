@@ -1,24 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Net;
-using System.Reflection;
+using System.Linq;
+using System.Text;
 using System.Windows;
 using Neurotoxin.Godspeed.Core.Caching;
-using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
+using Neurotoxin.Godspeed.Shell.Exceptions;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Reporting;
 using Neurotoxin.Godspeed.Shell.ViewModels;
-using System.Linq;
 using Application = System.Windows.Application;
 
 namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
 {
     public partial class ErrorMessage
     {
-        private readonly Exception _exception;
+        private readonly string _details;
+        private readonly string _ftpLog;
 
         public static void Show(Exception exception)
         {
@@ -34,11 +32,25 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
 
         private ErrorMessage(Exception exception)
         {
-            _exception = exception;
             if (Application.Current.MainWindow.IsVisible) Owner = Application.Current.MainWindow;
             InitializeComponent();
             Message.Text = exception.Message;
-            CallStack.Content = exception.StackTrace;
+
+            var sb = new StringBuilder();
+            var ex = exception is SomethingWentWrongException ? exception.InnerException : exception;
+            do
+            {
+                sb.AppendLine("Error: " + ex.Message);
+                sb.AppendLine(ex.StackTrace);
+                sb.AppendLine(String.Empty);
+                ex = ex.InnerException;
+            }
+            while (ex != null);
+            _details = sb.ToString();
+            Details.Content = _details;
+
+            _ftpLog = GetFtpLog();
+            FtpLog.Content = _ftpLog;
             Loaded += OnLoaded;
         }
 
@@ -59,8 +71,8 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
                         ApplicationVersion = App.GetApplicationVersion(),
                         FrameworkVersion = App.GetFrameworkVersion(),
                         OperatingSystemVersion = Environment.OSVersion.VersionString,
-                        Exception = _exception,
-                        FtpLog = GetFtpLog()
+                        Details = _details,
+                        FtpLog = _ftpLog
                     }
                 };
             var iw = 0;
@@ -78,8 +90,9 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
             OkButtonClick(sender, e);
         }
 
-        private static Stack<string> GetFtpLog()
+        private static string GetFtpLog()
         {
+            var sb = new StringBuilder();
             var w = Application.Current.MainWindow as FileManagerWindow;
             if (w != null)
             {
@@ -91,7 +104,11 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
                 }
                 if (ftp != null)
                 {
-                    return ftp.Log;
+                    for (var i = ftp.Log.Count - 1; i >= 0; i--)
+                    {
+                        sb.Append(ftp.Log.ElementAt(i));
+                    }
+                    return sb.ToString();
                 }
             }
             return null;

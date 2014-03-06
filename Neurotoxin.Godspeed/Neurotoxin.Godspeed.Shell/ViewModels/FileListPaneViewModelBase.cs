@@ -31,6 +31,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
     public abstract class FileListPaneViewModelBase<T> : PaneViewModelBase, IFileListPaneViewModel where T : IFileManager
     {
+        private readonly object _queueLock = new object();
         private Queue<FileSystemItem> _queue;
         protected readonly TitleRecognizer TitleRecognizer;
         protected readonly T FileManager;
@@ -240,39 +241,42 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         protected virtual void ChangeDirectoryCallback(List<FileSystemItem> result)
         {
             IsBusy = false;
-            _queue = new Queue<FileSystemItem>();
-            var sw = new Stopwatch();
-            sw.Start();
-            foreach (var item in result.Where(item => item.TitleType != TitleType.Unknown && !TitleRecognizer.MergeWithCachedEntry(item)))
+            lock (_queueLock)
             {
-                _queue.Enqueue(item);
-            }
-            sw.Stop();
-            Debug.WriteLine("[CD] Enqueued {0}: {1}", _queue.Count, sw.Elapsed);
-
-            if (CurrentFolder.Type != ItemType.Drive)
-            {
-                result.Insert(0, new FileSystemItem
+                _queue = new Queue<FileSystemItem>();
+                var sw = new Stopwatch();
+                sw.Start();
+                foreach (var item in result.Where(item => item.TitleType != TitleType.Unknown && !TitleRecognizer.MergeWithCachedEntry(item)))
                 {
-                    Name = "..",
-                    Type = CurrentFolder.Type,
-                    Date = CurrentFolder.Date,
-                    Path = CurrentFolder.Path,
-                    Thumbnail = ApplicationExtensions.GetContentByteArray("/Resources/up.png")
-                });
-            }
+                    _queue.Enqueue(item);
+                }
+                sw.Stop();
+                Debug.WriteLine("[CD] Enqueued {0}: {1}", _queue.Count, sw.Elapsed);
 
-            SortContent(result.Select(c => new FileSystemItemViewModel(c)));
-            NotifyPropertyChanged(SIZEINFO);
+                if (CurrentFolder.Type != ItemType.Drive)
+                {
+                    result.Insert(0, new FileSystemItem
+                        {
+                            Name = "..",
+                            Type = CurrentFolder.Type,
+                            Date = CurrentFolder.Date,
+                            Path = CurrentFolder.Path,
+                            Thumbnail = ApplicationExtensions.GetContentByteArray("/Resources/up.png")
+                        });
+                }
 
-            if (_queue.Count > 0)
-            {
-                IsBusy = true;
-                RecognitionStart();
-            }
-            else
-            {
-                RecognitionFinish();
+                SortContent(result.Select(c => new FileSystemItemViewModel(c)));
+                NotifyPropertyChanged(SIZEINFO);
+
+                if (_queue.Count > 0)
+                {
+                    IsBusy = true;
+                    RecognitionStart();
+                }
+                else
+                {
+                    RecognitionFinish();
+                }
             }
         }
 
@@ -635,11 +639,24 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void ExecuteRefreshTitleCommand()
         {
-            var selection = SelectedItems.Any() ? SelectedItems.Select(i => i.Model) : new[] {CurrentRow.Model};
+            var selection = SelectedItems.Any() ? SelectedItems.Select(i => i.Model).ToList() : new List<FileSystemItem> { CurrentRow.Model };
             selection.ForEach(TitleRecognizer.ThrowCache);
-            _queue = new Queue<FileSystemItem>(selection);
-            IsBusy = true;
-            RecognitionStart();
+
+            lock (_queueLock)
+            {
+                if (_queue != null)
+                {
+                    selection.Where(i => !_queue.Contains(i)).ForEach(_queue.Enqueue);
+                    var item = _queue.Peek();
+                    ProgressMessage = string.Format("Recognizing item {0} ({1} left)...", item.Name, _queue.Count - 1);
+                }
+                else
+                {
+                    _queue = new Queue<FileSystemItem>(selection);
+                    IsBusy = true;
+                    RecognitionStart();
+                }
+            }
         }
 
         #endregion
@@ -1103,15 +1120,18 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void RecognitionStart()
         {
-            if (_queue.Count > 0)
+            lock (_queueLock)
             {
-                var item = _queue.Dequeue();
-                ProgressMessage = string.Format("Recognizing item {0} ({1} left)...", item.Name, _queue.Count);
-                RecognitionInner(item, RecognitionSuccess, RecognitionError);
-            }
-            else
-            {
-                RecognitionFinish();
+                if (_queue.Count > 0)
+                {
+                    var item = _queue.Peek();
+                    ProgressMessage = string.Format("Recognizing item {0} ({1} left)...", item.Name, _queue.Count - 1);
+                    RecognitionInner(item, RecognitionSuccess, RecognitionError);
+                }
+                else
+                {
+                    RecognitionFinish();
+                }
             }
         }
 
@@ -1129,17 +1149,28 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void RecognitionSuccess(FileSystemItem item)
         {
             Items.Single(i => i.Model == item).NotifyModelChanges();
+            lock (_queueLock)
+            {
+                _queue.Dequeue();
+            }
             RecognitionStart();
         }
 
         private void RecognitionError(Exception exception)
         {
+            lock (_queueLock)
+            {
+                _queue.Dequeue();
+            }
             RecognitionStart();
         }
 
         private void RecognitionFinish()
         {
-            _queue = null;
+            lock (_queueLock)
+            {
+                _queue = null;
+            }
             SortContent();
             IsBusy = false;
         }

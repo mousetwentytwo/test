@@ -1,23 +1,28 @@
 * FIXED Issue #9: Polish month abbreviations in LIST results
 * FIXED Issue #18: "No error" exception when calling GetDrives()
+* FIXED Issue #28: Null reference exception after DeleteError
 * FIXED Issue #33: Folder creation on a device with no space left throws no exception
 * FIXED Issue #35: Null reference exception in FtpConnectError
 * FIXED Issue #36: Null reference exception during the disposal of a non-connected FTP ViewModel
 * FIXED Issue #40: Copying a grid row to clipboard
 * FIXED Issue #44: Lost connection can screw up directory navigation
 * FIXED Issue #45: .NET version checker doesn't do its thing
+* FIXED Issue #48: Null reference exception after CopyError
 * FIXED Issue #62: Can't connect back to an FTP where the last visited folder doesn't exist anymore
 * FIXED Issue #63: Remove server has not initiated the connection exception
 * FIXED Issue #64: Null reference exception in FTP file renaming
+* FIXED Issue #84: Null reference exception during Title Recognition
 * FIXED: Recognize standalone SVOD packages
 * FIXED: Clear Cache UI freeze
 * FIXED: PASV usage
 * FIXED: UTF-8 error reporting
 * FIXED: Special characters in path screws up Remote Copy
+* FIXED: Recognition can freeze if an unexpected error happens
 * FIXED: Remember last used sort order
 * FIXED: Close FTP pane if connection cannot be reestablished or user decides to do so
 * FIXED: Progress indication fix in case of skipping/retrying partially transferred files
 * FIXED: Access of read-only files
+* FIXED: Something went wrong exception doesn't have a stack trace
 * ADDED: New FTP client library (Based on the work of J.P. Trosclair, https://netftp.codeplex.com/), the dependency to Limilabs' Ftp.dll has been finally removed
 * ADDED: User Notification Service
 * ADDED: Sanity checker - checks dependencies, migrates cached data from an old version if needed

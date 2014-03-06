@@ -11,8 +11,8 @@ namespace Neurotoxin.Godspeed.Shell.Reporting
         public string ApplicationVersion { get; set; }
         public string FrameworkVersion { get; set; }
         public string OperatingSystemVersion { get; set; }
-        public Exception Exception { get; set; }
-        public Stack<string> FtpLog { get; set; }
+        public string Details { get; set; }
+        public string FtpLog { get; set; }
 
         public override void Write(StreamWriter sw)
         {
@@ -23,22 +23,11 @@ namespace Neurotoxin.Godspeed.Shell.Reporting
             sw.WriteLine("OS version: " + OperatingSystemVersion);
             sw.WriteLine();
 
-            var ex = Exception;
-            do
-            {
-                sw.WriteLine("Error: " + ex.Message);
-                sw.WriteLine(ex.StackTrace);
-                sw.WriteLine(String.Empty);
-                ex = ex.InnerException;
-            }
-            while (ex != null);
+            sw.WriteLine(Details);
+            sw.WriteLine();
 
             if (FtpLog == null) return;
-            for (var i = FtpLog.Count - 1; i >= 0; i--)
-            {
-                sw.WriteLine(FtpLog.ElementAt(i));
-            }
-            sw.WriteLine();
+            sw.WriteLine(FtpLog);
         }
     }
 }

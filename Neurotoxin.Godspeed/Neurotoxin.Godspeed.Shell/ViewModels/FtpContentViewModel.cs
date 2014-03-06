@@ -100,7 +100,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                                     if (error != null)
                                     {
                                         var somethingWentWrong = string.Format("Something went wrong while trying to establish connection. Please try again, and if the error persists try to turn {0} Passive Mode.", Connection.UsePassiveMode ? "off" : "on");
-                                        error.Invoke(this, new EstablishmentFailedException(somethingWentWrong, ex));
+                                        error.Invoke(this, new SomethingWentWrongException(somethingWentWrong, ex));
                                     }
                                     CloseCommand.Execute();
                                     return;

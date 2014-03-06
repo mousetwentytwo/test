@@ -16,7 +16,7 @@
 					 COUNT(client_id), 
 					 SUM(fully) as `fully`, 
 					 SUM(partially) as `partially` 
-			  FROM (SELECT UNIX_TIMESTAMP(date) as `date`, 
+			  FROM (SELECT UNIX_TIMESTAMP(DATE(date)) as `date`, 
 				 		   client_id, 
 						   MAX(games_recognized) as `fully`, 
 						   MAX(partially_recognized) as `partially` 

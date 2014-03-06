@@ -145,7 +145,7 @@
     <Compile Include="Events\TransferFinishedEvent.cs" />
     <Compile Include="Events\TransferStartedEvent.cs" />
     <Compile Include="Events\ViewModelGeneratedEvent.cs" />
-    <Compile Include="Exceptions\EstablishmentFailedException.cs" />
+    <Compile Include="Exceptions\SomethingWentWrongException.cs" />
     <Compile Include="Exceptions\TransferException.cs" />
     <Compile Include="GlobalVariables.cs" />
     <Compile Include="Helpers\SanityChecker.cs" />

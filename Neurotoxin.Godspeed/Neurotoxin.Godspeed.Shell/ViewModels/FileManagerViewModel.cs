@@ -338,7 +338,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void ExecuteCopyCommand()
         {
             if (!ConfirmCommand(TransferType.Copy)) return;
-            AsyncJob(() => SourcePane.PopulateQueue(TransferType.Copy), CopyPrepare, CopyError);
+            AsyncJob(() => SourcePane.PopulateQueue(TransferType.Copy), CopyPrepare, PopulationError);
         }
 
         private void CopyPrepare(Queue<QueueItem> queue)
@@ -504,7 +504,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void ExecuteMoveCommand()
         {
             if (!ConfirmCommand(TransferType.Move)) return;
-            AsyncJob(() => SourcePane.PopulateQueue(TransferType.Move), MovePrepare, MoveError);
+            AsyncJob(() => SourcePane.PopulateQueue(TransferType.Move), MovePrepare, PopulationError);
         }
 
         private void MovePrepare(Queue<QueueItem> queue)
@@ -674,7 +674,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             else
             {
                 _isAborted = false;
-                AsyncJob(() => SourcePane.PopulateQueue(TransferType.Delete), DeletePrepare, DeleteError);
+                AsyncJob(() => SourcePane.PopulateQueue(TransferType.Delete), DeletePrepare, PopulationError);
             }
         }
 
@@ -1152,7 +1152,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
             else
             {
-                NotificationMessage.ShowMessage("Unknown error occured", exception.Message);
+                ErrorMessage.Show(exception);
             }
             _elapsedTimeMeter.Start();
             return result;
@@ -1235,6 +1235,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         finished = true;
                         if (error != null) error.Invoke(e);
                     });
+        }
+
+        private void PopulationError(Exception ex)
+        {
+            ErrorMessage.Show(new SomethingWentWrongException("Population failed (Click below for details). Please try again." + ex.Message, ex));
         }
 
         public override void Dispose()

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using System.Threading;
 using Microsoft.Practices.Composite.Events;
 using Neurotoxin.Godspeed.Core.Constants;
 using Neurotoxin.Godspeed.Core.Extensions;
@@ -350,11 +351,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                             infoFileFound = true;
                         }
                     }
-                    catch (Exception ex)
-                    {
-                        item.IsLocked = true;
-                        item.LockMessage = ex.Message;
-                    }
+                    catch { }
                 }
             }
             return infoFileFound;
