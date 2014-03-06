@@ -1185,7 +1185,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             NotifyTransferFinished();
         }
 
-        private void RenameExistingFile(TransferException exception, CopyAction? action, Action<CopyAction?, string> rename, Action<Exception> chooseDifferentOption)
+        private static void RenameExistingFile(TransferException exception, CopyAction? action, Action<CopyAction?, string> rename, Action<Exception> chooseDifferentOption)
         {
             var name = InputDialog.Show("Rename", "New name:", Path.GetFileName(exception.TargetFile));
             if (!string.IsNullOrEmpty(name))
@@ -1208,7 +1208,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             return true;
         }
 
-        private void AsyncJob<T>(Func<T> work, Action<T> success, Action<Exception> error = null)
+        private static void AsyncJob<T>(Func<T> work, Action<T> success, Action<Exception> error = null)
         {
             var finished = false;
             WorkerThread.Run(
@@ -1237,7 +1237,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     });
         }
 
-        private void PopulationError(Exception ex)
+        private static void PopulationError(Exception ex)
         {
             ErrorMessage.Show(new SomethingWentWrongException("Population failed (Click below for details). Please try again." + ex.Message, ex));
         }
