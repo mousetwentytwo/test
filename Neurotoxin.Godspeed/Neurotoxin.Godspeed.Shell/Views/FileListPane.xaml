@@ -130,7 +130,7 @@
         </Grid>
 
         <Border Grid.Row="1" Background="{Binding Path=IsActive, Converter={StaticResource PaneHeaderBackgroundConverter}}"
-                BorderBrush="#FF9B9999" BorderThickness="1,1,1,0" SnapsToDevicePixels="True">
+                BorderBrush="{StaticResource NormalBorderBrush}" BorderThickness="1,1,1,0" SnapsToDevicePixels="True">
             <TextBlock Text="{Binding CurrentFolder.Path}" Padding="2" FontWeight="Bold"/>
         </Border>
         
@@ -154,7 +154,7 @@
                   SelectionUnit="FullRow"
                   Focusable="False"
                   ClipboardCopyMode="None"
-                  BorderBrush="#FF9B9999">
+                  BorderBrush="{StaticResource NormalBorderBrush}">
             <DataGrid.Resources>
                 <Style TargetType="{x:Type TextBlock}" x:Key="CellText">
                     <Style.Triggers>

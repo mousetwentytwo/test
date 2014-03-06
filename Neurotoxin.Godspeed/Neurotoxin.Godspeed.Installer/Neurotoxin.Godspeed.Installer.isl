@@ -927,7 +927,8 @@
 		<row><td>DestinationFolder</td><td>Cancel</td><td>SpawnDialog</td><td>CancelSetup</td><td>1</td><td>1</td></row>
 		<row><td>DestinationFolder</td><td>ChangeFolder</td><td>SpawnDialog</td><td>InstallChangeFolder</td><td>1</td><td>1</td></row>
 		<row><td>DestinationFolder</td><td>ChangeFolder</td><td>[_BrowseProperty]</td><td>INSTALLDIR</td><td>1</td><td>2</td></row>
-		<row><td>DestinationFolder</td><td>Next</td><td>NewDialog</td><td>ReadyToInstall</td><td>1</td><td>0</td></row>
+		<row><td>DestinationFolder</td><td>Next</td><td>EndDialog</td><td>Return</td><td>OutOfDiskSpace &lt;&gt; 1</td><td>1</td></row>
+		<row><td>DestinationFolder</td><td>Next</td><td>NewDialog</td><td>ReadyToInstall</td><td>0</td><td>2</td></row>
 		<row><td>DiskSpaceRequirements</td><td>OK</td><td>EndDialog</td><td>Return</td><td>1</td><td>0</td></row>
 		<row><td>FilesInUse</td><td>Exit</td><td>EndDialog</td><td>Exit</td><td>1</td><td>0</td></row>
 		<row><td>FilesInUse</td><td>Ignore</td><td>EndDialog</td><td>Ignore</td><td>1</td><td>0</td></row>
@@ -2767,7 +2768,7 @@
 		<col def="I2">Encoded</col>
 		<col def="S0">Comment</col>
 		<col def="I4">TimeStamp</col>
-		<row><td>COMPANY_NAME</td><td>1033</td><td>Neurotoxin</td><td>0</td><td/><td>-1390291503</td></row>
+		<row><td>COMPANY_NAME</td><td>1033</td><td>Neurotoxin</td><td>0</td><td/><td>832735442</td></row>
 		<row><td>DN_AlwaysInstall</td><td>1033</td><td>Always Install</td><td>0</td><td/><td>-1390293551</td></row>
 		<row><td>IDPROP_EXPRESS_LAUNCH_CONDITION_COLOR</td><td>1033</td><td>The color settings of your system are not adequate for running [ProductName].</td><td>0</td><td/><td>-1390293551</td></row>
 		<row><td>IDPROP_EXPRESS_LAUNCH_CONDITION_DOTNETVERSION40CLIENT</td><td>1033</td><td>Microsoft .NET Framework 4.0 Client Package or greater needs to be installed for this installation to continue.</td><td>0</td><td/><td>-1390309903</td></row>
@@ -3870,8 +3871,8 @@
 		<row><td>IDS__TargetReq_DESC_PROCESSOR</td><td>1033</td><td>The processor is not adequate for running [ProductName].</td><td>0</td><td/><td>-1390293551</td></row>
 		<row><td>IDS__TargetReq_DESC_RAM</td><td>1033</td><td>The amount of RAM is not adequate for running [ProductName].</td><td>0</td><td/><td>-1390293551</td></row>
 		<row><td>IDS__TargetReq_DESC_RESOLUTION</td><td>1033</td><td>The screen resolution is not adequate for running [ProductName].</td><td>0</td><td/><td>-1390293551</td></row>
-		<row><td>ID_STRING1</td><td>1033</td><td>http://godspeed.codeplex.com</td><td>0</td><td/><td>-1390328335</td></row>
-		<row><td>ID_STRING2</td><td>1033</td><td>Neurotoxin</td><td>0</td><td/><td>-1390291503</td></row>
+		<row><td>ID_STRING1</td><td>1033</td><td>http://www.Neurotoxin.com</td><td>0</td><td/><td>832735442</td></row>
+		<row><td>ID_STRING2</td><td>1033</td><td>Neurotoxin</td><td>0</td><td/><td>832735442</td></row>
 		<row><td>ID_STRING3</td><td>1033</td><td>GODspeed</td><td>0</td><td/><td>-1390344623</td></row>
 		<row><td>ID_STRING4</td><td>1033</td><td>UNINST~1|Uninstall GODspeed</td><td>0</td><td/><td>-1390332335</td></row>
 		<row><td>ID_STRING5</td><td>1033</td><td>GODspeed</td><td>0</td><td/><td>-1390307759</td></row>
@@ -3982,7 +3983,7 @@
 		<col def="V0">Data</col>
 		<col def="S255">ISBuildSourcePath</col>
 		<col def="I2">ISIconIndex</col>
-		<row><td>ARPPRODUCTICON.exe</td><td/><td>C:\merc\svn\contour\Neurotoxin.Godspeed\Neurotoxin.Godspeed.Shell\Resources\app.ico</td><td>0</td></row>
+		<row><td>ARPPRODUCTICON.exe</td><td/><td>D:\Work\NTX-CNT\svn\Neurotoxin.Godspeed\Neurotoxin.Godspeed.Shell\Resources\app.ico</td><td>0</td></row>
 		<row><td>NewShortcut2_7FCAF3BC947E40918F8EAA2CF5FD178A.exe</td><td/><td>C:\Program Files (x86)\InstallShield\2012SpringLE\Redist\Language Independent\OS Independent\uninstall.ico</td><td>0</td></row>
 	</table>
 
@@ -4116,7 +4117,7 @@ UwBpAG4AZwBsAGUASQBtAGEAZwBlAAEARQB4AHAAcgBlAHMAcwA=
 		<row><td>ISTheme</td><td>InstallShield Blue.theme</td></row>
 		<row><td>ISUSLock</td><td>{56784F6C-2895-4DB7-A4EE-E358478FE2CE}</td></row>
 		<row><td>ISUSSignature</td><td>{A6D90400-8DE9-4CC7-998E-5C3C06448833}</td></row>
-		<row><td>ISVisitedViews</td><td>viewAssistant,viewShortcuts,viewSystemSearch</td></row>
+		<row><td>ISVisitedViews</td><td>viewAssistant,viewShortcuts,viewSystemSearch,viewProject,viewUpdateService,viewSetupDesign,viewFeatureFiles,viewUI</td></row>
 		<row><td>Limited</td><td>1</td></row>
 		<row><td>LockPermissionMode</td><td>1</td></row>
 		<row><td>MsiExecCmdLineOptions</td><td/></row>
@@ -4421,8 +4422,10 @@ UwBpAG4AZwBsAGUASQBtAGEAZwBlAAEARQB4AHAAcgBlAHMAcwA=
 		<col key="yes" def="s72">Property</col>
 		<col def="L0">Value</col>
 		<col def="S255">ISComments</col>
-		<row><td>ALLUSERS</td><td>1</td><td/></row>
+		<row><td>ALLUSERS</td><td>2</td><td/></row>
 		<row><td>ARPINSTALLLOCATION</td><td/><td/></row>
+		<row><td>ARPNOMODIFY</td><td>1</td><td/></row>
+		<row><td>ARPNOREPAIR</td><td>1</td><td/></row>
 		<row><td>ARPPRODUCTICON</td><td>ARPPRODUCTICON.exe</td><td/></row>
 		<row><td>ARPSIZE</td><td/><td/></row>
 		<row><td>ARPURLINFOABOUT</td><td>##ID_STRING1##</td><td/></row>
@@ -4465,6 +4468,7 @@ UwBpAG4AZwBsAGUASQBtAGEAZwBlAAEARQB4AHAAcgBlAHMAcwA=
 		<row><td>LAUNCHPROGRAMCOMPCODE</td><td>{E3A3C640-4065-417E-B22F-D8D804FFE860}</td><td/></row>
 		<row><td>LAUNCHPROGRAMFILEKEY</td><td>neurotoxin.godspeed.shell.pr</td><td/></row>
 		<row><td>LAUNCHREADME</td><td>1</td><td/></row>
+		<row><td>MSIFASTINSTALL</td><td>1</td><td/></row>
 		<row><td>Manufacturer</td><td>##COMPANY_NAME##</td><td/></row>
 		<row><td>PIDKEY</td><td/><td/></row>
 		<row><td>PIDTemplate</td><td>12345&lt;###-%%%%%%%&gt;@@@@@</td><td/></row>

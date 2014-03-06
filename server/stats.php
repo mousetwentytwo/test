@@ -45,10 +45,8 @@ foreach ($_POST as $k => $v) {
 		foreach($rows as $row) {
 			$r = explode('=', trim($row));
 			$query = sprintf("INSERT INTO godspeed_command_usage (client_id, date, command, count) VALUES ('%s','%s','%s','%s')", $c, $d, $r[0], $r[1]);
-			echo $query."\r\n";
-			if (!mysql_query($query)) {
-				echo mysql_error()."\r\n";
-			}
+			
+			mysql_query($query);
 		}
 		continue;
 	}
@@ -81,11 +79,7 @@ foreach ($_POST as $k => $v) {
 
 $query = "INSERT INTO godspeed_stats ($columns) VALUES ($values)";
 
-echo $query."\r\n";
-if (!mysql_query($query)) {
-	echo mysql_error()."\r\n";
-}
-
+mysql_query($query);
 mysql_close();
 
 ?>

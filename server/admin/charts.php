@@ -43,24 +43,25 @@ function pie($data, $title, $filename, $colors = null) {
 	$pie->Render($filename);	
 }
 
-function stacked($data, $title, $filename, $colors = null) {
+function stacked($data, $title, $filename) {
 
 	// Dataset definition 
 	$DataSet = new pData;
 	$values = $data['values'];
 	
+	$bar = new pChart(700,230);
+	
 	for ($i = 0; $i < count($values); $i++) {
 		$DataSet->AddPoint($values[$i], "Serie".($i+1));
+		if ($i != 0 && $i != count($values) - 1) {
+			$DataSet->AddSerie("Serie".($i+1));
+		}
 	}
-	// This will mark both Serie1 & Serie2 as "graphable"  
-	$DataSet->AddSerie("Serie2");  
-	$DataSet->AddSerie("Serie3"); 
 	$DataSet->SetAbsciseLabelSerie("Serie1");
 	$DataSet->SetXAxisFormat("date");
 	$DataSet->SetYAxisFormat($data['yformat']);
 
 	// Initialise the graph
-	$bar = new pChart(700,230);
 	$bar->setDateFormat("M.d");	
 	$bar->setFontProperties("Fonts/consola.ttf",8);
 	$bar->setGraphArea(80,30,680,200);
@@ -78,8 +79,8 @@ function stacked($data, $title, $filename, $colors = null) {
 	// Draw the bar graph
 	$bar->drawStackedBarGraph($DataSet->GetData(),$DataSet->GetDataDescription(),100);
 	
-	$bar->setFontProperties("Fonts/MankSans.ttf",10);
-	$bar->writeValues($DataSet->GetData(),$DataSet->GetDataDescription(),array("Serie4"));
+	$bar->setFontProperties("Fonts/tahoma.ttf",8);
+	$bar->writeValues($DataSet->GetData(),$DataSet->GetDataDescription(),array("Serie".count($values)));
 
 	// Finish the graph
 	$bar->setFontProperties("Fonts/MankSans.ttf",10);
@@ -87,5 +88,3 @@ function stacked($data, $title, $filename, $colors = null) {
 	
 	$bar->Render($filename);
 }
-
-?>

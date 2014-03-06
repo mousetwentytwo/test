@@ -59,12 +59,10 @@
 	);	
 	
 	$title = 'User count';
-
-	stacked($data, $title, $name, false);
-
-	$fp = fopen($name, 'rb'); 
 	
 	if (!$debug) {
+		stacked($data, $title, $name);
+		$fp = fopen($name, 'rb');
 		header("Content-Type: image/png");
 		header("Content-Length: " . filesize($name));
 		fpassthru($fp);

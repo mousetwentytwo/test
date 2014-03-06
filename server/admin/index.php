@@ -50,6 +50,7 @@
 			<img src="usage.php"/>
 			<img src="clients.php"/>
 			<img src="recognition.php"/>
+			<img src="transfer.php"/>
 		</div>
 		<div class="list">
 			<?php

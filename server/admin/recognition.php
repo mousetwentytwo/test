@@ -61,7 +61,7 @@
 	
 	$title = 'Game recognitions';
 
-	stacked($data, $title, $name, false);
+	stacked($data, $title, $name);
 
 	$fp = fopen($name, 'rb'); 
 	
