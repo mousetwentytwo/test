@@ -7,7 +7,6 @@ using Microsoft.Practices.Composite.Events;
 using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Core.Models;
 using Neurotoxin.Godspeed.Presentation.Extensions;
-using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Interfaces;
@@ -127,10 +126,11 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             return true;
         }
 
-        public bool FileExists(string path)
+        public FileExistenceInfo FileExists(string path)
         {
             FileSystemItem item;
-            return _fileStructure.TryGetItem(path, out item) && item.Type == ItemType.File;
+            if (!_fileStructure.TryGetItem(path, out item) || item.Type != ItemType.File) return false;
+            return item.Size;
         }
 
         public bool FolderExists(string path)
@@ -173,33 +173,34 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public void ExtractFile(string path, FileStream fs)
         {
-            var done = false;
             var entry = _archive.Entries.First(e => e.FilePath == path);
             var size = entry.Size;
-            WorkerThread.Run(() =>
+            long totalBytesTransferred = 0;
+            var percentage = 0;
+            using (new Timer(s =>
+                                 {
+                                     long streamLength;
+                                     try
+                                     {
+                                         streamLength = fs.Length;
+                                     }
+                                     catch
+                                     {
+                                         streamLength = size;
+                                     }
+                                     var transferred = streamLength - totalBytesTransferred;
+                                     totalBytesTransferred = streamLength;
+                                     percentage = (int) (totalBytesTransferred*100/size);
+                                     var args = new TransferProgressChangedEventArgs(percentage, transferred, totalBytesTransferred, 0);
+                                     _eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(args);
+                                 }, null, 100, 1))
+            {
+                entry.WriteTo(fs);
+                while (percentage != 100)
                 {
-                    long totalBytesTransferred = 0;
-                    while (!done)
-                    {
-                        Thread.Sleep(100);
-                        long streamLength;
-                        try
-                        {
-                            streamLength = fs.Length;
-                        }
-                        catch
-                        {
-                            streamLength = size;
-                        }
-                        var transferred = streamLength - totalBytesTransferred;
-                        totalBytesTransferred = streamLength;
-                        var percentage = (int)(totalBytesTransferred*100/size);
-                        _eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(percentage, transferred, totalBytesTransferred, 0));
-                    }
-                    return true;
-                });
-            entry.WriteTo(fs);
-            done = true;
+                    Thread.Sleep(100);
+                }
+            }
         }
 
         public FileSystemItem Rename(string path, string newName)

@@ -5,9 +5,11 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using Microsoft.Practices.Composite.Events;
 using Neurotoxin.Godspeed.Core.Io;
 using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Shell.Constants;
+using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
 
@@ -15,6 +17,9 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 {
     public class LocalFileSystemContent : IFileManager
     {
+        private readonly IEventAggregator _eventAggregator;
+        private bool _isAborted;
+
         private const char SLASH = '\\';
         public char Slash
         {
@@ -28,6 +33,11 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             [MarshalAs(UnmanagedType.LPTStr)] string localName,
             [MarshalAs(UnmanagedType.LPTStr)] StringBuilder remoteName,
             ref int length);
+
+        public LocalFileSystemContent(IEventAggregator eventAggregator)
+        {
+            _eventAggregator = eventAggregator;
+        }
 
         public List<FileSystemItem> GetDrives()
         {
@@ -134,9 +144,11 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             return driveInfo.IsReady;
         }
 
-        public bool FileExists(string path)
+        public FileExistenceInfo FileExists(string path)
         {
-            return File.Exists(path);
+            var file = new FileInfo(path);
+            if (file.Exists) return file.Length;
+            return false;
         }
 
         public bool FolderExists(string path)
@@ -171,6 +183,31 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             fs.Read(bytes, 0, bytes.Length);
             fs.Close();
             return bytes;
+        }
+
+        public void CopyFile(string path, FileStream fs, long resumeStartPosition)
+        {
+            _isAborted = false;
+            var totalBytesTransferred = resumeStartPosition;
+            var readStream = File.Open(path, FileMode.Open, FileAccess.Read);
+            var totalBytes = readStream.Length;
+            readStream.Seek(resumeStartPosition, SeekOrigin.Begin);
+            var buffer = new byte[32768];
+            int bytesRead;
+            _eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(-1, resumeStartPosition, resumeStartPosition, resumeStartPosition));
+            while ((bytesRead = readStream.Read(buffer, 0, buffer.Length)) > 0 && !_isAborted)
+            {
+                fs.Write(buffer, 0, bytesRead);
+                totalBytesTransferred += bytesRead;
+                var percentage = (int)(totalBytesTransferred / totalBytes * 100);
+                _eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(percentage, bytesRead, totalBytesTransferred, resumeStartPosition));
+            }
+            readStream.Close();
+        }
+
+        public void AbortCopy()
+        {
+            _isAborted = true;
         }
 
         public FileSystemItem Rename(string path, string newName)

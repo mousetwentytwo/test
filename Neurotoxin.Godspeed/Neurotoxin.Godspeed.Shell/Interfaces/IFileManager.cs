@@ -22,7 +22,7 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
         DateTime GetFileModificationTime(string path);
 
         bool DriveIsReady(string drive);
-        bool FileExists(string path);
+        FileExistenceInfo FileExists(string path);
         bool FolderExists(string path);
 
         void DeleteFolder(string path);

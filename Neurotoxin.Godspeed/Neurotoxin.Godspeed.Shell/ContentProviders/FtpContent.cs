@@ -251,21 +251,18 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             }
         }
 
-        public bool FileExists(string path)
+        public FileExistenceInfo FileExists(string path)
         {
             NotifyFtpOperationStarted(false);
-            bool result;
             try
             {
                 var filename = LocateDirectory(path);
-                result = FtpClient.FileExists(filename);
+                var s = FtpClient.GetFileSize(filename);
+                return s;
             }
-            catch
-            {
-                result = false;
-            }
+            catch {}
             NotifyFtpOperationFinished();
-            return result;
+            return false;
         }
 
         public byte[] ReadFileHeader(string path)

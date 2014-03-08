@@ -8,26 +8,20 @@ namespace Neurotoxin.Godspeed.Shell.Exceptions
         public TransferErrorType Type { get; private set; }
         public string SourceFile { get; private set; }
         public string TargetFile { get; private set; }
+        public long TargetFileSize { get; private set; }
 
-        public TransferException(TransferErrorType type, string sourceFile, string targetFile, Exception innerException, string message, params object[] args)
-            : base(string.Format(message, args), innerException)
+        public TransferException(TransferErrorType type, string message, Exception innerException) 
+            : this(type, message, null, null, 0, innerException)
+        {
+        }
+
+        public TransferException(TransferErrorType type, string message, string sourceFile = null, string targetFile = null, long targetFileSize = 0, Exception innerException = null)
+            : base(message, innerException)
         {
             Type = type;
             SourceFile = sourceFile;
             TargetFile = targetFile;
-        }
-
-        public TransferException(TransferErrorType type, string message, params object[] args)
-            : this(type, null, null, string.Format(message, args))
-        {
-        }
-
-        public TransferException(TransferErrorType type, string sourceFile, string targetFile, string message, params object[] args)
-            : base(string.Format(message, args))
-        {
-            Type = type;
-            SourceFile = sourceFile;
-            TargetFile = targetFile;
+            TargetFileSize = targetFileSize;
         }
     }
 }

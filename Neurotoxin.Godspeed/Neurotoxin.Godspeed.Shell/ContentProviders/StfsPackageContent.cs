@@ -116,9 +116,11 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             return true;
         }
 
-        public bool FileExists(string path)
+        public FileExistenceInfo FileExists(string path)
         {
-            return _stfs.GetFileEntry(path, true) != null;
+            var entry = _stfs.GetFileEntry(path, true);
+            if (entry == null) return false;
+            return entry.FileSize;
         }
 
         public bool FolderExists(string path)

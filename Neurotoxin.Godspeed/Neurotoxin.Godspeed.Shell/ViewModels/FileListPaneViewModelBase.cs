@@ -1225,7 +1225,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 switch (action)
                 {
                     case CopyAction.CreateNew:
-                        if (File.Exists(savePath)) throw new TransferException(TransferErrorType.WriteAccessError, item.Path, savePath, "Target already exists");
+                        var file = new FileInfo(savePath);
+                        if (file.Exists) throw new TransferException(TransferErrorType.WriteAccessError, "Target already exists", item.Path, savePath, file.Length);
                         mode = FileMode.CreateNew;
                         break;
                     case CopyAction.Overwrite:
@@ -1267,8 +1268,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 switch (action)
                 {
                     case CopyAction.CreateNew:
-                        if (FileManager.FileExists(savePath))
-                            throw new TransferException(TransferErrorType.WriteAccessError, itemPath, savePath, "Target already exists");
+                        var exists = FileManager.FileExists(savePath);
+                        if (exists) throw new TransferException(TransferErrorType.WriteAccessError, "Target already exists", itemPath, savePath, exists.Size);
                         CreateFile(savePath, itemPath);
                         break;
                     case CopyAction.Overwrite:

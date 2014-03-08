@@ -430,11 +430,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
             var item = _queue.Dequeue().FileSystemItem;
             FilesTransferred++;
-            if (result)
-            {
-                _statistics.FilesTransferred++;
-                _statistics.BytesTransferred += item.Size ?? 0;
-            }
+            if (result) _statistics.FilesTransferred++;
             var vm = SourcePane.SelectedItems.FirstOrDefault(i => item.Path.StartsWith(i.Path));
             if (vm != null)
             {
@@ -556,11 +552,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             if (queueitem.TransferType == TransferType.Copy)
             {
                 FilesTransferred++;
-                if (result)
-                {
-                    _statistics.FilesTransferred++;
-                    _statistics.BytesTransferred += item.Size ?? 0;
-                }
+                if (result) _statistics.FilesTransferred++;
             }
             var vm = SourcePane.SelectedItems.FirstOrDefault(i => item.Path == i.Path);
             if (vm != null) vm.IsSelected = false;
@@ -932,6 +924,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     if (args.Percentage == 100)
                     {
                         _speedMeter.Stop();
+                        _statistics.BytesTransferred += args.TotalBytesTransferred - args.ResumeStartPosition;
                     } 
                     else if (!_speedMeter.IsRunning)
                     {
@@ -1111,11 +1104,10 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         break;
                     case TransferErrorType.WriteAccessError:
                         {
-                            var sourceFile = _queue.Peek().FileSystemItem.Path;
-                            var targetFile = transferException.TargetFile;
-                            var dialog = new WriteErrorDialog(TargetPane, eventAggregator, sourceFile, targetFile);
-                            SourcePane.GetItemViewModel(sourceFile);
-                            TargetPane.GetItemViewModel(targetFile);
+                            var sourceFile = _queue.Peek().FileSystemItem;
+                            var dialog = new WriteErrorDialog(eventAggregator, sourceFile.Path, transferException.TargetFile, TargetPane.IsResumeSupported && sourceFile.Size < transferException.TargetFileSize);
+                            SourcePane.GetItemViewModel(sourceFile.Path);
+                            TargetPane.GetItemViewModel(transferException.TargetFile);
                             if (dialog.ShowDialog() == true) result = dialog.Result;
                         }
                         break;

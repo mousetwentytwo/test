@@ -4,7 +4,6 @@ using System.Windows.Controls;
 using Microsoft.Practices.Composite.Events;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Events;
-using Neurotoxin.Godspeed.Shell.Exceptions;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
 using Neurotoxin.Godspeed.Shell.ViewModels;
@@ -18,14 +17,15 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
         private readonly IEventAggregator _eventAggregator;
         public TransferErrorDialogResult Result { get; private set; }
 
-        public WriteErrorDialog(IFileListPaneViewModel viewModel, IEventAggregator eventAggregator, string sourceFile, string targetFile)
+        public WriteErrorDialog(IEventAggregator eventAggregator, string sourceFile, string targetFile, bool isResumeSupported)
         {
             _eventAggregator = eventAggregator;
             _sourceFile = sourceFile;
             _targetFile = targetFile;
             Owner = Application.Current.MainWindow;
-            DataContext = viewModel;
             InitializeComponent();
+            Resume.IsEnabled = isResumeSupported;
+            ResumeAll.IsEnabled = isResumeSupported;
             _eventAggregator.GetEvent<ViewModelGeneratedEvent>().Subscribe(ViewModelGenerated);
         }
 

@@ -295,8 +295,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 switch (action)
                 {
                     case CopyAction.CreateNew:
-                        if (FileManager.FileExists(savePath))
-                            throw new TransferException(TransferErrorType.WriteAccessError, item.Path, savePath, "Target already exists");
+                        var exists = FileManager.FileExists(savePath);
+                        if (exists) throw new TransferException(TransferErrorType.WriteAccessError, "Target already exists", item.Path, savePath, exists.Size);
                         break;
                     case CopyAction.Overwrite:
                         FileManager.DeleteFile(savePath);

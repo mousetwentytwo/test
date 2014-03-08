@@ -18,7 +18,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
     public class LocalFileSystemContentViewModel : FileListPaneViewModelBase<LocalFileSystemContent>
     {
         private readonly IEventAggregator _eventAggregator;
-        private bool _isAborted;
 
         public bool IsNetworkDrive
         {
@@ -113,22 +112,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         protected override void SaveToFileStream(FileSystemItem item, FileStream fs, long remoteStartPosition)
         {
-            _isAborted = false;
-            var totalBytesTransferred = remoteStartPosition;
-            var readStream = File.Open(item.Path, FileMode.Open, FileAccess.Read);
-            var totalBytes = readStream.Length;
-            readStream.Seek(remoteStartPosition, SeekOrigin.Begin);
-            var buffer = new byte[32768];
-            int bytesRead;
-            eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(-1, remoteStartPosition, remoteStartPosition, remoteStartPosition));
-            while ((bytesRead = readStream.Read(buffer, 0, buffer.Length)) > 0 && !_isAborted)
-            {
-                fs.Write(buffer, 0, bytesRead);
-                totalBytesTransferred += bytesRead;
-                var percentage = (int)(totalBytesTransferred/totalBytes*100);
-                eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(percentage, bytesRead, totalBytesTransferred, remoteStartPosition));
-            }
-            readStream.Close();
+            FileManager.CopyFile(item.Path, fs, remoteStartPosition);
         }
 
         protected override Exception WrapTransferRelatedExceptions(Exception exception)
@@ -159,7 +143,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public override void Abort()
         {
-            _isAborted = true;
+            FileManager.AbortCopy();
         }
 
         private void OnUsbDeviceChanged(UsbDeviceChangedEventArgs e)
