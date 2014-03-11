@@ -13,8 +13,8 @@ namespace Neurotoxin.Godspeed.Shell.Constants
         F3,
         [StringValue("220-XeXMenu FTPD 0.1, by XeDev")]
         XeXMenu,
-        [StringValue("220 multiMAN")]
-        MultiMan,
+        [StringValue("220-PS3 FTP Server")]
+        PlayStation3,
         [StringValue("220 Microsoft FTP Service")]
         IIS
     }

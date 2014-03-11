@@ -153,6 +153,7 @@
     <Compile Include="Interfaces\IFileManager.cs" />
     <Compile Include="Interfaces\IUserMessageViewModel.cs" />
     <Compile Include="Models\CacheComplexKey.cs" />
+    <Compile Include="Models\FileExistenceInfo.cs" />
     <Compile Include="Models\FileListPaneSettings.cs" />
     <Compile Include="Models\LoadDataAsyncParameters.cs" />
     <Compile Include="Models\ProfileItemWrapper.cs" />

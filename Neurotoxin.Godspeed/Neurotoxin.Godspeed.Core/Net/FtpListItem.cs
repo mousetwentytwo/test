@@ -245,7 +245,7 @@ namespace Neurotoxin.Godspeed.Core.Net
                 item.FullName = path + item.Name;
             else
             {
-                FtpTrace.WriteLine(item.Name);
+                //FtpTrace.WriteLine(item.Name);
 
                 // remove globbing/wildcard from path
                 if (path.GetFtpFileName().Contains("*"))
@@ -400,6 +400,8 @@ namespace Neurotoxin.Godspeed.Core.Net
             switch (m.Groups["type"].Value.ToLower())
             {
                 case "dir":
+                case "cdir":
+                case "pdir":
                     item.Type = FtpFileSystemObjectType.Directory;
                     break;
                 case "file":

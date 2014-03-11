@@ -1904,7 +1904,10 @@ namespace Neurotoxin.Godspeed.Core.Net {
                     // FtpListItem.Parse() returns null if the line
                     // could not be parsed
                     if (item != null)
-                        lst.Add(item);
+                    {
+                        if (item.Name != "." && item.Name != "..")
+                            lst.Add(item);
+                    }
                     else
                         FtpTrace.WriteLine("Failed to parse file listing: " + buf);
                 }

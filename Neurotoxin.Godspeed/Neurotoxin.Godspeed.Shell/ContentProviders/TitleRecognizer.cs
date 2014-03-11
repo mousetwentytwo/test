@@ -375,10 +375,8 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                     result = !string.IsNullOrEmpty(title.Trim());
                 }
             }
-            catch
-            {
-                //TODO: ?
-            }
+            catch {}
+
             if (result)
             {
                 UIThread.Run(() =>

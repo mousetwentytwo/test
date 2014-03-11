@@ -1105,7 +1105,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     case TransferErrorType.WriteAccessError:
                         {
                             var sourceFile = _queue.Peek().FileSystemItem;
-                            var dialog = new WriteErrorDialog(eventAggregator, sourceFile.Path, transferException.TargetFile, TargetPane.IsResumeSupported && sourceFile.Size < transferException.TargetFileSize);
+                            var dialog = new WriteErrorDialog(eventAggregator, sourceFile.Path, transferException.TargetFile, TargetPane.IsResumeSupported && sourceFile.Size > transferException.TargetFileSize);
                             SourcePane.GetItemViewModel(sourceFile.Path);
                             TargetPane.GetItemViewModel(transferException.TargetFile);
                             if (dialog.ShowDialog() == true) result = dialog.Result;

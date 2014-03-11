@@ -5,6 +5,7 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows;
 using Microsoft.Practices.Composite.Events;
 using Neurotoxin.Godspeed.Core.Caching;
@@ -15,18 +16,41 @@ using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Models;
+using Neurotoxin.Godspeed.Shell.ViewModels;
+using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 
 namespace Neurotoxin.Godspeed.Shell.Helpers
 {
     public class SanityChecker
     {
+        private const string PARTICIPATIONMESSAGE = "<b>Help improve GODspeed!</b> Click to set your participation in its User Statistics.";
+        private const string FACEBOOKMESSAGE = "<b>Do you like GODspeed?</b> Do you want to get news about it first hand, share your ideas and/or be a part of its growing community? Then please like its Facebook page!";
+        private const string CODEPLEXMESSAGE = "<b>Thank you for using GODspeed!</b> Do you think you've got an opinion about the current version? Rate and review it on CodePlex! Thanks!";
+
+        private readonly Timer _participationTimer;
+        private readonly Timer _facebookTimer;
+        private readonly Timer _codeplexTimer;
+
         private readonly IEventAggregator _eventAggregator;
 
-        public SanityChecker(IEventAggregator eventAggregator)
+        public SanityChecker(IEventAggregator eventAggregator, StatisticsViewModel statistics)
         {
             _eventAggregator = eventAggregator;
             eventAggregator.GetEvent<CachePopulatedEvent>().Subscribe(OnCachePopulated);
             eventAggregator.GetEvent<ShellInitializedEvent>().Subscribe(OnShellInitialized);
+
+            if (!UserSettings.DisableUserStatisticsParticipation.HasValue)
+            {
+                _participationTimer = new Timer(ParticipationMessage, null, 60000, -1);
+            }
+            if (!UserSettings.IsMessageIgnored(FACEBOOKMESSAGE))
+            {
+                _facebookTimer = new Timer(FacebookMessage, null, 600000, -1);
+            }
+            if (!UserSettings.IsMessageIgnored(CODEPLEXMESSAGE) && statistics.ApplicationStarted > 9 && statistics.TotalUsageTime > new TimeSpan(0, 2, 0, 0))
+            {
+                _codeplexTimer = new Timer(CodeplexMessage, null, 60000, -1);
+            }
         }
 
         private void OnCachePopulated(CachePopulatedEventArgs e)
@@ -126,5 +150,27 @@ namespace Neurotoxin.Godspeed.Shell.Helpers
                                                  : RecognitionState.Recognized;
             cacheStore.Update(key, value);
         }
+
+        private void ParticipationMessage(object state)
+        {
+            _participationTimer.Dispose();
+            var args = new NotifyUserMessageEventArgs(PARTICIPATIONMESSAGE, MessageIcon.Info, MessageCommand.OpenDialog, typeof(UserStatisticsParticipationDialog));
+            _eventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(args);
+        }
+
+        private void FacebookMessage(object state)
+        {
+            _facebookTimer.Dispose();
+            var args = new NotifyUserMessageEventArgs(FACEBOOKMESSAGE, MessageIcon.Info, MessageCommand.OpenUrl, "http://www.facebook.com/godspeedftp", MessageFlags.Ignorable | MessageFlags.IgnoreAfterOpen);
+            _eventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(args);
+        }
+
+        private void CodeplexMessage(object state)
+        {
+            _codeplexTimer.Dispose();
+            var args = new NotifyUserMessageEventArgs(CODEPLEXMESSAGE, MessageIcon.Info, MessageCommand.OpenUrl, "http://godspeed.codeplex.com", MessageFlags.Ignorable | MessageFlags.IgnoreAfterOpen);
+            _eventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(args);
+        }
+
     }
 }

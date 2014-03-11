@@ -157,10 +157,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 {
                     var existing = Drives[i];
                     if (Drive.Name == existing.Name)
-                    {
-                        //TODO: dispose current usb model
                         Drive = GetDefaultDrive();
-                    }
                     Drives.Remove(existing);
                 } 
                 else

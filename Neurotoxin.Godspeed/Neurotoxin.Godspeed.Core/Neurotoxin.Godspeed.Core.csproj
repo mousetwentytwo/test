@@ -178,7 +178,6 @@
     <Compile Include="Security\XSHA1.cs" />
     <Compile Include="Security\XSHA256.cs" />
     <Compile Include="Security\XSHA512.cs" />
-    <Compile Include="Threading\TimerState.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -146,7 +146,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             Drives = FileManager.GetDrives().Select(d => new FileSystemItemViewModel(d)).ToObservableCollection();
             var r = new Regex("^/[A-Z0-9_-]+/", RegexOptions.IgnoreCase);
             var defaultPath = string.IsNullOrEmpty(Connection.Model.DefaultPath)
-                                  ? FileManager.ServerType == FtpServerType.MultiMan ? "/dev_hdd0/" : "/Hdd1/"
+                                  ? FileManager.ServerType == FtpServerType.PlayStation3 ? "/dev_hdd0/" : "/Hdd1/"
                                   : Connection.Model.DefaultPath;
 
             var m = r.Match(defaultPath);
@@ -188,13 +188,13 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         protected override List<FileSystemItem> ChangeDirectoryInner(string selectedPath)
         {
-            return FileManager.ServerType == FtpServerType.MultiMan ? FileManager.GetList(selectedPath) : base.ChangeDirectoryInner(selectedPath);
+            return FileManager.ServerType == FtpServerType.PlayStation3 ? FileManager.GetList(selectedPath) : base.ChangeDirectoryInner(selectedPath);
         }
 
         protected override void ChangeDirectoryCallback(List<FileSystemItem> result)
         {
             base.ChangeDirectoryCallback(result);
-            if (FileManager.ServerType != FtpServerType.MultiMan) return;
+            if (FileManager.ServerType != FtpServerType.PlayStation3) return;
 
             //TODO: recheck
             //PS3 Transfer complete response string
