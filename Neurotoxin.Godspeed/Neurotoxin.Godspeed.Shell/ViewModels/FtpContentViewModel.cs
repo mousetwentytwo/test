@@ -13,7 +13,6 @@ using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
 using Neurotoxin.Godspeed.Shell.Exceptions;
-using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
@@ -196,7 +195,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             base.ChangeDirectoryCallback(result);
             if (FileManager.ServerType != FtpServerType.PlayStation3) return;
 
-            //TODO: recheck
             //PS3 Transfer complete response string
             var r = new Regex(string.Format(@"226 Transfer complete \[{0}\] \[ ([0-9]+.*?free) \]", Drive.Path.TrimEnd('/')));
             var m = r.Match(FileManager.Log.ElementAt(1));

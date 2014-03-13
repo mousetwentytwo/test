@@ -10,14 +10,17 @@ using System.Windows;
 using Microsoft.Practices.Composite.Events;
 using Neurotoxin.Godspeed.Core.Caching;
 using Neurotoxin.Godspeed.Core.Extensions;
+using Neurotoxin.Godspeed.Core.Net;
 using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Models;
+using Neurotoxin.Godspeed.Shell.Reporting;
 using Neurotoxin.Godspeed.Shell.ViewModels;
 using Neurotoxin.Godspeed.Shell.Views.Dialogs;
+using System.Linq;
 
 namespace Neurotoxin.Godspeed.Shell.Helpers
 {
@@ -78,6 +81,7 @@ namespace Neurotoxin.Godspeed.Shell.Helpers
         private void OnShellInitialized(ShellInitializedEventArgs e)
         {
             CheckFrameworkVersion();
+            RetryFailedUserReports();
             if (UserSettings.UseVersionChecker) CheckForNewerVersion();
         }
 
@@ -93,7 +97,7 @@ namespace Neurotoxin.Godspeed.Shell.Helpers
             if (versionOk) return;
 
             const string message = "<b>Warning!</b> Some of the features require .NET version 4.0.30319.18408 (October 2013) or newer. Please update .NET Framework and restart GODspeed to enable those features.";
-            var args = new NotifyUserMessageEventArgs(message, MessageIcon.Info, MessageCommand.OpenUrl, "http://www.microsoft.com/en-us/download/details.aspx?id=40779");
+            var args = new NotifyUserMessageEventArgs(message, MessageIcon.Warning, MessageCommand.OpenUrl, "http://www.microsoft.com/en-us/download/details.aspx?id=40779");
             _eventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(args);
         }
 
@@ -134,6 +138,17 @@ namespace Neurotoxin.Godspeed.Shell.Helpers
                 var args = new NotifyUserMessageEventArgs(message, MessageIcon.Info, MessageCommand.OpenUrl, "http://godspeed.codeplex.com", MessageFlags.None);
                 _eventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(args);
             });
+        }
+
+        private static void RetryFailedUserReports()
+        {
+            var queue = Directory.GetDirectories(Path.Combine(App.DataDirectory, "post"));
+            foreach (var item in queue.OrderBy(f => f))
+            {
+                var file = Directory.GetFiles(item).First();
+                if (!HttpForm.Repost(file)) continue;
+                Directory.Delete(item, true);
+            }
         }
 
         private static void MigrateCacheItemVersion1ToVersion2(string key, CacheEntry<FileSystemItem> value, EsentPersistentDictionary cacheStore, object payload)

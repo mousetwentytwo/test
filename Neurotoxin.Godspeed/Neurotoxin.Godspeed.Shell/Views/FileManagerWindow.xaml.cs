@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
@@ -14,8 +17,11 @@ using Neurotoxin.Godspeed.Core.Io;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Commands;
 using Neurotoxin.Godspeed.Shell.Events;
+using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.ViewModels;
 using Neurotoxin.Godspeed.Shell.Views.Dialogs;
+using System.Linq;
+using Microsoft.Practices.ObjectBuilder2;
 
 namespace Neurotoxin.Godspeed.Shell.Views
 {
@@ -25,6 +31,7 @@ namespace Neurotoxin.Godspeed.Shell.Views
         private bool _isAbortionInProgress;
         private TransferProgressDialog _transferProgressDialog;
         private MigrationProgressDialog _migrationProgressDialog;
+        private Queue<Timer> _userMessageReadTimers;
 
         public FileManagerViewModel ViewModel
         {
@@ -194,5 +201,48 @@ namespace Neurotoxin.Godspeed.Shell.Views
             IsHitTestVisible = true;
             _migrationProgressDialog.Close();
         }
+
+        private void OnUserMessagesOpened(object sender, RoutedEventArgs e)
+        {
+            _userMessageReadTimers = new Queue<Timer>();
+            EnqueueNewTimer();
+            ((MenuItem)sender).ItemContainerGenerator.ItemsChanged += OnUserMessagesItemsChanged;
+        }
+
+        private void EnqueueNewTimer()
+        {
+            var items = ViewModel.UserMessages.Where(m => !m.IsRead).ToArray();
+            if (items.Length == 0) return;
+            var timer = new Timer(CheckUserMessages, items, 3000, -1);
+            _userMessageReadTimers.Enqueue(timer);
+        }
+
+        private void OnUserMessagesClosed(object sender, RoutedEventArgs e)
+        {
+            ((MenuItem)sender).ItemContainerGenerator.ItemsChanged -= OnUserMessagesItemsChanged;
+            lock (_userMessageReadTimers)
+            {
+                while (_userMessageReadTimers.Count > 0)
+                {
+                    var timer = _userMessageReadTimers.Dequeue();
+                    timer.Dispose();
+                }
+            }
+        }
+
+        private void OnUserMessagesItemsChanged(object sender, ItemsChangedEventArgs e)
+        {
+            EnqueueNewTimer();
+        }
+
+        private void CheckUserMessages(object state)
+        {
+            UIThread.Run(() =>
+                             {
+                                 ViewModel.SetUserMessagesToRead((IUserMessageViewModel[])state);
+                                 _userMessageReadTimers.Dequeue();
+                             });
+        }
+
     }
 }

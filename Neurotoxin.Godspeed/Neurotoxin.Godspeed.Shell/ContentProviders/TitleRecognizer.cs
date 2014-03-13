@@ -4,13 +4,13 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
-using System.Threading;
 using Microsoft.Practices.Composite.Events;
 using Neurotoxin.Godspeed.Core.Constants;
 using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Core.Io.Gpd;
 using Neurotoxin.Godspeed.Core.Io.Stfs;
 using Neurotoxin.Godspeed.Core.Models;
+using Neurotoxin.Godspeed.Core.Net;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Events;
@@ -382,7 +382,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 UIThread.Run(() =>
                                  {
                                      const string message = "<b>One or more titles couldn't be recognized fully.</b> If you played with them earlier try to extract the corresponding data from your profile by right clicking and selecting <i>Recognize Titles from Profile</i>.";
-                                     _eventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(new NotifyUserMessageEventArgs(message, MessageIcon.Info));
+                                     _eventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(new NotifyUserMessageEventArgs(message, MessageIcon.Warning));
                                  });
                 item.Title = title;
                 item.RecognitionState = RecognitionState.PartiallyRecognized;

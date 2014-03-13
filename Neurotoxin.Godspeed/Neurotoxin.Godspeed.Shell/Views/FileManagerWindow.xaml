@@ -114,7 +114,7 @@
             
             <Menu Grid.Column="1">
                 <MenuItem Header="{Binding UnreadMessageCount}" FlowDirection="RightToLeft" ItemsSource="{Binding UserMessages}" 
-                          IsSubmenuOpen="{Binding Path=IsMessagesDropdownOpen, Mode=TwoWay}">
+                          SubmenuOpened="OnUserMessagesOpened" SubmenuClosed="OnUserMessagesClosed">
                     <MenuItem.ItemTemplateSelector>
                         <s:MessageTemplateSelector>
                             <s:MessageTemplateSelector.DefaultTemplate>

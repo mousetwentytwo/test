@@ -181,7 +181,7 @@
                                             </MultiBinding>
                                         </TextBlock.Text>
                                     </TextBlock>
-                                    <Image Source="/Resources/warning.png" Width="11" Height="16" Margin="0" 
+                                    <Image Source="/Resources/fileaccesserror.png" Width="11" Height="16" Margin="0" 
                                            Visibility="{Binding IsLocked, Converter={StaticResource BoolToVis}}"
                                            ToolTip="{Binding LockMessage}"/>
                                     <TextBlock Opacity="0.4" Style="{StaticResource CellText}">
@@ -394,6 +394,7 @@
                 <KeyBinding Command="{Binding RefreshCommand}" Key="R" Modifiers="Control"/>
                 <KeyBinding Command="{Binding InvertSelectionCommand}" Key="Multiply"/>
                 <KeyBinding Command="{Binding UpCommand}" Key="Back"/>
+                <KeyBinding Command="{Binding CancelCommand}" Key="Escape"/>
             </DataGrid.InputBindings>
         </DataGrid>
 

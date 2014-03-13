@@ -94,13 +94,16 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             _connection = connection;
             _ftpClient.Connect();
 
-            foreach (var log in Log.Where(e => e.StartsWith("220")))
+            lock (Log)
             {
-                FtpServerType type;
-                if (EnumHelper.TryGetField(log.Trim(), out type))
+                foreach (var log in Log.Where(e => e.StartsWith("220")))
                 {
-                    ServerType = type;
-                    break;
+                    FtpServerType type;
+                    if (EnumHelper.TryGetField(log.Trim(), out type))
+                    {
+                        ServerType = type;
+                        break;
+                    }
                 }
             }
 
@@ -282,7 +285,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             ms.Close();
             if (saveToTempFile)
             {
-                TempFilePath = string.Format(@"{0}\{1}", AppDomain.CurrentDomain.GetData("DataDirectory"), Guid.NewGuid());
+                TempFilePath = Path.Combine(App.DataDirectory, Guid.NewGuid() + ".tmp");
                 File.WriteAllBytes(TempFilePath, result);
             }
             return result;
@@ -457,8 +460,11 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public override void Write(string message)
         {
-            if (!message.EndsWith(Environment.NewLine)) message = Log.Pop() + message;
-            Log.Push(message);
+            lock (Log)
+            {
+                if (!message.EndsWith(Environment.NewLine)) message = Log.Pop() + message;
+                Log.Push(message);
+            }
         }
 
         public override void WriteLine(string message)

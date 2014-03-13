@@ -31,5 +31,6 @@
 * ADDED: New new version detection
 * ADDED: Full FSD 1.x (MinFTPD) support for the old fashioned ones :)
 * ADDED: Pause/Continue buttons in the Windows 7 taskbar thumbnail
-* ADDED: Select drive in dropdown by initial letter
+* ADDED: Select drive in dropdown by initial letter key press
 * ADDED: Shows "?" in Size column while calculating
+* ADDED: Size calculation can now aborted by pressing the Esc key or changing directory

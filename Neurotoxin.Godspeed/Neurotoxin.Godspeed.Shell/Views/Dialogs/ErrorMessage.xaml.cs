@@ -86,7 +86,7 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
                 iw++;
             }
 
-            HttpForm.Post("http://www.mercenary.hu/godspeed/report.php", formData);
+            HttpForm.Post("report.php", formData);
             OkButtonClick(sender, e);
         }
 
@@ -104,9 +104,12 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
                 }
                 if (ftp != null)
                 {
-                    for (var i = ftp.Log.Count - 1; i >= 0; i--)
+                    lock (ftp.Log)
                     {
-                        sb.Append(ftp.Log.ElementAt(i));
+                        for (var i = ftp.Log.Count - 1; i >= 0; i--)
+                        {
+                            sb.Append(ftp.Log.ElementAt(i));
+                        }
                     }
                     return sb.ToString();
                 }

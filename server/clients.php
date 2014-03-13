@@ -17,7 +17,7 @@ switch (trim($_POST['participates'])) {
 		exit;
 }
 
-$query = sprintf("INSERT INTO godspeed_clients (`client_id`,`date`,`participates`) VALUES ('%s','%s',%s)", mysql_real_escape_string($_POST['client_id']), date('Y-m-d H:i:s'), $v);
+$query = sprintf("INSERT INTO godspeed_clients (`client_id`,`date`,`participates`) VALUES ('%s','%s',%s)", mysql_real_escape_string($_POST['client_id']), date('Y-m-d H:i:s', $_POST['date']), $v);
 
 echo $query."\r\n";
 if (!mysql_query($query)) {

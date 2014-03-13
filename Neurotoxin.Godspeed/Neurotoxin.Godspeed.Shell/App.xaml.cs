@@ -23,6 +23,8 @@ namespace Neurotoxin.Godspeed.Shell
     {
         private Bootstrapper _bootstrapper;
 
+        public static string DataDirectory { get; private set; }
+
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
@@ -65,11 +67,13 @@ namespace Neurotoxin.Godspeed.Shell
             var company = asm.GetAttribute<AssemblyCompanyAttribute>().Company;
             var product = asm.GetAttribute<AssemblyProductAttribute>().Product;
             var version = asm.GetAttribute<AssemblyFileVersionAttribute>().Version;
-            var appDir = string.Format(@"{0}\{1}\{2}\{3}", appData, company, product, version);
-            if (!Directory.Exists(appDir)) Directory.CreateDirectory(appDir);
-            AppDomain.CurrentDomain.SetData("DataDirectory", appDir);
-            var tempDir = Path.Combine(appDir, "temp");
+            DataDirectory = string.Format(@"{0}\{1}\{2}\{3}", appData, company, product, version);
+            if (!Directory.Exists(DataDirectory)) Directory.CreateDirectory(DataDirectory);
+            AppDomain.CurrentDomain.SetData("DataDirectory", DataDirectory);
+            var tempDir = Path.Combine(DataDirectory, "temp");
             if (!Directory.Exists(tempDir)) Directory.CreateDirectory(tempDir);
+            var postDir = Path.Combine(DataDirectory, "post");
+            if (!Directory.Exists(postDir)) Directory.CreateDirectory(postDir);
         }
 
         private void AppDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -108,7 +112,7 @@ namespace Neurotoxin.Godspeed.Shell
                 }
 
                 var utcOffset = TimeZone.CurrentTimeZone.GetUtcOffset(statistics.UsageStart);
-                HttpForm.Post("http://www.mercenary.hu/godspeed/stats.php", new List<IFormData>
+                HttpForm.Post("stats.php", new List<IFormData>
                 {
                     new RawPostData("client_id", EsentPersistentDictionary.Instance.Get<string>("ClientID")),
                     new RawPostData("version", GetApplicationVersion()),

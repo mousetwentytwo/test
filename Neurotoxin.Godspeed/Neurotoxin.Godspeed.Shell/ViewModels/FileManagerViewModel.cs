@@ -125,29 +125,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public ObservableCollection<IUserMessageViewModel> UserMessages { get; private set; }
 
-        private const string ISMESSAGESDROPDOWNOPEN = "IsMessagesDropdownOpen";
-        private bool _isMessagesDropdownOpen;
-        public bool IsMessagesDropdownOpen
-        {
-            get { return _isMessagesDropdownOpen; }
-            set
-            {
-                _isMessagesDropdownOpen = value;
-                NotifyPropertyChanged(ISMESSAGESDROPDOWNOPEN);
-                WorkerThread.Run(() =>
-                {
-                    Thread.Sleep(3000);
-                    return true;
-                },
-                                 b =>
-                                 {
-                                     if (!IsMessagesDropdownOpen) return;
-                                     UserMessages.ForEach(m => m.IsRead = true);
-                                     NotifyPropertyChanged(UNREADMESSAGECOUNT);
-                                 });
-            }
-        }
-
         #endregion
 
         #region Transfer properties
@@ -391,7 +368,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         case CopyMode.DirectImport:
                             return TargetPane.Import(item, targetPath, a);
                         case CopyMode.Indirect:
-                            var tempFile = string.Format("{0}\\temp\\{1}", AppDomain.CurrentDomain.GetData("DataDirectory"), item.FullPath.Hash());
+                            var tempFile = Path.Combine(App.DataDirectory, "temp", item.FullPath.Hash());
                             var tempItem = item.Clone();
                             tempItem.Path = tempFile;
                             var result = SourcePane.Export(item, tempFile, CopyAction.Overwrite) &&
@@ -895,6 +872,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             MoveCommand.RaiseCanExecuteChanged();
             NewFolderCommand.RaiseCanExecuteChanged();
             DeleteCommand.RaiseCanExecuteChanged();
+        }
+
+        public void SetUserMessagesToRead(IUserMessageViewModel[] items)
+        {
+            items.ForEach(item => item.IsRead = true);
+            NotifyPropertyChanged(UNREADMESSAGECOUNT);
         }
 
         private void OnTransferActionStarted(string action)

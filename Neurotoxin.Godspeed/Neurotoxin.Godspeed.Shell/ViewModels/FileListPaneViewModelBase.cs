@@ -228,6 +228,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             ProgressMessage = CHANGINGDIRECTORY;
             IsBusy = true;
+            ExecuteCancelCommand();
             WorkerThread.Run(() => ChangeDirectoryInner(CurrentFolder.Path), ChangeDirectoryCallback, AsyncErrorCallback);
         }
 
@@ -391,6 +392,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public DelegateCommand<bool> CalculateSizeCommand { get; private set; }
         private Queue<FileSystemItemViewModel> _calculationQueue;
         private bool _calculationIsRunning;
+        private bool _calculationIsAborted;
 
         private void ExecuteCalculateSizeCommand(bool calculateAll)
         {
@@ -416,6 +418,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             if (_calculationQueue == null || _calculationQueue.Count <= 0 || _calculationIsRunning) return;
 
             _calculationIsRunning = true;
+            _calculationIsAborted = false;
             WorkerThread.Run(CalculateSize, CalculateSizeCallback, AsyncErrorCallback);
         }
 
@@ -431,26 +434,51 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private long CalculateSize(string path)
         {
-            var list = FileManager.GetList(path);
+            if (_calculationIsAborted) return 0;
+
+            List<FileSystemItem> list;
+            try
+            {
+                list = FileManager.GetList(path);
+            }
+            catch
+            {
+                return 0;
+            }
             return list.Where(item => item.Type == ItemType.File).Sum(fi => fi.Size.HasValue ? fi.Size.Value : 0)
                  + list.Where(item => item.Type == ItemType.Directory).Sum(di => CalculateSize(string.Format("{0}{1}/", path, di.Name)));
         }
 
         private void CalculateSizeCallback(long size)
         {
-            var item = _calculationQueue.Dequeue();
-            item.Size = size;
-            item.IsRefreshing = false;
-            if (_calculationQueue.Count > 0)
+            lock (_calculationQueue)
             {
-                WorkerThread.Run(CalculateSize, CalculateSizeCallback, AsyncErrorCallback);
-            } 
-            else
-            {
-                _calculationQueue = null;
-                _calculationIsRunning = false;
+                var item = _calculationQueue.Dequeue();
+                item.Size = size;
+                item.IsRefreshing = false;
+                if (!_calculationIsAborted && _calculationQueue.Count > 0)
+                {
+                    WorkerThread.Run(CalculateSize, CalculateSizeCallback, AsyncErrorCallback);
+                }
+                else
+                {
+                    _calculationQueue = null;
+                    _calculationIsRunning = false;
+                }
             }
             NotifyPropertyChanged(SIZEINFO);
+        }
+
+        private void CalculateSizeAbort()
+        {
+            if (!_calculationIsRunning) return;
+            _calculationIsAborted = true;
+            lock (_calculationQueue)
+            {
+                var item = _calculationQueue.Dequeue();
+                _calculationQueue.Clear();
+                _calculationQueue.Enqueue(item);
+            }
         }
 
         #endregion
@@ -933,6 +961,17 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #endregion
 
+        #region CancelCommand
+
+        public DelegateCommand CancelCommand { get; private set; }
+
+        private void ExecuteCancelCommand()
+        {
+            if (_calculationIsRunning) CalculateSizeAbort();
+        }
+
+        #endregion
+
         #region CloseCommand
 
         public DelegateCommand CloseCommand { get; protected set; }
@@ -980,6 +1019,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             RenameFileSystemItemCommand = new DelegateCommand<object>(ExecuteRenameFileSystemItemCommand, CanExecuteRenameFileSystemItemCommand);
             RefreshCommand = new DelegateCommand(ExecuteRefreshCommand, CanExecuteRefreshCommand);
             UpCommand = new DelegateCommand(ExecuteUpCommand, CanExecuteUpCommand);
+            CancelCommand = new DelegateCommand(ExecuteCancelCommand);
             SelectDriveByInitialLetterCommand = new DelegateCommand<EventInformation<KeyEventArgs>>(ExecuteSelectDriveByInitialLetterCommand);
 
             Items = new ObservableCollection<FileSystemItemViewModel>();

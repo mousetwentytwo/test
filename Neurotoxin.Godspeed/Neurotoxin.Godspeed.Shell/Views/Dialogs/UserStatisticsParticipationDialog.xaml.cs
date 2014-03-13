@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows;
 using Neurotoxin.Godspeed.Core.Caching;
+using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Formatters;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
@@ -26,9 +27,10 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
         {
             var p = No.IsChecked != true;
             UserSettings.DisableUserStatisticsParticipation = p;
-            HttpForm.Post("http://www.mercenary.hu/godspeed/clients.php", new List<IFormData>
+            HttpForm.Post("clients.php", new List<IFormData>
                     {
                         new RawPostData("client_id", EsentPersistentDictionary.Instance.Get<string>("ClientID")),
+                        new RawPostData("date", DateTime.Now.ToUnixTimestamp()),
                         new RawPostData("participates", p ? "yes" : "no"),
                     });
             base.OkButtonClick(sender, e);
