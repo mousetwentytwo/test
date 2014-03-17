@@ -378,6 +378,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         case CopyMode.RemoteExport:
                             if (new Regex(@"[^\x20-\x7f]").IsMatch(targetPath))
                             {
+                                //TODO: not sure this is the right idea
+                                _copyMode = CopyMode.DirectExport;
+                                CloseTelnetSession();
                                 eventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(new NotifyUserMessageEventArgs(REMOTE_COPY_CANNOT_BE_USED, MessageIcon.Info));
                                 return SourcePane.Export(item, targetPath, a);
                             }
@@ -385,6 +388,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         case CopyMode.RemoteImport:
                             if (new Regex(@"[^\x20-\x7f]").IsMatch(item.Path))
                             {
+                                //TODO: not sure this is the right idea
+                                _copyMode = CopyMode.DirectImport;
+                                CloseTelnetSession();
                                 eventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(new NotifyUserMessageEventArgs(REMOTE_COPY_CANNOT_BE_USED, MessageIcon.Info));
                                 return TargetPane.Import(item, targetPath, a);
                             }

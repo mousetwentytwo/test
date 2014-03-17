@@ -107,6 +107,10 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 }
             }
 
+            //disabling SIZE because most of the FTPs don't support it
+            //TODO: better detection
+            _ftpClient.Capabilities &= ~FtpCapability.SIZE;
+
             var r = FtpClient.Execute("APPE");
             return !r.Message.Contains("command not recognized");
         }
@@ -260,8 +264,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             try
             {
                 var filename = LocateDirectory(path);
-                var s = FtpClient.GetFileSize(filename);
-                return s;
+                return FtpClient.GetFileSize(filename);
             }
             catch {}
             NotifyFtpOperationFinished();
@@ -427,12 +430,14 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         private void NotifyFtpOperationStarted(bool binaryTransfer)
         {
             _eventAggregator.GetEvent<FtpOperationStartedEvent>().Publish(new FtpOperationStartedEventArgs(binaryTransfer));
+            _notificationTimer.Restart();
         }
 
         private void NotifyFtpOperationFinished(long? streamLength = null)
         {
             _isIdle = true;
             _eventAggregator.GetEvent<FtpOperationFinishedEvent>().Publish(new FtpOperationFinishedEventArgs(streamLength));
+            _notificationTimer.Stop();
         }
 
         private void NotifyFtpOperationProgressChanged(int percentage, long transferred, long totalBytesTransferred, long resumeStartPosition, bool force = false)

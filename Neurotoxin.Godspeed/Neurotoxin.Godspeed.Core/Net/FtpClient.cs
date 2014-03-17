@@ -443,7 +443,7 @@ namespace Neurotoxin.Godspeed.Core.Net {
 
                 return m_caps;
             }
-            protected set {
+            set {
                 m_caps = value;
             }
         }
@@ -872,8 +872,8 @@ namespace Neurotoxin.Godspeed.Core.Net {
                     m_caps |= FtpCapability.MDTM;
                 else if (feat.ToUpper().Trim().StartsWith("REST STREAM"))
                     m_caps |= FtpCapability.REST;
-                //else if (feat.ToUpper().Trim().StartsWith("SIZE"))
-                //    m_caps |= FtpCapability.SIZE;
+                else if (feat.ToUpper().Trim().StartsWith("SIZE"))
+                    m_caps |= FtpCapability.SIZE;
                 else if (feat.ToUpper().Trim().StartsWith("UTF8"))
                     m_caps |= FtpCapability.UTF8;
                 else if (feat.ToUpper().Trim().StartsWith("PRET"))
@@ -2310,14 +2310,28 @@ namespace Neurotoxin.Godspeed.Core.Net {
             FtpReply reply;
             long length = 0;
 
-            try {
+            try
+            {
                 m_lock.WaitOne();
 
-                if (!(reply = Execute("SIZE {0}", path.GetFtpPath())).Success)
-                    return -1;
+                if (Capabilities.HasFlag(FtpCapability.SIZE))
+                {
+                    if (!(reply = Execute("SIZE {0}", path.GetFtpPath())).Success)
+                        return -1;
 
-                if (!long.TryParse(reply.Message, out length))
-                    return -1;
+                    if (!long.TryParse(reply.Message, out length))
+                        return -1;
+                }
+                else
+                {
+                    string dirname = path.GetFtpDirectoryName();
+                    if (!DirectoryExists(dirname))
+                        return -1;
+
+                    foreach (FtpListItem item in GetListing(dirname))
+                        if (item.Type == FtpFileSystemObjectType.File && item.Name == path.GetFtpFileName())
+                            return item.Size;
+                }
             }
             finally {
                 m_lock.ReleaseMutex();
