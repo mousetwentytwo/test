@@ -44,7 +44,7 @@
 			<img src="occurance.php?col=wpf"/>
 			<img src="occurance.php?col=os"/>
 			<img src="occurance.php?col=culture"/>
-			<img src="occurance.php?col=country"/>
+			<img src="occurance.php?col=country_name"/>
 			<img src="occurance.php?col=exit_code"/>
 			<img src="stability.php"/>
 			<img src="usage.php"/>

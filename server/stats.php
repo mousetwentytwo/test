@@ -8,7 +8,7 @@ function visitor_country()
     $client  = @$_SERVER['HTTP_CLIENT_IP'];
     $forward = @$_SERVER['HTTP_X_FORWARDED_FOR'];
     $remote  = $_SERVER['REMOTE_ADDR'];
-    $result  = "Unknown";
+    $result  = array();
     if(filter_var($client, FILTER_VALIDATE_IP))
     {
         $ip = $client;
@@ -24,9 +24,10 @@ function visitor_country()
 
     $ip_data = @json_decode(file_get_contents("http://www.geoplugin.net/json.gp?ip=".$ip));
 
-    if($ip_data && $ip_data->geoplugin_countryName != null)
+    if($ip_data)
     {
-        $result = $ip_data->geoplugin_countryName;
+        $result['name'] = $ip_data->geoplugin_countryName;
+		$result['code'] = $ip_data->geoplugin_countryCode;
     }
 
     return $result;
@@ -34,8 +35,9 @@ function visitor_country()
 
 include('db.php');
 
-$columns = '`country`';
-$values = "'".visitor_country()."'";
+$country = visitor_country();
+$columns = '`country_code`, `country_name`';
+$values = "'".$country['code']."','".$country['name']."'";
 
 foreach ($_POST as $k => $v) {
 	if ($k == 'command_usage') {

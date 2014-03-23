@@ -3871,7 +3871,7 @@
 		<row><td>IDS__TargetReq_DESC_PROCESSOR</td><td>1033</td><td>The processor is not adequate for running [ProductName].</td><td>0</td><td/><td>-1390293551</td></row>
 		<row><td>IDS__TargetReq_DESC_RAM</td><td>1033</td><td>The amount of RAM is not adequate for running [ProductName].</td><td>0</td><td/><td>-1390293551</td></row>
 		<row><td>IDS__TargetReq_DESC_RESOLUTION</td><td>1033</td><td>The screen resolution is not adequate for running [ProductName].</td><td>0</td><td/><td>-1390293551</td></row>
-		<row><td>ID_STRING1</td><td>1033</td><td>http://www.Neurotoxin.com</td><td>0</td><td/><td>832735442</td></row>
+		<row><td>ID_STRING1</td><td>1033</td><td>http://godspeed.codeplex.com</td><td>0</td><td/><td>-1448980973</td></row>
 		<row><td>ID_STRING2</td><td>1033</td><td>Neurotoxin</td><td>0</td><td/><td>832735442</td></row>
 		<row><td>ID_STRING3</td><td>1033</td><td>GODspeed</td><td>0</td><td/><td>-1390344623</td></row>
 		<row><td>ID_STRING4</td><td>1033</td><td>UNINST~1|Uninstall GODspeed</td><td>0</td><td/><td>-1390332335</td></row>
@@ -3983,7 +3983,7 @@
 		<col def="V0">Data</col>
 		<col def="S255">ISBuildSourcePath</col>
 		<col def="I2">ISIconIndex</col>
-		<row><td>ARPPRODUCTICON.exe</td><td/><td>D:\Work\NTX-CNT\svn\Neurotoxin.Godspeed\Neurotoxin.Godspeed.Shell\Resources\app.ico</td><td>0</td></row>
+		<row><td>ARPPRODUCTICON.exe</td><td/><td>c:\merc\svn\contour\Neurotoxin.Godspeed\Neurotoxin.Godspeed.Shell\Resources\app.ico</td><td>0</td></row>
 		<row><td>NewShortcut2_7FCAF3BC947E40918F8EAA2CF5FD178A.exe</td><td/><td>C:\Program Files (x86)\InstallShield\2012SpringLE\Redist\Language Independent\OS Independent\uninstall.ico</td><td>0</td></row>
 	</table>
 
