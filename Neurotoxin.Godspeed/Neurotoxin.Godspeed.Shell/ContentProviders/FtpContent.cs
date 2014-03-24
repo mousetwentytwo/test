@@ -305,8 +305,8 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 var filename = LocateDirectory(remotePath);
                 if (fileSize == -1)
                 {
-                    var list = FtpClient.GetListing();
-                    fileSize = list.First(file => file.Name == filename).Size;
+                    fileSize = FtpClient.GetFileSize(filename);
+                    if (fileSize == -1) throw new FtpException("File not exists: " + remotePath);
                 }
                 _isIdle = false;
                 _isAborted = false;

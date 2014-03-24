@@ -2308,7 +2308,7 @@ namespace Neurotoxin.Godspeed.Core.Net {
         /// <example><code source="..\Examples\GetFileSize.cs" lang="cs" /></example>
         public virtual long GetFileSize(string path) {
             FtpReply reply;
-            long length = 0;
+            long length = -1;
 
             try
             {

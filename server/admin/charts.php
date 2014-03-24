@@ -49,7 +49,7 @@ function stacked($data, $title, $filename) {
 	$DataSet = new pData;
 	$values = $data['values'];
 	
-	$bar = new pChart(700,230);
+	$bar = new pChart(900,230);
 	
 	for ($i = 0; $i < count($values); $i++) {
 		$DataSet->AddPoint($values[$i], "Serie".($i+1));
@@ -64,9 +64,9 @@ function stacked($data, $title, $filename) {
 	// Initialise the graph
 	$bar->setDateFormat("M.d");	
 	$bar->setFontProperties("Fonts/consola.ttf",8);
-	$bar->setGraphArea(80,30,680,200);
-	$bar->drawFilledRoundedRectangle(2,2,697,227,5,240,240,240);
-	$bar->drawRoundedRectangle(0,0,699,229,5,230,230,230);
+	$bar->setGraphArea(80,30,880,200);
+	$bar->drawFilledRoundedRectangle(2,2,897,227,5,240,240,240);
+	$bar->drawRoundedRectangle(0,0,899,229,5,230,230,230);
 	$bar->loadColorPalette('chartcolors.txt', ',');
 	$bar->drawGraphArea(255,255,255,TRUE);
 	$bar->drawScale($DataSet->GetData(),$DataSet->GetDataDescription(),SCALE_ADDALL,150,150,150,TRUE,0,2,TRUE);

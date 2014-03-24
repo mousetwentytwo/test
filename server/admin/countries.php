@@ -6,10 +6,19 @@
 	}
 
 	include("../db.php");
-	$query = "SELECT country_code, count(country_code) as num FROM `godspeed_stats` group by country_code ORDER BY COUNT(country_code) DESC";
+	$query = "SELECT country_code, country_name, count(*) as num FROM `godspeed_stats` group by country_code, country_name ORDER BY COUNT(*) DESC";
 	$rs = mysql_query($query);
 	if (!mysql_query($query)) {
 		echo mysql_error();
+	}
+	
+	$mapData = '';
+	$tableData = '';
+	$count = 0;
+	while ($row = mysql_fetch_assoc($rs)) {
+		$mapData .= sprintf('"%s": %s, ', $row['country_code'], $row['num']);
+		$tableData .= sprintf('<tr><td>%s</td><td>%s</td></tr>', $row['country_name'], $row['num']);
+		$count++;
 	}
 	
 ?>
@@ -19,17 +28,20 @@
 		<script type="text/javascript" src="js/jquery-jvectormap-1.2.2.min.js"></script>
 		<script type="text/javascript" src="js/jquery-jvectormap-world-mill-en.js"></script>
 		<link rel="stylesheet" href="css/jquery-jvectormap-1.2.2.css"/>
+		<link rel="stylesheet" href="css/admin.css"/>
 	</head>
 	<body>
 		<div id="world-map"></div>
+		<div class="list">
+			<h1><?php echo $count; ?></h1>
+			<table>
+				<?php echo $tableData; ?>
+			</table>
+		</div>
 		<script type="text/javascript">
 			$(function(){
 			  var data = {
-				<?php
-					while ($row = mysql_fetch_assoc($rs)) {
-						printf('"%s": %s, ', $row['country_code'], $row['num']);
-					}
-				?>
+				<?php echo $mapData; ?>
 			  };
 			  var container = $('#world-map');
 			  container.vectorMap({

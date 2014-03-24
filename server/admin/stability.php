@@ -24,7 +24,7 @@
 	);
 
 	while ($row = mysql_fetch_assoc($rs)) {
-		if ($row[$key] == 0) {
+		if ($row['key'] == 0) {
 			$values[0] += $row['value'];
 		} else {
 			$values[1] += $row['value'];
@@ -45,7 +45,7 @@
 		header("Content-Type: image/png");
 		header("Content-Length: " . filesize($name));
 		fpassthru($fp);
+	} else {
+		print_r($data);
 	}
-
-	exit;
 ?>

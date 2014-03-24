@@ -16,7 +16,7 @@
 	echo '<h1>Commands</h1>';
 	echo '<table><tr><th>Command</th><th>Count</th></tr>';
 	while ($row = mysql_fetch_assoc($rs)) {
-		printf('<tr><td>%s</td><td align="center">%s</td></tr>', $row['command'], $row['count']);
+		printf('<tr><td>%s</td><td align="center">%s</td></tr>', htmlspecialchars($row['command']), $row['count']);
 	} 
 	echo '</table>';
 ?>
