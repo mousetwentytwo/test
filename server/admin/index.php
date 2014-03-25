@@ -11,6 +11,7 @@
 			<img src="occurance.php?col=country_name"/>
 			<img src="occurance.php?col=exit_code"/>
 			<img src="stability.php"/>
+			<img src="participation.php"/>
 			<img src="usage.php"/>
 			<img src="clients.php"/>
 			<img src="recognition.php"/>
