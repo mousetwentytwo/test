@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Threading;
@@ -25,20 +27,38 @@ namespace Neurotoxin.Godspeed.Shell
 
         public static string DataDirectory { get; private set; }
 
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool SetForegroundWindow(IntPtr hWnd);
+
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
             SetDataDirectory();
-            Dispatcher.CurrentDispatcher.UnhandledException += UnhandledThreadingException;
-            EsentPersistentDictionary.Instance.Set("ClientID", Guid.NewGuid().ToString());
-            
-            ShutdownMode = ShutdownMode.OnMainWindowClose;
+            //TODO: what if two instances run for the first time and both pass this check and throw access exception later?
+            if (EsentPersistentDictionary.IsInstantiable)
+            {
+                Dispatcher.CurrentDispatcher.UnhandledException += UnhandledThreadingException;
+                EsentPersistentDictionary.Instance.Set("ClientID", Guid.NewGuid().ToString());
+
+                ShutdownMode = ShutdownMode.OnMainWindowClose;
 
 #if (DEBUG)
-            RunInDebugMode();
+                RunInDebugMode();
 #else
-              RunInReleaseMode();
+                RunInReleaseMode();
 #endif
+            }
+            else
+            {
+                var current = Process.GetCurrentProcess();
+                foreach (var process in Process.GetProcessesByName(current.ProcessName).Where(process => process.Id != current.Id))
+                {
+                    SetForegroundWindow(process.MainWindowHandle);
+                    break;
+                }
+                Shutdown();
+            }
         }
 
         private void RunInDebugMode()
@@ -60,7 +80,7 @@ namespace Neurotoxin.Godspeed.Shell
             }
         }
 
-        private void SetDataDirectory()
+        private static void SetDataDirectory()
         {
             var asm = Assembly.GetExecutingAssembly();
             var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
@@ -96,44 +116,47 @@ namespace Neurotoxin.Godspeed.Shell
 
         protected override void OnExit(ExitEventArgs e)
         {
-            var fileManager = _bootstrapper.Resolve<FileManagerViewModel>();
-            if (!fileManager.IsDisposed) fileManager.Dispose();
-            var statistics = _bootstrapper.Resolve<StatisticsViewModel>();
-            if (e.ApplicationExitCode != 0) statistics.ApplicationCrashed++;
-
-            statistics.PersistData();
-
-            if (UserSettings.DisableUserStatisticsParticipation != false)
+            if (_bootstrapper != null)
             {
-                var commandUsage = new StringBuilder();
-                foreach (var kvp in statistics.CommandUsage)
-                {
-                    commandUsage.AppendLine(string.Format("{0}={1}", kvp.Key, kvp.Value));
-                }
+                var fileManager = _bootstrapper.Resolve<FileManagerViewModel>();
+                if (!fileManager.IsDisposed) fileManager.Dispose();
+                var statistics = _bootstrapper.Resolve<StatisticsViewModel>();
+                if (e.ApplicationExitCode != 0) statistics.ApplicationCrashed++;
 
-                var utcOffset = TimeZone.CurrentTimeZone.GetUtcOffset(statistics.UsageStart);
-                HttpForm.Post("stats.php", new List<IFormData>
+                statistics.PersistData();
+
+                if (!Debugger.IsAttached && UserSettings.DisableUserStatisticsParticipation != false)
                 {
-                    new RawPostData("client_id", EsentPersistentDictionary.Instance.Get<string>("ClientID")),
-                    new RawPostData("version", GetApplicationVersion()),
-                    new RawPostData("wpf", GetFrameworkVersion()),
-                    new RawPostData("os", Environment.OSVersion.VersionString),
-                    new RawPostData("culture", CultureInfo.CurrentCulture.Name),
-                    new RawPostData("uiculture", CultureInfo.CurrentUICulture.Name),
-                    new RawPostData("osculture", CultureInfo.InstalledUICulture.Name),
-                    new RawPostData("date", statistics.UsageStart.ToUnixTimestamp()),
-                    new RawPostData("timezone", string.Format("{0}{1:D2}:{2:D2}", utcOffset.Hours >= 0 ? "+" : string.Empty, utcOffset.Hours, utcOffset.Minutes)),
-                    new RawPostData("usage", Math.Floor(statistics.UsageTime.TotalSeconds)),
-                    new RawPostData("exit_code", e.ApplicationExitCode),
-                    new RawPostData("games_recognized", statistics.GamesRecognizedFully),
-                    new RawPostData("partially_recognized", statistics.GamesRecognizedPartially),
-                    new RawPostData("svod_recognized", statistics.SvodPackagesRecognized),
-                    new RawPostData("stfs_recognized", statistics.StfsPackagesRecognized),
-                    new RawPostData("transferred_bytes", statistics.BytesTransferred),
-                    new RawPostData("transferred_files", statistics.FilesTransferred),
-                    new RawPostData("transfer_time", Math.Floor(statistics.TimeSpentWithTransfer.TotalSeconds)),
-                    new RawPostData("command_usage", commandUsage)
-                });
+                    var commandUsage = new StringBuilder();
+                    foreach (var kvp in statistics.CommandUsage)
+                    {
+                        commandUsage.AppendLine(string.Format("{0}={1}", kvp.Key, kvp.Value));
+                    }
+
+                    var utcOffset = TimeZone.CurrentTimeZone.GetUtcOffset(statistics.UsageStart);
+                    HttpForm.Post("stats.php", new List<IFormData>
+                        {
+                            new RawPostData("client_id", EsentPersistentDictionary.Instance.Get<string>("ClientID")),
+                            new RawPostData("version", GetApplicationVersion()),
+                            new RawPostData("wpf", GetFrameworkVersion()),
+                            new RawPostData("os", Environment.OSVersion.VersionString),
+                            new RawPostData("culture", CultureInfo.CurrentCulture.Name),
+                            new RawPostData("uiculture", CultureInfo.CurrentUICulture.Name),
+                            new RawPostData("osculture", CultureInfo.InstalledUICulture.Name),
+                            new RawPostData("date", statistics.UsageStart.ToUnixTimestamp()),
+                            new RawPostData("timezone", string.Format("{0}{1:D2}:{2:D2}", utcOffset.Hours >= 0 ? "+" : string.Empty, utcOffset.Hours, utcOffset.Minutes)),
+                            new RawPostData("usage", Math.Floor(statistics.UsageTime.TotalSeconds)),
+                            new RawPostData("exit_code", e.ApplicationExitCode),
+                            new RawPostData("games_recognized", statistics.GamesRecognizedFully),
+                            new RawPostData("partially_recognized", statistics.GamesRecognizedPartially),
+                            new RawPostData("svod_recognized", statistics.SvodPackagesRecognized),
+                            new RawPostData("stfs_recognized", statistics.StfsPackagesRecognized),
+                            new RawPostData("transferred_bytes", statistics.BytesTransferred),
+                            new RawPostData("transferred_files", statistics.FilesTransferred),
+                            new RawPostData("transfer_time", Math.Floor(statistics.TimeSpentWithTransfer.TotalSeconds)),
+                            new RawPostData("command_usage", commandUsage)
+                        });
+                }
             }
             base.OnExit(e);
         }

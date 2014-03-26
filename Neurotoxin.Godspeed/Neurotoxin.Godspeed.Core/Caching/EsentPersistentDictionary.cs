@@ -1,3 +1,4 @@
+using System.IO;
 using Microsoft.Isam.Esent.Collections.Generic;
 using System;
 using ServiceStack.Text;
@@ -10,16 +11,14 @@ namespace Neurotoxin.Godspeed.Core.Caching
 	    private static EsentPersistentDictionary _instance;
 	    public static EsentPersistentDictionary Instance
 	    {
-	        get {
-	            return _instance ??
-	                   (_instance = new EsentPersistentDictionary(AppDomain.CurrentDomain.GetData("DataDirectory").ToString()));
-	        }
+	        get { return _instance ?? (_instance = new EsentPersistentDictionary()); }
 	    }
 
 		private readonly PersistentDictionary<string, string> _persistentDictionary;
 
-		private EsentPersistentDictionary(string path)
+		private EsentPersistentDictionary()
 		{
+		    var path = AppDomain.CurrentDomain.GetData("DataDirectory").ToString();
 			_persistentDictionary = new PersistentDictionary<string, string>(path);
 		}
 
@@ -38,7 +37,33 @@ namespace Neurotoxin.Godspeed.Core.Caching
             }
 	    }
 
-		public T Get<T>(string key)
+	    public static bool IsInstantiable
+	    {
+	        get
+	        {
+	            var path = Path.Combine(AppDomain.CurrentDomain.GetData("DataDirectory").ToString(), "PersistentDictionary.edb");
+	            if (!File.Exists(path)) return true;
+
+	            Stream stream = null;
+	            bool result;
+                try
+                {
+                    stream = new FileStream(path, FileMode.Open, FileAccess.Read);
+                    result = true;
+                }
+                catch
+                {
+                    result = false;
+                }
+                finally
+                {
+                    if (stream != null) stream.Dispose();
+                }
+	            return result;
+	        }
+	    }
+
+	    public T Get<T>(string key)
 		{
 		    var content = _persistentDictionary[key];
             try

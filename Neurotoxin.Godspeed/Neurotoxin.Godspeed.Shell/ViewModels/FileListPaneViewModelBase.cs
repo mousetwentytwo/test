@@ -1109,7 +1109,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 var path = PathCache[Drive];
                 var clearPath = new Regex(@"^(.*)[\\/].*(:[\\/]).*$");
                 path = clearPath.Replace(path, "$1");
-                var model = FileManager.GetItemInfo(path, path == Drive.Path ? ItemType.Drive : ItemType.Directory);
+                var model = FileManager.GetItemInfo(path);
+                if (path == Drive.Path) model.Type = ItemType.Drive;
                 CurrentFolder = model != null ? new FileSystemItemViewModel(model) : Drive;
             }
             else

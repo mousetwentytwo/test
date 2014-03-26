@@ -88,7 +88,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             if (di.Attributes.HasFlag(FileAttributes.ReparsePoint))
                 path = new ReparsePoint(path).Target;
 
-            var list = Directory.GetDirectories(path).Select(GetDirectoryInfo).ToList();
+            var list = Directory.GetDirectories(path).Select(p => GetDirectoryInfo(p)).ToList();
             list.AddRange(Directory.GetFiles(path).Select(GetFileInfo));
             return list;
         }
@@ -100,19 +100,19 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public FileSystemItem GetItemInfo(string path, ItemType? type)
         {
-            if (path.EndsWith("\\") && Directory.Exists(path)) return GetDirectoryInfo(path);
+            if (path.EndsWith("\\") && Directory.Exists(path)) return GetDirectoryInfo(path, type);
             if (File.Exists(path)) return GetFileInfo(path);
             path += SLASH;
-            return Directory.Exists(path) ? GetDirectoryInfo(path) : null;
+            return Directory.Exists(path) ? GetDirectoryInfo(path, type) : null;
         }
 
-        private static FileSystemItem GetDirectoryInfo(string path)
+        private static FileSystemItem GetDirectoryInfo(string path, ItemType? type = null)
         {
             if (!path.EndsWith("\\")) path += SLASH;
             return new FileSystemItem
                        {
                            Name = Path.GetFileName(path.TrimEnd(SLASH)),
-                           Type = ItemType.Directory,
+                           Type = type ?? ItemType.Directory,
                            Date = Directory.GetLastWriteTime(path),
                            Path = path,
                            FullPath = path
