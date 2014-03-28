@@ -6,7 +6,7 @@
 		<div class="charts">
 			<img src="occurance.php?col=version"/>
 			<img src="occurance.php?col=wpf"/>
-			<img src="occurance.php?col=os"/>
+			<img src="occurance.php?col=os&crop=29&keyr=os.txt"/>
 			<img src="occurance.php?col=culture"/>
 			<img src="occurance.php?col=country_name"/>
 			<img src="occurance.php?col=exit_code"/>
@@ -22,5 +22,16 @@
 				include('commands.php');
 			?>
 		</div>
+		<div class="list">
+			<?php
+				include('loyalty.php');
+			?>
+		</div>
+		<div class="list">
+		<?php
+			include('countries-inner.php');
+			printf("<h1>%s countries<br/>%s users (+%s unknown)</h1>", $count, $sum, $all-$sum);
+			printf('<table><tr><th>Country</th><th>Users</th></tr>%s</table>', $tableData);
+		?>
 	</body>
 </html>

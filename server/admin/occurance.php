@@ -9,12 +9,24 @@
 	include("charts.php");
 
 	$col = $_GET['col'];
+	$crop = isset($_GET['crop']) ? $_GET['crop'] : 0;
 	$name = "./charts/$col.png";
 	
-	$query = "SELECT $col AS `key`, COUNT($col) AS `value` FROM `godspeed_stats` GROUP BY $col ORDER BY COUNT($col) DESC";
+	$column = isset($_GET['crop']) ? sprintf('substring(`%s`, 1, %s)', $col, $_GET['crop']) : $col;
+	
+	$query = "SELECT $column AS `key`, COUNT(*) AS `value` FROM `godspeed_stats` GROUP BY $column ORDER BY COUNT(*) DESC";
 	$rs = mysql_query($query);
 	if (!mysql_query($query)) {
 		echo mysql_error();
+	}
+	
+	$keyr = array();
+	if (isset($_GET['keyr'])) {
+		$f = file($_GET['keyr']);
+		for ($i = 0; $i < count($f); $i++) {
+			$x = explode('|', trim($f[$i]));
+			$keyr[$x[0]] = $x[1];
+		}
 	}
 
 	$keys = array();
@@ -26,6 +38,7 @@
 		if ($j < 7) {
 			$k = $row['key'];
 			if ($k == null || $k == '') $k = '<empty>';
+			if (isset($keyr[$k])) $k = $keyr[$k];
 			array_push($keys, $k);
 			array_push($values, $row['value']);
 			$j++;
@@ -74,6 +87,9 @@
 		header("Content-Type: image/png");
 		header("Content-Length: " . filesize($name));
 		fpassthru($fp);
+	} else {
+		echo $query;
+		print_r($data);
 	}
 
 	exit;
