@@ -87,6 +87,12 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WPFLocalizeExtension">
+      <HintPath>..\packages\WpfLocalizeExtension.2.2.0\lib\net35\WPFLocalizeExtension.dll</HintPath>
+    </Reference>
+    <Reference Include="XAMLMarkupExtensions">
+      <HintPath>..\packages\XAMLMarkupExtensions.1.1.6.3\lib\net40\XAMLMarkupExtensions.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -108,6 +114,7 @@
     <Compile Include="Constants\ModuleLoadInfoCollection.cs" />
     <Compile Include="Constants\OpenStfsPackageMode.cs" />
     <Compile Include="Constants\RecognitionState.cs" />
+    <Compile Include="Constants\Strings.cs" />
     <Compile Include="Constants\TitleType.cs" />
     <Compile Include="Constants\ToggleSelectionMode.cs" />
     <Compile Include="Constants\TransferErrorType.cs" />
@@ -163,6 +170,11 @@
       <DependentUpon>CaptionButtons.xaml</DependentUpon>
     </Compile>
     <Compile Include="Primitives\DialogBase.cs" />
+    <Compile Include="Properties\Resources.hu-HU.Designer.cs">
+      <DependentUpon>Resources.hu-HU.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="Reporting\RawPostData.cs" />
     <Compile Include="Reporting\HttpForm.cs" />
     <Compile Include="Reporting\ErrorReport.cs" />
@@ -410,9 +422,15 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <EmbeddedResource Include="Properties\Resources.hu-HU.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.hu-HU.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="App.config">
       <SubType>Designer</SubType>

@@ -18,9 +18,6 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
         {
             Owner = Application.Current.MainWindow;
             InitializeComponent();
-            var desc = ApplicationExtensions.GetContentByteArray("/Resources/UserStatisticsParticipation.html");
-            Description.TextFormatter = new HtmlFormatter();
-            Description.Text = Encoding.UTF8.GetString(desc);
         }
 
         protected override void OkButtonClick(object sender, RoutedEventArgs e)

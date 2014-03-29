@@ -12,6 +12,7 @@ namespace Neurotoxin.Godspeed.Shell.Primitives
             SizeToContent = SizeToContent.Height;
             if (!UserSettings.DisableCustomChrome) Style = (Style)Application.Current.Resources["Dialog"];
             PreviewKeyDown += OnPreviewKeyDown;
+            WindowStartupLocation = WindowStartupLocation.CenterOwner;
         }
 
         protected virtual void OnPreviewKeyDown(object sender, KeyEventArgs e)
@@ -33,6 +34,5 @@ namespace Neurotoxin.Godspeed.Shell.Primitives
             DialogResult = false;
             Close();
         }
-
     }
 }

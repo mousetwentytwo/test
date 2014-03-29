@@ -3,7 +3,11 @@
                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                        xmlns:dialogs="clr-namespace:Neurotoxin.Godspeed.Shell.Views.Dialogs"
                        xmlns:primitives="clr-namespace:Neurotoxin.Godspeed.Shell.Primitives"
-                       Width="450" WindowStartupLocation="CenterOwner"
+                       xmlns:lex="http://wpflocalizeextension.codeplex.com"
+                       lex:LocalizeDictionary.DesignCulture="en-US"
+                       lex:ResxLocalizationProvider.DefaultAssembly="Neurotoxin.Godspeed.Shell"
+                       lex:ResxLocalizationProvider.DefaultDictionary="Resources"
+                       Width="450"
                        Title="{Binding ProgressValue, StringFormat={x:Static dialogs:MigrationProgressDialog.TitleFormat}}">
     <primitives:DialogBase.TaskbarItemInfo>
         <TaskbarItemInfo ProgressValue="{Binding ProgressValueDouble}"/>
@@ -14,7 +18,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <TextBlock Text="Your cached data needs to be migrated to a newer format. Please wait while this happens..." Margin="0,0,0,5" TextWrapping="Wrap" Width="320" HorizontalAlignment="Left"/>
+        <TextBlock Text="{lex:LocText MigrationProgressMessage}" Margin="0,0,0,5" TextWrapping="Wrap" Width="320" HorizontalAlignment="Left"/>
         <ProgressBar Grid.Row="1" Minimum="0" Maximum="100" Value="{Binding ProgressValue, Mode=OneWay}" Height="16"/>
     </Grid>
 </primitives:DialogBase>

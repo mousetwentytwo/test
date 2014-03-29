@@ -3,16 +3,25 @@
                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                        xmlns:primitives="clr-namespace:Neurotoxin.Godspeed.Shell.Primitives"
                        xmlns:controls="clr-namespace:Neurotoxin.Godspeed.Presentation.Controls;assembly=Neurotoxin.Godspeed.Presentation"
-                       Width="400" WindowStartupLocation="CenterOwner">
+                       xmlns:f="clr-namespace:Neurotoxin.Godspeed.Presentation.Formatters;assembly=Neurotoxin.Godspeed.Presentation"
+                       xmlns:lex="http://wpflocalizeextension.codeplex.com"
+                       lex:LocalizeDictionary.DesignCulture="en-US"
+                       lex:ResxLocalizationProvider.DefaultAssembly="Neurotoxin.Godspeed.Shell"
+                       lex:ResxLocalizationProvider.DefaultDictionary="Resources"
+                       Width="400">
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <controls:RichTextBox Grid.Row="0" Margin="5,0,0,15" x:Name="Description"/>
+        <controls:RichTextBox Grid.Row="0" Margin="5,0,0,15" Text="{lex:LocText AboutContent}">
+            <controls:RichTextBox.TextFormatter>
+                <f:HtmlFormatter/>
+            </controls:RichTextBox.TextFormatter>
+        </controls:RichTextBox>
 
-        <Button Grid.Row="1" Content="Close" Width="75" x:Name="Ok" Click="OkButtonClick"/>
+        <Button Grid.Row="1" Content="{lex:LocText Close}" Width="75" x:Name="Ok" Click="OkButtonClick"/>
 
     </Grid>
 </primitives:DialogBase>

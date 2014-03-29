@@ -46,7 +46,7 @@
     
     mimetype: application/x-microsoft.net.object.binary.base64
     value   : The object must be serialized with 
-            : System.Serialization.Formatters.Binary.BinaryFormatter
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
     
     mimetype: application/x-microsoft.net.object.soap.base64
@@ -60,6 +60,7 @@
             : and then encoded with base64 encoding.
     -->
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -68,9 +69,10 @@
               <xsd:sequence>
                 <xsd:element name="value" type="xsd:string" minOccurs="0" />
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" />
+              <xsd:attribute name="name" use="required" type="xsd:string" />
               <xsd:attribute name="type" type="xsd:string" />
               <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="assembly">
@@ -85,9 +87,10 @@
                 <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
                 <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
               <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
               <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="resheader">
@@ -109,9 +112,350 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="WriteErrorDialogTitle" xml:space="preserve">
+    <value>Target already exists</value>
+  </data>
+  <data name="TargetFileHeader" xml:space="preserve">
+    <value>Overwrite</value>
+  </data>
+  <data name="SourceFileHeader" xml:space="preserve">
+    <value>With this</value>
+  </data>
+  <data name="Overwrite" xml:space="preserve">
+    <value>Overwrite</value>
+  </data>
+  <data name="OverwriteAll" xml:space="preserve">
+    <value>Overwrite all</value>
+  </data>
+  <data name="OverwriteAllOlder" xml:space="preserve">
+    <value>Overwrite all older</value>
+  </data>
+  <data name="Resume" xml:space="preserve">
+    <value>Resume</value>
+  </data>
+  <data name="ResumeAll" xml:space="preserve">
+    <value>Resume all</value>
+  </data>
+  <data name="Rename" xml:space="preserve">
+    <value>Rename</value>
+  </data>
+  <data name="Skip" xml:space="preserve">
+    <value>Skip</value>
+  </data>
+  <data name="SkipAll" xml:space="preserve">
+    <value>Skip all</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="WriteErrorDialogButtonWidth" xml:space="preserve">
+    <value>116</value>
+  </data>
+  <data name="FilesMenu" xml:space="preserve">
+    <value>Files</value>
+  </data>
+  <data name="CommandsMenu" xml:space="preserve">
+    <value>Commands</value>
+  </data>
+  <data name="CalculateOccupiedSpace" xml:space="preserve">
+    <value>Calculate Occupied Space</value>
+  </data>
+  <data name="OptionsMenu" xml:space="preserve">
+    <value>Options</value>
+  </data>
+  <data name="HelpMenu" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="OfficialGODspeedwebsite" xml:space="preserve">
+    <value>Official GODspeed website</value>
+  </data>
+  <data name="OfficialGODspeedFacebookpage" xml:space="preserve">
+    <value>Official GODspeed Facebook page</value>
+  </data>
+  <data name="Messages" xml:space="preserve">
+    <value>Messages</value>
+  </data>
+  <data name="EditButton" xml:space="preserve">
+    <value>F4 Edit</value>
+  </data>
+  <data name="CopyButton" xml:space="preserve">
+    <value>F5 Copy</value>
+  </data>
+  <data name="MoveButton" xml:space="preserve">
+    <value>F6 Move</value>
+  </data>
+  <data name="NewFolderButton" xml:space="preserve">
+    <value>F7 New Folder</value>
+  </data>
+  <data name="DeleteButton" xml:space="preserve">
+    <value>F8 Delete</value>
+  </data>
+  <data name="AboutContent" xml:space="preserve">
+    <value>&lt;p&gt;Author: Mercenary/Neurotoxin&lt;br/&gt;Homepage: &lt;a href="http://godspeed.codeplex.com" target="_blank"&gt;http://godspeed.codeplex.com&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.&lt;/p&gt;
+&lt;p&gt;This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.&lt;/p&gt;
+&lt;p&gt;You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&lt;/p&gt;</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="UnhandledErrorOccurred" xml:space="preserve">
+    <value>Unhandled error occurred</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="FTPLog" xml:space="preserve">
+    <value>FTP Log</value>
+  </data>
+  <data name="Report" xml:space="preserve">
+    <value>Report</value>
+  </data>
+  <data name="Ok" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="IOError" xml:space="preserve">
+    <value>IO error</value>
+  </data>
+  <data name="WhatDoYouWantToDo" xml:space="preserve">
+    <value>What do you want to do?</value>
+  </data>
+  <data name="Retry" xml:space="preserve">
+    <value>Retry</value>
+  </data>
+  <data name="MigrationProgressMessage" xml:space="preserve">
+    <value>Your cached data needs to be migrated to a newer format. Please wait while this happens...</value>
+  </data>
+  <data name="ConnectionDetails" xml:space="preserve">
+    <value>Connection details</value>
+  </data>
+  <data name="ConnectionName" xml:space="preserve">
+    <value>Connection name</value>
+  </data>
+  <data name="Console" xml:space="preserve">
+    <value>Console</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="Port" xml:space="preserve">
+    <value>Port</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="AnonymousLogin" xml:space="preserve">
+    <value>Anonymous login</value>
+  </data>
+  <data name="UsePassiveMode" xml:space="preserve">
+    <value>Use Passive Mode (Please note that XeXMenu doesn't support PASV!)</value>
+  </data>
+  <data name="DontShowThisMessageAgain" xml:space="preserve">
+    <value>Don't show this message again</value>
+  </data>
+  <data name="ConnectionLost" xml:space="preserve">
+    <value>Connection lost</value>
+  </data>
+  <data name="DoYouWantToReconnect" xml:space="preserve">
+    <value>Do you want to reconnect?</value>
+  </data>
+  <data name="SessionInitiationFailed" xml:space="preserve">
+    <value>Session initiation failed</value>
+  </data>
+  <data name="ContinueWithIndirectCopy" xml:space="preserve">
+    <value>Continue with regular (indirect) copy</value>
+  </data>
+  <data name="TurnOffRemoteCopyAndContinue" xml:space="preserve">
+    <value>Turn off Remote Copy and Continue</value>
+  </data>
+  <data name="Abort" xml:space="preserve">
+    <value>Abort</value>
+  </data>
+  <data name="Pause" xml:space="preserve">
+    <value>Pause</value>
+  </data>
+  <data name="Continue" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="About" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="Exit" xml:space="preserve">
+    <value>Exit</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Statistics" xml:space="preserve">
+    <value>Statistics</value>
+  </data>
+  <data name="UserStatisticsParticipation" xml:space="preserve">
+    <value>User Statistics Participation</value>
+  </data>
+  <data name="YesImWillingToParticipate" xml:space="preserve">
+    <value>Yes, I'm willing to participate (Recommended)</value>
+  </data>
+  <data name="NoIWouldNotLikeToParticipate" xml:space="preserve">
+    <value>No, I would not like to participate</value>
+  </data>
+  <data name="Connections" xml:space="preserve">
+    <value>Connections</value>
+  </data>
+  <data name="UserStatisticsParticipationContent" xml:space="preserve">
+    <value>&lt;p&gt;&lt;b&gt;Help improve GODspeed&lt;/b&gt;&lt;/p&gt;
+&lt;p&gt;Participate in its User Statistics and help improve the quality, reliability and performance of this software. If you choose to participate:&lt;/p&gt;
+&lt;div&gt;GODspeed will collect:&lt;/div&gt;
+&lt;ul&gt;
+    &lt;li&gt;Anonymous usage data&lt;/li&gt;
+    &lt;li&gt;Language settings&lt;/li&gt;
+    &lt;li&gt;System information (OS and .NET Framework version)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div&gt;But GODspeed will NOT:&lt;/div&gt;
+&lt;ul&gt;
+    &lt;li&gt;Collect your name, address or any other personal information&lt;/li&gt;
+    &lt;li&gt;Collect anything which could be used as a proof of piracy&lt;/li&gt;
+    &lt;li&gt;Give away the collected information to any third party&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div&gt;You can stop participating at any time. Just go to the &lt;i&gt;Help&lt;/i&gt; menu, select &lt;i&gt;User Statistics Participation&lt;/i&gt;, then select &lt;i&gt;No, I would not like to participate&lt;/i&gt;.&lt;/div&gt;</value>
+  </data>
+  <data name="Disconnect" xml:space="preserve">
+    <value>Disconnect</value>
+  </data>
+  <data name="SaveAndClose" xml:space="preserve">
+    <value>Save and Close</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Size" xml:space="preserve">
+    <value>Size</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="RecognizeAgain" xml:space="preserve">
+    <value>Recognize Again</value>
+  </data>
+  <data name="RecognizeTitlesFromProfile" xml:space="preserve">
+    <value>Recognize Titles from Profile</value>
+  </data>
+  <data name="OpenProfile" xml:space="preserve">
+    <value>Open Profile</value>
+  </data>
+  <data name="CopyTitleIDtoClipboard" xml:space="preserve">
+    <value>Copy TitleID to Clipboard</value>
+  </data>
+  <data name="SearchGoogle" xml:space="preserve">
+    <value>Search Google</value>
+  </data>
+  <data name="SaveThumbnailAs" xml:space="preserve">
+    <value>Save Thumbnail as...</value>
+  </data>
+  <data name="RenameTitle" xml:space="preserve">
+    <value>Rename Title</value>
+  </data>
+  <data name="ProfileRebuilder" xml:space="preserve">
+    <value>Profile Rebuilder</value>
+  </data>
+  <data name="FileStructure" xml:space="preserve">
+    <value>File Structure</value>
+  </data>
+  <data name="ContentRecognition" xml:space="preserve">
+    <value>Content recognition</value>
+  </data>
+  <data name="UseJQE360" xml:space="preserve">
+    <value>Use jqe360.com for game recognition</value>
+  </data>
+  <data name="CacheExpiration" xml:space="preserve">
+    <value>Cache expiration</value>
+  </data>
+  <data name="Profile" xml:space="preserve">
+    <value>Profile</value>
+  </data>
+  <data name="InvalidateCacheIfSourceChanges" xml:space="preserve">
+    <value>Invalidate cache if source changes</value>
+  </data>
+  <data name="RecognizedGame" xml:space="preserve">
+    <value>Recognized game</value>
+  </data>
+  <data name="PartiallyRecognizedGame" xml:space="preserve">
+    <value>Partially recognized game</value>
+  </data>
+  <data name="UnrecognizedGame" xml:space="preserve">
+    <value>Unrecognized game</value>
+  </data>
+  <data name="XboxLiveContent" xml:space="preserve">
+    <value>Xbox Live Content</value>
+  </data>
+  <data name="UnknownContent" xml:space="preserve">
+    <value>Unknown Content</value>
+  </data>
+  <data name="ClearCache" xml:space="preserve">
+    <value>Clear Cache</value>
+  </data>
+  <data name="Operation" xml:space="preserve">
+    <value>Operation</value>
+  </data>
+  <data name="UseRemoteCopy" xml:space="preserve">
+    <value>Use Remote Copy between NAS and FTP if able</value>
+  </data>
+  <data name="Appearance" xml:space="preserve">
+    <value>Appearance</value>
+  </data>
+  <data name="DisableCustomWindowChrome" xml:space="preserve">
+    <value>Disable Custom Window Chrome</value>
+  </data>
+  <data name="Misc" xml:space="preserve">
+    <value>Misc</value>
+  </data>
+  <data name="CheckForNewerVersionOnStartup" xml:space="preserve">
+    <value>Check for newer version on startup</value>
+  </data>
+  <data name="NeedsRestartToApplyChanges" xml:space="preserve">
+    <value>* needs restart to apply changes</value>
+  </data>
+  <data name="GamesRecognizedFully" xml:space="preserve">
+    <value>Games recognized fully</value>
+  </data>
+  <data name="GamesRecognizedPartially" xml:space="preserve">
+    <value>Games recognized partially</value>
+  </data>
+  <data name="SVODPackagesRecognized" xml:space="preserve">
+    <value>SVOD packages recognized</value>
+  </data>
+  <data name="STFSPackagesRecognized" xml:space="preserve">
+    <value>STFS packages recognized</value>
+  </data>
+  <data name="TotalFilesTransferred" xml:space="preserve">
+    <value>Total files transferred</value>
+  </data>
+  <data name="TotalBytesTransferred" xml:space="preserve">
+    <value>Total bytes transferred</value>
+  </data>
+  <data name="TotalTimeSpentWithTransfer" xml:space="preserve">
+    <value>Total time spent with transfer</value>
+  </data>
+  <data name="TotalUsageTime" xml:space="preserve">
+    <value>Total usage time</value>
+  </data>
+  <data name="ApplicationStarted" xml:space="preserve">
+    <value>Application started</value>
+  </data>
+  <data name="ApplicationCrashed" xml:space="preserve">
+    <value>Application crashed</value>
+  </data>
 </root>

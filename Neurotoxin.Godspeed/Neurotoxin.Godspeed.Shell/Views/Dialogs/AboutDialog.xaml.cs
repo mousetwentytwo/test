@@ -1,7 +1,4 @@
-﻿using System.Text;
-using System.Windows;
-using Neurotoxin.Godspeed.Presentation.Extensions;
-using Neurotoxin.Godspeed.Presentation.Formatters;
+﻿using System.Windows;
 
 namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
 {
@@ -12,9 +9,6 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
             Owner = Application.Current.MainWindow;
             Title = Owner.Title;
             InitializeComponent();
-            var desc = ApplicationExtensions.GetContentByteArray("/Resources/About.html");
-            Description.TextFormatter = new HtmlFormatter();
-            Description.Text = Encoding.UTF8.GetString(desc);
             Loaded += OnLoaded;
         }
 
