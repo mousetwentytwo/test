@@ -1,0 +1,3 @@
+* FIXED Issue #173: Do not let multiple instances to run
+* FIXED: Misbehaving [..] folder on local file system
+* ADDED: Hungarian language support

@@ -47,6 +47,7 @@
                     <converters:TitleConverter x:Key="TitleConverter"/>
                     <converters:NameConverter x:Key="NameConverter"/>
                     <converters:ContentTypeConverter x:Key="ContentTypeConverter"/>
+                    <converters:RenameFileConverter x:Key="RenameFileConverter"/>
                     <converters:PaneHeaderBackgroundConverter x:Key="PaneHeaderBackgroundConverter"
                                                   ActivePaneBrush="{StaticResource DefaultedBorderBrush}"
                                                   InactivePaneBrush="{StaticResource NormalBorderBrush}"/>

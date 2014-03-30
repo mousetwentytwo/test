@@ -105,6 +105,7 @@
     <Compile Include="Formatters\HtmlFormatter.cs" />
     <Compile Include="Formatters\ITextFormatter.cs" />
     <Compile Include="Formatters\PlainTextFormatter.cs" />
+    <Compile Include="Formatters\PluralFormatProvider.cs" />
     <Compile Include="Formatters\RtfFormatter.cs" />
     <Compile Include="Formatters\XamlFormatter.cs" />
     <Compile Include="Infrastructure\AsyncResult.cs" />

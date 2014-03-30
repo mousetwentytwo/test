@@ -1809,6 +1809,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0:#,0} / {1:#,0} bytes in {2} / {3:file;files}, {4} / {5:dir;dirs}.
+        /// </summary>
+        internal static string SizeInfo {
+            get {
+                return ResourceManager.GetString("SizeInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Skip.
         /// </summary>
         internal static string Skip {
@@ -2275,15 +2284,6 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         internal static string WriteErrorDialogButtonWidth {
             get {
                 return ResourceManager.GetString("WriteErrorDialogButtonWidth", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Target already exists.
-        /// </summary>
-        internal static string WriteErrorDialogTitle {
-            get {
-                return ResourceManager.GetString("WriteErrorDialogTitle", resourceCulture);
             }
         }
         

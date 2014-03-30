@@ -13,6 +13,7 @@ using Microsoft.Practices.Unity;
 using Microsoft.Win32;
 using Neurotoxin.Godspeed.Core.Io.Stfs;
 using Neurotoxin.Godspeed.Core.Models;
+using Neurotoxin.Godspeed.Presentation.Formatters;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
@@ -151,11 +152,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 var totalFileCount = Items.Count(item => item.Type == ItemType.File);
                 var selectedDirCount = Items.Count(item => item.Type == ItemType.Directory && item.IsSelected);
                 var totalDirCount = Items.Count(item => item.Type == ItemType.Directory && !item.IsUpDirectory);
-                const string s = "s";
 
-                return string.Format("{0:#,0} / {1:#,0} bytes in {2} / {3} file{4}, {5} / {6} dir{7}", selectedSize,
-                                     totalSize, selectedFileCount, totalFileCount, totalFileCount > 1 ? s : string.Empty,
-                                     selectedDirCount, totalDirCount, totalDirCount > 1 ? s : string.Empty);
+                return string.Format(new PluralFormatProvider(), Resx.SizeInfo, selectedSize, totalSize, selectedFileCount, totalFileCount, selectedDirCount, totalDirCount);
             }
         }
 

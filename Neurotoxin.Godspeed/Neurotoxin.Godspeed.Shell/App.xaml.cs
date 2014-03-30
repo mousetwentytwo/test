@@ -125,6 +125,7 @@ namespace Neurotoxin.Godspeed.Shell
 
                 statistics.PersistData();
 
+                //TODO: Better detection
                 if (!Debugger.IsAttached && UserSettings.DisableUserStatisticsParticipation != false)
                 {
                     var commandUsage = new StringBuilder();

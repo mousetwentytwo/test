@@ -43,7 +43,7 @@ namespace Neurotoxin.Godspeed.Shell.Converters
                     t = type.GetType().Name;
                     v = type.ToString();
                 }
-                string.Format("<{0}>", Resx.ResourceManager.GetString(t + v).ToUpper());
+                return string.Format("<{0}>", Resx.ResourceManager.GetString(t + v).ToUpper());
             }
             return Convert(values[0], targetType, parameter, culture);
         }

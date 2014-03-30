@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Windows;
 using Microsoft.Practices.Composite.Modularity;
 using Microsoft.Practices.Composite.UnityExtensions;
@@ -9,6 +10,7 @@ using Neurotoxin.Godspeed.Shell.Controllers;
 using Neurotoxin.Godspeed.Shell.Helpers;
 using Neurotoxin.Godspeed.Shell.ViewModels;
 using Neurotoxin.Godspeed.Shell.Views;
+using WPFLocalizeExtension.Engine;
 
 namespace Neurotoxin.Godspeed.Shell
 {
@@ -56,6 +58,7 @@ namespace Neurotoxin.Godspeed.Shell
 
         protected override DependencyObject CreateShell()
         {
+            LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("hu-HU");
             Container.Resolve<SanityChecker>();
             var shell = Container.Resolve<FileManagerWindow>();
             var viewModel = (FileManagerViewModel)shell.DataContext;
