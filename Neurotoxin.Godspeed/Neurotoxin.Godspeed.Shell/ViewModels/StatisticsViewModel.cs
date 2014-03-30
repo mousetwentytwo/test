@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Microsoft.Practices.Composite.Events;
 using Neurotoxin.Godspeed.Core.Caching;
 using Neurotoxin.Godspeed.Core.Constants;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;

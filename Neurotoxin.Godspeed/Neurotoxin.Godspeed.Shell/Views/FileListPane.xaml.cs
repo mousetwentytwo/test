@@ -1,11 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Reflection;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Input;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
 using Neurotoxin.Godspeed.Presentation.Extensions;
@@ -18,8 +16,6 @@ namespace Neurotoxin.Godspeed.Shell.Views
 {
     public partial class FileListPane : UserControl
     {
-        public const string DateTimeUiFormat = "dd/MM/yyyy HH:mm";
-
         public FileListPane()
         {
             InitializeComponent();

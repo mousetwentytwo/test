@@ -228,7 +228,7 @@
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding Path=Date, StringFormat={x:Static views:FileListPane.DateTimeUiFormat}}"
+                <DataGridTextColumn Binding="{Binding Path=Date, StringFormat={lex:LocText DateTimeFormat}}"
                                     Header="{lex:LocText Date}" SortMemberPath="Date" Width="100" IsReadOnly="True">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">

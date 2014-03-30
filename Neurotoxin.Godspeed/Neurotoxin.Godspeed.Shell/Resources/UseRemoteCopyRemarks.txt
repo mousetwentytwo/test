@@ -1,1 +1,0 @@
-﻿Please note that not every NAS is supported. Your NAS has to be Telnet-enabled (on default port) and should support LFTP. Once these requirements are met, you can speed up your transfer using this option. However you will lose the possibility of immediate file transfer abortion, you have to wait till the up- or download of the current file in queue finishes.

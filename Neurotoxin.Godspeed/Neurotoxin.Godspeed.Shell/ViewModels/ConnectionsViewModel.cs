@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
@@ -14,6 +13,7 @@ using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
 using System.Linq;
+using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
@@ -192,7 +192,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private FtpContentViewModel FtpConnect(IStoredConnectionViewModel connection)
         {
             IsBusy = true;
-            ProgressMessage = string.Format("Connecting to {0}...", connection.Name);
+            ProgressMessage = string.Format(Resx.ConnectingToFtp, connection.Name);
             var connectedFtp = container.Resolve<FtpContentViewModel>();
             connectedFtp.LoadDataAsync(LoadCommand.Load, new LoadDataAsyncParameters(Settings.Clone("/"), connection), FtpConnectSuccess, FtpConnectError);
             return connectedFtp;
@@ -214,7 +214,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             } 
             else
             {
-                NotificationMessage.ShowMessage("Connection failed", string.Format("Can't connect to {0}", connectionName));
+                NotificationMessage.ShowMessage(Resx.ConnectionFailed, string.Format(Resx.CantConnectToFtp, connectionName));
             }
             ConnectedFtp = null;
         }

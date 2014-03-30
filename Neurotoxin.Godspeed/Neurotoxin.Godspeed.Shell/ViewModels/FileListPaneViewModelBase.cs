@@ -26,6 +26,7 @@ using Microsoft.Practices.Composite;
 using Microsoft.Practices.ObjectBuilder2;
 using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 using Neurotoxin.Godspeed.Core.Extensions;
+using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
@@ -39,7 +40,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #region Constants
 
-        private const string CHANGINGDIRECTORY = "Changing directory...";
         protected abstract string ExportActionDescription { get; }
         protected abstract string ImportActionDescription { get; }
 
@@ -226,7 +226,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void ChangeDirectory()
         {
-            ProgressMessage = CHANGINGDIRECTORY;
+            ProgressMessage = Resx.ChangingDirectory + Strings.DotDotDot;
             IsBusy = true;
             ExecuteCancelCommand();
             WorkerThread.Run(() => ChangeDirectoryInner(CurrentFolder.Path), ChangeDirectoryCallback, AsyncErrorCallback);
@@ -258,7 +258,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 {
                     result.Insert(0, new FileSystemItem
                         {
-                            Name = "..",
+                            Name = Strings.UpDirectory,
                             Type = CurrentFolder.Type,
                             Date = CurrentFolder.Date,
                             Path = CurrentFolder.Path,
@@ -295,7 +295,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void ExecuteOpenStfsPackageCommand(OpenStfsPackageMode mode)
         {
-            ProgressMessage = string.Format("Opening profile {0}...", CurrentRow.ComputedName);
+            ProgressMessage = string.Format("{0} {1}...", Resx.OpeningProfile, CurrentRow.ComputedName);
             IsBusy = true;
             WorkerThread.Run(() => OpenStfsPackage(CurrentRow.Model), b => OpenStfsPackageCallback(b, mode), AsyncErrorCallback);
         }
@@ -341,7 +341,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void OpenStfsPackageError(PaneViewModelBase pane, Exception exception)
         {
             IsBusy = false;
-            NotificationMessage.ShowMessage("Open failed", string.Format("Can't open {0}: {1}", CurrentRow.ComputedName, exception.Message));
+            NotificationMessage.ShowMessage(Resx.OpenFailed, string.Format("{0}: {1}", string.Format(Resx.CantOpenFile, CurrentRow.ComputedName), exception.Message));
         }
 
         #endregion
@@ -357,7 +357,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void ExecuteOpenCompressedFileCommand()
         {
-            ProgressMessage = string.Format("Opening archive {0}...", CurrentRow.ComputedName);
+            ProgressMessage = string.Format("{0} {1}...", Resx.OpeningArchive, CurrentRow.ComputedName);
             IsBusy = true;
             WorkerThread.Run(() => OpenCompressedFile(CurrentRow.Model), OpenCompressedFileCallback, AsyncErrorCallback);
         }
@@ -382,7 +382,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void OpenCompressedFileError(PaneViewModelBase pane, Exception exception)
         {
             IsBusy = false;
-            NotificationMessage.ShowMessage("Open failed", string.Format("Can't open {0}: {1}", CurrentRow.ComputedName, exception.Message));
+            NotificationMessage.ShowMessage(Resx.OpenFailed, string.Format("{0}: {1}", string.Format(Resx.CantOpenFile, CurrentRow.ComputedName), exception.Message));
         }
 
         #endregion
@@ -676,7 +676,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 {
                     selection.Where(i => !_queue.Contains(i)).ForEach(_queue.Enqueue);
                     var item = _queue.Peek();
-                    ProgressMessage = string.Format("Recognizing item {0} ({1} left)...", item.Name, _queue.Count - 1);
+                    ProgressMessage = string.Format(Resx.RecognizingItem, item.Name, _queue.Count - 1);
                 }
                 else
                 {
@@ -701,7 +701,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void ExecuteRecognizeFromProfileCommand()
         {
             IsBusy = true;
-            ProgressMessage = "Scanning profile...";
+            ProgressMessage = Resx.ScanningProfile + Strings.DotDotDot;
             WorkerThread.Run(RecognizeFromProfile, RecognizeFromProfileCallback, AsyncErrorCallback);
         }
 
@@ -736,8 +736,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void RecognizeFromProfileCallback(int count)
         {
             IsBusy = false;
-            var message = count < 1 ? "No new titles found." : string.Format("{0} new title{1} found.", count, count > 1 ? "s" : string.Empty);
-            NotificationMessage.ShowMessage("Title Recognition", message);
+            var message = count < 1 ? Resx.NoNewTitlesFound : string.Format(count > 1 ? Resx.NewTitleFoundPlural : Resx.NewTitleFoundSingular, count);
+            NotificationMessage.ShowMessage(Resx.TitleRecognition, message);
         }
 
         #endregion
@@ -902,7 +902,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public virtual void Refresh(Action callback)
         {
-            ProgressMessage = "Refreshing directory...";
+            ProgressMessage = Resx.RefreshingDirectory + Strings.DotDotDot;
             IsBusy = true;
             WorkerThread.Run(
                 () => ChangeDirectoryInner(CurrentFolder.Path),
@@ -949,7 +949,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             try
             {
                 var folder = FileManager.GetItemInfo(parentPath, ItemType.Directory);
-                if (folder == null) throw new ApplicationException("Item not exists on path: " + parentPath);
+                if (folder == null) throw new ApplicationException(string.Format(Resx.ItemNotExistsOnPath, parentPath));
                 return new FileSystemItemViewModel(folder);
             }
             catch(TransferException ex)
@@ -1153,7 +1153,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
             WorkerThread.Run(() => FileManager.GetItemInfo(itemPath, ItemType.File), item =>
                 {
-                    if (item == null) throw new ApplicationException("Item not exists on path: " + itemPath);
+                    if (item == null) throw new ApplicationException(string.Format(Resx.ItemNotExistsOnPath, itemPath));
                     var vm = new FileSystemItemViewModel(item);
                     RecognitionInner(item, i => PublishItemViewModel(vm), null);
                 });
@@ -1166,7 +1166,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 if (_queue.Count > 0)
                 {
                     var item = _queue.Peek();
-                    ProgressMessage = string.Format("Recognizing item {0} ({1} left)...", item.Name, _queue.Count - 1);
+                    ProgressMessage = string.Format(Resx.RecognizingItem + Strings.DotDotDot, item.Name, _queue.Count - 1);
                     RecognitionInner(item, RecognitionSuccess, RecognitionError);
                 }
                 else
@@ -1267,7 +1267,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 {
                     case CopyAction.CreateNew:
                         var file = new FileInfo(savePath);
-                        if (file.Exists) throw new TransferException(TransferErrorType.WriteAccessError, "Target already exists", item.Path, savePath, file.Length);
+                        if (file.Exists) throw new TransferException(TransferErrorType.WriteAccessError, Resx.TargetAlreadyExists, item.Path, savePath, file.Length);
                         mode = FileMode.CreateNew;
                         break;
                     case CopyAction.Overwrite:
@@ -1310,7 +1310,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 {
                     case CopyAction.CreateNew:
                         var exists = FileManager.FileExists(savePath);
-                        if (exists) throw new TransferException(TransferErrorType.WriteAccessError, "Target already exists", itemPath, savePath, exists.Size);
+                        if (exists) throw new TransferException(TransferErrorType.WriteAccessError, Resx.TargetAlreadyExists, itemPath, savePath, exists.Size);
                         CreateFile(savePath, itemPath);
                         break;
                     case CopyAction.Overwrite:
@@ -1339,7 +1339,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             UIThread.Run(() =>
                 {
-                    if (string.IsNullOrEmpty(ProgressMessage) || ProgressMessage == CHANGINGDIRECTORY) return;
+                    if (string.IsNullOrEmpty(ProgressMessage) || ProgressMessage.StartsWith(Resx.ChangingDirectory)) return;
                     var r = new Regex(@" \([0-9]+%\)$");
                     ProgressMessage = r.Replace(ProgressMessage, string.Empty);
                     ProgressMessage += string.Format(" ({0}%)", args.Percentage);

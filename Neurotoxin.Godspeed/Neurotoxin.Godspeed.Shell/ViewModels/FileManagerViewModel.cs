@@ -25,13 +25,13 @@ using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
 using System.Linq;
 using Microsoft.Practices.ObjectBuilder2;
+using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
 
     public class FileManagerViewModel : ViewModelBase
     {
-        private const string REMOTE_COPY_CANNOT_BE_USED = "Remote Copy cannot be used for files with non-ASCII characters in their paths. These files have been copied with the standard transfer methods.";
         private const string RenameFromPattern = @"([\/]){0}$";
         private const string RenameToPattern = @"$1{0}";
         private readonly Stopwatch _speedMeter = new Stopwatch();
@@ -314,7 +314,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void ExecuteCopyCommand()
         {
-            if (!ConfirmCommand(TransferType.Copy)) return;
+            if (!ConfirmCommand(TransferType.Copy, SourcePane.SelectedItems.Count() > 1)) return;
             AsyncJob(() => SourcePane.PopulateQueue(TransferType.Copy), CopyPrepare, PopulationError);
         }
 
@@ -381,7 +381,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                                 //TODO: not sure this is the right idea
                                 _copyMode = CopyMode.DirectExport;
                                 CloseTelnetSession();
-                                eventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(new NotifyUserMessageEventArgs(REMOTE_COPY_CANNOT_BE_USED, MessageIcon.Info));
+                                eventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(new NotifyUserMessageEventArgs("RemoteCopySpecialCharsWarningMessage", MessageIcon.Info));
                                 return SourcePane.Export(item, targetPath, a);
                             }
                             return ((FtpContentViewModel)SourcePane).RemoteDownload(item, targetPath, a);
@@ -391,7 +391,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                                 //TODO: not sure this is the right idea
                                 _copyMode = CopyMode.DirectImport;
                                 CloseTelnetSession();
-                                eventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(new NotifyUserMessageEventArgs(REMOTE_COPY_CANNOT_BE_USED, MessageIcon.Info));
+                                eventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(new NotifyUserMessageEventArgs("RemoteCopySpecialCharsWarningMessage", MessageIcon.Info));
                                 return TargetPane.Import(item, targetPath, a);
                             }
                             return ((FtpContentViewModel)TargetPane).RemoteUpload(item, targetPath, a);
@@ -482,7 +482,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void ExecuteMoveCommand()
         {
-            if (!ConfirmCommand(TransferType.Move)) return;
+            if (!ConfirmCommand(TransferType.Move, SourcePane.SelectedItems.Count() > 1)) return;
             AsyncJob(() => SourcePane.PopulateQueue(TransferType.Move), MovePrepare, PopulationError);
         }
 
@@ -598,7 +598,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     DisplayName = TitleRecognizer.GetTitle(d)
                 });
 
-            var name = InputDialog.Show("Add New Folder", "Folder name:", string.Empty, suggestion);
+            var name = InputDialog.Show(Resx.AddNewFolder, Resx.FolderName + Strings.Colon, string.Empty, suggestion);
             if (string.IsNullOrEmpty(name)) return;
             var path = string.Format("{0}{1}", SourcePane.CurrentFolder.Path, name);
             WorkerThread.Run(() => SourcePane.CreateFolder(path), success => NewFolderSuccess(success, name), NewFolderError);
@@ -608,7 +608,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             if (!success)
             {
-                NotificationMessage.ShowMessage("Add New Folder", string.Format("Error: folder [{0}] already exists! Please specify a different name.", name));
+                NotificationMessage.ShowMessage(Resx.AddNewFolder, string.Format(Resx.FolderAlreadyExists, name));
                 return;
             }
             SourcePane.Refresh(() =>
@@ -641,7 +641,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void ExecuteDeleteCommand()
         {
             var connections = ActivePane as ConnectionsViewModel;
-            if (!ConfirmCommand(TransferType.Delete, connections != null ? string.Empty : "(s)")) return;
+            if (!ConfirmCommand(TransferType.Delete, connections == null && SourcePane.SelectedItems.Count() > 1)) return;
             if (connections != null)
             {
                 connections.Delete();
@@ -793,7 +793,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void ExecuteRemoveUserMessageCommand(UserMessageViewModel message)
         {
             if (message.Flags.HasFlag(MessageFlags.Ignorable) && 
-                new ConfirmationDialog("Remove message", "Do you want to disable this message permanently in the future?").ShowDialog() == true)
+                new ConfirmationDialog(Resx.RemoveUserMessage, Resx.RemoveUserMessageConfirmation).ShowDialog() == true)
             {
                 UserSettings.IgnoreMessage(message.Message);
             }
@@ -973,12 +973,13 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 UIThread.Run(() => OnNotifyUserMessage(e));
                 return;
             }
-            if (UserSettings.IsMessageIgnored(e.Message)) return;
-            var i = UserMessages.IndexOf(m => m.Message == e.Message);
+            if (UserSettings.IsMessageIgnored(e.MessageKey)) return;
+            var message = string.Format(Resx.ResourceManager.GetString(e.MessageKey), e.MessageArgs);
+            var i = UserMessages.IndexOf(m => m.Message == message);
             if (i == -1)
             {
                 if (UserMessages.First() is NoMessagesViewModel) UserMessages.RemoveAt(0);
-                UserMessages.Insert(0, new UserMessageViewModel(e));
+                UserMessages.Insert(0, new UserMessageViewModel(message, e));
             } 
             else if (i != 0)
             {
@@ -1063,7 +1064,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     });
         }
 
-        internal TransferErrorDialogResult ShowCorrespondingErrorDialog(Exception exception, bool resultMatters = true)
+        internal TransferErrorDialogResult ShowCorrespondingErrorDialog(Exception exception, bool feedbackNeeded = true)
         {
             _elapsedTimeMeter.Stop();
             var transferException = exception as TransferException;
@@ -1074,7 +1075,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 {
                     case TransferErrorType.NotSpecified:
                         {
-                            if (resultMatters)
+                            if (feedbackNeeded)
                             {
                                 var dialog = new IoErrorDialog(exception);
                                 if (dialog.ShowDialog() == true)
@@ -1087,7 +1088,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                             } 
                             else
                             {
-                                NotificationMessage.ShowMessage("Error reading file", exception.Message);
+                                NotificationMessage.ShowMessage(Resx.ReadFileError, exception.Message);
                             }
                         }
                         break;
@@ -1113,7 +1114,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                             } 
                             catch (Exception ex)
                             {
-                                NotificationMessage.ShowMessage("Connection failed", string.Format("Cannot reestablish connection because: {0}", ex.Message));
+                                NotificationMessage.ShowMessage(Resx.ConnectionFailed, string.Format(Resx.CannotReestablishConnection, ex.Message));
                                 ftp.CloseCommand.Execute();
                             }
                         }
@@ -1168,7 +1169,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private static void RenameExistingFile(TransferException exception, CopyAction? action, Action<CopyAction?, string> rename, Action<Exception> chooseDifferentOption)
         {
-            var name = InputDialog.Show("Rename", "New name:", Path.GetFileName(exception.TargetFile));
+            var name = InputDialog.Show(Resx.Rename, Resx.NewName + Strings.Colon , Path.GetFileName(exception.TargetFile));
             if (!string.IsNullOrEmpty(name))
             {
                 rename.Invoke(action, name);
@@ -1179,11 +1180,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
         }
 
-        private bool ConfirmCommand(TransferType type, string s = "(s)")
+        private bool ConfirmCommand(TransferType type, bool isPlural)
         {
-            var cmd = type.ToString();
-            var message = string.Format("Do you really want to {0} the selected item{1}?", cmd.ToLower(), s);
-            if (new ConfirmationDialog(cmd, message).ShowDialog() != true) return false;
+            var title = Resx.ResourceManager.GetString(type.ToString());
+            var message = Resx.ResourceManager.GetString(string.Format(isPlural ? "{0}ConfirmationPlural" : "{0}ConfirmationSingular", type));
+            if (new ConfirmationDialog(title, message).ShowDialog() != true) return false;
             _isAborted = false;
             if (Ftp != null) Ftp.IsKeepAliveEnabled = true;
             return true;
@@ -1201,7 +1202,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 b =>
                     {
                         if (finished) return;
-                        NotificationMessage.ShowMessage("Application is busy", "Please wait...", NotificationMessageFlags.NonClosable);
+                        NotificationMessage.ShowMessage(Resx.ApplicationIsBusy, Resx.PleaseWait, NotificationMessageFlags.NonClosable);
                     });
             WorkerThread.Run(work, 
                 b =>
@@ -1220,7 +1221,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private static void PopulationError(Exception ex)
         {
-            ErrorMessage.Show(new SomethingWentWrongException("Population failed (Click below for details). Please try again." + ex.Message, ex));
+            ErrorMessage.Show(new SomethingWentWrongException(Resx.PopulationFailed, ex));
         }
 
         public override void Dispose()

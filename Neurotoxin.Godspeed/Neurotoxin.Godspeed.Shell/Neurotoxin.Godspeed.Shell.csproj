@@ -561,17 +561,7 @@
     <Resource Include="Resources\refresh_folder.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\About.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\info.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\UseRemoteCopyRemarks.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
@@ -594,11 +584,6 @@
     <Resource Include="Resources\pause.png" />
     <Resource Include="Resources\play.png" />
     <Resource Include="Resources\stop.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\UserStatisticsParticipation.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\fileaccesserror.png">

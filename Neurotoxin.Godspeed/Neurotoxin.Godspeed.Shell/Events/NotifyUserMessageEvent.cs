@@ -7,19 +7,21 @@ namespace Neurotoxin.Godspeed.Shell.Events
 
     public class NotifyUserMessageEventArgs
     {
-        public string Message { get; private set; }
+        public string MessageKey { get; private set; }
         public MessageIcon Icon { get; private set; }
         public MessageFlags Flags { get; private set; }
         public MessageCommand Command { get; private set; }
         public object CommandParameter { get; private set; }
+        public object[] MessageArgs { get; private set; }
 
-        public NotifyUserMessageEventArgs(string message, MessageIcon icon, MessageCommand command = MessageCommand.DoNothing, object commandParameter = null, MessageFlags flags = MessageFlags.Ignorable)
+        public NotifyUserMessageEventArgs(string messageKey, MessageIcon icon, MessageCommand command = MessageCommand.DoNothing, object commandParameter = null, MessageFlags flags = MessageFlags.Ignorable, params object[] messageArgs)
         {
-            Message = message;
+            MessageKey = messageKey;
             Icon = icon;
             Command = command;
             CommandParameter = commandParameter;
             Flags = flags;
+            MessageArgs = messageArgs;
         }
     }
 }

@@ -90,6 +90,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add New Folder.
+        /// </summary>
+        internal static string AddNewFolder {
+            get {
+                return ResourceManager.GetString("AddNewFolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Address.
         /// </summary>
         internal static string Address {
@@ -117,11 +126,101 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Application crashed.
+        /// </summary>
+        internal static string ApplicationCrashed {
+            get {
+                return ResourceManager.GetString("ApplicationCrashed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Application is busy.
+        /// </summary>
+        internal static string ApplicationIsBusy {
+            get {
+                return ResourceManager.GetString("ApplicationIsBusy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Application started.
+        /// </summary>
+        internal static string ApplicationStarted {
+            get {
+                return ResourceManager.GetString("ApplicationStarted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Avatar Asset Packs.
+        /// </summary>
+        internal static string AvatarAssetPackPlural {
+            get {
+                return ResourceManager.GetString("AvatarAssetPackPlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Avatar Asset Pack.
+        /// </summary>
+        internal static string AvatarAssetPackSingular {
+            get {
+                return ResourceManager.GetString("AvatarAssetPackSingular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Avatar Editor.
+        /// </summary>
+        internal static string AvatarEditor {
+            get {
+                return ResourceManager.GetString("AvatarEditor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Avatar Items.
+        /// </summary>
+        internal static string AvatarItemPlural {
+            get {
+                return ResourceManager.GetString("AvatarItemPlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Avatar Item.
+        /// </summary>
+        internal static string AvatarItemSingular {
+            get {
+                return ResourceManager.GetString("AvatarItemSingular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cache expiration.
         /// </summary>
         internal static string CacheExpiration {
             get {
                 return ResourceManager.GetString("CacheExpiration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cache Files.
+        /// </summary>
+        internal static string CacheFilePlural {
+            get {
+                return ResourceManager.GetString("CacheFilePlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cache File.
+        /// </summary>
+        internal static string CacheFileSingular {
+            get {
+                return ResourceManager.GetString("CacheFileSingular", resourceCulture);
             }
         }
         
@@ -140,6 +239,42 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         internal static string Cancel {
             get {
                 return ResourceManager.GetString("Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot reestablish connection. (Error: {0}).
+        /// </summary>
+        internal static string CannotReestablishConnection {
+            get {
+                return ResourceManager.GetString("CannotReestablishConnection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Can&apos;t connect to {0}.
+        /// </summary>
+        internal static string CantConnectToFtp {
+            get {
+                return ResourceManager.GetString("CantConnectToFtp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Can&apos;t open {0}.
+        /// </summary>
+        internal static string CantOpenFile {
+            get {
+                return ResourceManager.GetString("CantOpenFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Changing directory.
+        /// </summary>
+        internal static string ChangingDirectory {
+            get {
+                return ResourceManager.GetString("ChangingDirectory", resourceCulture);
             }
         }
         
@@ -171,11 +306,47 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;b&gt;Thank you for using GODspeed!&lt;/b&gt; Do you think you&apos;ve got an opinion about the current version? Rate and review it on CodePlex! Thanks!.
+        /// </summary>
+        internal static string CodeplexMessage {
+            get {
+                return ResourceManager.GetString("CodeplexMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Commands.
         /// </summary>
         internal static string CommandsMenu {
             get {
                 return ResourceManager.GetString("CommandsMenu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Community Games.
+        /// </summary>
+        internal static string CommunityGamePlural {
+            get {
+                return ResourceManager.GetString("CommunityGamePlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Community Game.
+        /// </summary>
+        internal static string CommunityGameSingular {
+            get {
+                return ResourceManager.GetString("CommunityGameSingular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Connecting to {0}....
+        /// </summary>
+        internal static string ConnectingToFtp {
+            get {
+                return ResourceManager.GetString("ConnectingToFtp", resourceCulture);
             }
         }
         
@@ -189,6 +360,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Connection failed.
+        /// </summary>
+        internal static string ConnectionFailed {
+            get {
+                return ResourceManager.GetString("ConnectionFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Connection lost.
         /// </summary>
         internal static string ConnectionLost {
@@ -198,11 +378,29 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The connection with {0} has been lost..
+        /// </summary>
+        internal static string ConnectionLostMessage {
+            get {
+                return ResourceManager.GetString("ConnectionLostMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Connection name.
         /// </summary>
         internal static string ConnectionName {
             get {
                 return ResourceManager.GetString("ConnectionName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This connection name already exists..
+        /// </summary>
+        internal static string ConnectionNameExistsErrorMessage {
+            get {
+                return ResourceManager.GetString("ConnectionNameExistsErrorMessage", resourceCulture);
             }
         }
         
@@ -252,11 +450,38 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Copy.
+        /// </summary>
+        internal static string Copy {
+            get {
+                return ResourceManager.GetString("Copy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to F5 Copy.
         /// </summary>
         internal static string CopyButton {
             get {
                 return ResourceManager.GetString("CopyButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do you really want to copy the selected items?.
+        /// </summary>
+        internal static string CopyConfirmationPlural {
+            get {
+                return ResourceManager.GetString("CopyConfirmationPlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do you really want to copy the selected item?.
+        /// </summary>
+        internal static string CopyConfirmationSingular {
+            get {
+                return ResourceManager.GetString("CopyConfirmationSingular", resourceCulture);
             }
         }
         
@@ -279,11 +504,65 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to dd/MM/yyyy HH:mm.
+        /// </summary>
+        internal static string DateTimeFormat {
+            get {
+                return ResourceManager.GetString("DateTimeFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Days.
+        /// </summary>
+        internal static string DayPlural {
+            get {
+                return ResourceManager.GetString("DayPlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Day.
+        /// </summary>
+        internal static string DaySingular {
+            get {
+                return ResourceManager.GetString("DaySingular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        internal static string Delete {
+            get {
+                return ResourceManager.GetString("Delete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to F8 Delete.
         /// </summary>
         internal static string DeleteButton {
             get {
                 return ResourceManager.GetString("DeleteButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do you really want to delete the selected items?.
+        /// </summary>
+        internal static string DeleteConfirmationPlural {
+            get {
+                return ResourceManager.GetString("DeleteConfirmationPlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do you really want to delete the selected item?.
+        /// </summary>
+        internal static string DeleteConfirmationSingular {
+            get {
+                return ResourceManager.GetString("DeleteConfirmationSingular", resourceCulture);
             }
         }
         
@@ -324,6 +603,33 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Download.
+        /// </summary>
+        internal static string Download {
+            get {
+                return ResourceManager.GetString("Download", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Downloadable Contents.
+        /// </summary>
+        internal static string DownloadableContentPlural {
+            get {
+                return ResourceManager.GetString("DownloadableContentPlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Downloadable Content.
+        /// </summary>
+        internal static string DownloadableContentSingular {
+            get {
+                return ResourceManager.GetString("DownloadableContentSingular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Do you want to reconnect?.
         /// </summary>
         internal static string DoYouWantToReconnect {
@@ -342,11 +648,38 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You can&apos;t leave this field empty..
+        /// </summary>
+        internal static string EmptyFieldErrorMessage {
+            get {
+                return ResourceManager.GetString("EmptyFieldErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Exit.
         /// </summary>
         internal static string Exit {
             get {
                 return ResourceManager.GetString("Exit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Extract.
+        /// </summary>
+        internal static string Extract {
+            get {
+                return ResourceManager.GetString("Extract", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;b&gt;Do you like GODspeed?&lt;/b&gt; Do you want to get news about it first hand, share your ideas and/or be a part of its growing community? Then please like its Facebook page!.
+        /// </summary>
+        internal static string FacebookMessage {
+            get {
+                return ResourceManager.GetString("FacebookMessage", resourceCulture);
             }
         }
         
@@ -369,6 +702,24 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Folder [{0}] already exists! Please specify a different name..
+        /// </summary>
+        internal static string FolderAlreadyExists {
+            get {
+                return ResourceManager.GetString("FolderAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Folder name.
+        /// </summary>
+        internal static string FolderName {
+            get {
+                return ResourceManager.GetString("FolderName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to FTP Log.
         /// </summary>
         internal static string FTPLog {
@@ -378,11 +729,200 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Game Demos.
+        /// </summary>
+        internal static string GameDemoPlural {
+            get {
+                return ResourceManager.GetString("GameDemoPlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Game Demo.
+        /// </summary>
+        internal static string GameDemoSingular {
+            get {
+                return ResourceManager.GetString("GameDemoSingular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to GOD Contents.
+        /// </summary>
+        internal static string GameOnDemandPlural {
+            get {
+                return ResourceManager.GetString("GameOnDemandPlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to GOD Content.
+        /// </summary>
+        internal static string GameOnDemandSingular {
+            get {
+                return ResourceManager.GetString("GameOnDemandSingular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gamer Pictures.
+        /// </summary>
+        internal static string GamerPicturePlural {
+            get {
+                return ResourceManager.GetString("GamerPicturePlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gamer Picture.
+        /// </summary>
+        internal static string GamerPictureSingular {
+            get {
+                return ResourceManager.GetString("GamerPictureSingular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gamer Titles.
+        /// </summary>
+        internal static string GamerTitlePlural {
+            get {
+                return ResourceManager.GetString("GamerTitlePlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gamer Title.
+        /// </summary>
+        internal static string GamerTitleSingular {
+            get {
+                return ResourceManager.GetString("GamerTitleSingular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Games.
+        /// </summary>
+        internal static string Games {
+            get {
+                return ResourceManager.GetString("Games", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Games recognized fully.
+        /// </summary>
+        internal static string GamesRecognizedFully {
+            get {
+                return ResourceManager.GetString("GamesRecognizedFully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Games recognized partially.
+        /// </summary>
+        internal static string GamesRecognizedPartially {
+            get {
+                return ResourceManager.GetString("GamesRecognizedPartially", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Game Trailers.
+        /// </summary>
+        internal static string GameTrailerPlural {
+            get {
+                return ResourceManager.GetString("GameTrailerPlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Game Trailer.
+        /// </summary>
+        internal static string GameTrailerSingular {
+            get {
+                return ResourceManager.GetString("GameTrailerSingular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Game Videos.
+        /// </summary>
+        internal static string GameVideoPlural {
+            get {
+                return ResourceManager.GetString("GameVideoPlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Game Video.
+        /// </summary>
+        internal static string GameVideoSingular {
+            get {
+                return ResourceManager.GetString("GameVideoSingular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Help.
         /// </summary>
         internal static string HelpMenu {
             get {
                 return ResourceManager.GetString("HelpMenu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Inaccessible file. Please check the corresponding permissions..
+        /// </summary>
+        internal static string InaccessibleFileErrorMessage {
+            get {
+                return ResourceManager.GetString("InaccessibleFileErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Something went wrong while trying to establish connection. Please try again, and if the error persists try to switch Passive Mode..
+        /// </summary>
+        internal static string IndetermineFtpConnectionError {
+            get {
+                return ResourceManager.GetString("IndetermineFtpConnectionError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Inject.
+        /// </summary>
+        internal static string Inject {
+            get {
+                return ResourceManager.GetString("Inject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Installed Games.
+        /// </summary>
+        internal static string InstalledGamePlural {
+            get {
+                return ResourceManager.GetString("InstalledGamePlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Installed Game.
+        /// </summary>
+        internal static string InstalledGameSingular {
+            get {
+                return ResourceManager.GetString("InstalledGameSingular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to [{0}] is not an Integer value..
+        /// </summary>
+        internal static string IntegerErrorMessage {
+            get {
+                return ResourceManager.GetString("IntegerErrorMessage", resourceCulture);
             }
         }
         
@@ -405,11 +945,137 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Please enter an IP Address..
+        /// </summary>
+        internal static string IPAddressEmptyErrorMessage {
+            get {
+                return ResourceManager.GetString("IPAddressEmptyErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Each octet of an IP Address should be a number..
+        /// </summary>
+        internal static string IPAddressInvalidCharacterErrorMessage {
+            get {
+                return ResourceManager.GetString("IPAddressInvalidCharacterErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Each octet of an IP Address should be between 0 and 255..
+        /// </summary>
+        internal static string IPAddressOctetOutOfRangeErrorMessage {
+            get {
+                return ResourceManager.GetString("IPAddressOctetOutOfRangeErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to IP Address should be four octets, seperated by decimals..
+        /// </summary>
+        internal static string IPAddressWrongFormatErrorMessage {
+            get {
+                return ResourceManager.GetString("IPAddressWrongFormatErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to IPTV Pause Buffers.
+        /// </summary>
+        internal static string IptvPauseBufferPlural {
+            get {
+                return ResourceManager.GetString("IptvPauseBufferPlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to IPTV Pause Buffer.
+        /// </summary>
+        internal static string IptvPauseBufferSingular {
+            get {
+                return ResourceManager.GetString("IptvPauseBufferSingular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Item not exists on path: {0}.
+        /// </summary>
+        internal static string ItemNotExistsOnPath {
+            get {
+                return ResourceManager.GetString("ItemNotExistsOnPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DIRECTORY.
+        /// </summary>
+        internal static string ItemTypeDirectory {
+            get {
+                return ResourceManager.GetString("ItemTypeDirectory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DRIVE.
+        /// </summary>
+        internal static string ItemTypeDrive {
+            get {
+                return ResourceManager.GetString("ItemTypeDrive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to FILE.
+        /// </summary>
+        internal static string ItemTypeFile {
+            get {
+                return ResourceManager.GetString("ItemTypeFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to License Stores.
+        /// </summary>
+        internal static string LicenseStorePlural {
+            get {
+                return ResourceManager.GetString("LicenseStorePlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to License Store.
+        /// </summary>
+        internal static string LicenseStoreSingular {
+            get {
+                return ResourceManager.GetString("LicenseStoreSingular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0:#,0} of {1:#,0} bytes free.
+        /// </summary>
+        internal static string LocalFileSystemFreeSpace {
+            get {
+                return ResourceManager.GetString("LocalFileSystemFreeSpace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Messages.
         /// </summary>
         internal static string Messages {
             get {
                 return ResourceManager.GetString("Messages", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Migrating... ({0}%).
+        /// </summary>
+        internal static string MigrationProgressDialogTitle {
+            get {
+                return ResourceManager.GetString("MigrationProgressDialogTitle", resourceCulture);
             }
         }
         
@@ -432,11 +1098,74 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Move.
+        /// </summary>
+        internal static string Move {
+            get {
+                return ResourceManager.GetString("Move", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to F6 Move.
         /// </summary>
         internal static string MoveButton {
             get {
                 return ResourceManager.GetString("MoveButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do you really want to move the selected items?.
+        /// </summary>
+        internal static string MoveConfirmationPlural {
+            get {
+                return ResourceManager.GetString("MoveConfirmationPlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do you really want to move the selected item?.
+        /// </summary>
+        internal static string MoveConfirmationSingular {
+            get {
+                return ResourceManager.GetString("MoveConfirmationSingular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Movies.
+        /// </summary>
+        internal static string MoviePlural {
+            get {
+                return ResourceManager.GetString("MoviePlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Movie.
+        /// </summary>
+        internal static string MovieSingular {
+            get {
+                return ResourceManager.GetString("MovieSingular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Musicvideos.
+        /// </summary>
+        internal static string MusicVideoPlural {
+            get {
+                return ResourceManager.GetString("MusicVideoPlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Musicvideo.
+        /// </summary>
+        internal static string MusicVideoSingular {
+            get {
+                return ResourceManager.GetString("MusicVideoSingular", resourceCulture);
             }
         }
         
@@ -459,11 +1188,74 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Never.
+        /// </summary>
+        internal static string Never {
+            get {
+                return ResourceManager.GetString("Never", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New connection.
+        /// </summary>
+        internal static string NewConnection {
+            get {
+                return ResourceManager.GetString("NewConnection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;b&gt;Warning!&lt;/b&gt; Some of the features require .NET version 4.0.30319.18408 (October 2013) or newer. Please update .NET Framework and restart GODspeed to enable those features..
+        /// </summary>
+        internal static string NewerDotNetVersionRequiredMessage {
+            get {
+                return ResourceManager.GetString("NewerDotNetVersionRequiredMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to F7 New Folder.
         /// </summary>
         internal static string NewFolderButton {
             get {
                 return ResourceManager.GetString("NewFolderButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New name.
+        /// </summary>
+        internal static string NewName {
+            get {
+                return ResourceManager.GetString("NewName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} new titles found..
+        /// </summary>
+        internal static string NewTitleFoundPlural {
+            get {
+                return ResourceManager.GetString("NewTitleFoundPlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} new title found..
+        /// </summary>
+        internal static string NewTitleFoundSingular {
+            get {
+                return ResourceManager.GetString("NewTitleFoundSingular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;b&gt;New version available!&lt;/b&gt;&lt;br/&gt;{0} ({1:yyyy.MM.dd HH:mm}).
+        /// </summary>
+        internal static string NewVersionAvailableMessage {
+            get {
+                return ResourceManager.GetString("NewVersionAvailableMessage", resourceCulture);
             }
         }
         
@@ -482,6 +1274,24 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         internal static string NoIWouldNotLikeToParticipate {
             get {
                 return ResourceManager.GetString("NoIWouldNotLikeToParticipate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There are no messages yet..
+        /// </summary>
+        internal static string NoMessages {
+            get {
+                return ResourceManager.GetString("NoMessages", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No new titles found..
+        /// </summary>
+        internal static string NoNewTitlesFound {
+            get {
+                return ResourceManager.GetString("NoNewTitlesFound", resourceCulture);
             }
         }
         
@@ -509,6 +1319,33 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         internal static string Ok {
             get {
                 return ResourceManager.GetString("Ok", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open failed.
+        /// </summary>
+        internal static string OpenFailed {
+            get {
+                return ResourceManager.GetString("OpenFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Opening archive.
+        /// </summary>
+        internal static string OpeningArchive {
+            get {
+                return ResourceManager.GetString("OpeningArchive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Opening profile.
+        /// </summary>
+        internal static string OpeningProfile {
+            get {
+                return ResourceManager.GetString("OpeningProfile", resourceCulture);
             }
         }
         
@@ -576,6 +1413,24 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;b&gt;One or more titles couldn&apos;t be recognized fully.&lt;/b&gt; If you played with them earlier try to extract the corresponding data from your profile by right clicking and selecting &lt;i&gt;Recognize Titles from Profile&lt;/i&gt;..
+        /// </summary>
+        internal static string PartialRecognitionMessage {
+            get {
+                return ResourceManager.GetString("PartialRecognitionMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;b&gt;Help improve GODspeed!&lt;/b&gt; Click to set your participation in its User Statistics..
+        /// </summary>
+        internal static string ParticipationMessage {
+            get {
+                return ResourceManager.GetString("ParticipationMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Password.
         /// </summary>
         internal static string Password {
@@ -590,6 +1445,42 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         internal static string Pause {
             get {
                 return ResourceManager.GetString("Pause", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please wait....
+        /// </summary>
+        internal static string PleaseWait {
+            get {
+                return ResourceManager.GetString("PleaseWait", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Podcast Videos.
+        /// </summary>
+        internal static string PodcastVideoPlural {
+            get {
+                return ResourceManager.GetString("PodcastVideoPlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Podcast Video.
+        /// </summary>
+        internal static string PodcastVideoSingular {
+            get {
+                return ResourceManager.GetString("PodcastVideoSingular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Population failed. (Error: {0}).
+        /// </summary>
+        internal static string PopulationFailed {
+            get {
+                return ResourceManager.GetString("PopulationFailed", resourceCulture);
             }
         }
         
@@ -612,11 +1503,74 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Profile file does not exists..
+        /// </summary>
+        internal static string ProfileDoesntExistErrorMessage {
+            get {
+                return ResourceManager.GetString("ProfileDoesntExistErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Profile is currently in use. Please sign out..
+        /// </summary>
+        internal static string ProfileIsInUseErrorMessage {
+            get {
+                return ResourceManager.GetString("ProfileIsInUseErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Profile Data.
+        /// </summary>
+        internal static string ProfilePlural {
+            get {
+                return ResourceManager.GetString("ProfilePlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Profile Rebuilder.
         /// </summary>
         internal static string ProfileRebuilder {
             get {
                 return ResourceManager.GetString("ProfileRebuilder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Profile Data.
+        /// </summary>
+        internal static string ProfileSingular {
+            get {
+                return ResourceManager.GetString("ProfileSingular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Publishers.
+        /// </summary>
+        internal static string PublisherPlural {
+            get {
+                return ResourceManager.GetString("PublisherPlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Publisher.
+        /// </summary>
+        internal static string PublisherSingular {
+            get {
+                return ResourceManager.GetString("PublisherSingular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error reading file.
+        /// </summary>
+        internal static string ReadFileError {
+            get {
+                return ResourceManager.GetString("ReadFileError", resourceCulture);
             }
         }
         
@@ -648,11 +1602,74 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Recognizing item {0} ({1} left).
+        /// </summary>
+        internal static string RecognizingItem {
+            get {
+                return ResourceManager.GetString("RecognizingItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Refreshing directory.
+        /// </summary>
+        internal static string RefreshingDirectory {
+            get {
+                return ResourceManager.GetString("RefreshingDirectory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remote Copy cannot be used for files with non-ASCII characters in their paths. These files have been copied with the standard transfer methods..
+        /// </summary>
+        internal static string RemoteCopySpecialCharsWarningMessage {
+            get {
+                return ResourceManager.GetString("RemoteCopySpecialCharsWarningMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove message.
+        /// </summary>
+        internal static string RemoveUserMessage {
+            get {
+                return ResourceManager.GetString("RemoveUserMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do you want to disable this message permanently in the future?.
+        /// </summary>
+        internal static string RemoveUserMessageConfirmation {
+            get {
+                return ResourceManager.GetString("RemoveUserMessageConfirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Rename.
         /// </summary>
         internal static string Rename {
             get {
                 return ResourceManager.GetString("Rename", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rename Directory.
+        /// </summary>
+        internal static string RenameDirectory {
+            get {
+                return ResourceManager.GetString("RenameDirectory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rename File.
+        /// </summary>
+        internal static string RenameFile {
+            get {
+                return ResourceManager.GetString("RenameFile", resourceCulture);
             }
         }
         
@@ -693,6 +1710,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The resume function on target machine is not available. Do you really want to abort the transfer?.
+        /// </summary>
+        internal static string ResumeIsNotAvailableConfirmation {
+            get {
+                return ResourceManager.GetString("ResumeIsNotAvailableConfirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Retry.
         /// </summary>
         internal static string Retry {
@@ -711,11 +1737,38 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Saved Games.
+        /// </summary>
+        internal static string SavedGamePlural {
+            get {
+                return ResourceManager.GetString("SavedGamePlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Saved Game.
+        /// </summary>
+        internal static string SavedGameSingular {
+            get {
+                return ResourceManager.GetString("SavedGameSingular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Save Thumbnail as....
         /// </summary>
         internal static string SaveThumbnailAs {
             get {
                 return ResourceManager.GetString("SaveThumbnailAs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Scanning profile.
+        /// </summary>
+        internal static string ScanningProfile {
+            get {
+                return ResourceManager.GetString("ScanningProfile", resourceCulture);
             }
         }
         
@@ -792,6 +1845,60 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to STFS packages recognized.
+        /// </summary>
+        internal static string STFSPackagesRecognized {
+            get {
+                return ResourceManager.GetString("STFSPackagesRecognized", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Storage Downloads.
+        /// </summary>
+        internal static string StorageDownloadPlural {
+            get {
+                return ResourceManager.GetString("StorageDownloadPlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Storage Download.
+        /// </summary>
+        internal static string StorageDownloadSingular {
+            get {
+                return ResourceManager.GetString("StorageDownloadSingular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SVOD packages recognized.
+        /// </summary>
+        internal static string SVODPackagesRecognized {
+            get {
+                return ResourceManager.GetString("SVODPackagesRecognized", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to System Data.
+        /// </summary>
+        internal static string SystemData {
+            get {
+                return ResourceManager.GetString("SystemData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Target already exists.
+        /// </summary>
+        internal static string TargetAlreadyExists {
+            get {
+                return ResourceManager.GetString("TargetAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Overwrite.
         /// </summary>
         internal static string TargetFileHeader {
@@ -801,11 +1908,173 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to TV Shows.
+        /// </summary>
+        internal static string TelevisionPlural {
+            get {
+                return ResourceManager.GetString("TelevisionPlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to TV Show.
+        /// </summary>
+        internal static string TelevisionSingular {
+            get {
+                return ResourceManager.GetString("TelevisionSingular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Themes.
+        /// </summary>
+        internal static string ThemePlural {
+            get {
+                return ResourceManager.GetString("ThemePlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Theme.
+        /// </summary>
+        internal static string ThemeSingular {
+            get {
+                return ResourceManager.GetString("ThemeSingular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Title Recognition.
+        /// </summary>
+        internal static string TitleRecognition {
+            get {
+                return ResourceManager.GetString("TitleRecognition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CONTENT.
+        /// </summary>
+        internal static string TitleTypeContent {
+            get {
+                return ResourceManager.GetString("TitleTypeContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DATAFILE.
+        /// </summary>
+        internal static string TitleTypeDataFile {
+            get {
+                return ResourceManager.GetString("TitleTypeDataFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to GAME.
+        /// </summary>
+        internal static string TitleTypeGame {
+            get {
+                return ResourceManager.GetString("TitleTypeGame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PROFILE.
+        /// </summary>
+        internal static string TitleTypeProfile {
+            get {
+                return ResourceManager.GetString("TitleTypeProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SYSTEMDIR.
+        /// </summary>
+        internal static string TitleTypeSystemDir {
+            get {
+                return ResourceManager.GetString("TitleTypeSystemDir", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SYSTEMFILE.
+        /// </summary>
+        internal static string TitleTypeSystemFile {
+            get {
+                return ResourceManager.GetString("TitleTypeSystemFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Title Updates.
+        /// </summary>
+        internal static string TitleUpdatePlural {
+            get {
+                return ResourceManager.GetString("TitleUpdatePlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Title Update.
+        /// </summary>
+        internal static string TitleUpdateSingular {
+            get {
+                return ResourceManager.GetString("TitleUpdateSingular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Total bytes transferred.
+        /// </summary>
+        internal static string TotalBytesTransferred {
+            get {
+                return ResourceManager.GetString("TotalBytesTransferred", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Total files transferred.
+        /// </summary>
+        internal static string TotalFilesTransferred {
+            get {
+                return ResourceManager.GetString("TotalFilesTransferred", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Total time spent with transfer.
+        /// </summary>
+        internal static string TotalTimeSpentWithTransfer {
+            get {
+                return ResourceManager.GetString("TotalTimeSpentWithTransfer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Total usage time.
+        /// </summary>
+        internal static string TotalUsageTime {
+            get {
+                return ResourceManager.GetString("TotalUsageTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Turn off Remote Copy and Continue.
         /// </summary>
         internal static string TurnOffRemoteCopyAndContinue {
             get {
                 return ResourceManager.GetString("TurnOffRemoteCopyAndContinue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Type.
+        /// </summary>
+        internal static string Type {
+            get {
+                return ResourceManager.GetString("Type", resourceCulture);
             }
         }
         
@@ -828,11 +2097,47 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unknown Data File.
+        /// </summary>
+        internal static string UnknownDataFile {
+            get {
+                return ResourceManager.GetString("UnknownDataFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown Game.
+        /// </summary>
+        internal static string UnknownGame {
+            get {
+                return ResourceManager.GetString("UnknownGame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown Profile.
+        /// </summary>
+        internal static string UnknownProfile {
+            get {
+                return ResourceManager.GetString("UnknownProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unrecognized game.
         /// </summary>
         internal static string UnrecognizedGame {
             get {
                 return ResourceManager.GetString("UnrecognizedGame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Upload.
+        /// </summary>
+        internal static string Upload {
+            get {
+                return ResourceManager.GetString("Upload", resourceCulture);
             }
         }
         
@@ -860,6 +2165,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         internal static string UseRemoteCopy {
             get {
                 return ResourceManager.GetString("UseRemoteCopy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please note that not every NAS is supported. Your NAS has to be Telnet-enabled (on default port) and should support LFTP. Once these requirements are met, you can speed up your transfer using this option. However you will lose the possibility of immediate file transfer abortion, you have to wait till the up- or download of the current file in queue finishes..
+        /// </summary>
+        internal static string UseRemoteCopyRemarks {
+            get {
+                return ResourceManager.GetString("UseRemoteCopyRemarks", resourceCulture);
             }
         }
         
@@ -902,6 +2216,51 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Videos.
+        /// </summary>
+        internal static string VideoPlural {
+            get {
+                return ResourceManager.GetString("VideoPlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Video.
+        /// </summary>
+        internal static string VideoSingular {
+            get {
+                return ResourceManager.GetString("VideoSingular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Viral Videos.
+        /// </summary>
+        internal static string ViralVideoPlural {
+            get {
+                return ResourceManager.GetString("ViralVideoPlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Viral Video.
+        /// </summary>
+        internal static string ViralVideoSingular {
+            get {
+                return ResourceManager.GetString("ViralVideoSingular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Warning.
+        /// </summary>
+        internal static string Warning {
+            get {
+                return ResourceManager.GetString("Warning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to What do you want to do?.
         /// </summary>
         internal static string WhatDoYouWantToDo {
@@ -929,11 +2288,128 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Xbox360 Titles.
+        /// </summary>
+        internal static string Xbox360TitlePlural {
+            get {
+                return ResourceManager.GetString("Xbox360TitlePlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Xbox360 Title.
+        /// </summary>
+        internal static string Xbox360TitleSingular {
+            get {
+                return ResourceManager.GetString("Xbox360TitleSingular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Xbox Downloads.
+        /// </summary>
+        internal static string XboxDownloadPlural {
+            get {
+                return ResourceManager.GetString("XboxDownloadPlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Xbox Download.
+        /// </summary>
+        internal static string XboxDownloadSingular {
+            get {
+                return ResourceManager.GetString("XboxDownloadSingular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to XBLA Contents.
+        /// </summary>
+        internal static string XboxLiveArcadeGamePlural {
+            get {
+                return ResourceManager.GetString("XboxLiveArcadeGamePlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to XBLA Content.
+        /// </summary>
+        internal static string XboxLiveArcadeGameSingular {
+            get {
+                return ResourceManager.GetString("XboxLiveArcadeGameSingular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Xbox Live Content.
         /// </summary>
         internal static string XboxLiveContent {
             get {
                 return ResourceManager.GetString("XboxLiveContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Xbox Original Games.
+        /// </summary>
+        internal static string XboxOriginalGamePlural {
+            get {
+                return ResourceManager.GetString("XboxOriginalGamePlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Xbox Original Game.
+        /// </summary>
+        internal static string XboxOriginalGameSingular {
+            get {
+                return ResourceManager.GetString("XboxOriginalGameSingular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Xbox Saved Games.
+        /// </summary>
+        internal static string XboxSavedGamePlural {
+            get {
+                return ResourceManager.GetString("XboxSavedGamePlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Xbox Saved Game.
+        /// </summary>
+        internal static string XboxSavedGameSingular {
+            get {
+                return ResourceManager.GetString("XboxSavedGameSingular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to XNA Indie Player.
+        /// </summary>
+        internal static string XNAIndiePlayer {
+            get {
+                return ResourceManager.GetString("XNAIndiePlayer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to XNA Contents.
+        /// </summary>
+        internal static string XNAPlural {
+            get {
+                return ResourceManager.GetString("XNAPlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to XNA Content.
+        /// </summary>
+        internal static string XNASingular {
+            get {
+                return ResourceManager.GetString("XNASingular", resourceCulture);
             }
         }
         

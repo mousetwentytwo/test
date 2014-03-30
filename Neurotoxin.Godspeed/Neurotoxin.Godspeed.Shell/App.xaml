@@ -46,6 +46,7 @@
                     <converters:SizeConverter x:Key="SizeConverter"/>
                     <converters:TitleConverter x:Key="TitleConverter"/>
                     <converters:NameConverter x:Key="NameConverter"/>
+                    <converters:ContentTypeConverter x:Key="ContentTypeConverter"/>
                     <converters:PaneHeaderBackgroundConverter x:Key="PaneHeaderBackgroundConverter"
                                                   ActivePaneBrush="{StaticResource DefaultedBorderBrush}"
                                                   InactivePaneBrush="{StaticResource NormalBorderBrush}"/>

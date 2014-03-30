@@ -5,12 +5,11 @@ using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 
 namespace Neurotoxin.Godspeed.Shell.Converters
 {
-    public class ExpirationConverter : IValueConverter
+    public class ContentTypeConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var intValue = (int)value;
-            return intValue == 0 ? Resx.Never : string.Format("{0} {1}", intValue, intValue > 1 ? Resx.DayPlural : Resx.DaySingular);
+            return Resx.ResourceManager.GetString(value + "Singular");
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using Neurotoxin.Godspeed.Shell.Constants;
+using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 
 namespace Neurotoxin.Godspeed.Shell.Converters
 {
@@ -24,14 +25,27 @@ namespace Neurotoxin.Godspeed.Shell.Converters
             if (values[0] == DependencyProperty.UnsetValue || values[1] == DependencyProperty.UnsetValue || values[2] == DependencyProperty.UnsetValue) return null;
             
             var type = (ItemType) values[1];
-            var contentType = (TitleType)values[2];
+            var titleType = (TitleType)values[2];
             var isRefreshing = (bool) values[3];
 
-            return isRefreshing
-                       ? "?"
-                       : values[0] == null
-                             ? string.Format("<{0}>", contentType != TitleType.Unknown ? contentType.ToString().ToUpper() : type.ToString().ToUpper())
-                             : Convert(values[0], targetType, parameter, culture);
+            if (isRefreshing) return "?";
+            if (values[0] == null)
+            {
+                string t;
+                string v;
+                if (titleType != TitleType.Unknown)
+                {
+                    t = titleType.GetType().Name;
+                    v = titleType.ToString();
+                } 
+                else
+                {
+                    t = type.GetType().Name;
+                    v = type.ToString();
+                }
+                string.Format("<{0}>", Resx.ResourceManager.GetString(t + v).ToUpper());
+            }
+            return Convert(values[0], targetType, parameter, culture);
         }
 
         public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)

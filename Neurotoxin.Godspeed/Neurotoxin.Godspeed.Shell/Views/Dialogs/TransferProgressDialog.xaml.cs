@@ -1,6 +1,4 @@
-﻿using System;
-using System.ComponentModel;
-using System.Windows;
+﻿using System.Windows;
 using Neurotoxin.Godspeed.Shell.ViewModels;
 
 namespace Neurotoxin.Godspeed.Shell.Views.Dialogs

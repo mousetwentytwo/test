@@ -15,6 +15,7 @@ using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
+using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 
 namespace Neurotoxin.Godspeed.Shell.ContentProviders
 {
@@ -306,7 +307,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 if (fileSize == -1)
                 {
                     fileSize = FtpClient.GetFileSize(filename);
-                    if (fileSize == -1) throw new FtpException("File not exists: " + remotePath);
+                    if (fileSize == -1) throw new FtpException(string.Format(Resx.ItemNotExistsOnPath ,remotePath));
                 }
                 _isIdle = false;
                 _isAborted = false;
@@ -418,7 +419,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             var r = new Regex(string.Format("{0}{1}?$", Regex.Escape(oldName), Slash), RegexOptions.IgnoreCase);
             path = r.Replace(path, newName);
             var item = GetItemInfo(path);
-            if (item == null) throw new ApplicationException("Item not exists on path: " + path);
+            if (item == null) throw new ApplicationException(string.Format(Resx.ItemNotExistsOnPath, path));
             return item;
         }
 

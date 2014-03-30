@@ -10,8 +10,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
     public class FileSystemItemViewModel : ViewModelBase
     {
-        private const string UPDIRECTORY = "..";
-
         private readonly FileSystemItem _model;
         public FileSystemItem Model
         {
@@ -127,8 +125,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public bool IsUpDirectory
         {
-            get { return Name == UPDIRECTORY; }
-            set { if (value) Name = UPDIRECTORY; }
+            get { return Name == Strings.UpDirectory; }
+            set { if (value) Name = Strings.UpDirectory; }
         }
 
         public bool IsCached

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Text;
-using System.Windows;
-using Neurotoxin.Godspeed.Presentation.Extensions;
+﻿using System.Windows;
 using Neurotoxin.Godspeed.Shell.ViewModels;
 
 namespace Neurotoxin.Godspeed.Shell.Views
@@ -12,8 +9,6 @@ namespace Neurotoxin.Godspeed.Shell.Views
         {
             Owner = Application.Current.MainWindow;
             InitializeComponent();
-            var desc = ApplicationExtensions.GetContentByteArray("/Resources/UseRemoteCopyRemarks.txt");
-            UseRemoteCopyRemarks.Text = Encoding.UTF8.GetString(desc);
             DataContext = viewModel;
         }
 

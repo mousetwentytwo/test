@@ -1,7 +1,9 @@
 ﻿using System.Windows.Media;
+using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
+using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
@@ -14,7 +16,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             var thumbnail = ApplicationExtensions.GetContentByteArray("/Resources/Connections/AddConnection.png");
             Thumbnail = StfsPackageExtensions.GetBitmapFromByteArray(thumbnail);
-            Name = "New connection...";
+            Name = Resx.NewConnection + Strings.DotDotDot;
         }
     }
 }

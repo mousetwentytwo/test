@@ -21,7 +21,7 @@ using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.ViewModels;
 using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 using System.Linq;
-using Microsoft.Practices.ObjectBuilder2;
+using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 
 namespace Neurotoxin.Godspeed.Shell.Views
 {
@@ -163,7 +163,7 @@ namespace Neurotoxin.Godspeed.Shell.Views
             if (_isAbortionInProgress) return;
             if (!ViewModel.TargetPane.IsResumeSupported)
             {
-                var d = new ConfirmationDialog("Warning", "The resume function on target machine is not available. Do you really want to abort the transfer?");
+                var d = new ConfirmationDialog(Resx.Warning, Resx.ResumeIsNotAvailableConfirmation);
                 if (d.ShowDialog() != true) return;
             }
             _transferProgressDialog.Abort.IsEnabled = false;

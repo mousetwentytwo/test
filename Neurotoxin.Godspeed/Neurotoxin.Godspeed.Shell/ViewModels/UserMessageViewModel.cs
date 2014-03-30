@@ -36,9 +36,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             set { _isChecked = value; NotifyPropertyChanged(ISCHECKED); }
         }
 
-        public UserMessageViewModel(NotifyUserMessageEventArgs e)
+        public UserMessageViewModel(string message, NotifyUserMessageEventArgs e)
         {
-            Message = e.Message;
+            Message = message;
             var png = ApplicationExtensions.GetContentByteArray(string.Format("/Resources/{0}.png", e.Icon));
             Icon = StfsPackageExtensions.GetBitmapFromByteArray(png);
             CommandParameter = new UserMessageCommandParameter(this, e.Command, e.CommandParameter);

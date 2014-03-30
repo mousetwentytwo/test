@@ -7,6 +7,7 @@ using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
 using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Models;
+using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
@@ -19,12 +20,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         protected override string ExportActionDescription
         {
-            get { return "Extract"; }
+            get { return Resx.Extract; }
         }
 
         protected override string ImportActionDescription
         {
-            get { return "Inject"; }
+            get { return Resx.Inject; }
         }
 
         #region CloseCommand

@@ -2,6 +2,7 @@
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Shell.Views.Dialogs;
+using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
@@ -131,7 +132,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             WorkerThread.Run(() =>
                                  {
-                                     UIThread.Run(() => NotificationMessage.ShowMessage("Application is busy", "Please wait...", NotificationMessageFlags.NonClosable));
+                                     UIThread.Run(() => NotificationMessage.ShowMessage(Resx.ApplicationIsBusy, Resx.PleaseWait, NotificationMessageFlags.NonClosable));
                                      _cacheManager.ClearCache(); 
                                      return true;
                                  }, 

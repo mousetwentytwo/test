@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Neurotoxin.Godspeed.Core.Attributes;
+﻿using Neurotoxin.Godspeed.Core.Attributes;
 
 namespace Neurotoxin.Godspeed.Shell.Constants
 {

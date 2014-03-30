@@ -4,8 +4,6 @@ using Neurotoxin.Godspeed.Core.Constants;
 using Neurotoxin.Godspeed.Core.Io.Stfs.Data;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Constants;
-using System.Linq;
-using Microsoft.Practices.ObjectBuilder2;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {

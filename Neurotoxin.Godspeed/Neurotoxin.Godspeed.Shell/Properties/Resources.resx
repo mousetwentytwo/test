@@ -458,4 +458,466 @@
   <data name="ApplicationCrashed" xml:space="preserve">
     <value>Application crashed</value>
   </data>
+  <data name="AddNewFolder" xml:space="preserve">
+    <value>Add New Folder</value>
+  </data>
+  <data name="ApplicationIsBusy" xml:space="preserve">
+    <value>Application is busy</value>
+  </data>
+  <data name="AvatarAssetPackSingular" xml:space="preserve">
+    <value>Avatar Asset Pack</value>
+  </data>
+  <data name="AvatarAssetPackPlural" xml:space="preserve">
+    <value>Avatar Asset Packs</value>
+  </data>
+  <data name="AvatarEditor" xml:space="preserve">
+    <value>Avatar Editor</value>
+  </data>
+  <data name="AvatarItemSingular" xml:space="preserve">
+    <value>Avatar Item</value>
+  </data>
+  <data name="AvatarItemPlural" xml:space="preserve">
+    <value>Avatar Items</value>
+  </data>
+  <data name="CacheFileSingular" xml:space="preserve">
+    <value>Cache File</value>
+  </data>
+  <data name="CacheFilePlural" xml:space="preserve">
+    <value>Cache Files</value>
+  </data>
+  <data name="CannotReestablishConnection" xml:space="preserve">
+    <value>Cannot reestablish connection. (Error: {0})</value>
+  </data>
+  <data name="CantConnectToFtp" xml:space="preserve">
+    <value>Can't connect to {0}</value>
+  </data>
+  <data name="CantOpenFile" xml:space="preserve">
+    <value>Can't open {0}</value>
+  </data>
+  <data name="ChangingDirectory" xml:space="preserve">
+    <value>Changing directory</value>
+  </data>
+  <data name="CommunityGameSingular" xml:space="preserve">
+    <value>Community Game</value>
+  </data>
+  <data name="CommunityGamePlural" xml:space="preserve">
+    <value>Community Games</value>
+  </data>
+  <data name="ConnectingToFtp" xml:space="preserve">
+    <value>Connecting to {0}...</value>
+  </data>
+  <data name="ConnectionFailed" xml:space="preserve">
+    <value>Connection failed</value>
+  </data>
+  <data name="ConnectionLostMessage" xml:space="preserve">
+    <value>The connection with {0} has been lost.</value>
+  </data>
+  <data name="ConnectionNameExistsErrorMessage" xml:space="preserve">
+    <value>This connection name already exists.</value>
+  </data>
+  <data name="Copy" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="CopyConfirmationPlural" xml:space="preserve">
+    <value>Do you really want to copy the selected items?</value>
+  </data>
+  <data name="CopyConfirmationSingular" xml:space="preserve">
+    <value>Do you really want to copy the selected item?</value>
+  </data>
+  <data name="DateTimeFormat" xml:space="preserve">
+    <value>dd/MM/yyyy HH:mm</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="DeleteConfirmationPlural" xml:space="preserve">
+    <value>Do you really want to delete the selected items?</value>
+  </data>
+  <data name="DeleteConfirmationSingular" xml:space="preserve">
+    <value>Do you really want to delete the selected item?</value>
+  </data>
+  <data name="Download" xml:space="preserve">
+    <value>Download</value>
+  </data>
+  <data name="DownloadableContentSingular" xml:space="preserve">
+    <value>Downloadable Content</value>
+  </data>
+  <data name="DownloadableContentPlural" xml:space="preserve">
+    <value>Downloadable Contents</value>
+  </data>
+  <data name="EmptyFieldErrorMessage" xml:space="preserve">
+    <value>You can't leave this field empty.</value>
+  </data>
+  <data name="Extract" xml:space="preserve">
+    <value>Extract</value>
+  </data>
+  <data name="FolderAlreadyExists" xml:space="preserve">
+    <value>Folder [{0}] already exists! Please specify a different name.</value>
+  </data>
+  <data name="FolderName" xml:space="preserve">
+    <value>Folder name</value>
+  </data>
+  <data name="GameDemoSingular" xml:space="preserve">
+    <value>Game Demo</value>
+  </data>
+  <data name="GameDemoPlural" xml:space="preserve">
+    <value>Game Demos</value>
+  </data>
+  <data name="GameOnDemandSingular" xml:space="preserve">
+    <value>GOD Content</value>
+  </data>
+  <data name="GameOnDemandPlural" xml:space="preserve">
+    <value>GOD Contents</value>
+  </data>
+  <data name="GamerPicturePlural" xml:space="preserve">
+    <value>Gamer Pictures</value>
+  </data>
+  <data name="GamerPictureSingular" xml:space="preserve">
+    <value>Gamer Picture</value>
+  </data>
+  <data name="GamerTitleSingular" xml:space="preserve">
+    <value>Gamer Title</value>
+  </data>
+  <data name="GamerTitlePlural" xml:space="preserve">
+    <value>Gamer Titles</value>
+  </data>
+  <data name="Games" xml:space="preserve">
+    <value>Games</value>
+  </data>
+  <data name="GameTrailerSingular" xml:space="preserve">
+    <value>Game Trailer</value>
+  </data>
+  <data name="GameTrailerPlural" xml:space="preserve">
+    <value>Game Trailers</value>
+  </data>
+  <data name="GameVideoSingular" xml:space="preserve">
+    <value>Game Video</value>
+  </data>
+  <data name="GameVideoPlural" xml:space="preserve">
+    <value>Game Videos</value>
+  </data>
+  <data name="InaccessibleFileErrorMessage" xml:space="preserve">
+    <value>Inaccessible file. Please check the corresponding permissions.</value>
+  </data>
+  <data name="IndetermineFtpConnectionError" xml:space="preserve">
+    <value>Something went wrong while trying to establish connection. Please try again, and if the error persists try to switch Passive Mode.</value>
+  </data>
+  <data name="Inject" xml:space="preserve">
+    <value>Inject</value>
+  </data>
+  <data name="InstalledGameSingular" xml:space="preserve">
+    <value>Installed Game</value>
+  </data>
+  <data name="InstalledGamePlural" xml:space="preserve">
+    <value>Installed Games</value>
+  </data>
+  <data name="IntegerErrorMessage" xml:space="preserve">
+    <value>[{0}] is not an Integer value.</value>
+  </data>
+  <data name="IPAddressEmptyErrorMessage" xml:space="preserve">
+    <value>Please enter an IP Address.</value>
+  </data>
+  <data name="IPAddressInvalidCharacterErrorMessage" xml:space="preserve">
+    <value>Each octet of an IP Address should be a number.</value>
+  </data>
+  <data name="IPAddressOctetOutOfRangeErrorMessage" xml:space="preserve">
+    <value>Each octet of an IP Address should be between 0 and 255.</value>
+  </data>
+  <data name="IPAddressWrongFormatErrorMessage" xml:space="preserve">
+    <value>IP Address should be four octets, seperated by decimals.</value>
+  </data>
+  <data name="IptvPauseBufferSingular" xml:space="preserve">
+    <value>IPTV Pause Buffer</value>
+  </data>
+  <data name="IptvPauseBufferPlural" xml:space="preserve">
+    <value>IPTV Pause Buffers</value>
+  </data>
+  <data name="ItemNotExistsOnPath" xml:space="preserve">
+    <value>Item not exists on path: {0}</value>
+  </data>
+  <data name="LicenseStoreSingular" xml:space="preserve">
+    <value>License Store</value>
+  </data>
+  <data name="LicenseStorePlural" xml:space="preserve">
+    <value>License Stores</value>
+  </data>
+  <data name="LocalFileSystemFreeSpace" xml:space="preserve">
+    <value>{0:#,0} of {1:#,0} bytes free</value>
+  </data>
+  <data name="MigrationProgressDialogTitle" xml:space="preserve">
+    <value>Migrating... ({0}%)</value>
+  </data>
+  <data name="Move" xml:space="preserve">
+    <value>Move</value>
+  </data>
+  <data name="MoveConfirmationPlural" xml:space="preserve">
+    <value>Do you really want to move the selected items?</value>
+  </data>
+  <data name="MoveConfirmationSingular" xml:space="preserve">
+    <value>Do you really want to move the selected item?</value>
+  </data>
+  <data name="MovieSingular" xml:space="preserve">
+    <value>Movie</value>
+  </data>
+  <data name="MoviePlural" xml:space="preserve">
+    <value>Movies</value>
+  </data>
+  <data name="MusicVideoSingular" xml:space="preserve">
+    <value>Musicvideo</value>
+  </data>
+  <data name="MusicVideoPlural" xml:space="preserve">
+    <value>Musicvideos</value>
+  </data>
+  <data name="NewConnection" xml:space="preserve">
+    <value>New connection</value>
+  </data>
+  <data name="NewName" xml:space="preserve">
+    <value>New name</value>
+  </data>
+  <data name="NewTitleFoundPlural" xml:space="preserve">
+    <value>{0} new titles found.</value>
+  </data>
+  <data name="NewTitleFoundSingular" xml:space="preserve">
+    <value>{0} new title found.</value>
+  </data>
+  <data name="NoMessages" xml:space="preserve">
+    <value>There are no messages yet.</value>
+  </data>
+  <data name="NoNewTitlesFound" xml:space="preserve">
+    <value>No new titles found.</value>
+  </data>
+  <data name="OpenFailed" xml:space="preserve">
+    <value>Open failed</value>
+  </data>
+  <data name="OpeningArchive" xml:space="preserve">
+    <value>Opening archive</value>
+  </data>
+  <data name="OpeningProfile" xml:space="preserve">
+    <value>Opening profile</value>
+  </data>
+  <data name="PleaseWait" xml:space="preserve">
+    <value>Please wait...</value>
+  </data>
+  <data name="PodcastVideoSingular" xml:space="preserve">
+    <value>Podcast Video</value>
+  </data>
+  <data name="PodcastVideoPlural" xml:space="preserve">
+    <value>Podcast Videos</value>
+  </data>
+  <data name="PopulationFailed" xml:space="preserve">
+    <value>Population failed. (Error: {0})</value>
+  </data>
+  <data name="ProfileDoesntExistErrorMessage" xml:space="preserve">
+    <value>Profile file does not exists.</value>
+  </data>
+  <data name="ProfileIsInUseErrorMessage" xml:space="preserve">
+    <value>Profile is currently in use. Please sign out.</value>
+  </data>
+  <data name="ProfilePlural" xml:space="preserve">
+    <value>Profile Data</value>
+  </data>
+  <data name="ProfileSingular" xml:space="preserve">
+    <value>Profile Data</value>
+  </data>
+  <data name="PublisherSingular" xml:space="preserve">
+    <value>Publisher</value>
+  </data>
+  <data name="PublisherPlural" xml:space="preserve">
+    <value>Publishers</value>
+  </data>
+  <data name="ReadFileError" xml:space="preserve">
+    <value>Error reading file</value>
+  </data>
+  <data name="RecognizingItem" xml:space="preserve">
+    <value>Recognizing item {0} ({1} left)</value>
+  </data>
+  <data name="RefreshingDirectory" xml:space="preserve">
+    <value>Refreshing directory</value>
+  </data>
+  <data name="RemoteCopySpecialCharsWarningMessage" xml:space="preserve">
+    <value>Remote Copy cannot be used for files with non-ASCII characters in their paths. These files have been copied with the standard transfer methods.</value>
+  </data>
+  <data name="RemoveUserMessage" xml:space="preserve">
+    <value>Remove message</value>
+  </data>
+  <data name="RemoveUserMessageConfirmation" xml:space="preserve">
+    <value>Do you want to disable this message permanently in the future?</value>
+  </data>
+  <data name="RenameDirectory" xml:space="preserve">
+    <value>Rename Directory</value>
+  </data>
+  <data name="RenameFile" xml:space="preserve">
+    <value>Rename File</value>
+  </data>
+  <data name="ResumeIsNotAvailableConfirmation" xml:space="preserve">
+    <value>The resume function on target machine is not available. Do you really want to abort the transfer?</value>
+  </data>
+  <data name="SavedGameSingular" xml:space="preserve">
+    <value>Saved Game</value>
+  </data>
+  <data name="SavedGamePlural" xml:space="preserve">
+    <value>Saved Games</value>
+  </data>
+  <data name="ScanningProfile" xml:space="preserve">
+    <value>Scanning profile</value>
+  </data>
+  <data name="StorageDownloadSingular" xml:space="preserve">
+    <value>Storage Download</value>
+  </data>
+  <data name="StorageDownloadPlural" xml:space="preserve">
+    <value>Storage Downloads</value>
+  </data>
+  <data name="SystemData" xml:space="preserve">
+    <value>System Data</value>
+  </data>
+  <data name="TargetAlreadyExists" xml:space="preserve">
+    <value>Target already exists</value>
+  </data>
+  <data name="TelevisionSingular" xml:space="preserve">
+    <value>TV Show</value>
+  </data>
+  <data name="TelevisionPlural" xml:space="preserve">
+    <value>TV Shows</value>
+  </data>
+  <data name="ThemeSingular" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="ThemePlural" xml:space="preserve">
+    <value>Themes</value>
+  </data>
+  <data name="TitleRecognition" xml:space="preserve">
+    <value>Title Recognition</value>
+  </data>
+  <data name="TitleUpdateSingular" xml:space="preserve">
+    <value>Title Update</value>
+  </data>
+  <data name="TitleUpdatePlural" xml:space="preserve">
+    <value>Title Updates</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="UnknownDataFile" xml:space="preserve">
+    <value>Unknown Data File</value>
+  </data>
+  <data name="UnknownGame" xml:space="preserve">
+    <value>Unknown Game</value>
+  </data>
+  <data name="UnknownProfile" xml:space="preserve">
+    <value>Unknown Profile</value>
+  </data>
+  <data name="Upload" xml:space="preserve">
+    <value>Upload</value>
+  </data>
+  <data name="UseRemoteCopyRemarks" xml:space="preserve">
+    <value>Please note that not every NAS is supported. Your NAS has to be Telnet-enabled (on default port) and should support LFTP. Once these requirements are met, you can speed up your transfer using this option. However you will lose the possibility of immediate file transfer abortion, you have to wait till the up- or download of the current file in queue finishes.</value>
+  </data>
+  <data name="VideoSingular" xml:space="preserve">
+    <value>Video</value>
+  </data>
+  <data name="VideoPlural" xml:space="preserve">
+    <value>Videos</value>
+  </data>
+  <data name="ViralVideoSingular" xml:space="preserve">
+    <value>Viral Video</value>
+  </data>
+  <data name="ViralVideoPlural" xml:space="preserve">
+    <value>Viral Videos</value>
+  </data>
+  <data name="Warning" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="Xbox360TitleSingular" xml:space="preserve">
+    <value>Xbox360 Title</value>
+  </data>
+  <data name="Xbox360TitlePlural" xml:space="preserve">
+    <value>Xbox360 Titles</value>
+  </data>
+  <data name="XboxDownloadSingular" xml:space="preserve">
+    <value>Xbox Download</value>
+  </data>
+  <data name="XboxDownloadPlural" xml:space="preserve">
+    <value>Xbox Downloads</value>
+  </data>
+  <data name="XboxLiveArcadeGameSingular" xml:space="preserve">
+    <value>XBLA Content</value>
+  </data>
+  <data name="XboxLiveArcadeGamePlural" xml:space="preserve">
+    <value>XBLA Contents</value>
+  </data>
+  <data name="XboxOriginalGameSingular" xml:space="preserve">
+    <value>Xbox Original Game</value>
+  </data>
+  <data name="XboxOriginalGamePlural" xml:space="preserve">
+    <value>Xbox Original Games</value>
+  </data>
+  <data name="XboxSavedGameSingular" xml:space="preserve">
+    <value>Xbox Saved Game</value>
+  </data>
+  <data name="XboxSavedGamePlural" xml:space="preserve">
+    <value>Xbox Saved Games</value>
+  </data>
+  <data name="XNAIndiePlayer" xml:space="preserve">
+    <value>XNA Indie Player</value>
+  </data>
+  <data name="XNASingular" xml:space="preserve">
+    <value>XNA Content</value>
+  </data>
+  <data name="XNAPlural" xml:space="preserve">
+    <value>XNA Contents</value>
+  </data>
+  <data name="CodeplexMessage" xml:space="preserve">
+    <value>&lt;b&gt;Thank you for using GODspeed!&lt;/b&gt; Do you think you've got an opinion about the current version? Rate and review it on CodePlex! Thanks!</value>
+  </data>
+  <data name="DayPlural" xml:space="preserve">
+    <value>Days</value>
+  </data>
+  <data name="DaySingular" xml:space="preserve">
+    <value>Day</value>
+  </data>
+  <data name="FacebookMessage" xml:space="preserve">
+    <value>&lt;b&gt;Do you like GODspeed?&lt;/b&gt; Do you want to get news about it first hand, share your ideas and/or be a part of its growing community? Then please like its Facebook page!</value>
+  </data>
+  <data name="ItemTypeDirectory" xml:space="preserve">
+    <value>DIRECTORY</value>
+  </data>
+  <data name="ItemTypeDrive" xml:space="preserve">
+    <value>DRIVE</value>
+  </data>
+  <data name="ItemTypeFile" xml:space="preserve">
+    <value>FILE</value>
+  </data>
+  <data name="Never" xml:space="preserve">
+    <value>Never</value>
+  </data>
+  <data name="NewerDotNetVersionRequiredMessage" xml:space="preserve">
+    <value>&lt;b&gt;Warning!&lt;/b&gt; Some of the features require .NET version 4.0.30319.18408 (October 2013) or newer. Please update .NET Framework and restart GODspeed to enable those features.</value>
+  </data>
+  <data name="NewVersionAvailableMessage" xml:space="preserve">
+    <value>&lt;b&gt;New version available!&lt;/b&gt;&lt;br/&gt;{0} ({1:yyyy.MM.dd HH:mm})</value>
+  </data>
+  <data name="PartialRecognitionMessage" xml:space="preserve">
+    <value>&lt;b&gt;One or more titles couldn't be recognized fully.&lt;/b&gt; If you played with them earlier try to extract the corresponding data from your profile by right clicking and selecting &lt;i&gt;Recognize Titles from Profile&lt;/i&gt;.</value>
+  </data>
+  <data name="ParticipationMessage" xml:space="preserve">
+    <value>&lt;b&gt;Help improve GODspeed!&lt;/b&gt; Click to set your participation in its User Statistics.</value>
+  </data>
+  <data name="TitleTypeContent" xml:space="preserve">
+    <value>CONTENT</value>
+  </data>
+  <data name="TitleTypeDataFile" xml:space="preserve">
+    <value>DATAFILE</value>
+  </data>
+  <data name="TitleTypeGame" xml:space="preserve">
+    <value>GAME</value>
+  </data>
+  <data name="TitleTypeProfile" xml:space="preserve">
+    <value>PROFILE</value>
+  </data>
+  <data name="TitleTypeSystemDir" xml:space="preserve">
+    <value>SYSTEMDIR</value>
+  </data>
+  <data name="TitleTypeSystemFile" xml:space="preserve">
+    <value>SYSTEMFILE</value>
+  </data>
 </root>

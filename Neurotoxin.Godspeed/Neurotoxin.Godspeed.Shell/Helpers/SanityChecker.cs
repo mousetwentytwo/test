@@ -10,7 +10,6 @@ using System.Windows;
 using Microsoft.Practices.Composite.Events;
 using Neurotoxin.Godspeed.Core.Caching;
 using Neurotoxin.Godspeed.Core.Extensions;
-using Neurotoxin.Godspeed.Core.Net;
 using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Constants;
@@ -26,9 +25,11 @@ namespace Neurotoxin.Godspeed.Shell.Helpers
 {
     public class SanityChecker
     {
-        private const string PARTICIPATIONMESSAGE = "<b>Help improve GODspeed!</b> Click to set your participation in its User Statistics.";
-        private const string FACEBOOKMESSAGE = "<b>Do you like GODspeed?</b> Do you want to get news about it first hand, share your ideas and/or be a part of its growing community? Then please like its Facebook page!";
-        private const string CODEPLEXMESSAGE = "<b>Thank you for using GODspeed!</b> Do you think you've got an opinion about the current version? Rate and review it on CodePlex! Thanks!";
+        private const string PARTICIPATIONMESSAGEKEY = "ParticipationMessage";
+        private const string FACEBOOKMESSAGEKEY = "FacebookMessage";
+        private const string CODEPLEXMESSAGEKEY = "CodeplexMessage";
+        private const string NEWVERSIONAVAILABLEMESSAGEKEY = "NewVersionAvailableMessage";
+        private const string NEWERDOTNETVERSIONREQUIREDMESSAGEKEY = "NewerDotNetVersionRequiredMessage";
 
         private readonly Timer _participationTimer;
         private readonly Timer _facebookTimer;
@@ -46,11 +47,11 @@ namespace Neurotoxin.Godspeed.Shell.Helpers
             {
                 _participationTimer = new Timer(ParticipationMessage, null, 60000, -1);
             }
-            if (!UserSettings.IsMessageIgnored(FACEBOOKMESSAGE))
+            if (!UserSettings.IsMessageIgnored(FACEBOOKMESSAGEKEY))
             {
                 _facebookTimer = new Timer(FacebookMessage, null, 600000, -1);
             }
-            if (!UserSettings.IsMessageIgnored(CODEPLEXMESSAGE) && statistics.ApplicationStarted > 9 && statistics.TotalUsageTime > new TimeSpan(0, 2, 0, 0))
+            if (!UserSettings.IsMessageIgnored(CODEPLEXMESSAGEKEY) && statistics.ApplicationStarted > 9 && statistics.TotalUsageTime > new TimeSpan(0, 2, 0, 0))
             {
                 _codeplexTimer = new Timer(CodeplexMessage, null, 60000, -1);
             }
@@ -96,8 +97,7 @@ namespace Neurotoxin.Godspeed.Shell.Helpers
             GlobalVariables.DataGridSupportsRenaming = versionOk;
             if (versionOk) return;
 
-            const string message = "<b>Warning!</b> Some of the features require .NET version 4.0.30319.18408 (October 2013) or newer. Please update .NET Framework and restart GODspeed to enable those features.";
-            var args = new NotifyUserMessageEventArgs(message, MessageIcon.Warning, MessageCommand.OpenUrl, "http://www.microsoft.com/en-us/download/details.aspx?id=40779");
+            var args = new NotifyUserMessageEventArgs(NEWERDOTNETVERSIONREQUIREDMESSAGEKEY, MessageIcon.Warning, MessageCommand.OpenUrl, "http://www.microsoft.com/en-us/download/details.aspx?id=40779");
             _eventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(args);
         }
 
@@ -134,8 +134,7 @@ namespace Neurotoxin.Godspeed.Shell.Helpers
             info =>
             {
                 if (string.Compare(title, info.Item1, StringComparison.InvariantCultureIgnoreCase) != -1) return;
-                var message = string.Format("<b>New version available!</b><br/>{0} ({1:yyyy.MM.dd HH:mm})", info.Item1, info.Item2);
-                var args = new NotifyUserMessageEventArgs(message, MessageIcon.Info, MessageCommand.OpenUrl, "http://godspeed.codeplex.com", MessageFlags.None);
+                var args = new NotifyUserMessageEventArgs(NEWVERSIONAVAILABLEMESSAGEKEY, MessageIcon.Info, MessageCommand.OpenUrl, "http://godspeed.codeplex.com", MessageFlags.None, info.Item1, info.Item2);
                 _eventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(args);
             });
         }
@@ -169,21 +168,21 @@ namespace Neurotoxin.Godspeed.Shell.Helpers
         private void ParticipationMessage(object state)
         {
             _participationTimer.Dispose();
-            var args = new NotifyUserMessageEventArgs(PARTICIPATIONMESSAGE, MessageIcon.Info, MessageCommand.OpenDialog, typeof(UserStatisticsParticipationDialog));
+            var args = new NotifyUserMessageEventArgs(PARTICIPATIONMESSAGEKEY, MessageIcon.Info, MessageCommand.OpenDialog, typeof(UserStatisticsParticipationDialog));
             _eventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(args);
         }
 
         private void FacebookMessage(object state)
         {
             _facebookTimer.Dispose();
-            var args = new NotifyUserMessageEventArgs(FACEBOOKMESSAGE, MessageIcon.Info, MessageCommand.OpenUrl, "http://www.facebook.com/godspeedftp", MessageFlags.Ignorable | MessageFlags.IgnoreAfterOpen);
+            var args = new NotifyUserMessageEventArgs(FACEBOOKMESSAGEKEY, MessageIcon.Info, MessageCommand.OpenUrl, "http://www.facebook.com/godspeedftp", MessageFlags.Ignorable | MessageFlags.IgnoreAfterOpen);
             _eventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(args);
         }
 
         private void CodeplexMessage(object state)
         {
             _codeplexTimer.Dispose();
-            var args = new NotifyUserMessageEventArgs(CODEPLEXMESSAGE, MessageIcon.Info, MessageCommand.OpenUrl, "http://godspeed.codeplex.com", MessageFlags.Ignorable | MessageFlags.IgnoreAfterOpen);
+            var args = new NotifyUserMessageEventArgs(CODEPLEXMESSAGEKEY, MessageIcon.Info, MessageCommand.OpenUrl, "http://godspeed.codeplex.com", MessageFlags.Ignorable | MessageFlags.IgnoreAfterOpen);
             _eventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(args);
         }
 

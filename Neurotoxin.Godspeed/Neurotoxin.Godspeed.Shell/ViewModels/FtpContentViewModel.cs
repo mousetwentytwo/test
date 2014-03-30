@@ -14,6 +14,7 @@ using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
 using Neurotoxin.Godspeed.Shell.Exceptions;
 using Neurotoxin.Godspeed.Shell.Models;
+using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
@@ -38,19 +39,19 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         
         protected override string ExportActionDescription
         {
-            get { return "Download"; }
+            get { return Resx.Download; }
         }
 
         protected override string ImportActionDescription
         {
-            get { return "Upload"; }
+            get { return Resx.Upload; }
         }
 
         private string ConnectionLostMessage
         {
             get
             {
-                return string.Format("The connection with {0} has been lost.", Connection.Name);
+                return string.Format(Resx.ConnectionLostMessage, Connection.Name);
             }
         }
 
@@ -96,11 +97,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                                 } 
                                 catch(Exception ex)
                                 {
-                                    if (error != null)
-                                    {
-                                        var somethingWentWrong = string.Format("Something went wrong while trying to establish connection. Please try again, and if the error persists try to turn {0} Passive Mode.", Connection.UsePassiveMode ? "off" : "on");
-                                        error.Invoke(this, new SomethingWentWrongException(somethingWentWrong, ex));
-                                    }
+                                    if (error != null) error.Invoke(this, new SomethingWentWrongException(Resx.IndetermineFtpConnectionError, ex));
                                     CloseCommand.Execute();
                                     return;
                                 }
@@ -198,7 +195,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             //PS3 Transfer complete response string
             var r = new Regex(string.Format(@"226 Transfer complete \[{0}\] \[ ([0-9]+.*?free) \]", Drive.Path.TrimEnd('/')));
             var m = r.Match(FileManager.Log.ElementAt(1));
-            if (m.Success) FreeSpace = m.Groups[1].Value;
+            if (m.Success)
+            {
+                //TODO: localize
+                FreeSpace = m.Groups[1].Value;
+            }
         }
 
         public override string GetTargetPath(string path)
@@ -257,7 +258,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 {
                     case CopyAction.CreateNew:
                         if (File.Exists(savePath))
-                            throw new TransferException(TransferErrorType.WriteAccessError, item.Path, savePath, "Target already exists");
+                            throw new TransferException(TransferErrorType.WriteAccessError, item.Path, savePath, Resx.TargetAlreadyExists);
                         break;
                     case CopyAction.Overwrite:
                         File.Delete(savePath);
@@ -294,7 +295,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 {
                     case CopyAction.CreateNew:
                         var exists = FileManager.FileExists(savePath);
-                        if (exists) throw new TransferException(TransferErrorType.WriteAccessError, "Target already exists", item.Path, savePath, exists.Size);
+                        if (exists) throw new TransferException(TransferErrorType.WriteAccessError, Resx.TargetAlreadyExists, item.Path, savePath, exists.Size);
                         break;
                     case CopyAction.Overwrite:
                         FileManager.DeleteFile(savePath);

@@ -110,7 +110,7 @@
                          Padding="5,0,0,0" IsChecked="{Binding UseRemoteCopy}" />
 
                     <Image Grid.Row="1" Source="/Resources/info.png" Margin="20,10,5,0" VerticalAlignment="Top" />
-                    <TextBlock Grid.Row="1" Grid.Column="1" TextWrapping="Wrap" Margin="0,10,0,0" x:Name="UseRemoteCopyRemarks" />
+                    <TextBlock Grid.Row="1" Grid.Column="1" TextWrapping="Wrap" Margin="0,10,0,0" Text="{lex:LocText UseRemoteCopyRemarks}" />
                 </Grid>
             </TabItem>
             <TabItem Header="{lex:LocText Appearance}">

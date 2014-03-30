@@ -10,13 +10,13 @@ using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Core.Io.Gpd;
 using Neurotoxin.Godspeed.Core.Io.Stfs;
 using Neurotoxin.Godspeed.Core.Models;
-using Neurotoxin.Godspeed.Core.Net;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
 using Neurotoxin.Godspeed.Presentation.Extensions;
+using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 
 namespace Neurotoxin.Godspeed.Shell.ContentProviders
 {
@@ -27,24 +27,20 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         private readonly IEventAggregator _eventAggregator;
         private readonly Dictionary<string, FileSystemItem> _profileFileCache = new Dictionary<string, FileSystemItem>();
 
-        private const string ACCESSERRORMESSAGE = "Inaccessible file. Please check the corresponding permissions.";
-        private const string PROFILEISINUSE = "Profile is currently in use. Please sign out.";
-        private const string PROFILEFILEDOESNTEXIST = "Profile file does not exists.";
-
         private static readonly List<RecognitionInformation> RecognitionKeywords = new List<RecognitionInformation>
             {
-                new RecognitionInformation("^0000000000000000$", "Games", TitleType.SystemDir),
-                new RecognitionInformation("^584E07D2$", "XNA Indie Player", TitleType.SystemDir),
-                new RecognitionInformation("^FFFE07C3$", "Gamer Pictures", TitleType.SystemDir),
-                new RecognitionInformation("^FFFE07D1$", "Profile Data", TitleType.SystemDir),
-                new RecognitionInformation("^FFFE07DF$", "Avatar Editor", TitleType.SystemDir),
-                new RecognitionInformation("^F[0-9A-F]{7}$", "System Data", TitleType.SystemDir),
-                new RecognitionInformation("^F[0-9A-F]{7}.gpd$", "System Data", TitleType.SystemFile, ItemType.File),
-                new RecognitionInformation("^[1-9A-E][0-9A-F]{7}$", "Unknown Game", TitleType.Game),
-                new RecognitionInformation("^[1-9A-E][0-9A-F]{7}.gpd$", "Unknown Game", TitleType.Game, ItemType.File),
-                new RecognitionInformation("^[0-9A-F]{8}$", "Unknown Content", TitleType.Content),
-                new RecognitionInformation("^E0000[0-9A-F]{11}$", "Unknown Profile", TitleType.Profile, ItemType.Directory | ItemType.File),
-                new RecognitionInformation("^TU[\\w\\.]+$|^[0-9A-F]+$", "Unknown Data File", TitleType.DataFile, ItemType.File),
+                new RecognitionInformation("^0000000000000000$", Resx.Games, TitleType.SystemDir),
+                new RecognitionInformation("^584E07D2$", Resx.XNAIndiePlayer, TitleType.SystemDir),
+                new RecognitionInformation("^FFFE07C3$", Resx.GamerPictureSingular, TitleType.SystemDir),
+                new RecognitionInformation("^FFFE07D1$", Resx.ProfileSingular, TitleType.SystemDir),
+                new RecognitionInformation("^FFFE07DF$", Resx.AvatarEditor, TitleType.SystemDir),
+                new RecognitionInformation("^F[0-9A-F]{7}$", Resx.SystemData, TitleType.SystemDir),
+                new RecognitionInformation("^F[0-9A-F]{7}.gpd$", Resx.SystemData, TitleType.SystemFile, ItemType.File),
+                new RecognitionInformation("^[1-9A-E][0-9A-F]{7}$", Resx.UnknownGame, TitleType.Game),
+                new RecognitionInformation("^[1-9A-E][0-9A-F]{7}.gpd$", Resx.UnknownGame, TitleType.Game, ItemType.File),
+                new RecognitionInformation("^[0-9A-F]{8}$", Resx.UnknownContent, TitleType.Content),
+                new RecognitionInformation("^E0000[0-9A-F]{11}$", Resx.UnknownProfile, TitleType.Profile, ItemType.Directory | ItemType.File),
+                new RecognitionInformation("^TU[\\w\\.]+$|^[0-9A-F]+$", Resx.UnknownDataFile, TitleType.DataFile, ItemType.File),
             };
 
         public TitleRecognizer(IFileManager fileManager, CacheManager cacheManager, IEventAggregator eventAggregator)
@@ -91,9 +87,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         private static string GetContentTypeTitle(ContentType contentType)
         {
-            var title = EnumHelper.GetStringValue(contentType);
-            var suffix = title.EndsWith("data", StringComparison.InvariantCultureIgnoreCase) ? string.Empty : "s";
-            return string.Format("{0}{1}", title, suffix);
+            return Resx.ResourceManager.GetString(contentType + "Plural");
         }
 
         private static RecognitionInformation RecognizeByName(string name, ItemType? flag = null)
@@ -128,7 +122,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             {
                 item.IsCached = true;
                 item.IsLocked = true;
-                item.LockMessage = cacheKey.ErrorMessage ?? ACCESSERRORMESSAGE;
+                item.LockMessage = cacheKey.ErrorMessage ?? Resx.InaccessibleFileErrorMessage;
             } 
             else
             {
@@ -210,7 +204,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                         catch
                         {
                             item.IsLocked = true;
-                            item.LockMessage = ACCESSERRORMESSAGE;
+                            item.LockMessage = Resx.InaccessibleFileErrorMessage;
                         }
                         item.IsCached = true;
                     }
@@ -240,12 +234,12 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                     else
                     {
                         profileItem = null;
-                        message = PROFILEISINUSE;
+                        message = Resx.ProfileIsInUseErrorMessage;
                     }
                 } 
                 else
                 {
-                    message = PROFILEFILEDOESNTEXIST;
+                    message = Resx.ProfileDoesntExistErrorMessage;
                 }
                 _profileFileCache.Add(profilePath, profileItem);
             }
@@ -310,7 +304,8 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             catch (Exception ex)
             {
                 item.IsLocked = true;
-                item.LockMessage = ex.Message == "Permission denied" ? PROFILEISINUSE : ex.Message;
+                //TODO: exception message in non-English environment
+                item.LockMessage = ex.Message == "Permission denied" ? Resx.ProfileIsInUseErrorMessage : ex.Message;
                 return false;
             }
         }
@@ -379,11 +374,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
             if (result)
             {
-                UIThread.Run(() =>
-                                 {
-                                     const string message = "<b>One or more titles couldn't be recognized fully.</b> If you played with them earlier try to extract the corresponding data from your profile by right clicking and selecting <i>Recognize Titles from Profile</i>.";
-                                     _eventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(new NotifyUserMessageEventArgs(message, MessageIcon.Warning));
-                                 });
+                UIThread.Run(() => _eventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(new NotifyUserMessageEventArgs("PartialRecognitionMessage", MessageIcon.Warning)));
                 item.Title = title;
                 item.RecognitionState = RecognitionState.PartiallyRecognized;
             }

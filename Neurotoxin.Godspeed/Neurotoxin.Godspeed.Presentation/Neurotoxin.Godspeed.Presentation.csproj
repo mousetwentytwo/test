@@ -164,7 +164,6 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\Neurotoxin.Godspeed.Core\Neurotoxin.Godspeed.Core.csproj">
       <Project>{6BC68F07-4B7E-4143-9795-973CAC9EAAB4}</Project>

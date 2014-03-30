@@ -94,15 +94,16 @@
             <TextBox.Text>
                 <Binding Path="Name" UpdateSourceTrigger="LostFocus">
                     <Binding.ValidationRules>
-                        <validation:IsRequired ValidatesOnTargetUpdated="True" />
-                        <shellValidations:IsNonExistentConnection ValidatesOnTargetUpdated="True" />
+                        <validation:IsRequired ValidatesOnTargetUpdated="True" ErrorMessage="{lex:LocText EmptyFieldErrorMessage}" />
+                        <shellValidations:IsNonExistentConnection ValidatesOnTargetUpdated="True" ErrorMessage="{lex:LocText ConnectionNameExistsErrorMessage}" />
                     </Binding.ValidationRules>
                 </Binding>
             </TextBox.Text>
         </TextBox>
         <TextBlock Grid.Column="0" Grid.Row="1" Text="{lex:LocText Console, Suffix={x:Static constants:Strings.Colon}}" VerticalAlignment="Center" Margin="0,0,0,5" />
-        <ComboBox Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="3" Margin="0,0,0,5" ItemsSource="{Binding RelativeSource={RelativeSource AncestorType={x:Type dialogs:NewConnectionDialog}}, Path=ConnectionImages}"
-             SelectedItem="{Binding ConnectionImage}">
+        <ComboBox Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="3" Margin="0,0,0,5" 
+                  ItemsSource="{Binding RelativeSource={RelativeSource AncestorType={x:Type dialogs:NewConnectionDialog}}, Path=ConnectionImages}"
+                  SelectedItem="{Binding ConnectionImage}">
             <ComboBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding Converter={StaticResource EnumConverter}}" />
@@ -114,7 +115,11 @@
             <TextBox.Text>
                 <Binding Path="Address" UpdateSourceTrigger="LostFocus">
                     <Binding.ValidationRules>
-                        <validation:IsIPv4Address ValidatesOnTargetUpdated="True" />
+                        <validation:IsIPv4Address ValidatesOnTargetUpdated="True" 
+                                                  EmptyErrorMessage="{lex:LocText IPAddressEmptyErrorMessage}" 
+                                                  WrongFormatErrorMessage="{lex:LocText IPAddressWrongFormatErrorMessage}"
+                                                  InvalidCharacterErrorMessage="{lex:LocText IPAddressInvalidCharacterErrorMessage}"
+                                                  OctetOutOfRangeErrorMessage="{lex:LocText IPAddressOctetOutOfRangeErrorMessage}"/>
                     </Binding.ValidationRules>
                 </Binding>
             </TextBox.Text>
@@ -124,29 +129,29 @@
             <TextBox.Text>
                 <Binding Path="Port" UpdateSourceTrigger="LostFocus">
                     <Binding.ValidationRules>
-                        <validation:IsInteger ValidatesOnTargetUpdated="True" />
+                        <validation:IsInteger ValidatesOnTargetUpdated="True" ErrorMessage="{lex:LocText IntegerErrorMessage}" />
                     </Binding.ValidationRules>
                 </Binding>
             </TextBox.Text>
         </TextBox>
         <TextBlock Grid.Column="0" Grid.Row="3" Text="{lex:LocText Username, Suffix={x:Static constants:Strings.Colon}}" VerticalAlignment="Center" Margin="0,0,0,5" />
-        <TextBox Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="3" Margin="0,0,0,5" x:Name="Username"
-             Style="{StaticResource TextBoxStyle}" IsEnabled="{Binding ElementName=AnonymousLogin, Path=IsChecked, Converter={StaticResource InverseBooleanConverter}}">
+        <TextBox Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="3" Margin="0,0,0,5" x:Name="Username" Style="{StaticResource TextBoxStyle}" 
+                 IsEnabled="{Binding ElementName=AnonymousLogin, Path=IsChecked, Converter={StaticResource InverseBooleanConverter}}">
             <TextBox.Text>
                 <Binding Path="Username" UpdateSourceTrigger="LostFocus">
                     <Binding.ValidationRules>
-                        <validation:IsRequired ValidatesOnTargetUpdated="True" />
+                        <validation:IsRequired ValidatesOnTargetUpdated="True" ErrorMessage="{lex:LocText EmptyFieldErrorMessage}" />
                     </Binding.ValidationRules>
                 </Binding>
             </TextBox.Text>
         </TextBox>
         <TextBlock Grid.Column="0" Grid.Row="4" Text="{lex:LocText Password, Suffix={x:Static constants:Strings.Colon}}" VerticalAlignment="Center" Margin="0,0,0,5" />
-        <TextBox Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="3" Margin="0,0,0,5" x:Name="Password"
-             Style="{StaticResource TextBoxStyle}" IsEnabled="{Binding ElementName=AnonymousLogin, Path=IsChecked, Converter={StaticResource InverseBooleanConverter}}">
+        <TextBox Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="3" Margin="0,0,0,5" x:Name="Password" Style="{StaticResource TextBoxStyle}" 
+                 IsEnabled="{Binding ElementName=AnonymousLogin, Path=IsChecked, Converter={StaticResource InverseBooleanConverter}}">
             <TextBox.Text>
                 <Binding Path="Password" UpdateSourceTrigger="LostFocus">
                     <Binding.ValidationRules>
-                        <validation:IsRequired ValidatesOnTargetUpdated="True" />
+                        <validation:IsRequired ValidatesOnTargetUpdated="True" ErrorMessage="{lex:LocText EmptyFieldErrorMessage}" />
                     </Binding.ValidationRules>
                 </Binding>
             </TextBox.Text>
