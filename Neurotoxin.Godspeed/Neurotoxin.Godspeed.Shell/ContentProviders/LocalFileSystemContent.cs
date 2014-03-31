@@ -88,7 +88,10 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
             var di = new System.IO.DirectoryInfo(path);
             if (di.Attributes.HasFlag(FileAttributes.ReparsePoint))
+            {
                 path = new ReparsePoint(path).Target;
+                if (path == null) throw new IOException(Resx.ReparsePointCannotBeResolved);
+            }
 
             var list = Directory.GetDirectories(path).Select(p => GetDirectoryInfo(p)).ToList();
             list.AddRange(Directory.GetFiles(path).Select(GetFileInfo));

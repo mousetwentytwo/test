@@ -328,27 +328,27 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 }
             }
 
-            if (exists)
+            if (!exists) return false;
+
+            try
             {
                 var file = _fileManager.GetList(gamePath).FirstOrDefault(i => i.Type == ItemType.File);
                 if (file != null)
                 {
-                    try
+                    var fileContent = _fileManager.ReadFileHeader(file.Path);
+                    var svod = ModelFactory.GetModel<SvodPackage>(fileContent);
+                    if (svod.IsValid)
                     {
-                        var fileContent = _fileManager.ReadFileHeader(file.Path);
-                        var svod = ModelFactory.GetModel<SvodPackage>(fileContent);
-                        if (svod.IsValid)
-                        {
-                            item.Title = svod.TitleName;
-                            item.Thumbnail = svod.ThumbnailImage;
-                            item.ContentType = svod.ContentType;
-                            item.RecognitionState = RecognitionState.Recognized;
-                            infoFileFound = true;
-                        }
+                        item.Title = svod.TitleName;
+                        item.Thumbnail = svod.ThumbnailImage;
+                        item.ContentType = svod.ContentType;
+                        item.RecognitionState = RecognitionState.Recognized;
+                        infoFileFound = true;
                     }
-                    catch { }
                 }
             }
+            catch { }
+
             return infoFileFound;
         }
 

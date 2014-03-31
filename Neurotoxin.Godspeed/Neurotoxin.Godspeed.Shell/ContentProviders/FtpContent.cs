@@ -232,7 +232,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             return new FileSystemItem
                        {
                            Name = item.Name,
-                           Type = item.Type == FtpFileSystemObjectType.Directory ? ItemType.Directory : ItemType.File,
+                           Type = item.Type == FtpFileSystemObjectType.File ? ItemType.File : ItemType.Directory,
                            Date = item.Modified,
                            Path = path,
                            FullPath = string.Format("{0}:/{1}", _connection.Name, path),

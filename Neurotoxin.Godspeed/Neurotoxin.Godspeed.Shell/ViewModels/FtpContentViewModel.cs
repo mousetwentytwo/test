@@ -184,7 +184,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         protected override List<FileSystemItem> ChangeDirectoryInner(string selectedPath)
         {
-            return FileManager.ServerType == FtpServerType.PlayStation3 ? FileManager.GetList(selectedPath) : base.ChangeDirectoryInner(selectedPath);
+            return FileManager.ServerType == FtpServerType.PlayStation3
+                ? FileManager.GetList(selectedPath)
+                : base.ChangeDirectoryInner(selectedPath);
         }
 
         protected override void ChangeDirectoryCallback(List<FileSystemItem> result)

@@ -1683,6 +1683,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Reparse point cannot be resolved.
+        /// </summary>
+        internal static string ReparsePointCannotBeResolved {
+            get {
+                return ResourceManager.GetString("ReparsePointCannotBeResolved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Report.
         /// </summary>
         internal static string Report {

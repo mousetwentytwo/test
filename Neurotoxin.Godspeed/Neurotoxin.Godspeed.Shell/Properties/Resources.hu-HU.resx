@@ -836,4 +836,7 @@
   <data name="SizeInfo" xml:space="preserve">
     <value>{0:#,0} / {1:#,0} bájt - {2} / {3:fájl;fájl}, {4} / {5:mappa;mappa}</value>
   </data>
+  <data name="ReparsePointCannotBeResolved" xml:space="preserve">
+    <value>Az újraértelmezési pontot nem sikerült feloldani</value>
+  </data>
 </root>

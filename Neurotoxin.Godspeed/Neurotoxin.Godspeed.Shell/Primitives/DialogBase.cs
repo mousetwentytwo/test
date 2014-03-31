@@ -17,7 +17,7 @@ namespace Neurotoxin.Godspeed.Shell.Primitives
 
         protected virtual void OnPreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key != Key.Escape) return;
+            if (!IsVisible || !IsActive || e.Key != Key.Escape) return;
             e.Handled = true;
             DialogResult = false;
             Close();
