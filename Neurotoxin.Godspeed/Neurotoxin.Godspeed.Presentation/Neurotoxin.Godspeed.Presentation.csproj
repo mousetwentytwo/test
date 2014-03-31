@@ -111,6 +111,7 @@
     <Compile Include="Infrastructure\AsyncResult.cs" />
     <Compile Include="Infrastructure\BindingProxy.cs" />
     <Compile Include="Infrastructure\Constants\LoadCommand.cs" />
+    <Compile Include="Infrastructure\DataResource.cs" />
     <Compile Include="Infrastructure\MandatoryProperty.cs" />
     <Compile Include="Infrastructure\MapDataGridRowEditEndingEventToCommand.cs" />
     <Compile Include="Infrastructure\MapDataGridCellEditEndingEventToCommand.cs" />

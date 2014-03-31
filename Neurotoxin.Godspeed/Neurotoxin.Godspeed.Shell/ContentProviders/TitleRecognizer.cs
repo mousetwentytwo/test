@@ -409,7 +409,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         public void ThrowCache(FileSystemItem item)
         {
             var cacheKey = GetCacheKey(item);
-            _cacheManager.ClearCache(cacheKey.Key);
+            if (cacheKey.Key != null) _cacheManager.ClearCache(cacheKey.Key);
         }
 
         public string GetTempFilePath(FileSystemItem item)

@@ -14,9 +14,11 @@ namespace Neurotoxin.Godspeed.Shell.Views.Validations
             set { _errorMessage = value; }
         }
 
+        public string OriginalValue { get; set; }
+
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
-            return new ValidationResult(value == null || !EsentPersistentDictionary.Instance.ContainsKey(ConnectionsViewModel.CacheStoreKeyPrefix + value), ErrorMessage);
+            return new ValidationResult((string)value == OriginalValue || !EsentPersistentDictionary.Instance.ContainsKey(ConnectionsViewModel.CacheStoreKeyPrefix + value), ErrorMessage);
         }
     }
 }

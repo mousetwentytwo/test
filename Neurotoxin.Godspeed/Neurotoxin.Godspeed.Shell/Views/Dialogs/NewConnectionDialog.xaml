@@ -1,6 +1,7 @@
 ﻿<primitives:DialogBase x:Class="Neurotoxin.Godspeed.Shell.Views.Dialogs.NewConnectionDialog"
                        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:i="clr-namespace:Neurotoxin.Godspeed.Presentation.Infrastructure;assembly=Neurotoxin.Godspeed.Presentation"
                        xmlns:validation="clr-namespace:Neurotoxin.Godspeed.Presentation.Validation;assembly=Neurotoxin.Godspeed.Presentation"
                        xmlns:dialogs="clr-namespace:Neurotoxin.Godspeed.Shell.Views.Dialogs"
                        xmlns:primitives="clr-namespace:Neurotoxin.Godspeed.Shell.Primitives"
@@ -71,6 +72,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <i:DataResource x:Key="OriginalName" BindingTarget="{Binding Name}"/>
     </primitives:DialogBase.Resources>
     <Grid x:Name="LayoutRoot" Margin="2">
         <Grid.ColumnDefinitions>
@@ -95,7 +97,8 @@
                 <Binding Path="Name" UpdateSourceTrigger="LostFocus">
                     <Binding.ValidationRules>
                         <validation:IsRequired ValidatesOnTargetUpdated="True" ErrorMessage="{lex:LocText EmptyFieldErrorMessage}" />
-                        <shellValidations:IsNonExistentConnection ValidatesOnTargetUpdated="True" ErrorMessage="{lex:LocText ConnectionNameExistsErrorMessage}" />
+                        <shellValidations:IsNonExistentConnection ValidatesOnTargetUpdated="True" ErrorMessage="{lex:LocText Neurotoxin.Godspeed.Shell:Resources:ConnectionNameExistsErrorMessage}" 
+                                                                  OriginalValue="{i:DataResourceBinding DataResource={StaticResource OriginalName}}"/>
                     </Binding.ValidationRules>
                 </Binding>
             </TextBox.Text>
@@ -116,10 +119,10 @@
                 <Binding Path="Address" UpdateSourceTrigger="LostFocus">
                     <Binding.ValidationRules>
                         <validation:IsIPv4Address ValidatesOnTargetUpdated="True" 
-                                                  EmptyErrorMessage="{lex:LocText IPAddressEmptyErrorMessage}" 
-                                                  WrongFormatErrorMessage="{lex:LocText IPAddressWrongFormatErrorMessage}"
-                                                  InvalidCharacterErrorMessage="{lex:LocText IPAddressInvalidCharacterErrorMessage}"
-                                                  OctetOutOfRangeErrorMessage="{lex:LocText IPAddressOctetOutOfRangeErrorMessage}"/>
+                                                  EmptyErrorMessage="{lex:LocText Neurotoxin.Godspeed.Shell:Resources:IPAddressEmptyErrorMessage}" 
+                                                  WrongFormatErrorMessage="{lex:LocText Neurotoxin.Godspeed.Shell:Resources:IPAddressWrongFormatErrorMessage}"
+                                                  InvalidCharacterErrorMessage="{lex:LocText Neurotoxin.Godspeed.Shell:Resources:IPAddressInvalidCharacterErrorMessage}"
+                                                  OctetOutOfRangeErrorMessage="{lex:LocText Neurotoxin.Godspeed.Shell:Resources:IPAddressOctetOutOfRangeErrorMessage}"/>
                     </Binding.ValidationRules>
                 </Binding>
             </TextBox.Text>
@@ -129,7 +132,7 @@
             <TextBox.Text>
                 <Binding Path="Port" UpdateSourceTrigger="LostFocus">
                     <Binding.ValidationRules>
-                        <validation:IsInteger ValidatesOnTargetUpdated="True" ErrorMessage="{lex:LocText IntegerErrorMessage}" />
+                        <validation:IsInteger ValidatesOnTargetUpdated="True" ErrorMessage="{lex:LocText Neurotoxin.Godspeed.Shell:Resources:IntegerErrorMessage}" />
                     </Binding.ValidationRules>
                 </Binding>
             </TextBox.Text>
@@ -140,7 +143,7 @@
             <TextBox.Text>
                 <Binding Path="Username" UpdateSourceTrigger="LostFocus">
                     <Binding.ValidationRules>
-                        <validation:IsRequired ValidatesOnTargetUpdated="True" ErrorMessage="{lex:LocText EmptyFieldErrorMessage}" />
+                        <validation:IsRequired ValidatesOnTargetUpdated="True" ErrorMessage="{lex:LocText Neurotoxin.Godspeed.Shell:Resources:EmptyFieldErrorMessage}" />
                     </Binding.ValidationRules>
                 </Binding>
             </TextBox.Text>
@@ -151,7 +154,7 @@
             <TextBox.Text>
                 <Binding Path="Password" UpdateSourceTrigger="LostFocus">
                     <Binding.ValidationRules>
-                        <validation:IsRequired ValidatesOnTargetUpdated="True" ErrorMessage="{lex:LocText EmptyFieldErrorMessage}" />
+                        <validation:IsRequired ValidatesOnTargetUpdated="True" ErrorMessage="{lex:LocText Neurotoxin.Godspeed.Shell:Resources:EmptyFieldErrorMessage}" />
                     </Binding.ValidationRules>
                 </Binding>
             </TextBox.Text>

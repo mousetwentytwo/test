@@ -1,3 +1,5 @@
 * FIXED Issue #173: Do not let multiple instances to run
+* FIXED Issue #177: Throwing the cache of a non-cached item
 * FIXED: Misbehaving [..] folder on local file system
+* FIXED: Editing connection highlight name as an already existing one
 * ADDED: Hungarian language support
