@@ -940,17 +940,15 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private FileSystemItemViewModel UpDirectory()
         {
-            var parentPath = CurrentFolder.Path.GetParentPath();
-            if (parentPath == Drive.Path)
-                return Drive;
-
             try
             {
-                var folder = FileManager.GetItemInfo(parentPath, ItemType.Directory);
-                if (folder == null) throw new ApplicationException(string.Format(Resx.ItemNotExistsOnPath, parentPath));
-                return new FileSystemItemViewModel(folder);
+                var parentPath = CurrentFolder.Path.GetParentPath();
+                var folder = FileManager.GetItemInfo(parentPath, parentPath == Drive.Path ? ItemType.Drive : ItemType.Directory);
+                if (folder != null) return new FileSystemItemViewModel(folder);
+                NotificationMessage.ShowMessage(Resx.IOError, string.Format(Resx.ItemNotExistsOnPath, parentPath));
+                return Drive;
             }
-            catch(TransferException ex)
+            catch (Exception ex)
             {
                 AsyncErrorCallback(ex);
                 return null;
@@ -1093,8 +1091,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
             catch (Exception ex)
             {
-                ex = WrapTransferRelatedExceptions(ex);
-                Parent.ShowCorrespondingErrorDialog(ex, false);
+                AsyncErrorCallback(ex);
                 return false;
             }
         }
@@ -1250,7 +1247,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             _calculationIsRunning = false;
             IsBusy = false;
-            Parent.ShowCorrespondingErrorDialog(ex, false);
+            Parent.ShowCorrespondingErrorDialog(WrapTransferRelatedExceptions(ex), false);
         }
 
         public bool Export(FileSystemItem item, string savePath, CopyAction action)
@@ -1301,7 +1298,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             if (item.Type != ItemType.File) throw new NotSupportedException();
             eventAggregator.GetEvent<TransferActionStartedEvent>().Publish(ImportActionDescription);
             var itemPath = item.Path;
-
             try
             {
                 switch (action)

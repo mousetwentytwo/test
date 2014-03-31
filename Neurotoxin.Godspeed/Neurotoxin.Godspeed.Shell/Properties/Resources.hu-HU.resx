@@ -577,7 +577,7 @@
     <value>Nap</value>
   </data>
   <data name="DayPlural" xml:space="preserve">
-    <value>Napok</value>
+    <value>Nap</value>
   </data>
   <data name="DateTimeFormat" xml:space="preserve">
     <value>yyyy-MM-dd HH:mm</value>

@@ -30,22 +30,22 @@
                         <s:CloseButtonsTemplateSelector.FtpTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
-                                    <Button Content="{lex:LocText Disconnect}" Command="{Binding CloseCommand}" Width="75" />
+                                    <Button Content="{lex:LocText Disconnect}" Command="{Binding CloseCommand}" MinWidth="75" Padding="10,0,10,0" />
                                 </StackPanel>
                             </DataTemplate>
                         </s:CloseButtonsTemplateSelector.FtpTemplate>
                         <s:CloseButtonsTemplateSelector.PackageTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
-                                    <Button Content="{lex:LocText SaveAndClose}" Command="{Binding SaveAndCloseCommand}" Margin="0,0,3,0" Width="100" />
-                                    <Button Content="{lex:LocText Close}" Command="{Binding CloseCommand}" Width="60" />
+                                    <Button Content="{lex:LocText SaveAndClose}" Command="{Binding SaveAndCloseCommand}" Margin="0,0,3,0" MinWidth="100" Padding="10,0,10,0" />
+                                    <Button Content="{lex:LocText Close}" Command="{Binding CloseCommand}" MinWidth="60" Padding="10,0,10,0" />
                                 </StackPanel>
                             </DataTemplate>
                         </s:CloseButtonsTemplateSelector.PackageTemplate>
                         <s:CloseButtonsTemplateSelector.CompressedFileTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
-                                    <Button Content="{lex:LocText Close}" Command="{Binding CloseCommand}" Width="60" />
+                                    <Button Content="{lex:LocText Close}" Command="{Binding CloseCommand}" MinWidth="60" Padding="10,0,10,0" />
                                 </StackPanel>
                             </DataTemplate>
                         </s:CloseButtonsTemplateSelector.CompressedFileTemplate>

@@ -6,7 +6,7 @@
                        xmlns:converters="clr-namespace:Neurotoxin.Godspeed.Shell.Converters"
                        xmlns:constants="clr-namespace:Neurotoxin.Godspeed.Shell.Constants"
                        xmlns:lex="http://wpflocalizeextension.codeplex.com"
-                       lex:LocalizeDictionary.DesignCulture="en-US"
+                       lex:LocalizeDictionary.DesignCulture="en"
                        lex:ResxLocalizationProvider.DefaultAssembly="Neurotoxin.Godspeed.Shell"
                        lex:ResxLocalizationProvider.DefaultDictionary="Resources"
                        Width="420" Title="{lex:LocText Settings}">
@@ -90,9 +90,10 @@
                                  SelectedItem="{Binding UnknownContentExpiration}" VerticalAlignment="Center" ItemTemplate="{StaticResource ExpirationTimeSpanTemplate}" />
                         </Grid>
                     </GroupBox>
-                    
-                    <Button Grid.Row="2" Content="{lex:LocText ClearCache}"
-                         Width="90" Margin="0,5,0,0" Command="{Binding ClearCacheCommand}" SnapsToDevicePixels="True" />
+
+                    <StackPanel Grid.Row="2" HorizontalAlignment="Center" Margin="0,5,0,0">
+                        <Button Content="{lex:LocText ClearCache}" MinWidth="90" Height="22" Padding="10,0,10,0" Command="{Binding ClearCacheCommand}" SnapsToDevicePixels="True" />
+                    </StackPanel>
                 </Grid>
             </TabItem>
             <TabItem Header="{lex:LocText Operation}">

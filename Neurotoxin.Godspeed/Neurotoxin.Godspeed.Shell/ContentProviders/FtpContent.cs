@@ -222,7 +222,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             catch
             {
                 NotifyFtpOperationFinished();
-                return null;
+                throw;
             }
         }
 

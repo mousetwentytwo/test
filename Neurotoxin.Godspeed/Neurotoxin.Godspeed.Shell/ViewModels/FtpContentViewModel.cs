@@ -257,8 +257,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 switch (action)
                 {
                     case CopyAction.CreateNew:
-                        if (File.Exists(savePath))
-                            throw new TransferException(TransferErrorType.WriteAccessError, item.Path, savePath, Resx.TargetAlreadyExists);
+                        if (File.Exists(savePath)) throw new TransferException(TransferErrorType.WriteAccessError, item.Path, savePath, Resx.TargetAlreadyExists);
                         break;
                     case CopyAction.Overwrite:
                         File.Delete(savePath);
@@ -289,8 +288,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             if (item.Type != ItemType.File) throw new NotSupportedException();
             eventAggregator.GetEvent<TransferActionStartedEvent>().Publish(ImportActionDescription);
             long resumeStartPosition = 0;
-            try
-            {
+            try {
                 switch (action)
                 {
                     case CopyAction.CreateNew:

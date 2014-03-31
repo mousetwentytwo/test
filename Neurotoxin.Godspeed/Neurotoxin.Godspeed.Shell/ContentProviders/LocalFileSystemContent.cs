@@ -12,6 +12,8 @@ using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
+using Neurotoxin.Godspeed.Shell.Views.Dialogs;
+using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 
 namespace Neurotoxin.Godspeed.Shell.ContentProviders
 {
@@ -218,13 +220,29 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             
             if (FolderExists(path))
             {
-                Directory.Move(path, newPath + Slash);
-                return GetDirectoryInfo(newPath);
+                try
+                {
+                    Directory.Move(path, newPath + Slash);
+                    return GetDirectoryInfo(newPath);
+                }
+                catch (Exception ex)
+                {
+                    NotificationMessage.ShowMessage(Resx.IOError, ex.Message);
+                    return GetDirectoryInfo(path);
+                }
             }
             else
             {
-                File.Move(path, newPath);
-                return GetFileInfo(newPath);
+                try
+                {
+                    File.Move(path, newPath);
+                    return GetFileInfo(newPath);
+                }
+                catch (Exception ex)
+                {
+                    NotificationMessage.ShowMessage(Resx.IOError, ex.Message);
+                    return GetFileInfo(path);
+                }
             }
         }
     }

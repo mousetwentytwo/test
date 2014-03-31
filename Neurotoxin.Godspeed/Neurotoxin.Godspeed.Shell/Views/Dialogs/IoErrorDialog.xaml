@@ -3,29 +3,25 @@
                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                        xmlns:primitives="clr-namespace:Neurotoxin.Godspeed.Shell.Primitives" 
                        xmlns:lex="http://wpflocalizeextension.codeplex.com"
-                       lex:LocalizeDictionary.DesignCulture="en-US"
+                       lex:LocalizeDictionary.DesignCulture="hu"
                        lex:ResxLocalizationProvider.DefaultAssembly="Neurotoxin.Godspeed.Shell"
                        lex:ResxLocalizationProvider.DefaultDictionary="Resources"
-                       Width="400" Title="{lex:LocText IOError}">
+                       MinWidth="400" Title="{lex:LocText IOError}">
     <Grid x:Name="LayoutRoot">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <TextBlock x:Name="ErrorMessage" Grid.ColumnSpan="4" Grid.Row="0" Margin="5,5,5,10"
+        <TextBlock x:Name="ErrorMessage" Grid.Row="0" Margin="5,5,5,10"
              TextWrapping="Wrap" />
-        <TextBlock Grid.ColumnSpan="3" Grid.Row="1" Margin="5,0,0,5" Text="{lex:LocText WhatDoYouWantToDo}" />
-        <Button Grid.Column="0" Grid.Row="2" Content="{lex:LocText}" Margin="5" x:Name="Retry" Click="ButtonClick" />
-        <Button Grid.Column="1" Grid.Row="2" Content="{lex:LocText}" Margin="5" x:Name="Skip" Click="ButtonClick" />
-        <Button Grid.Column="2" Grid.Row="2" Content="{lex:LocText}" Margin="5" x:Name="SkipAll" Click="ButtonClick" />
-        <Button Grid.Column="3" Grid.Row="2" Content="{lex:LocText}" Margin="5" x:Name="Cancel" Click="ButtonClick" />
+        <TextBlock Grid.Row="1" Margin="5,0,0,5" Text="{lex:LocText WhatDoYouWantToDo}" />
+        <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Grid.Row="2">
+            <Button Height="22" MinWidth="75" Padding="10,0,10,0" Content="{lex:LocText}" Margin="5" x:Name="Retry" Click="ButtonClick" />
+            <Button Height="22" MinWidth="75" Padding="10,0,10,0" Content="{lex:LocText}" Margin="5" x:Name="Skip" Click="ButtonClick" />
+            <Button Height="22" MinWidth="75" Padding="10,0,10,0" Content="{lex:LocText}" Margin="5" x:Name="SkipAll" Click="ButtonClick" />
+            <Button Height="22" MinWidth="75" Padding="10,0,10,0" Content="{lex:LocText}" Margin="5" x:Name="Cancel" Click="ButtonClick" />
+        </StackPanel>
     </Grid>
 </primitives:DialogBase>

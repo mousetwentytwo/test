@@ -1081,9 +1081,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                                 if (dialog.ShowDialog() == true)
                                 {
                                     result = dialog.Result;
-                                    result.Action = TargetPane.IsResumeSupported
-                                                        ? CopyAction.Resume
-                                                        : CopyAction.Overwrite;
+                                    if (TargetPane != null) result.Action = TargetPane.IsResumeSupported ? CopyAction.Resume : CopyAction.Overwrite;
                                 }
                             } 
                             else
