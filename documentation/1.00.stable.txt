@@ -1,6 +1,11 @@
+* FIXED Issue #135: DialogResult can be set only after Window is created and shown as dialog.
+* FIXED Issue #168: Application crashes if item cannot be deleted
 * FIXED Issue #173: Do not let multiple instances to run
 * FIXED Issue #177: Throwing the cache of a non-cached item
+* FIXED Issue #181: Application crashes if parent folder doesn't exist anymore but I call an UpDirectory
 * FIXED Issue #182: Application crashes if folder cannot be renamed
+* FIXED Issue #187: Application crashes if reparse points cannot be accessed
 * FIXED: Misbehaving [..] folder on local file system
+* FIXED: Stored participation answer isn't displayed if I open the User Participation Window again
 * FIXED: Editing connection highlight name as an already existing one
-* ADDED: Hungarian language support
+* ADDED: Hungarian language
