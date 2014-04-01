@@ -1,5 +1,6 @@
 * FIXED Issue #135: DialogResult can be set only after Window is created and shown as dialog.
 * FIXED Issue #168: Application crashes if item cannot be deleted
+* FIXED Issue #171: Uploading and empty folder browsing with XeXMenu
 * FIXED Issue #173: Do not let multiple instances to run
 * FIXED Issue #177: Throwing the cache of a non-cached item
 * FIXED Issue #181: Application crashes if parent folder doesn't exist anymore but I call an UpDirectory

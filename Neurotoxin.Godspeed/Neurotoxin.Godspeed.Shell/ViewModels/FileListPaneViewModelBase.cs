@@ -81,7 +81,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     var name = string.IsNullOrEmpty(value.Title)
                                    ? value.Name
                                    : string.Format("{0} ({1})", value.Title, value.Name);
-                    NotificationMessage.ShowMessage("Drive change failed", string.Format("{0} is not accessible.", name));
+                    NotificationMessage.ShowMessage(Resx.DriveChangeFailed, string.Format(Resx.DriveIsNotAccessible, name));
                     if (_drive == null) _drive = Drives.FirstOrDefault();
                 }
                 ChangeDrive();

@@ -923,4 +923,10 @@
   <data name="ReparsePointCannotBeResolved" xml:space="preserve">
     <value>Reparse point cannot be resolved</value>
   </data>
+  <data name="DriveChangeFailed" xml:space="preserve">
+    <value>Drive change failed</value>
+  </data>
+  <data name="DriveIsNotAccessible" xml:space="preserve">
+    <value>{0} is not accessible.</value>
+  </data>
 </root>

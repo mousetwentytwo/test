@@ -639,6 +639,24 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Drive change failed.
+        /// </summary>
+        internal static string DriveChangeFailed {
+            get {
+                return ResourceManager.GetString("DriveChangeFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} is not accessible..
+        /// </summary>
+        internal static string DriveIsNotAccessible {
+            get {
+                return ResourceManager.GetString("DriveIsNotAccessible", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to F4 Edit.
         /// </summary>
         internal static string EditButton {

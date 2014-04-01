@@ -108,11 +108,13 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 }
             }
 
-            //disabling SIZE because most of the FTPs don't support it
-            //TODO: better detection
-            _ftpClient.Capabilities &= ~FtpCapability.SIZE;
+            var r = FtpClient.Execute("SIZE");
+            if (r.Message.Contains("command not recognized") || r.Message.Contains("command not implemented"))
+            {
+                _ftpClient.Capabilities &= ~FtpCapability.SIZE;
+            }
 
-            var r = FtpClient.Execute("APPE");
+            r = FtpClient.Execute("APPE");
             return !r.Message.Contains("command not recognized");
         }
 
@@ -164,9 +166,18 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 else
                     currentPath = FtpClient.GetWorkingDirectory();
                 if (!currentPath.EndsWith("/")) currentPath += "/";
-                result = FtpClient.GetListing()
-                                  .Select(item => CreateModel(item, string.Format("{0}{1}{2}", currentPath, item.Name, item.Type == FtpFileSystemObjectType.Directory ? "/" : string.Empty)))
-                                  .ToList();
+                try
+                {
+                    result = FtpClient.GetListing()
+                                      .Select(item => CreateModel(item, string.Format("{0}{1}{2}", currentPath, item.Name, item.Type == FtpFileSystemObjectType.Directory ? "/" : string.Empty)))
+                                      .ToList();
+                }
+                catch
+                {
+                    //XeXMenu throws an exception if the folder is empty (dull)
+                    if (ServerType == FtpServerType.XeXMenu && FtpClient.IsConnected) return new List<FileSystemItem>();
+                    throw;
+                }
             }
             finally
             {
@@ -222,7 +233,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             catch
             {
                 NotifyFtpOperationFinished();
-                throw;
+                return null;
             }
         }
 

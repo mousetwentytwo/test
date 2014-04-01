@@ -92,6 +92,7 @@ namespace Neurotoxin.Godspeed.Core.Net
                                   "MMM dd  yyyy",
                                   "MMM dd yyyy",
                                   "MMM dd HH:mm",
+                                  "MMM  d HH:mm",
                                   "YYYY-MM-DD-HH:mm"
                               };
             DateTime parsed;

@@ -413,7 +413,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
             var item = _queue.Dequeue().FileSystemItem;
             FilesTransferred++;
-            if (result) _statistics.FilesTransferred++;
+            if (item.Type == ItemType.File && result) _statistics.FilesTransferred++;
             var vm = SourcePane.SelectedItems.FirstOrDefault(i => item.Path.StartsWith(i.Path));
             if (vm != null)
             {
@@ -1086,7 +1086,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                             } 
                             else
                             {
-                                NotificationMessage.ShowMessage(Resx.ReadFileError, exception.Message);
+                                NotificationMessage.ShowMessage(Resx.IOError, exception.Message);
                             }
                         }
                         break;

@@ -3,6 +3,7 @@ Microsoft Windows NT 5.1.2600|Windows XP
 Microsoft Windows NT 5.2.3790|Windows XP x64 2003
 Microsoft Windows NT 6.0.6000|Windows Vista
 Microsoft Windows NT 6.0.6001|Windows Vista SP1
+Microsoft Windows NT 6.0.6002|Windows Vista SP2
 Microsoft Windows NT 6.1.7600|Windows 7
 Microsoft Windows NT 6.1.7601|Windows 7 SP1
 Microsoft Windows NT 6.2.9200|Windows 8

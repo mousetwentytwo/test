@@ -546,9 +546,6 @@
   <data name="Exit" xml:space="preserve">
     <value>Kilépés</value>
   </data>
-  <data name="EmptyFieldErrorMessage" xml:space="preserve">
-    <value>Ez a mező nem maradhat üresen.</value>
-  </data>
   <data name="EditButton" xml:space="preserve">
     <value>F4 Szerkesztés</value>
   </data>
@@ -577,7 +574,7 @@
     <value>Nap</value>
   </data>
   <data name="DayPlural" xml:space="preserve">
-    <value>Nap</value>
+    <value>Napok</value>
   </data>
   <data name="DateTimeFormat" xml:space="preserve">
     <value>yyyy-MM-dd HH:mm</value>
@@ -836,7 +833,10 @@
   <data name="SizeInfo" xml:space="preserve">
     <value>{0:#,0} / {1:#,0} bájt - {2} / {3:fájl;fájl}, {4} / {5:mappa;mappa}</value>
   </data>
-  <data name="ReparsePointCannotBeResolved" xml:space="preserve">
-    <value>Az újraértelmezési pontot nem sikerült feloldani</value>
+  <data name="DriveChangeFailed" xml:space="preserve">
+    <value>Sikertelen meghajtó váltás</value>
+  </data>
+  <data name="DriveIsNotAccessible" xml:space="preserve">
+    <value>A {0} meghajtó nem elérhető.</value>
   </data>
 </root>
