@@ -232,9 +232,18 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         protected virtual List<FileSystemItem> ChangeDirectoryInner(string selectedPath)
         {
-            var list = FileManager.GetList(selectedPath);
-            list.ForEach(item => TitleRecognizer.RecognizeType(item));
-            return list;
+            try
+            {
+                var list = FileManager.GetList(selectedPath);
+                list.ForEach(item => TitleRecognizer.RecognizeType(item));
+                return list;
+            }
+            catch (Exception ex)
+            {
+                ex = WrapTransferRelatedExceptions(ex);
+                Parent.ShowCorrespondingErrorDialog(ex, false);
+                return new List<FileSystemItem>();
+            }
         }
 
         protected virtual void ChangeDirectoryCallback(List<FileSystemItem> result)
@@ -943,8 +952,13 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             try
             {
                 var parentPath = CurrentFolder.Path.GetParentPath();
-                var folder = FileManager.GetItemInfo(parentPath, parentPath == Drive.Path ? ItemType.Drive : ItemType.Directory);
-                if (folder != null) return new FileSystemItemViewModel(folder);
+                if (FileManager.FolderExists(parentPath))
+                {
+                    var type = parentPath == Drive.Path ? ItemType.Drive : ItemType.Directory;
+                    var folder = FileManager.GetItemInfo(parentPath, type, false);
+                    return new FileSystemItemViewModel(folder);
+                }
+
                 NotificationMessage.ShowMessage(Resx.IOError, string.Format(Resx.ItemNotExistsOnPath, parentPath));
                 return Drive;
             }

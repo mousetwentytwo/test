@@ -67,6 +67,11 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public FileSystemItem GetItemInfo(string path, ItemType? type)
         {
+            return GetItemInfo(path, type, true);
+        }
+
+        public FileSystemItem GetItemInfo(string path, ItemType? type, bool swallowException)
+        {
             if (type.HasValue && type.Value == ItemType.Directory && _archive is RarArchive && path[path.Length -1] != BACKSLASH) path += BACKSLASH;
             FileSystemItem item;
             if (!_fileStructure.TryGetItem(path, out item)) return null;

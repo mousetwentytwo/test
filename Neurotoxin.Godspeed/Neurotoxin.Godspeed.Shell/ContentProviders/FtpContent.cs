@@ -172,10 +172,10 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                                       .Select(item => CreateModel(item, string.Format("{0}{1}{2}", currentPath, item.Name, item.Type == FtpFileSystemObjectType.Directory ? "/" : string.Empty)))
                                       .ToList();
                 }
-                catch
+                catch (Exception ex)
                 {
                     //XeXMenu throws an exception if the folder is empty (dull)
-                    if (ServerType == FtpServerType.XeXMenu && FtpClient.IsConnected) return new List<FileSystemItem>();
+                    if (ServerType == FtpServerType.XeXMenu && ex.Message.Contains("Path not found")) return new List<FileSystemItem>();
                     throw;
                 }
             }
@@ -197,10 +197,15 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public FileSystemItem GetItemInfo(string path)
         {
-            return GetItemInfo(path, null);
+            return GetItemInfo(path, null, true);
         }
 
         public FileSystemItem GetItemInfo(string path, ItemType? type)
+        {
+            return GetItemInfo(path, type, true);
+        }
+
+        public FileSystemItem GetItemInfo(string path, ItemType? type, bool swallowException)
         {
             NotifyFtpOperationStarted(false);
             try
@@ -233,7 +238,8 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             catch
             {
                 NotifyFtpOperationFinished();
-                return null;
+                if (swallowException) return null;
+                throw;
             }
         }
 

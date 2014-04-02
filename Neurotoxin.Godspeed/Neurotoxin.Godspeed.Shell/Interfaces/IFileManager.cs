@@ -15,6 +15,7 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
 
         FileSystemItem GetItemInfo(string itemPath);
         FileSystemItem GetItemInfo(string itemPath, ItemType? type);
+        FileSystemItem GetItemInfo(string itemPath, ItemType? type, bool swallowException);
 
         //FileSystemItem GetFolderInfo(string itemPath);
         //FileSystemItem GetFolderInfo(string itemPath, ItemType type);

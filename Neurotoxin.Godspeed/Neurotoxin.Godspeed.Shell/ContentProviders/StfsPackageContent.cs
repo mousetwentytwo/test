@@ -70,6 +70,11 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public FileSystemItem GetItemInfo(string path, ItemType? type)
         {
+            return GetItemInfo(path, type, true);
+        }
+
+        public FileSystemItem GetItemInfo(string path, ItemType? type, bool swallowException)
+        {
             var item = GetFileInfo(path) ?? GetFolderInfo(path);
             if (item == null) return null;
             if (type != null)

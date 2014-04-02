@@ -105,6 +105,11 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public FileSystemItem GetItemInfo(string path, ItemType? type)
         {
+            return GetItemInfo(path, type, true);
+        }
+
+        public FileSystemItem GetItemInfo(string path, ItemType? type, bool swallowException)
+        {
             if (path.EndsWith("\\") && Directory.Exists(path)) return GetDirectoryInfo(path, type);
             if (File.Exists(path)) return GetFileInfo(path);
             path += SLASH;
