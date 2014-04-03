@@ -921,12 +921,15 @@
     <value>{0:#,0} / {1:#,0} bytes in {2} / {3:file;files}, {4} / {5:dir;dirs}</value>
   </data>
   <data name="ReparsePointCannotBeResolved" xml:space="preserve">
-    <value>Reparse point cannot be resolved</value>
+    <value>Reparse point cannot be resolved.</value>
   </data>
   <data name="DriveChangeFailed" xml:space="preserve">
     <value>Drive change failed</value>
   </data>
   <data name="DriveIsNotAccessible" xml:space="preserve">
     <value>{0} is not accessible.</value>
+  </data>
+  <data name="ReparsePointCannotBeAccessed" xml:space="preserve">
+    <value>Reparse point cannot be accessed. Try running the application as administrator or turning off UAC.</value>
   </data>
 </root>

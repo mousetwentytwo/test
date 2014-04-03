@@ -85,14 +85,6 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         public List<FileSystemItem> GetList(string path = null)
         {
             if (path == null) throw new NotSupportedException();
-
-            var di = new System.IO.DirectoryInfo(path);
-            if (di.Attributes.HasFlag(FileAttributes.ReparsePoint))
-            {
-                path = new ReparsePoint(path).Target;
-                if (path == null) throw new IOException(Resx.ReparsePointCannotBeResolved);
-            }
-
             var list = Directory.GetDirectories(path).Select(p => GetDirectoryInfo(p)).ToList();
             list.AddRange(Directory.GetFiles(path).Select(GetFileInfo));
             return list;
@@ -119,28 +111,30 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         private static FileSystemItem GetDirectoryInfo(string path, ItemType? type = null)
         {
             if (!path.EndsWith("\\")) path += SLASH;
+            var dirInfo = new FileInfo(path);
             return new FileSystemItem
-                       {
-                           Name = Path.GetFileName(path.TrimEnd(SLASH)),
-                           Type = type ?? ItemType.Directory,
-                           Date = Directory.GetLastWriteTime(path),
-                           Path = path,
-                           FullPath = path
-                       };
+            {
+                Name = Path.GetFileName(path.TrimEnd(SLASH)),
+                Type = type ?? ItemType.Directory,
+                Date = dirInfo.LastWriteTime,
+                Path = path,
+                FullPath = path,
+                IsLink = dirInfo.Attributes.HasFlag(FileAttributes.ReparsePoint)
+            };
         }
 
         private static FileSystemItem GetFileInfo(string path)
         {
             var fileInfo = new FileInfo(path);
             return new FileSystemItem
-                       {
-                           Name = fileInfo.Name,
-                           Type = ItemType.File,
-                           Date = fileInfo.LastWriteTime,
-                           Path = path,
-                           FullPath = path,
-                           Size = fileInfo.Length,
-                       };
+            {
+                Name = fileInfo.Name,
+                Type = ItemType.File,
+                Date = fileInfo.LastWriteTime,
+                Path = path,
+                FullPath = path,
+                Size = fileInfo.Length,
+            };
         }
 
         public DateTime GetFileModificationTime(string path)
@@ -150,8 +144,8 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public bool DriveIsReady(string drive)
         {
-            var driveInfo = DriveInfo.GetDrives().First(d => d.Name == drive);
-            return driveInfo.IsReady;
+            var driveInfo = DriveInfo.GetDrives().FirstOrDefault(d => d.Name == drive);
+            return driveInfo != null && driveInfo.IsReady;
         }
 
         public FileExistenceInfo FileExists(string path)

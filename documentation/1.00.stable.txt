@@ -9,4 +9,5 @@
 * FIXED: Misbehaving [..] folder on local file system
 * FIXED: Stored participation answer isn't displayed if I open the User Participation Window again
 * FIXED: Editing connection highlight name as an already existing one
+* FIXED: Drive selector combobox shows wrong drive letter after unsuccessful drive change
 * ADDED: Hungarian language

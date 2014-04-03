@@ -9,6 +9,8 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
 {
     public interface IFileListPaneViewModel : IPaneViewModel
     {
+        FileSystemItemViewModel Drive { get; set; }
+
         ObservableCollection<FileSystemItemViewModel> Items { get; }
         IEnumerable<FileSystemItemViewModel> SelectedItems { get; }
         FileSystemItemViewModel CurrentFolder { get; }

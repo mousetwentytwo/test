@@ -129,6 +129,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             set { if (value) Name = Strings.UpDirectory; }
         }
 
+        public bool IsLink
+        {
+            get { return _model.IsLink; }
+        }
+
         public bool IsCached
         {
             get { return _model.IsCached; }

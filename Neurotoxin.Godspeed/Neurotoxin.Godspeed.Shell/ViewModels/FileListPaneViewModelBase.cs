@@ -222,28 +222,39 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             ChangeDirectory();
         }
 
-        private void ChangeDirectory()
+        protected virtual void ChangeDirectory(string message = null, Action callback = null)
         {
-            ProgressMessage = Resx.ChangingDirectory + Strings.DotDotDot;
+            if (string.IsNullOrEmpty(message)) message = Resx.ChangingDirectory;
+            ProgressMessage = message + Strings.DotDotDot;
             IsBusy = true;
             ExecuteCancelCommand();
-            WorkerThread.Run(() => ChangeDirectoryInner(CurrentFolder.Path), ChangeDirectoryCallback, AsyncErrorCallback);
+
+            WorkerThread.Run(() =>
+                {
+                    try
+                    {
+                        return ChangeDirectoryInner(CurrentFolder.Path);
+                    }
+                    catch (Exception ex)
+                    {
+                        ex = WrapTransferRelatedExceptions(ex);
+                        Parent.ShowCorrespondingErrorDialog(ex, false);
+                        return new List<FileSystemItem>();
+                    }
+                },
+                result =>
+                {
+                    ChangeDirectoryCallback(result);
+                    if (callback != null) callback.Invoke();
+                },
+                AsyncErrorCallback);
         }
 
         protected virtual List<FileSystemItem> ChangeDirectoryInner(string selectedPath)
         {
-            try
-            {
-                var list = FileManager.GetList(selectedPath);
-                list.ForEach(item => TitleRecognizer.RecognizeType(item));
-                return list;
-            }
-            catch (Exception ex)
-            {
-                ex = WrapTransferRelatedExceptions(ex);
-                Parent.ShowCorrespondingErrorDialog(ex, false);
-                return new List<FileSystemItem>();
-            }
+            var list = FileManager.GetList(selectedPath);
+            list.ForEach(item => TitleRecognizer.RecognizeType(item));
+            return list;
         }
 
         protected virtual void ChangeDirectoryCallback(List<FileSystemItem> result)
@@ -907,18 +918,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             Refresh(null);
         }
 
-        public virtual void Refresh(Action callback)
+        public void Refresh(Action callback)
         {
-            ProgressMessage = Resx.RefreshingDirectory + Strings.DotDotDot;
-            IsBusy = true;
-            WorkerThread.Run(
-                () => ChangeDirectoryInner(CurrentFolder.Path),
-                result =>
-                {
-                    ChangeDirectoryCallback(result);
-                    if (callback != null) callback.Invoke();
-                },
-                AsyncErrorCallback);
+            ChangeDirectory(Resx.RefreshingDirectory, callback);
         }
 
         #endregion

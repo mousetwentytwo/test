@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.Practices.Composite.Events;
+using Neurotoxin.Godspeed.Core.Io;
 using Neurotoxin.Godspeed.Core.Models;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Constants;
@@ -12,6 +13,7 @@ using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
 using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Exceptions;
 using Neurotoxin.Godspeed.Shell.Models;
+using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
@@ -91,6 +93,28 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             base.ChangeDrive();
             UpdateDriveInfo();
+        }
+
+        protected override void ChangeDirectory(string message = null, Action callback = null)
+        {
+            if (CurrentFolder.IsLink)
+            {
+                var reparsePoint = new ReparsePoint(CurrentFolder.Path);
+                var path = reparsePoint.Target;
+                if (path == null)
+                {
+                    NotificationMessage.ShowMessage(Resx.IOError, reparsePoint.LastError == 5 ? Resx.ReparsePointCannotBeAccessed : Resx.ReparsePointCannotBeResolved);
+                    return;
+                }
+                var model = FileManager.GetItemInfo(path, ItemType.Directory);
+                if (model == null)
+                {
+                    NotificationMessage.ShowMessage(Resx.IOError, string.Format(Resx.ItemNotExistsOnPath, path));
+                    return;
+                }
+                CurrentFolder = new FileSystemItemViewModel(model);
+            }
+            base.ChangeDirectory(message, callback);
         }
 
         protected override void ChangeDirectoryCallback(List<FileSystemItem> result)

@@ -118,6 +118,7 @@ namespace Neurotoxin.Godspeed.Core.Io
         private string normalisedTarget;
         private string actualTarget;
         private TagType tag;
+        private int lastError;
 
         /// <summary>
         /// Takes a full path to a reparse point and finds the target.
@@ -129,7 +130,6 @@ namespace Neurotoxin.Godspeed.Core.Io
             normalisedTarget = "";
             tag = TagType.None;
             bool success;
-            int lastError;
             // Apparently we need to have backup privileges
             IntPtr token;
             TOKEN_PRIVILEGES tokenPrivileges = new TOKEN_PRIVILEGES();
@@ -273,6 +273,14 @@ namespace Neurotoxin.Godspeed.Core.Io
             get
             {
                 return tag;
+            }
+        }
+
+        public int LastError
+        {
+            get
+            {
+                return lastError;
             }
         }
     }

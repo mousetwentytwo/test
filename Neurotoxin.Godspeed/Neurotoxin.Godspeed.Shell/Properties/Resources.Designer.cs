@@ -1701,7 +1701,16 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reparse point cannot be resolved.
+        ///   Looks up a localized string similar to Reparse point cannot be accessed. Try running the application as administrator or turning off UAC..
+        /// </summary>
+        internal static string ReparsePointCannotBeAccessed {
+            get {
+                return ResourceManager.GetString("ReparsePointCannotBeAccessed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reparse point cannot be resolved..
         /// </summary>
         internal static string ReparsePointCannotBeResolved {
             get {

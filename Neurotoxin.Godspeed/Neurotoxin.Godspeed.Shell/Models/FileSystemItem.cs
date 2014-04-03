@@ -24,10 +24,11 @@ namespace Neurotoxin.Godspeed.Shell.Models
         public string FullPath;
         public long? Size;
         public DateTime Date;
+        public bool IsLink;
 
         public bool IsCached;
-        public bool IsLocked = false;
-        public string LockMessage = null;
+        public bool IsLocked;
+        public string LockMessage;
 
         private string _title;
 
@@ -44,7 +45,8 @@ namespace Neurotoxin.Godspeed.Shell.Models
                     Path = Path,
                     FullPath = FullPath,
                     Size = Size,
-                    Date = Date
+                    Date = Date,
+                    IsLink = IsLink
                 };
         }
 

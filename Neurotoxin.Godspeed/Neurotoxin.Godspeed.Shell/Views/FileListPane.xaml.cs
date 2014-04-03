@@ -26,6 +26,14 @@ namespace Neurotoxin.Godspeed.Shell.Views
             Grid.Sorting += GridOnSorting;
             Grid.SelectionChanged += GridOnSelectionChanged;
             Grid.DataContextChanged += GridOnDataContextChanged;
+            DriveDropdown.SelectionChanged += DriveDropdownOnSelectionChanged;
+        }
+
+        private void DriveDropdownOnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var selectedDrive = ((IFileListPaneViewModel) DataContext).Drive;
+            if (DriveDropdown.SelectedValue == selectedDrive) return;
+            DriveDropdown.SelectedValue = selectedDrive;
         }
 
         private void GridOnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
