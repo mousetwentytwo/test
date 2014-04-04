@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Microsoft.Practices.Composite.Events;
 using Neurotoxin.Godspeed.Core.Io;
 using Neurotoxin.Godspeed.Core.Models;
@@ -103,8 +105,34 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 var path = reparsePoint.Target;
                 if (path == null)
                 {
-                    NotificationMessage.ShowMessage(Resx.IOError, reparsePoint.LastError == 5 ? Resx.ReparsePointCannotBeAccessed : Resx.ReparsePointCannotBeResolved);
-                    return;
+                    if (reparsePoint.LastError == 5)
+                    {
+                        try
+                        {
+                            var cmd = string.Format("/k dir \"{0}\" /AL", Path.Combine(CurrentFolder.Path, ".."));
+                            var p = Process.Start(new ProcessStartInfo("cmd.exe", cmd)
+                            {
+                                CreateNoWindow = true,
+                                RedirectStandardOutput = true,
+                                RedirectStandardError = true,
+                                UseShellExecute = false
+                            });
+                            var r = new Regex(string.Format("{0} \\[(.*?)\\]", Regex.Escape(CurrentFolder.Name)), RegexOptions.IgnoreCase | RegexOptions.Singleline);
+                            var m = r.Match(p.StandardOutput.ReadToEnd());
+                            path = m.Groups[1].Value;
+                            p.Close();
+                        }
+                        catch
+                        {
+                            //do nothing if something goes wrong
+                        }
+                    }
+
+                    if (string.IsNullOrEmpty(path))
+                    {
+                        NotificationMessage.ShowMessage(Resx.IOError, reparsePoint.LastError == 5 ? Resx.ReparsePointCannotBeAccessed : Resx.ReparsePointCannotBeResolved);
+                        return;
+                    }
                 }
                 var model = FileManager.GetItemInfo(path, ItemType.Directory);
                 if (model == null)
