@@ -31,6 +31,8 @@ namespace Neurotoxin.Godspeed.Shell.Views
 
         private void DriveDropdownOnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (DataContext == null)
+                return;
             var selectedDrive = ((IFileListPaneViewModel) DataContext).Drive;
             if (DriveDropdown.SelectedValue == selectedDrive) return;
             DriveDropdown.SelectedValue = selectedDrive;
