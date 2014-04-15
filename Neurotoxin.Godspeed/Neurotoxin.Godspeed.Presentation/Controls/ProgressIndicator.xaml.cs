@@ -16,9 +16,8 @@ namespace Neurotoxin.Godspeed.Presentation.Controls
         public ProgressIndicator()
         {
             InitializeComponent();
-            _sleep = new Timer(100);
-            _sleep.Elapsed += _sleep_Elapsed;
-            this.Loaded += ProgressIndicator_Loaded;
+            Loaded += ProgressIndicator_Loaded;
+            Unloaded += ProgressIndicator_Unloaded;
         }
 
         void _sleep_Elapsed(object sender, ElapsedEventArgs e)
@@ -28,6 +27,15 @@ namespace Neurotoxin.Godspeed.Presentation.Controls
 
         void ProgressIndicator_Loaded(object sender, RoutedEventArgs e)
         {
+            _sleep = new Timer(100);
+            _sleep.Elapsed += _sleep_Elapsed; 
+            if (Visibility == Visibility.Visible) Start();
+        }
+
+        void ProgressIndicator_Unloaded(object sender, RoutedEventArgs e)
+        {
+            _sleep.Elapsed -= _sleep_Elapsed;
+            _sleep = null;
             if (Visibility == Visibility.Visible) Start();
         }
 

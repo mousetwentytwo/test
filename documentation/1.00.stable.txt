@@ -10,4 +10,14 @@
 * FIXED: Stored participation answer isn't displayed if I open the User Participation Window again
 * FIXED: Editing connection highlight name as an already existing one
 * FIXED: Drive selector combobox shows wrong drive letter after unsuccessful drive change
+* FIXED: Can't open profile by right clicking on its profile
+* FIXED: Can't interact (open, recognize, etc.) with a profile if the cache was just erased before
+* FIXED: Trimming of long connection names
+* FIXED: Cannot abort second transfer if the first one was aborted too
+* FIXED: Title recognition after rename
+* FIXED: Folder creation within Xbox folder structure
+* FIXED: Folder name validation
+* FIXED: Skip All doesn't remember decision
+* ADDED: DashLaunch FTP (DLiFTPD) support
+* ADDED: XeXMenu and DashLaunch FTP cannot be access in PASV anymore
 * ADDED: Hungarian language

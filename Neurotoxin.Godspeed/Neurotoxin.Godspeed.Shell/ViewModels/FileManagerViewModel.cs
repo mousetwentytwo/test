@@ -33,12 +33,13 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
     public class FileManagerViewModel : ViewModelBase
     {
         private const string RenameFromPattern = @"([\/]){0}$";
-        private const string RenameToPattern = @"$1{0}";
+        private const string RenameToPattern = @"${{1}}{0}";
         private readonly Stopwatch _speedMeter = new Stopwatch();
         private readonly Stopwatch _elapsedTimeMeter = new Stopwatch();
         private Queue<QueueItem> _queue;
         private CopyMode _copyMode;
         private CopyAction _rememberedCopyAction;
+        private TransferErrorDialogResult _skipAll;
         private long _currentFileBytesTransferred;
         private bool _isAborted;
         private bool _isContinued;
@@ -599,7 +600,17 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 });
 
             var name = InputDialog.Show(Resx.AddNewFolder, Resx.FolderName + Strings.Colon, string.Empty, suggestion);
-            if (string.IsNullOrEmpty(name)) return;
+            if (string.IsNullOrEmpty(name))
+            {
+                NotificationMessage.ShowMessage(Resx.AddNewFolder, Resx.CannotCreateFolderWithNoName);
+                return;
+            }
+            var invalidChars = Path.GetInvalidFileNameChars();
+            if (invalidChars.Any(name.Contains))
+            {
+                NotificationMessage.ShowMessage(Resx.AddNewFolder, Resx.CannotCreateFolderWithInvalidCharacters);
+                return;
+            }
             var path = string.Format("{0}{1}", SourcePane.CurrentFolder.Path, name);
             WorkerThread.Run(() => SourcePane.CreateFolder(path), success => NewFolderSuccess(success, name), NewFolderError);
         }
@@ -1092,11 +1103,18 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         break;
                     case TransferErrorType.WriteAccessError:
                         {
-                            var sourceFile = _queue.Peek().FileSystemItem;
-                            var dialog = new WriteErrorDialog(eventAggregator, sourceFile.Path, transferException.TargetFile, TargetPane.IsResumeSupported && sourceFile.Size > transferException.TargetFileSize);
-                            SourcePane.GetItemViewModel(sourceFile.Path);
-                            TargetPane.GetItemViewModel(transferException.TargetFile);
-                            if (dialog.ShowDialog() == true) result = dialog.Result;
+                            if (_skipAll != null)
+                            {
+                                result = _skipAll;
+                            }
+                            else
+                            {
+                                var sourceFile = _queue.Peek().FileSystemItem;
+                                var dialog = new WriteErrorDialog(eventAggregator, sourceFile.Path, transferException.TargetFile, TargetPane.IsResumeSupported && sourceFile.Size > transferException.TargetFileSize);
+                                SourcePane.GetItemViewModel(sourceFile.Path);
+                                TargetPane.GetItemViewModel(transferException.TargetFile);
+                                if (dialog.ShowDialog() == true) result = dialog.Result;
+                            }
                         }
                         break;
                     case TransferErrorType.LostConnection:
@@ -1125,9 +1143,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         throw new NotSupportedException("Invalid transfer error type: " + transferException.Type);
                 }
 
-                if (result.Scope == CopyActionScope.All && result.Action.HasValue)
+                //TODO: refactor scoping
+                if (result.Scope == CopyActionScope.All)
                 {
-                    _rememberedCopyAction = result.Action.Value;
+                    if (result.Action.HasValue) _rememberedCopyAction = result.Action.Value;
+                    if (result.Behavior == ErrorResolutionBehavior.Skip) _skipAll = result;
                 }
             }
             else

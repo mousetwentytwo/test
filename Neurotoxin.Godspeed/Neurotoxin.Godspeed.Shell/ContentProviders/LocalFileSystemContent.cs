@@ -216,7 +216,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public FileSystemItem Rename(string path, string newName)
         {
-            var oldName = Path.GetFileName(path.TrimEnd('\\'));
+            var oldName = Path.GetFileName(path.TrimEnd(Slash));
             var r = new Regex(string.Format(@"{0}\\?$", Regex.Escape(oldName)), RegexOptions.IgnoreCase);
             var newPath = r.Replace(path, newName); 
             
@@ -224,7 +224,17 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             {
                 try
                 {
-                    Directory.Move(path, newPath + Slash);
+                    var newPath2 = newPath + Slash;
+                    if (!string.Equals(path, newPath2))
+                    {
+                        var tmpPath = path;
+                        if (string.Equals(path, newPath2, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            tmpPath = r.Replace(path, new Guid().ToString());
+                            Directory.Move(path, tmpPath);
+                        }
+                        Directory.Move(tmpPath, newPath2);
+                    }
                     return GetDirectoryInfo(newPath);
                 }
                 catch (Exception ex)
@@ -237,7 +247,10 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             {
                 try
                 {
-                    File.Move(path, newPath);
+                    if (!string.Equals(path, newPath))
+                    {
+                        File.Move(path, newPath);
+                    }
                     return GetFileInfo(newPath);
                 }
                 catch (Exception ex)

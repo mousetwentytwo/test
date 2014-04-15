@@ -108,6 +108,12 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 }
             }
 
+            if (connection.UsePassiveMode &&
+                (ServerType == FtpServerType.XeXMenu || ServerType == FtpServerType.DashLaunch))
+            {
+                throw new FtpException(string.Format(Resx.PassiveModeNotSupported, ServerType));
+            }
+
             var r = FtpClient.Execute("SIZE");
             if (r.Message.Contains("command not recognized") || r.Message.Contains("command not implemented"))
             {
@@ -121,6 +127,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         internal void Disconnect()
         {
             FtpTrace.RemoveListener(this);
+            _keepAliveTimer.Elapsed -= KeepAliveTimerOnElapsed;
             FtpClient.Dispose();
         }
 

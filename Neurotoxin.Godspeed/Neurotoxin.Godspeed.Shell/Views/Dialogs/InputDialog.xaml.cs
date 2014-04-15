@@ -11,11 +11,17 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
         public static string Show(string title, string message, string defaultValue, IEnumerable<InputDialogOptionViewModel> options = null)
         {
             var dialog = new InputDialog(title, message, defaultValue, options);
-            return dialog.ShowDialog() == true
-                       ? dialog.Input.SelectedItem != null
-                             ? ((InputDialogOptionViewModel)dialog.Input.SelectedItem).Value
-                             : dialog.Input.Text
-                       : null;
+            if (dialog.ShowDialog() == true)
+            {
+                var selectedItem = dialog.Input.SelectedItem;
+                if (selectedItem != null)
+                {
+                    var selectedValue = ((InputDialogOptionViewModel) dialog.Input.SelectedItem);
+                    if (selectedValue.DisplayName == dialog.Input.Text) return selectedValue.Value;
+                }
+                return dialog.Input.Text;
+            }
+            return null;
         }
 
         private InputDialog(string title, string message, string defaultValue, IEnumerable<InputDialogOptionViewModel> options = null)

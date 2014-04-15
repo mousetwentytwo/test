@@ -51,7 +51,7 @@
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <Image Grid.Row="0" Source="{Binding Thumbnail}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Row="1" Text="{Binding Name}" HorizontalAlignment="Center"/>
+                        <TextBlock Grid.Row="1" Text="{Binding Name}" HorizontalAlignment="Center" TextTrimming="CharacterEllipsis"/>
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>

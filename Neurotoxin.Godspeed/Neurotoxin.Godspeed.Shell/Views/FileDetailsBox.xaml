@@ -46,7 +46,7 @@
                 <TextBlock Grid.Row="1" Text="{lex:LocText Size, Suffix={x:Static constants:Strings.ColonSpace}}"/>
                 <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Path=Size, Converter={StaticResource SizeConverter}, ConverterParameter=bytes}"/>
                 <TextBlock Grid.Row="2" Text="{lex:LocText Date, Suffix={x:Static constants:Strings.ColonSpace}}"/>
-                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Path=Date, StringFormat={lex:LocText DateTimeFormat}}"/>
+                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Path=Date, StringFormat={lex:LocText Neurotoxin.Godspeed.Shell:Resources:DateTimeFormat}}"/>
             </Grid>
         </Grid>
         <controls:ProgressIndicator Visibility="{Binding Converter={StaticResource NotNullOrEmptyConverter}, ConverterParameter=True}"/>

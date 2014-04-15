@@ -910,6 +910,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     if (CurrentRow.Name != newValue)
                     {
                         var newModel = FileManager.Rename(CurrentRow.Model.Path, newValue);
+                        TitleRecognizer.RecognizeType(newModel);
+                        TitleRecognizer.RecognizeTitle(newModel);
                         var newItem = new FileSystemItemViewModel(newModel);
                         Items.Replace(CurrentRow, newItem);
                         CurrentRow = newItem;

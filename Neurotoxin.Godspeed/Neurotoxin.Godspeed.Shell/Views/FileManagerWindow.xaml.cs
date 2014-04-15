@@ -154,6 +154,7 @@ namespace Neurotoxin.Godspeed.Shell.Views
                 _transferProgressDialog.Closed += TransferProgressDialogOnClosed;
             }
             IsHitTestVisible = false;
+            _isAbortionInProgress = false;
             _transferProgressDialog.Show();
         }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 using Neurotoxin.Godspeed.Core.Models;
@@ -216,11 +217,13 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         protected override Exception WrapTransferRelatedExceptions(Exception exception)
         {
-            if (exception is IOException || exception is FtpException)
+            if (!FileManager.IsConnected)
             {
-                return FileManager.IsConnected
-                           ? new TransferException(TransferErrorType.NotSpecified, exception.Message, exception)
-                           : new TransferException(TransferErrorType.LostConnection, ConnectionLostMessage, exception);
+                return new TransferException(TransferErrorType.LostConnection, ConnectionLostMessage, exception);
+            }
+            if (exception is IOException || exception is FtpException || exception is SocketException)
+            {
+                return new TransferException(TransferErrorType.NotSpecified, exception.Message, exception);
             }
             return base.WrapTransferRelatedExceptions(exception);
         }

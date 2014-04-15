@@ -259,7 +259,7 @@
     <value>Anonymous login</value>
   </data>
   <data name="UsePassiveMode" xml:space="preserve">
-    <value>Use Passive Mode (Please note that XeXMenu doesn't support PASV!)</value>
+    <value>Use Passive Mode (Please note that XeXMenu and DashLaunch doesn't support PASV!)</value>
   </data>
   <data name="DontShowThisMessageAgain" xml:space="preserve">
     <value>Don't show this message again</value>
@@ -931,5 +931,14 @@
   </data>
   <data name="ReparsePointCannotBeAccessed" xml:space="preserve">
     <value>Reparse point cannot be accessed. Try running the application as administrator or turning off UAC.</value>
+  </data>
+  <data name="PassiveModeNotSupported" xml:space="preserve">
+    <value>{0} doesn't support Passive Mode.</value>
+  </data>
+  <data name="CannotCreateFolderWithNoName" xml:space="preserve">
+    <value>Cannot create folder with no name!</value>
+  </data>
+  <data name="CannotCreateFolderWithInvalidCharacters" xml:space="preserve">
+    <value>Cannot create folder with invalid characters in its name!</value>
   </data>
 </root>

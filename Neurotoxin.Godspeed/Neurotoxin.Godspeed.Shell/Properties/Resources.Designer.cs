@@ -243,6 +243,24 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot create folder with invalid characters in its name!.
+        /// </summary>
+        internal static string CannotCreateFolderWithInvalidCharacters {
+            get {
+                return ResourceManager.GetString("CannotCreateFolderWithInvalidCharacters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot create folder with no name!.
+        /// </summary>
+        internal static string CannotCreateFolderWithNoName {
+            get {
+                return ResourceManager.GetString("CannotCreateFolderWithNoName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot reestablish connection. (Error: {0}).
         /// </summary>
         internal static string CannotReestablishConnection {
@@ -1449,6 +1467,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} doesn&apos;t support Passive Mode..
+        /// </summary>
+        internal static string PassiveModeNotSupported {
+            get {
+                return ResourceManager.GetString("PassiveModeNotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Password.
         /// </summary>
         internal static string Password {
@@ -2196,7 +2223,7 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Use Passive Mode (Please note that XeXMenu doesn&apos;t support PASV!).
+        ///   Looks up a localized string similar to Use Passive Mode (Please note that XeXMenu and DashLaunch doesn&apos;t support PASV!).
         /// </summary>
         internal static string UsePassiveMode {
             get {
