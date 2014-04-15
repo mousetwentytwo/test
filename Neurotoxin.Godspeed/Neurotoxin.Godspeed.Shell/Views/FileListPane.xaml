@@ -4,7 +4,6 @@
              xmlns:e="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              xmlns:inf="clr-namespace:Neurotoxin.Godspeed.Presentation.Infrastructure;assembly=Neurotoxin.Godspeed.Presentation"
              xmlns:controls="clr-namespace:Neurotoxin.Godspeed.Presentation.Controls;assembly=Neurotoxin.Godspeed.Presentation"
-             xmlns:views="clr-namespace:Neurotoxin.Godspeed.Shell.Views" 
              xmlns:vc="clr-namespace:Neurotoxin.Godspeed.Shell.Views.Controls"
              xmlns:constants="clr-namespace:Neurotoxin.Godspeed.Shell.Constants" 
              xmlns:s="clr-namespace:Neurotoxin.Godspeed.Shell.Views.Selectors"
@@ -37,7 +36,7 @@
                         <s:CloseButtonsTemplateSelector.PackageTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
-                                    <Button Content="{lex:LocText SaveAndClose}" Command="{Binding SaveAndCloseCommand}" Margin="0,0,3,0" MinWidth="100" Padding="10,0,10,0" />
+                                    <!--<Button Content="{lex:LocText SaveAndClose}" Command="{Binding SaveAndCloseCommand}" Margin="0,0,3,0" MinWidth="100" Padding="10,0,10,0" />-->
                                     <Button Content="{lex:LocText Close}" Command="{Binding CloseCommand}" MinWidth="60" Padding="10,0,10,0" />
                                 </StackPanel>
                             </DataTemplate>
@@ -305,7 +304,7 @@
                                         <controls:GreyableImage Source="/Resources/rename.png" Width="16" Height="16" SnapsToDevicePixels="True" />
                                     </MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem Header="{Binding Path=Type, Converter={StaticResource RenameFileConverter}}" 
+                                <MenuItem Header="{Binding Path=Type, Converter={StaticResource ResxConverter}, ConverterParameter={x:Static constants:Strings.RenameFormat}}" 
                                           Command="{Binding Source={StaticResource ViewModel}, Path=Data.RenameFileSystemItemCommand}"
                                           CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}">
                                     <MenuItem.Icon>

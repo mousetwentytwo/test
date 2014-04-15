@@ -1,0 +1,183 @@
+Connection name limit 24 characters please. 
+Több karakter esetén nem látszik az eleje vége
+
+Connection edit, name MUST change.
+Miért is? Csak az ip-t írtam át.
+
+Cannot stop second file upload.
+	Start to copy files. Press Stop and press Really OK.
+	Start to copy files again without modifying the selection.
+	Cancel/stop/exit does Not work this time. You cannot exit, only KILL with fire.
+	
+Copy screen Bytes shown as size, but KBps shown as speed, speed should be Bytes too.
+Jó dolog a kbps, de itt szebb lenne a byte per sec szerintem.
+- Setting kéne, hogy legyen
+
+Memóriaelfogyás, RAMmap game fileokat mutat a memóriába szorulva nagy mennyiségben,
+Nem értek hozzá, de lehet hogy szegmensenként kéne kezelni a streamet, 
+nem egybe behúzni a memóriába a filet amíg tart? :) 
+Lol, no idea what i'm talking bout, mindenesetre látványosan megerõszakolja a 8 gigát a gépemen, pár másolás után már szenved a gép.
+Programok vinnyognak hogy nincs memória, kicsit beparáztam és memtesztet futtattam 4 órát, de nem nálam lesz a hiba szerintem.
+RAMmap "Empty" menüjében a cuccokat végignyomkodva kipucolja szerencsére, idõlegesen használhatóvá teszi a gépet utána.
+Erhm. lehet hogy a hiba az én készülékemben van, de nézd meg kérlek te is tüzetesebben.
+- Semmi ilyesmit nem tárolok, az adatot 32k-s bufferekben olvasom, majd zárom a streameket.
+
+Újra kapcsolódásnál kényelmesebb lenne a /HDD1/Content/00000000000000/ ba érkezni,
+ha kell úgyis oda navigál az illetõ ahova kell, de úgyis fõleg játék másolásra van a tool.
+- Setting kéne, hogy legyen
+
+File copy read elég erõs prioritással megy, ami gyengébb gépen torrent/copy mellett,
+ akár a rendszer olvasási nehézségeihez, ergo belassulásához vezethetnek.
+Úgyszint az unzip prioritása sem módosítható, elég szépen tud cpu-t zabálni, de tudom, ez külsõ lib.
+- Utána kell nézni
+ 
+FTP-n könyvtár átnevezése után lejön a játék infója. 
+Ha visszanevezem és felismertetem sem ismeri fel azonnal, mappát kell váltani.
+
+Delete ablakon a megszakítás nem mûködik, mire megnyomod, a "pufferben" van minden lépés, 
+elszalad elvégezni mire megnyomod. Sok fileal könnyebb tesztelni.
+Pause detto.
+
+Új mappa ablakon üres stringet is be lehet adni, persze semmi nem történik, validation missing.
+Elfogad "/" jelet is, csinál mappát bele meg almappát, aztán meghal egy exceptionnel.
+Rengeteg karaktert megeszik, de kéne kicsit cleanupolni. Gyakorlatilag String, sszh :D
+
+Mappát almappákkal teljes nyugalommal törli, egy "is it ok? it Contains subdirectories" üzenet beférne.
+Avagy az are you sure ra egy "may contain" is segít a helyzeten.
+
+A copy ablakon egy idõ után elvesztettem a fonalat melyik az eltelt és melyik a hátravan idõ, 
+elférne ott 2 sorban textekkel nemigaz? :) Fancy labelek.
+
+Míg copy van, böngésznék, érzem a késztetést, kár hogy nincs egy move it to background gomb, 
+addigis nézegetném a fileokat, etc, el tudom képzelni ahogy a copy/transfer window csak egy alsó szegmense a fõablaknak alul.
+Bár megjegyzem alt-al, tabbal és egyebekkel szépen át lehet nyúlni a fõablakra csibészkedni.
+A calculate occupied spacet meg is nyomtam egyszer egy copy alatt, de nem lett jó vége. ;)
+
+Ugyan elvileg buta end usereknek készül, de szerintem egy ftp log window vagy tab vagy valami alul elférne
+
+Kéne legalább egy warning hogy ne kezdj el játszani amíg másol. ;)
+Ha mégis így tesz valaki, csak megáll a copy. Copy ablak tetején Piros warning szép lehetne.
+Gép kikapcsnál persze socket stream error jön.
+
+Error trying to connect után is van még kapcsolat bontása gomb, holott már közölte hogy nincs kapcsolat.
+
+A kapcsolódás igen lassú ha rossz ipre próbálod, mire bejön a nem sikerült kapcsolódni, eltelik sok idõ
+
+FTP porton amúgy mindegyik szerver megeszi a NOOP commandot.. keep/check connection alive ra tökéletes lenne!
+kb 3 mpenként el lehetne küldeni, hogy Lost connection-t fel lehessen ismerni.
+
+FTP-n OnboardMU drivera én egy Warningot kitennék, hogy csak kaucióval piszkálják emberek, 
+még a végén oda töltenek valamit, de nincs hely és kipucolják óvatlan suttyó módjára vagy véletlen..
+GAME driveot meg átlehetne "nevezni" legalább title szinten hogy DVD drive.
+
+A Content mappa is kaphatna valami megkülönböztetést, kezdõknek fõleg hazsnos lehet.
+
+Recognize nem játék vagy profil mappán exceptont dob.
+
+Letöltésnél pause után continue ra IO error comand not implemented.
+Retry esetén újra ugyanez a hiba jön
+
+Letöltésnél ütközés esetén a Skip all nem megy, egyesével skippel.
+
+Letöltésnél Rename nem mûködik, ugyanazzal a névvel próbálja elmenteni.
+
+Uploadnál létezõ file nem zavarja, felülírja simán kérdés nélkül.
+
+Title-t ha átírod egyik ablakrészben, a másikban még a régi marad.
+
+Remote Rename idejére befagy kicsit az ablak.
+
+Clear Cacne a content recognitionon még akkor is elhal ha rengeteg felismert játék van.
+
+File átnevezés kisbetûs nagybets elétérésnél exception.
+
+Készítettem egy FileZilla FTP szervert ami ugyanazt a képet adja mint az XBOX, 
+ez jó lesz teszteléshez és a dokumentáció folytatásához.
+Beleértve a Profile currently in use szimulálását(dupla .. ftp alias a user profil file ba ;) ), 
+unknown profilt etc, szal így PONT úgy néz ki ahogy a box, játékfelismerés, profilnyitás etc,
+sebességszabályozós ftp.
+
+
+Összegezve az XBOX os FTP elérés egész jól megy, vannak apró háklik, amiket fetebb említettem, de nem gáz.
+
+Ami nagy feature lenne az a drag&drop a mappákra, annyiszor próbáltam reflexbõl, hogy úristen :DD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Hidden Track:
+
+Finomságok is akadnak, hiába GODspeed-hez mérten offtopic, de kíváncsi fajta vagyok, és ez néha jól sül el :D 
+Döntsd el te hogy így van-e most.
+
+Portscan eredménye: 21,80(F22 és F3 only),1034(f3 only),1132(f22 only),9999(rendszer szintû webui)
+(1024 szálon is jól bírta a box a scant, féltem leég a hálókártya, de szépen vette, a leégés csak vicc volt nyugi)
+Xbox ipjére simán lépj rá f3http a user és a jelszó
+Van DEBUG.TXT!! FTP loggal természetesen Status : FTP : D : 12.34 mBps -
+Egy kis insider facepalm..
+21:08:02.072|FTPSERVERCONN|F900002C|PASSIVE MODE IS BROKEN AT ROOT- THIS DEBUG MESSAGE IS A HACK FIX-  PLEASE FIX ME.  KTHX
+Een a UIon game folder Scan pathokat is hozzá lehet adni. SÕT! Van game rescan/recognition is, akár game elindítás, xbox restart is van!
+Valszeg egy pár http kérés-válasz és könnyedén el lehet érni ezt azt.
+Ha jól sejtem FTP szerver gyanánt egy samba kapocs van? weird? Nézd meg teis a database részt, hátha többet mond neked.
+http://192.168.22.105/launch?sessionid=678418BE482329&contentid=11&Action=launch
+http://192.168.22.105/launch?sessionid=678418BE482329&contentid=E&Action=launch
+http://192.168.22.105/paths.html?sessionid=valami&pathid=1&Action=scan
+
+Ugyszint van rajta egy másik app is 9999 es porton úgyszint f3http a belépéshez, itt a system (bal fent) gomb alatt van sok sok infó ;)
+Ez mindíg fut.
+
+FSD22Final alatt a 80 as portra (lassan de rájöttem magamtól, neten nem találtam) fsdhttp a belépés.
+Bár konkrétan fel sincs rendesen setupolva ahogy nézem, 1 game sincs benne, de cirka uyganaz mint a 3 as.
+Nincs rajta game, de valami image could not loadokat odafakelt a games menübe azért. WTF?
+
+Sima FreeStly 1.x nél még nincs 80 as port.
+
+XEX menü alatt nincs 80 as porton semmi, várható volt :D
+
+Off topic: 1034,1132 lejátszócapable portok, xbox vs MS MediaPlayer support (Why???)
+"Microsoft Windows Media player 11 Media center kérlek játszd/streameld le ezt a filmet az xboxon." Utolsó mondatok idézet
+Mik nem vannak, igaze? Persze csak F3 al! F22 vel 1132 es porton van ~Hasonló.
+
+
+ 
+CSakMertDe egy Freestlye 3 Bug:
+Ha egy játék fel lett ismerve 2 cdvel, ha kiszeded az egyik cd-t a GOD contents mappájából(meg midnenhonnan) akkor is felismerve marad a letörölt. ;)
+Lásd "GTA V CD 1" beszorult az adatbázisába. Gondolom workaround leszedni felirmerni hogy nincs ott és újra feltenni, de lusta voltam, bocsesz.

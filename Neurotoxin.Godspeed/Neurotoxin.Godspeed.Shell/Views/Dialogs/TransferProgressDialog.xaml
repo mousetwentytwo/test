@@ -24,7 +24,7 @@
     </primitives:DialogBase.TaskbarItemInfo>
     <primitives:DialogBase.Title>
         <MultiBinding StringFormat="{x:Static dialogs:TransferProgressDialog.TitleFormat}">
-            <Binding Path="TransferType" />
+            <Binding Path="TransferType" Converter="{StaticResource ResxConverter}" />
             <Binding Path="TotalProgress" />
         </MultiBinding>
     </primitives:DialogBase.Title>

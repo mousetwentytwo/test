@@ -252,7 +252,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public bool RemoteDownload(FileSystemItem item, string savePath, CopyAction action)
         {
             if (item.Type != ItemType.File) throw new NotSupportedException();
-            eventAggregator.GetEvent<TransferActionStartedEvent>().Publish(ExportActionDescription);
+            UIThread.Run(() => eventAggregator.GetEvent<TransferActionStartedEvent>().Publish(ExportActionDescription));
             long resumeStartPosition = 0;
             try
             {
@@ -288,7 +288,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public bool RemoteUpload(FileSystemItem item, string savePath, CopyAction action)
         {
             if (item.Type != ItemType.File) throw new NotSupportedException();
-            eventAggregator.GetEvent<TransferActionStartedEvent>().Publish(ImportActionDescription);
+            UIThread.Run(() => eventAggregator.GetEvent<TransferActionStartedEvent>().Publish(ImportActionDescription));
             long resumeStartPosition = 0;
             try {
                 switch (action)

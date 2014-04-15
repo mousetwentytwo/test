@@ -133,9 +133,10 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             return item.IsCached;
         }
 
-        public void RecognizeTitle(FileSystemItem item)
+        public CacheEntry<FileSystemItem> RecognizeTitle(FileSystemItem item)
         {
             var cacheKey = GetCacheKey(item);
+            CacheEntry<FileSystemItem> cacheItem = null;
 
             switch (item.TitleType)
             {
@@ -144,11 +145,11 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                     var profileExpiration = GetExpirationFrom(UserSettings.ProfileExpiration);
                     if (UserSettings.ProfileInvalidation)
                     {
-                        _cacheManager.SaveEntry(cacheKey.Key, item, profileExpiration, cacheKey.Date, cacheKey.Size, _fileManager.TempFilePath);
+                        cacheItem = _cacheManager.SaveEntry(cacheKey.Key, item, profileExpiration, cacheKey.Date, cacheKey.Size, _fileManager.TempFilePath);
                     }
                     else
                     {
-                        _cacheManager.SaveEntry(cacheKey.Key, item, profileExpiration);
+                        cacheItem = _cacheManager.SaveEntry(cacheKey.Key, item, profileExpiration);
                         File.Delete(_fileManager.TempFilePath);
                     }
                     item.IsCached = true;
@@ -157,7 +158,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                     if (item.Type == ItemType.File)
                     {
                         GetGameDataFromGpd(item);
-                        _cacheManager.SaveEntry(cacheKey.Key, item, GetExpirationFrom(UserSettings.RecognizedGameExpiration));
+                        cacheItem = _cacheManager.SaveEntry(cacheKey.Key, item, GetExpirationFrom(UserSettings.RecognizedGameExpiration));
                     } 
                     else
                     {
@@ -166,12 +167,12 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                                                  : UserSettings.UseJqe360 && GetGameDataFromJqe360(item)
                                                        ? UserSettings.PartiallyRecognizedGameExpiration
                                                        : UserSettings.UnrecognizedGameExpiration;
-                        _cacheManager.SaveEntry(cacheKey.Key, item, GetExpirationFrom(gameExpiration));
+                        cacheItem = _cacheManager.SaveEntry(cacheKey.Key, item, GetExpirationFrom(gameExpiration));
                     }
                     item.IsCached = true;
                     break;
                 case TitleType.Content:
-                    _cacheManager.SaveEntry(cacheKey.Key, item);
+                    cacheItem = _cacheManager.SaveEntry(cacheKey.Key, item);
                     item.IsCached = true;
                     break;
                 case TitleType.DataFile:
@@ -189,16 +190,16 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                                 var svodExpiration = GetExpirationFrom(UserSettings.XboxLiveContentExpiration);
                                 if (UserSettings.XboxLiveContentInvalidation)
                                 {
-                                    _cacheManager.SaveEntry(cacheKey.Key, item, svodExpiration, item.Date, item.Size);
+                                    cacheItem = _cacheManager.SaveEntry(cacheKey.Key, item, svodExpiration, item.Date, item.Size);
                                 }
                                 else
                                 {
-                                    _cacheManager.SaveEntry(cacheKey.Key, item, svodExpiration);
+                                    cacheItem = _cacheManager.SaveEntry(cacheKey.Key, item, svodExpiration);
                                 }
                             }
                             else
                             {
-                                _cacheManager.SaveEntry(cacheKey.Key, item, GetExpirationFrom(UserSettings.UnknownContentExpiration));
+                                cacheItem = _cacheManager.SaveEntry(cacheKey.Key, item, GetExpirationFrom(UserSettings.UnknownContentExpiration));
                             }
                         } 
                         catch
@@ -210,6 +211,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                     }
                     break;
             }
+            return cacheItem;
         }
 
         private static DateTime? GetExpirationFrom(int expiration)
@@ -218,12 +220,14 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             return DateTime.Now.AddDays(expiration);
         }
 
-        public ProfileItemWrapper GetProfileItem(FileSystemItem item)
+        private ProfileItemWrapper GetProfileItem(FileSystemItem item)
         {
-            var profilePath = string.Format("{1}FFFE07D1{2}00010000{2}{0}", item.Name, item.Path, _fileManager.Slash);
+            const string pattern = "{1}FFFE07D1{2}00010000{2}{0}";
+            var profileFullPath = string.Format(pattern, item.Name, item.FullPath, _fileManager.Slash);
             string message = null;
-            if (!_profileFileCache.ContainsKey(profilePath))
+            if (!_profileFileCache.ContainsKey(profileFullPath))
             {
+                var profilePath = string.Format(pattern, item.Name, item.Path, _fileManager.Slash);
                 var profileItem = _fileManager.GetItemInfo(profilePath);
                 if (profileItem != null)
                 {
@@ -241,9 +245,9 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 {
                     message = Resx.ProfileDoesntExistErrorMessage;
                 }
-                _profileFileCache.Add(profilePath, profileItem);
+                _profileFileCache.Add(profileFullPath, profileItem);
             }
-            return new ProfileItemWrapper(profilePath, _profileFileCache[profilePath], message);
+            return new ProfileItemWrapper(profileFullPath, _profileFileCache[profileFullPath], message);
         }
 
         private CacheComplexKey GetCacheKey(FileSystemItem item)
@@ -412,11 +416,10 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             if (cacheKey.Key != null) _cacheManager.ClearCache(cacheKey.Key);
         }
 
-        public string GetTempFilePath(FileSystemItem item)
+        public CacheEntry<FileSystemItem> GetCacheEntry(FileSystemItem item)
         {
             var cacheKey = GetCacheKey(item);
-            var cacheEntry = _cacheManager.GetEntry(cacheKey);
-            return cacheEntry != null && !string.IsNullOrEmpty(cacheEntry.TempFilePath) ? cacheEntry.TempFilePath : null;
+            return _cacheManager.GetEntry(cacheKey);
         }
 
         public CacheEntry<FileSystemItem> GetCacheEntry(string key)

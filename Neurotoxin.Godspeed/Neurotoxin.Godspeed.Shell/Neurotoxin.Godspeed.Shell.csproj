@@ -128,7 +128,7 @@
     <Compile Include="ContentProviders\StfsPackageContent.cs" />
     <Compile Include="ContentProviders\TitleRecognizer.cs" />
     <Compile Include="Converters\ContentTypeConverter.cs" />
-    <Compile Include="Converters\RenameFileConverter.cs" />
+    <Compile Include="Converters\ResxConverter.cs" />
     <Compile Include="Converters\FileBlockHealthStatusConverter.cs" />
     <Compile Include="Converters\ExpirationConverter.cs" />
     <Compile Include="Converters\NameConverter.cs" />

@@ -83,7 +83,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             return item;
         }
 
-        public void SaveEntry(string key, FileSystemItem content, DateTime? expiration = null, DateTime? date = null, long? size = null, string tmpPath = null)
+        public CacheEntry<FileSystemItem> SaveEntry(string key, FileSystemItem content, DateTime? expiration = null, DateTime? date = null, long? size = null, string tmpPath = null)
         {
             if (content == null)
             {
@@ -99,6 +99,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 };
             var hashKey = HashKey(key);
             _cacheStore.Update(hashKey, entry);
+            return entry;
         }
 
         public void UpdateEntry(string key, FileSystemItem content)

@@ -888,7 +888,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void OnTransferActionStarted(string action)
         {
-            UIThread.Run(() => { TransferAction = action ?? TransferType.ToString(); });
+            UIThread.Run(() => { TransferAction = action ?? Resx.ResourceManager.GetString(TransferType.ToString()); });
         }
 
         private void OnTransferProgressChanged(TransferProgressChangedEventArgs args)
@@ -990,7 +990,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void InitializeTransfer(TransferType mode, Action callback)
         {
             TransferType = mode;
-            TransferAction = mode.ToString();
+            TransferAction = Resx.ResourceManager.GetString(mode.ToString());
             _rememberedCopyAction = CopyAction.CreateNew;
             _currentFileBytesTransferred = 0;
             CurrentFileProgress = 0;

@@ -8,6 +8,6 @@
         public const string DotDotDot = "...";
         public const string UpDirectory = "..";
         public const string TimeFormat = "{0:hh\\:mm\\:ss}";
-
+        public const string RenameFormat = "Rename{0}";
     }
 }

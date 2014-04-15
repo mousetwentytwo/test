@@ -321,15 +321,36 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private BinaryContent OpenStfsPackage(FileSystemItem item)
         {
             var contentType = item.ContentType;
-            if (item.Type == ItemType.Directory)
+            if (item.IsLocked)
             {
-                var recognition = TitleRecognizer.GetProfileItem(item);
-                item = recognition.Item;
-                if (item == null) throw new TransferException(TransferErrorType.NotSpecified, recognition.ErrorMessage);
+                //TODO
+                throw new Exception();
+            }
+            
+            //if (item.Type == ItemType.Directory)
+            //{
+            //    var recognition = TitleRecognizer.GetProfileItem(item);
+            //    item = recognition.Item;
+            //    if (item == null) throw new TransferException(TransferErrorType.NotSpecified, recognition.ErrorMessage);
+            //}
+
+            var cacheEntry = TitleRecognizer.GetCacheEntry(item);
+            if (cacheEntry == null)
+            {
+                cacheEntry = TitleRecognizer.RecognizeTitle(item);
+                if (cacheEntry == null)
+                {
+                    //TODO
+                    throw new Exception();
+                }
+            }
+            if (string.IsNullOrEmpty(cacheEntry.TempFilePath))
+            {
+                //TODO
+                throw new Exception();                
             }
 
-            var tempFilePath = TitleRecognizer.GetTempFilePath(item) ?? item.Path;
-            return new BinaryContent(item.Path, tempFilePath, File.ReadAllBytes(tempFilePath), contentType);
+            return new BinaryContent(item.Path, cacheEntry.TempFilePath, File.ReadAllBytes(cacheEntry.TempFilePath), contentType);
         }
 
         private void OpenStfsPackageCallback(BinaryContent content, OpenStfsPackageMode mode)
@@ -725,18 +746,22 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private int RecognizeFromProfile()
         {
-            var tmp = TitleRecognizer.GetTempFilePath(CurrentRow.Model);
-            if (tmp == null) return -1;
+            var cacheEntry = TitleRecognizer.GetCacheEntry(CurrentRow.Model);
+            if (cacheEntry == null)
+            {
+                cacheEntry = TitleRecognizer.RecognizeTitle(CurrentRow.Model);
+                if (cacheEntry == null || string.IsNullOrEmpty(cacheEntry.TempFilePath)) return -1;
+            }
 
             var i = 0;
-            var stfs = ModelFactory.GetModel<StfsPackage>(tmp);
+            var stfs = ModelFactory.GetModel<StfsPackage>(cacheEntry.TempFilePath);
             stfs.ExtractContent();
             stfs.ProfileInfo.TitlesPlayed.ForEach(g =>
                                                       {
                                                           var game = stfs.Games.Values.FirstOrDefault(gg => gg.TitleId == g.TitleCode);
                                                           if (game == null) return;
-                                                          var cacheEntry = TitleRecognizer.GetCacheEntry(g.TitleCode);
-                                                          if (cacheEntry != null && cacheEntry.Expiration == null) return;
+                                                          var gameCacheEntry = TitleRecognizer.GetCacheEntry(g.TitleCode);
+                                                          if (gameCacheEntry != null && gameCacheEntry.Expiration == null) return;
                                                           var item = new FileSystemItem
                                                                          {
                                                                              Name = g.TitleCode,
@@ -1269,7 +1294,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public bool Export(FileSystemItem item, string savePath, CopyAction action)
         {
             if (item.Type != ItemType.File) throw new NotSupportedException();
-            eventAggregator.GetEvent<TransferActionStartedEvent>().Publish(ExportActionDescription);
+            UIThread.Run(() => eventAggregator.GetEvent<TransferActionStartedEvent>().Publish(ExportActionDescription));
             try
             {
                 FileMode mode;
@@ -1312,7 +1337,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public bool Import(FileSystemItem item, string savePath, CopyAction action)
         {
             if (item.Type != ItemType.File) throw new NotSupportedException();
-            eventAggregator.GetEvent<TransferActionStartedEvent>().Publish(ImportActionDescription);
+            UIThread.Run(() => eventAggregator.GetEvent<TransferActionStartedEvent>().Publish(ImportActionDescription));
             var itemPath = item.Path;
             try
             {
