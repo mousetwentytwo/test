@@ -854,4 +854,7 @@
   <data name="CannotCreateFolderWithInvalidCharacters" xml:space="preserve">
     <value>A mappa neve nem tartalmazhat illegális karaktereket!</value>
   </data>
+  <data name="Language" xml:space="preserve">
+    <value>Nyelv</value>
+  </data>
 </root>

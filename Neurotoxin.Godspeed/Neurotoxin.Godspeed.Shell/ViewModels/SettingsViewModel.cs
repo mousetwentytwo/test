@@ -1,7 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Shell.Views.Dialogs;
+using WPFLocalizeExtension.Engine;
 using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
@@ -102,6 +105,16 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #region Appearance
 
+        public List<CultureInfo> AvailableLanguages { get; set; }
+
+        private const string LANGUAGE = "Language";
+        private CultureInfo _language;
+        public CultureInfo Language
+        {
+            get { return _language; }
+            set { _language = value; NotifyPropertyChanged(LANGUAGE); }
+        }
+
         private const string DISABLECUSTOMCHROME = "DisableCustomChrome";
         private bool _disableCustomChrome;
         public bool DisableCustomChrome
@@ -147,6 +160,20 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             ClearCacheCommand = new DelegateCommand(ExecuteClearCacheCommand);
 
             ExpirationTimeSpans = new List<int> { 0, 1, 2, 3, 4, 5, 6, 7, 14, 21, 30, 60, 90 };
+            AvailableLanguages = CultureInfo.GetCultures(CultureTypes.AllCultures).Where(c =>
+            {
+                try
+                {
+                    if (c.IsNeutralCulture) return false;
+                    if (c.Equals(CultureInfo.InvariantCulture)) return false;
+                    if (c.Name == "en-US") return true;
+                    return Resx.ResourceManager.GetResourceSet(c, true, false) != null;
+                }
+                catch (CultureNotFoundException ex)
+                {
+                    return false;
+                }
+            }).ToList();
 
             UseJqe360 = UserSettings.UseJqe360;
             ProfileExpiration = UserSettings.ProfileExpiration;
@@ -158,6 +185,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             XboxLiveContentInvalidation = UserSettings.XboxLiveContentInvalidation;
             UnknownContentExpiration = UserSettings.UnknownContentExpiration;
             UseRemoteCopy = UserSettings.UseRemoteCopy;
+            Language = UserSettings.Language ?? LocalizeDictionary.Instance.Culture;
             DisableCustomChrome = UserSettings.DisableCustomChrome;
             UseVersionChecker = UserSettings.UseVersionChecker;
         }
@@ -174,6 +202,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             UserSettings.XboxLiveContentInvalidation = XboxLiveContentInvalidation;
             UserSettings.UnknownContentExpiration = UnknownContentExpiration;
             UserSettings.UseRemoteCopy = UseRemoteCopy;
+            UserSettings.Language = Language;
             UserSettings.DisableCustomChrome = DisableCustomChrome;
             UserSettings.UseVersionChecker = UseVersionChecker;
         }

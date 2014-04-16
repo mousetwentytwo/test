@@ -58,7 +58,7 @@ namespace Neurotoxin.Godspeed.Shell
 
         protected override DependencyObject CreateShell()
         {
-            LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("hu-HU");
+            LocalizeDictionary.Instance.Culture = UserSettings.Language ?? CultureInfo.CurrentCulture;
             Container.Resolve<SanityChecker>();
             var shell = Container.Resolve<FileManagerWindow>();
             var viewModel = (FileManagerViewModel)shell.DataContext;

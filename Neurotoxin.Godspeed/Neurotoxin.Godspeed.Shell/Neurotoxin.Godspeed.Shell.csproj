@@ -122,7 +122,6 @@
     <Compile Include="ContentProviders\CacheManager.cs" />
     <Compile Include="ContentProviders\CompressedFileContent.cs" />
     <Compile Include="ContentProviders\FtpContent.cs" />
-    <None Include="ContentProviders\FtpContent.cs.oldLimilabs" />
     <Compile Include="ContentProviders\LocalFileSystemContent.cs" />
     <Compile Include="ContentProviders\UserSettings.cs" />
     <Compile Include="ContentProviders\StfsPackageContent.cs" />

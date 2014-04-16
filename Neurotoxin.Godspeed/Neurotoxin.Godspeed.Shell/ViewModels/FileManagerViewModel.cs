@@ -1172,6 +1172,24 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 _queue.Clear();
                 _queue.Enqueue(actualItem);
             }
+            if (_isPaused)
+            {
+                UIThread.BeginRun(() =>
+                {
+                    switch (TransferType)
+                    {
+                        case TransferType.Copy:
+                            CopyFinish();
+                            break;
+                        case TransferType.Move:
+                            MoveFinish();
+                            break;
+                        case TransferType.Delete:
+                            DeleteFinish();
+                            break;
+                    }
+                });
+            }
         }
 
         private void FinishTransfer()

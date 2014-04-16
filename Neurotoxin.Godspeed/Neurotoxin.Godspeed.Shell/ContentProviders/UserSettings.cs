@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Globalization;
 using Neurotoxin.Godspeed.Core.Caching;
 using Neurotoxin.Godspeed.Shell.Models;
 using Neurotoxin.Godspeed.Shell.ViewModels;
@@ -9,6 +10,17 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
     public static class UserSettings
     {
         private static readonly EsentPersistentDictionary CacheStore = EsentPersistentDictionary.Instance;
+
+        private const string LanguageKey = "Language";
+        public static CultureInfo Language
+        {
+            get
+            {
+                var name = Get<string>(LanguageKey);
+                return string.IsNullOrEmpty(name) ? null : CultureInfo.GetCultureInfo(name);
+            }
+            set { Set(LanguageKey, value != null ? value.Name: null); }
+        }
 
         private const string DisableCustomChromeKey = "DisableCustomChrome";
         public static bool DisableCustomChrome

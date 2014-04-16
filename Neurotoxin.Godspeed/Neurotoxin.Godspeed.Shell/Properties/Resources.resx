@@ -941,4 +941,7 @@
   <data name="CannotCreateFolderWithInvalidCharacters" xml:space="preserve">
     <value>Cannot create folder with invalid characters in its name!</value>
   </data>
+  <data name="Language" xml:space="preserve">
+    <value>Language</value>
+  </data>
 </root>

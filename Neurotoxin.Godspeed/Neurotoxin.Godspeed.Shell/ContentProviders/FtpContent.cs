@@ -350,7 +350,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                         }
                         stream.Write(buffer, 0, bufferSize);
                         transferred += bufferSize;
-                        NotifyFtpOperationProgressChanged((int) (transferred*100/fileSize), bufferSize, transferred, remoteStartPosition);
+                        NotifyFtpOperationProgressChanged(fileSize, bufferSize, transferred, remoteStartPosition);
                     }
                 }
                 stream.Flush();
@@ -359,7 +359,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             catch (Exception ex)
             {
                 if (downloadStarted)
-                    NotifyFtpOperationProgressChanged((int)(transferred * 100 / fileSize), bufferSize, transferred, remoteStartPosition, true);
+                    NotifyFtpOperationProgressChanged(fileSize, bufferSize, transferred, remoteStartPosition, true);
                 NotifyFtpOperationFinished();
                 if (_isAborted && ex.Message == "Broken pipe") return;
                 throw;
@@ -399,14 +399,14 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                         //if ((int)(transferred * 100 / fileSize) == 50) throw new FtpException("[TESTING] Intentional error at 50%");
                         ftpStream.Write(buffer, 0, bufferSize);
                         transferred += bufferSize;
-                        NotifyFtpOperationProgressChanged((int) (transferred*100/fileSize), bufferSize, transferred, resumeStartPosition);
+                        NotifyFtpOperationProgressChanged(fileSize, bufferSize, transferred, resumeStartPosition);
                     }
                 }
             }
             catch
             {
                 if (uploadedStarted)
-                    NotifyFtpOperationProgressChanged((int) (transferred*100/fileSize), bufferSize, transferred, resumeStartPosition, true);
+                    NotifyFtpOperationProgressChanged(fileSize, bufferSize, transferred, resumeStartPosition, true);
                 throw;
             }
             finally
@@ -465,9 +465,10 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             _notificationTimer.Stop();
         }
 
-        private void NotifyFtpOperationProgressChanged(int percentage, long transferred, long totalBytesTransferred, long resumeStartPosition, bool force = false)
+        private void NotifyFtpOperationProgressChanged(long fileSize, long transferred, long totalBytesTransferred, long resumeStartPosition, bool force = false)
         {
             _aggregatedTransferredValue += transferred;
+            var percentage = (int)((resumeStartPosition + totalBytesTransferred) * 100 / fileSize);
             if (!force && _notificationTimer.Elapsed.TotalMilliseconds < 100 && percentage != 100) return;
 
             _eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(percentage, _aggregatedTransferredValue, totalBytesTransferred, resumeStartPosition));
