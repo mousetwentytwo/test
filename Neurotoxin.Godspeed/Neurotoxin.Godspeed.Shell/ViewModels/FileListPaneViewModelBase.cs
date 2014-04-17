@@ -880,18 +880,29 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             if (grid == null) grid = row.FindAncestor<DataGrid>();
             var cell = row.FirstCell();
             cell.Tag = tag; //param for template selector
+            grid.PreparingCellForEdit += GridOnPreparingCellForEdit;
             grid.CellEditEnding += GridOnCellEditEnding;
+            grid.PreviewKeyDown += GridOnPreviewKeyDown;
             cell.IsEditing = true;
             IsInEditMode = true;
             ChangeDirectoryCommand.RaiseCanExecuteChanged();
         }
 
-        private void GridOnCellEditEnding(object sender, DataGridCellEditEndingEventArgs args)
+        private void GridOnPreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e)
+        {
+            e.EditingElement.LostFocus += GridCellEditingElementOnLostFocus;
+        }
+
+        private void GridOnCellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
             IsInEditMode = false;
-            if (args.EditAction == DataGridEditAction.Cancel) return;
+            var content = (ContentPresenter)e.EditingElement;
+            content.LostFocus -= GridCellEditingElementOnLostFocus;
+            var grid = (DataGrid)sender;
+            grid.CellEditEnding -= GridOnCellEditEnding;
+            grid.PreviewKeyDown -= GridOnPreviewKeyDown;
+            if (e.EditAction == DataGridEditAction.Cancel) return;
 
-            var content = (ContentPresenter) args.EditingElement;
             var tag = (string)content.FindAncestor<DataGridCell>().Tag;
             var template = content.ContentTemplateSelector.SelectTemplate(null, content);
             var textBox = (TextBox)template.FindName("TitleEditBox", content);
@@ -922,6 +933,21 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
             SortContent();
             ChangeDirectoryCommand.RaiseCanExecuteChanged();
+        }
+
+        private void GridOnPreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key != Key.Escape) return;
+
+            var grid = (DataGrid) sender;
+            grid.CancelEdit();
+        }
+
+        private void GridCellEditingElementOnLostFocus(object sender, RoutedEventArgs e)
+        {
+            var cell = (ContentPresenter) sender;
+            var grid = cell.FindAncestor<DataGrid>();
+            grid.CancelEdit();
         }
 
         #endregion
@@ -1382,5 +1408,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     ProgressMessage += string.Format(" ({0}%)", args.Percentage);
                 });
         }
+
     }
 }
