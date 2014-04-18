@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows;
-using Neurotoxin.Godspeed.Presentation.Controls;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Shell.Primitives;
@@ -11,8 +10,7 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
     public enum NotificationMessageFlags
     {
         None = 0x0,
-        NonClosable = 0x1,
-        Ignorable = 0x2
+        NonClosable = 0x1
     }
 
     public partial class NotificationMessage
@@ -57,16 +55,6 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
             else
             {
                 Loaded += OnLoaded;
-            }
-            DontShowCheckbox.Visibility = flags.HasFlag(NotificationMessageFlags.Ignorable) ? Visibility.Visible : Visibility.Collapsed;
-            Closed += OnClosed;
-        }
-
-        private void OnClosed(object sender, EventArgs e)
-        {
-            if (_flags.HasFlag(NotificationMessageFlags.Ignorable) && DontShowCheckbox.IsChecked == true)
-            {
-                UserSettings.IgnoreMessage(Message.Text);
             }
         }
 

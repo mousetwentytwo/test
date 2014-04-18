@@ -14,14 +14,10 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <TextBlock Grid.Row="0" Margin="5,0,0,5" x:Name="Message" TextWrapping="Wrap" />
-        
-        <CheckBox Grid.Row="1" Content="{lex:LocText DontShowThisMessageAgain}" Margin="0,0,0,15" x:Name="DontShowCheckbox"/>
-
-        <Button Grid.Row="2" Content="{lex:LocText}" Margin="5" x:Name="Ok" Click="OkButtonClick" Width="80"/>
+        <Button Grid.Row="1" Content="{lex:LocText}" Margin="5" x:Name="Ok" Click="OkButtonClick" Width="80"/>
         
     </Grid>
 </primitives:DialogBase>

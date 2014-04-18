@@ -40,7 +40,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 new RecognitionInformation("^[1-9A-E][0-9A-F]{7}.gpd$", Resx.UnknownGame, TitleType.Game, ItemType.File),
                 new RecognitionInformation("^[0-9A-F]{8}$", Resx.UnknownContent, TitleType.Content),
                 new RecognitionInformation("^E0000[0-9A-F]{11}$", Resx.UnknownProfile, TitleType.Profile, ItemType.Directory | ItemType.File),
-                new RecognitionInformation("^TU[\\w\\.]+$|^[0-9A-F]+$", Resx.UnknownDataFile, TitleType.DataFile, ItemType.File),
+                new RecognitionInformation("^TU[\\w\\.]+$|^[0-9A-F]{4,}$", Resx.UnknownDataFile, TitleType.DataFile, ItemType.File),
             };
 
         public TitleRecognizer(IFileManager fileManager, CacheManager cacheManager, IEventAggregator eventAggregator)

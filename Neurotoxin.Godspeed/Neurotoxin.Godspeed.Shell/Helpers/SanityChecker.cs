@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Reflection;
@@ -7,6 +9,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
+using System.Windows.Input;
 using Microsoft.Practices.Composite.Events;
 using Neurotoxin.Godspeed.Core.Caching;
 using Neurotoxin.Godspeed.Core.Extensions;
@@ -20,6 +23,7 @@ using Neurotoxin.Godspeed.Shell.Reporting;
 using Neurotoxin.Godspeed.Shell.ViewModels;
 using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 using System.Linq;
+using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 
 namespace Neurotoxin.Godspeed.Shell.Helpers
 {
@@ -59,24 +63,42 @@ namespace Neurotoxin.Godspeed.Shell.Helpers
 
         private void OnCachePopulated(CachePopulatedEventArgs e)
         {
-            const int requiredCacheVersion = 2;
+            const int requiredCacheVersion = 3;
             var actualCacheVersion = e.CacheStore.TryGet("CacheVersion", 1);
             if (actualCacheVersion == requiredCacheVersion) return;
 
             Action setCacheVersion = () => e.CacheStore.Update("CacheVersion", requiredCacheVersion);
-            if (e.InMemoryCacheItems.Count == 0)
+
+            var cacheKeys = e.CacheStore.Keys.Where(k => k.StartsWith(Strings.UserMessageCacheItemPrefix)).ToList();
+            if (cacheKeys.Any())
             {
-                setCacheVersion();
-                return;
+                var resx = Resx.ResourceManager.GetResourceSet(CultureInfo.InvariantCulture, true, false);
+                foreach (DictionaryEntry entry in resx)
+                {
+                    var resxKey = (string)entry.Key;
+                    if (!resxKey.EndsWith("Message")) continue;
+                    var resxValue = (string)entry.Value;
+                    var cacheKey = cacheKeys.FirstOrDefault(k => k == Strings.UserMessageCacheItemPrefix + resxValue.Hash());
+                    if (cacheKey == null) continue;
+                    e.CacheStore.Remove(cacheKey);
+                    e.CacheStore.Set(Strings.UserMessageCacheItemPrefix + resxKey.Hash(), true);
+                }
             }
 
-            var payload = ApplicationExtensions.GetContentByteArray("/Resources/xbox_logo.png");
-            var args = new CacheMigrationEventArgs(MigrateCacheItemVersion1ToVersion2, 
-                                                   setCacheVersion, 
-                                                   e.InMemoryCacheItems,
-                                                   e.CacheStore, 
-                                                   payload);
-            _eventAggregator.GetEvent<CacheMigrationEvent>().Publish(args);
+            if (actualCacheVersion == 1 && e.InMemoryCacheItems.Count != 0)
+            {
+                var payload = ApplicationExtensions.GetContentByteArray("/Resources/xbox_logo.png");
+                var args = new CacheMigrationEventArgs(MigrateCacheItemVersion1ToVersion2,
+                    setCacheVersion,
+                    e.InMemoryCacheItems,
+                    e.CacheStore,
+                    payload);
+                _eventAggregator.GetEvent<CacheMigrationEvent>().Publish(args);
+            }
+            else
+            {
+                setCacheVersion();
+            }
         }
 
         private void OnShellInitialized(ShellInitializedEventArgs e)

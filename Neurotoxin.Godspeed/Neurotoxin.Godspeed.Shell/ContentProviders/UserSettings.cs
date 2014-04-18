@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Globalization;
 using Neurotoxin.Godspeed.Core.Caching;
+using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Models;
 using Neurotoxin.Godspeed.Shell.ViewModels;
 using Neurotoxin.Godspeed.Core.Extensions;
@@ -143,12 +144,12 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public static bool IsMessageIgnored(string message)
         {
-            return CacheStore.ContainsKey("UserMessage_" + message.Hash());
+            return CacheStore.ContainsKey(Strings.UserMessageCacheItemPrefix + message.Hash());
         }
 
         public static void IgnoreMessage(string message)
         {
-            CacheStore.Update("UserMessage_" + message.Hash(), true);
+            CacheStore.Update(Strings.UserMessageCacheItemPrefix + message.Hash(), true);
         }
 
         private static T Get<T>(string key, T defaultValue = default(T))

@@ -9,5 +9,7 @@
         public const string UpDirectory = "..";
         public const string TimeFormat = "{0:hh\\:mm\\:ss}";
         public const string RenameFormat = "Rename{0}";
+
+        public const string UserMessageCacheItemPrefix = "UserMessage_";
     }
 }
