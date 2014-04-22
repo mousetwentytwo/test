@@ -1196,6 +1196,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void FinishTransfer()
         {
             if (_copyMode == CopyMode.RemoteExport || _copyMode == CopyMode.RemoteImport) CloseTelnetSession();
+            SourcePane.FinishTransferAsSource();
+            TargetPane.FinishTransferAsTarget();
             if (Ftp != null) Ftp.IsKeepAliveEnabled = false;
             _speedMeter.Stop();
             _speedMeter.Reset();

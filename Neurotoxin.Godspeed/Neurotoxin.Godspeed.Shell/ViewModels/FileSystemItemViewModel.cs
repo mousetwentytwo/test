@@ -64,7 +64,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                                 break;
                             case ItemType.Link:
                                 //TODO: link
-                                bytes = ApplicationExtensions.GetContentByteArray("/Resources/folder.png");
+                                bytes = ApplicationExtensions.GetContentByteArray("/Resources/reparse_point.png");
                                 break;
                             case ItemType.File:
                                 var fileIconPath = IsCompressedFile ? "/Resources/package.png" : "/Resources/file.png";

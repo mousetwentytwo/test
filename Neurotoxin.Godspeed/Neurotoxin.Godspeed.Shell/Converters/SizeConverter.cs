@@ -23,29 +23,23 @@ namespace Neurotoxin.Godspeed.Shell.Converters
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             if (values[0] == DependencyProperty.UnsetValue || values[1] == DependencyProperty.UnsetValue || values[2] == DependencyProperty.UnsetValue) return null;
-            
-            var type = (ItemType) values[1];
+
+            var type = (ItemType)values[1];
             var titleType = (TitleType)values[2];
-            var isRefreshing = (bool) values[3];
+            var isRefreshing = (bool)values[3];
 
             if (isRefreshing) return "?";
-            if (values[0] == null)
-            {
-                string t;
-                string v;
-                if (titleType != TitleType.Unknown)
-                {
-                    t = titleType.GetType().Name;
-                    v = titleType.ToString();
-                } 
-                else
-                {
-                    t = type.GetType().Name;
-                    v = type.ToString();
-                }
-                return string.Format("<{0}>", Resx.ResourceManager.GetString(t + v).ToUpper());
-            }
-            return Convert(values[0], targetType, parameter, culture);
+
+            //size is set
+            if (values[0] != null) return Convert(values[0], targetType, parameter, culture);
+
+            string resxName;
+            if (titleType != TitleType.Unknown)
+                resxName = titleType.GetType().Name + titleType;
+            else
+                resxName = type.GetType().Name + type;
+
+            return string.Format("<{0}>", Resx.ResourceManager.GetString(resxName).ToUpper());
         }
 
         public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)

@@ -169,7 +169,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     if (c.Name == "en-US") return true;
                     return Resx.ResourceManager.GetResourceSet(c, true, false) != null;
                 }
-                catch (CultureNotFoundException ex)
+                catch (CultureNotFoundException)
                 {
                     return false;
                 }

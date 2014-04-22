@@ -6,7 +6,7 @@
 	}
 
 	include("../db.php");
-	$query = "SELECT country_code, country_name, count(distinct client_id) as num FROM `godspeed_stats` group by country_code, country_name ORDER BY COUNT(distinct client_id) DESC";
+	$query = "SELECT country_code, country_name, count(distinct client_id) as num, (SELECT s.date FROM `godspeed_stats` s WHERE s.country_code = m.country_code ORDER BY s.date ASC LIMIT 0,1) as joined FROM `godspeed_stats` m group by country_code, country_name ORDER BY COUNT(distinct client_id) DESC";
 	$rs = mysql_query($query);
 	if (!mysql_query($query)) {
 		echo mysql_error();
@@ -19,7 +19,7 @@
 	while ($row = mysql_fetch_assoc($rs)) {
 		$sum += $row['num'];
 		$mapData .= sprintf('"%s": %s, ', $row['country_code'], $row['num']);
-		$tableData .= sprintf('<tr><td>%s</td><td>%s</td></tr>', $row['country_name'], $row['num']);
+		$tableData .= sprintf('<tr><td>%s</td><td>%s</td><td>%s</td></tr>', $row['country_name'], $row['num'], $row['joined']);
 		$count++;
 	}
 	

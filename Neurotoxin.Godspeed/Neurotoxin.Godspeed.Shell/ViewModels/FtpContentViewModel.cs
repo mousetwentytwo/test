@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using Neurotoxin.Godspeed.Core.Models;
@@ -15,6 +16,7 @@ using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
 using Neurotoxin.Godspeed.Shell.Exceptions;
 using Neurotoxin.Godspeed.Shell.Models;
+using Neurotoxin.Godspeed.Shell.Reporting;
 using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
@@ -164,6 +166,32 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public override void Abort()
         {
             FileManager.Abort();
+        }
+
+        public override void FinishTransferAsTarget()
+        {
+            //TODO: determine necessity
+            //TODO: get pathid
+            try
+            {
+                using (var client = new WebClient())
+                {
+                    byte[] body;
+                    using (var ms = new MemoryStream())
+                    {
+                        var sw = new StreamWriter(ms);
+                        sw.Write("pathid=1&Action=scan");
+                        sw.Flush();
+                        body = ms.ToArray();
+                    }
+                    client.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+                    client.UploadData(string.Format("http://{0}/paths.html", Connection.Address), body);
+                }
+            } 
+            catch
+            {
+                //TODO: notification message? "auto scan failed, bla-bla-bla, you have to do this manually"
+            }
         }
 
         protected override void ChangeDrive()

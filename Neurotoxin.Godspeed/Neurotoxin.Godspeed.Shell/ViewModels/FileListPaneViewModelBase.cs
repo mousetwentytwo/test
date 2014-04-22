@@ -1098,6 +1098,14 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         protected abstract void ResumeFile(string targetPath, string sourcePath);
         public abstract void Abort();
 
+        public virtual void FinishTransferAsSource()
+        {
+        }
+
+        public virtual void FinishTransferAsTarget()
+        {
+        }
+
         public override void Dispose()
         {
             eventAggregator.GetEvent<TransferProgressChangedEvent>().Unsubscribe(OnTransferProgressChanged);

@@ -20,7 +20,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
     {
         private BinaryContent _packageContent;
         private StfsPackage _stfs;
-        private ProfileEmbeddedContent _pec;
 
         #region Properties
 

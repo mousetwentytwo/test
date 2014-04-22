@@ -31,7 +31,7 @@
 		<?php
 			include('countries-inner.php');
 			printf("<h1>%s countries<br/>%s users (+%s unknown)</h1>", $count, $sum, $all-$sum);
-			printf('<table><tr><th>Country</th><th>Users</th></tr>%s</table>', $tableData);
+			printf('<table><tr><th>Country</th><th>Users</th><th>Joined</th></tr>%s</table>', $tableData);
 		?>
 	</body>
 </html>
