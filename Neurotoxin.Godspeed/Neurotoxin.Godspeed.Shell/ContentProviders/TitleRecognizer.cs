@@ -418,7 +418,13 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public CacheEntry<FileSystemItem> GetCacheEntry(FileSystemItem item)
         {
-            var cacheKey = GetCacheKey(item);
+            CacheComplexKey cacheKey;
+            return GetCacheEntry(item, out cacheKey);
+        }
+
+        public CacheEntry<FileSystemItem> GetCacheEntry(FileSystemItem item, out CacheComplexKey cacheKey)
+        {
+            cacheKey = GetCacheKey(item);
             return _cacheManager.GetEntry(cacheKey);
         }
 

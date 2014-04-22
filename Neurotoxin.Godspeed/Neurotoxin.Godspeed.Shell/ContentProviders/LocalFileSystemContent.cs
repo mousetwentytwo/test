@@ -112,14 +112,14 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         {
             if (!path.EndsWith("\\")) path += SLASH;
             var dirInfo = new FileInfo(path);
+
             return new FileSystemItem
             {
                 Name = Path.GetFileName(path.TrimEnd(SLASH)),
-                Type = type ?? ItemType.Directory,
+                Type = type ?? (dirInfo.Attributes.HasFlag(FileAttributes.ReparsePoint) ? ItemType.Link : ItemType.Directory),
                 Date = dirInfo.LastWriteTime,
                 Path = path,
-                FullPath = path,
-                IsLink = dirInfo.Attributes.HasFlag(FileAttributes.ReparsePoint)
+                FullPath = path
             };
         }
 

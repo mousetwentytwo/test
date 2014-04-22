@@ -350,6 +350,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             switch (item.Type)
             {
                 case ItemType.Directory:
+                case ItemType.Link:
                     TargetPane.CreateFolder(targetPath);
                     return true;
                 case ItemType.File:

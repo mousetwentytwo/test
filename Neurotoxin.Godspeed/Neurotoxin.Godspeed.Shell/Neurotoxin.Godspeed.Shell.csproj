@@ -185,9 +185,12 @@
     <Compile Include="ViewModels\CacheMigrationViewModel.cs" />
     <Compile Include="ViewModels\CompressedFileContentViewModel.cs" />
     <Compile Include="Constants\FileBlockHealthStatus.cs" />
+    <Compile Include="ViewModels\GpdFileEntryViewModel.cs" />
+    <Compile Include="ViewModels\GpdFileViewModel.cs" />
     <Compile Include="ViewModels\NoMessagesViewModel.cs" />
     <Compile Include="ViewModels\FileBlockViewModel.cs" />
     <Compile Include="ViewModels\FileEntryViewModel.cs" />
+    <Compile Include="ViewModels\ProfileRebuilderTabItemViewModel.cs" />
     <Compile Include="ViewModels\StatisticsViewModel.cs" />
     <Compile Include="ViewModels\UserMessageViewModel.cs" />
     <Compile Include="ViewModels\ProfileRebuilderViewModel.cs" />
@@ -226,6 +229,7 @@
     <Compile Include="Views\Dialogs\MigrationProgressDialog.xaml.cs">
       <DependentUpon>MigrationProgressDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Selectors\ProfileRebuilderContentTemplateSelector.cs" />
     <Compile Include="Views\StatisticsWindow.xaml.cs">
       <DependentUpon>StatisticsWindow.xaml</DependentUpon>
     </Compile>

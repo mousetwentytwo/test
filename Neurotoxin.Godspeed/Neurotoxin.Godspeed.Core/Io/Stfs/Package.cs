@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Net.Mime;
 using System.Reflection;
 using System.Security.Cryptography;
 using Neurotoxin.Godspeed.Core.Attributes;
 using Neurotoxin.Godspeed.Core.Constants;
 using Neurotoxin.Godspeed.Core.Extensions;
-using Neurotoxin.Godspeed.Core.Io.Gpd;
-using Neurotoxin.Godspeed.Core.Io.Gpd.Entries;
 using Neurotoxin.Godspeed.Core.Io.Stfs.Data;
 using Neurotoxin.Godspeed.Core.Models;
 using System.Linq;

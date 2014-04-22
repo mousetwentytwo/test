@@ -377,7 +377,7 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
             });
         }
 
-        private ProfileEmbeddedContent ExtractPec()
+        public ProfileEmbeddedContent ExtractPec()
         {
             var pec = ExtractFile("PEC");
             var model = ModelFactory.GetModel<ProfileEmbeddedContent>(pec);

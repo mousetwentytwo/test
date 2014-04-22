@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace Neurotoxin.Godspeed.Core.Extensions
 {
@@ -29,7 +30,14 @@ namespace Neurotoxin.Godspeed.Core.Extensions
             var hour = (time & 0xF800) >> 11;
             var minute = (time & 0x7E0) >> 5;
             var second = time & 0x1F;
-            return new DateTime(year, month, day, hour, minute, second);
+            try
+            {
+                return new DateTime(year, month, day, hour, minute, second);
+            }
+            catch
+            {
+                return DateTime.MinValue;
+            }
         }
     }
 }

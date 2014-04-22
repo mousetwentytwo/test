@@ -334,7 +334,7 @@
     <value>Profil adat</value>
   </data>
   <data name="ProfileRebuilder" xml:space="preserve">
-    <value>Profil Újraépítő</value>
+    <value>Profil Javító</value>
   </data>
   <data name="ProfilePlural" xml:space="preserve">
     <value>Profil adatok</value>
@@ -856,5 +856,14 @@
   </data>
   <data name="Language" xml:space="preserve">
     <value>Nyelv</value>
+  </data>
+  <data name="RepairProfile" xml:space="preserve">
+    <value>Profil javítása</value>
+  </data>
+  <data name="PEC" xml:space="preserve">
+    <value>PEC</value>
+  </data>
+  <data name="ItemTypeLink" xml:space="preserve">
+    <value>LINK</value>
   </data>
 </root>

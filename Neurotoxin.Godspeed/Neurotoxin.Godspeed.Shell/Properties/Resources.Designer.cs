@@ -1071,6 +1071,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to LINK.
+        /// </summary>
+        internal static string ItemTypeLink {
+            get {
+                return ResourceManager.GetString("ItemTypeLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Language.
         /// </summary>
         internal static string Language {
@@ -1503,6 +1512,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to PEC.
+        /// </summary>
+        internal static string PEC {
+            get {
+                return ResourceManager.GetString("PEC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please wait....
         /// </summary>
         internal static string PleaseWait {
@@ -1733,6 +1751,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         internal static string RenameTitle {
             get {
                 return ResourceManager.GetString("RenameTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Repair profile.
+        /// </summary>
+        internal static string RepairProfile {
+            get {
+                return ResourceManager.GetString("RepairProfile", resourceCulture);
             }
         }
         

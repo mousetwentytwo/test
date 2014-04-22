@@ -266,13 +266,13 @@
                                         <controls:GreyableImage Source="/Resources/package.png" Width="16" Height="16" SnapsToDevicePixels="True" />
                                     </MenuItem.Icon>
                                 </MenuItem>
-                                <!--<MenuItem Header="Repair Profile" 
+                                <MenuItem Header="{lex:Loc Neurotoxin.Godspeed.Shell:Resources:RepairProfile}" 
                                           Visibility="{Binding Source={StaticResource ViewModel}, Path=Data.CurrentRow.IsProfile, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}"
                                           Command="{Binding Source={StaticResource ViewModel}, Path=Data.OpenStfsPackageCommand}" CommandParameter="{StaticResource Repair}">
                                     <MenuItem.Icon>
                                         <controls:GreyableImage Source="/Resources/package.png" Width="16" Height="16" SnapsToDevicePixels="True"/>
                                     </MenuItem.Icon>
-                                </MenuItem>-->
+                                </MenuItem>
                                 <MenuItem Header="{lex:LocText Neurotoxin.Godspeed.Shell:Resources:CopyTitleIDtoClipboard}"
                                           Visibility="{Binding Source={StaticResource ViewModel}, Path=Data.CurrentRow.IsGame, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}"
                                           Command="{Binding Source={StaticResource ViewModel}, Path=Data.CopyTitleIdToClipboardCommand}">

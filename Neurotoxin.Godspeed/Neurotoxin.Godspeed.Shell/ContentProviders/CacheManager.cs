@@ -49,7 +49,6 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                     var entry = _cacheStore.Get<CacheEntry<FileSystemItem>>(hashKey);
                     if (entry.Content == null || string.IsNullOrEmpty(entry.Content.Title))
                     {
-                        Debugger.Break();
                         _cacheStore.Remove(hashKey);
                         _inMemoryCache.Remove(hashKey);
                         Debug.WriteLine("[!] Invalid Cache Entry Removed: " + hashKey);

@@ -62,6 +62,10 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                                 var dirIconPath = IsRefreshing ? "/Resources/refresh_folder.png" : "/Resources/folder.png";
                                 bytes = ApplicationExtensions.GetContentByteArray(dirIconPath);
                                 break;
+                            case ItemType.Link:
+                                //TODO: link
+                                bytes = ApplicationExtensions.GetContentByteArray("/Resources/folder.png");
+                                break;
                             case ItemType.File:
                                 var fileIconPath = IsCompressedFile ? "/Resources/package.png" : "/Resources/file.png";
                                 bytes = ApplicationExtensions.GetContentByteArray(fileIconPath);
@@ -127,11 +131,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             get { return Name == Strings.UpDirectory; }
             set { if (value) Name = Strings.UpDirectory; }
-        }
-
-        public bool IsLink
-        {
-            get { return _model.IsLink; }
         }
 
         public bool IsCached

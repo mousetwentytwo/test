@@ -99,7 +99,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         protected override void ChangeDirectory(string message = null, Action callback = null)
         {
-            if (CurrentFolder.IsLink)
+            if (CurrentFolder.Type == ItemType.Link)
             {
                 var reparsePoint = new ReparsePoint(CurrentFolder.Path);
                 var path = reparsePoint.Target;

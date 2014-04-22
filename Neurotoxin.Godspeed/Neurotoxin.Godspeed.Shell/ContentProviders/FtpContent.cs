@@ -233,6 +233,9 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                         case ItemType.Drive:
                             ftpItemType = FtpFileSystemObjectType.Directory;
                             break;
+                        case ItemType.Link:
+                            ftpItemType = FtpFileSystemObjectType.Link;
+                            break;
                         default:
                             throw new NotSupportedException("Invalid item type:" + type);
                     }
@@ -253,10 +256,25 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         private FileSystemItem CreateModel(IFtpListItem item, string path)
         {
             if (item.Type == FtpFileSystemObjectType.Directory && !path.EndsWith("/")) path += "/";
+            ItemType type;
+            switch (item.Type)
+            {
+                case FtpFileSystemObjectType.File:
+                    type = ItemType.File;
+                    break;
+                case FtpFileSystemObjectType.Directory:
+                    type = ItemType.Directory;
+                    break;
+                case FtpFileSystemObjectType.Link:
+                    type = ItemType.Link;
+                    break;
+                default:
+                    throw new NotSupportedException("Invalid FTP item type: " + item.Type);
+            }
             return new FileSystemItem
                        {
                            Name = item.Name,
-                           Type = item.Type == FtpFileSystemObjectType.File ? ItemType.File : ItemType.Directory,
+                           Type = type,
                            Date = item.Modified,
                            Path = path,
                            FullPath = string.Format("{0}:/{1}", _connection.Name, path),

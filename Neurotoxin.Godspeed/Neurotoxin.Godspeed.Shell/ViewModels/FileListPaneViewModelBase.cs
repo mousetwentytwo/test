@@ -334,7 +334,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             //    if (item == null) throw new TransferException(TransferErrorType.NotSpecified, recognition.ErrorMessage);
             //}
 
-            var cacheEntry = TitleRecognizer.GetCacheEntry(item);
+            CacheComplexKey cacheKey;
+            var cacheEntry = TitleRecognizer.GetCacheEntry(item, out cacheKey);
             if (cacheEntry == null)
             {
                 cacheEntry = TitleRecognizer.RecognizeTitle(item);
@@ -344,13 +345,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     throw new Exception();
                 }
             }
-            if (string.IsNullOrEmpty(cacheEntry.TempFilePath))
-            {
-                //TODO
-                throw new Exception();                
-            }
 
-            return new BinaryContent(item.Path, cacheEntry.TempFilePath, File.ReadAllBytes(cacheEntry.TempFilePath), contentType);
+            //TODO: if ftp throw exception
+            var path = cacheEntry.TempFilePath ?? cacheKey.Item.Path;
+
+            return new BinaryContent(item.Path, path, File.ReadAllBytes(path), contentType);
         }
 
         private void OpenStfsPackageCallback(BinaryContent content, OpenStfsPackageMode mode)
@@ -1122,13 +1121,13 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             try
             {
-                if (item.Type == ItemType.Directory)
+                if (item.Type == ItemType.File)
                 {
-                    FileManager.DeleteFolder(item.Path);
+                    FileManager.DeleteFile(item.Path);
                 }
                 else
                 {
-                    FileManager.DeleteFile(item.Path);
+                    FileManager.DeleteFolder(item.Path);
                 }
                 return true;
             }
@@ -1301,6 +1300,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             foreach (var item in items)
             {
                 if (type != TransferType.Delete) result.Add(new QueueItem(item, TransferType.Copy));
+                //TODO: Link?
                 if (item.Type == ItemType.Directory)
                 {
                     var sub = PopulateQueue(ChangeDirectoryInner(item.Path), type);
