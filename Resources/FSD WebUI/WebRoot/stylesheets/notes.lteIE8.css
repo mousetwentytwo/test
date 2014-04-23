@@ -1,0 +1,18 @@
+/*----------------------------------------
+    * IE-Fix
+----------------------------------------*/
+.jquery-notes-container .notes .note .border .bg,
+.jquery-notes-container .notes .offFocus,
+.jquery-notes-container .notes .offFocus .border {
+    filter:alpha(opacity=30);
+}
+.jquery-notes-container .notes .offFocus .border {
+    outline:1px solid #555;
+}
+.jquery-notes-container .notes .offFocus .border .bg {
+    filter:alpha(opacity=9);
+}
+.jquery-notes-container .notes .text,
+.jquery-notes-container .notes .note .text-box button {
+    filter:alpha(opacity=90);
+}

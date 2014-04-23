@@ -1,0 +1,187 @@
+POST http://192.168.1.110/ HTTP/1.1
+Host: 192.168.1.110
+Connection: keep-alive
+Content-Length: 64
+Cache-Control: max-age=0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+Origin: http://192.168.1.110
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.116 Safari/537.36
+Content-Type: application/x-www-form-urlencoded
+Referer: http://192.168.1.110/
+Accept-Encoding: gzip,deflate,sdch
+Accept-Language: en-US,en;q=0.8,hu;q=0.6
+Cookie: session=678418BE482329; fsplugin_http_session=678418BE482329
+
+targeturl=%2F&j_username=fsdhttp&j_password=fsdhttp&Action=Login
+HTTP/1.0 200 OK
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<title>Freestyle Dash 2.2 WebUI</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="/files/css/FSD.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="/files/css/dropdown.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="/files/css/default.ultimate.css" media="screen" rel="stylesheet" type="text/css" />
+
+<!--[if lt IE 7]>
+<script type="text/javascript" src="/files/js/jquery/jquery.js"></script>
+<script type="text/javascript" src="/files/js/jquery/jquery.dropdown.js"></script>
+<![endif]-->
+
+<script type="text/javascript">
+function postwith (to,p) {
+  var myForm = document.createElement("form");
+  myForm.method="post" ;
+  myForm.action = to ;
+  for (var k in p) {
+    var myInput = document.createElement("input") ;
+    myInput.setAttribute("name", k) ;
+    myInput.setAttribute("value", p[k]);
+    myForm.appendChild(myInput) ;
+  }
+  document.body.appendChild(myForm) ;
+  myForm.submit() ;
+  document.body.removeChild(myForm) ;
+}
+</script>
+
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" class="MainTable">
+
+<!-- Logo -->
+  <tr class="LogoRow">
+    <td class="LogoCol">
+      <div id="logo" align="center">
+          <img src="/files/images/FSD_Logo.png" width="800" height="70" />
+      </div>
+    </td>
+  </tr>
+<!-- End Logo -->
+
+<!-- Nav Menu -->
+  <tr class="NavRow">
+    <td class="NavCol">
+      <ul id="nav" class="dropdown dropdown-horizontal">
+		  <li id="n-home"><a class="dir" href="javascript:postwith('/', {sessionid:'E9525AB733D7A818A6035A255061EB3D'})">Home</a></li>
+          <li id="n-debug"><a class="dir">Debug Info</a>
+              <ul>
+                  <li><span class="dir">Version Info</span>
+                      <ul>
+                          <li class="first"><a>Dash version: <br><i>2.2 Rev1072</i></a></li>
+                          <li><a><strong>Skin version: <br><i>2.2 Rev1072</i></a></li>
+                          <li><a><strong>Plugin version: <br><i>2.2 Rev1072</i></a></li>
+						  <li><a><strong>Kernel version: <br><i>2.0.16547.0</i></a></li>
+                      </ul>
+                  </li>
+                  <li class="first"><a href="/debug.txt" title="FSD Debug Log">Debug Log</a></li>
+              </ul>
+          </li>
+          
+          <li id="n-settings"><a class="dir">Setting Manager</a>
+              <ul>
+                  <li class="first"><a href="javascript:postwith('/paths', {sessionid:'E9525AB733D7A818A6035A255061EB3D'})">View Scan Paths</a></li>
+				  <li><a href="javascript:postwith('/getdb', {sessionid:'E9525AB733D7A818A6035A255061EB3D'})">View Database</a></li>
+              </ul>
+          </li>
+          
+          <li id="n-gameList"><a class="dir">Game Lists</a>
+              <ul>
+                  <li class="first"><a href="javascript:postwith('/360', {sessionid:'E9525AB733D7A818A6035A255061EB3D'})" title="Xbox360 Games List">Xbox360 Games</a></li>
+                  <li><a href="javascript:postwith('/XBLA', {sessionid:'E9525AB733D7A818A6035A255061EB3D'})" title="Xbox Arcade Games List">Xbox Arcade Games</a></li>
+                  <li><a href="javascript:postwith('/Homebrew', {sessionid:'E9525AB733D7A818A6035A255061EB3D'})" title="Kinect Games List">Kinect Games</a></li>
+                  <li><a href="javascript:postwith('/Emulators', {sessionid:'E9525AB733D7A818A6035A255061EB3D'})" title="Emulators List">Emulators</a></li>
+                  <li><a href="javascript:postwith('/Xbox1', {sessionid:'E9525AB733D7A818A6035A255061EB3D'})" title="Xbox Classic Games List">Xbox Classic Games</a></li>
+				  <li><a href="javascript:postwith('/Kai', {sessionid:'E9525AB733D7A818A6035A255061EB3D'})" title="XLink Kai Games List">XLink Kai Games</a></li>
+				  <li><a href="javascript:postwith('/Hidden', {sessionid:'E9525AB733D7A818A6035A255061EB3D'})" title="Hidden Games List">Hidden Games</a></li>
+              </ul>
+          </li>
+          
+          <li id="n-commands"><a class="dir">Commands</a>
+              <ul>
+                  <li class="first"><span class="dir">Basic</span>
+                      <ul>
+                          <li class="first"><a href="/screenshot.png">Screenshots</a></li>
+                      </ul>
+                  </li>
+                  <li><span class="dir">Advanced</span>
+                      <ul>
+                          <li class="first"><form name="Commands" id="Commands" method="post"><input type="hidden" name="sessionid" value="E9525AB733D7A818A6035A255061EB3D" /><input type="submit" class="submit" name="Action" value="Restart FSD"/></form></li>
+                          <li><form name="Commands" id="Commands" method="post"><input type="hidden" name="sessionid" value="E9525AB733D7A818A6035A255061EB3D" /><input type="submit" class="submit" name="Action" value="Shutdown Xbox"/></form></li>
+                      </ul>
+                  </li>
+              </ul>
+          </li>						
+      </ul>
+    </td>
+  </tr>
+<!-- End Nav Menu -->
+
+<!-- Main -->
+  <tr class="MainRow">
+    <td class="MainCol">
+		<h1>Main</h1><br>
+        <!-- GamerCard -->
+        <table border="0" cellpadding="0" cellspacing="0" width="197">
+        	<tr>
+            	<td><img src="/files/images/spacer.gif" height="1" width="8"/></td>
+                <td><img src="/files/images/spacer.gif" height="1" width="64"/></td>
+                <td><img src="/files/images/spacer.gif" height="1" width="24"/></td>
+                <td><img src="/files/images/spacer.gif" height="1" width="101"/></td>
+                <td><img src="/files/images/spacer.gif" height="1" width="1"/></td>
+            </tr>
+			<tr>
+				<td colspan="4" background="/files/images/gamerCard/top.png" width="197" height="18" style="padding-left: 5px; color: #000">mercenary</td>
+                <td><img src="/files/images/spacer.gif" height="18" width="1"/></td>
+			</tr>
+			<tr>
+				<td colspan="4"><img src="/files/images/gamerCard/padding_top.png"/></td>
+                <td><img src="/files/images/spacer.gif" height="4" width="1"/></td>
+			</tr>
+			<tr>
+				<td rowspan="3"><img src="/files/images/gamerCard/padding_left.png" /></td>
+				<td rowspan="3" background="/files/images/gamerCard/icon_bg.png" width="64" height="64"><img src="/memory/gamerpic.png?playerid=0" width="64" height="64" /></td>
+				<td><img src="/files/images/gamerCard/gamerscore.png" /></td>
+				<td background="/files/images/gamerCard/gamerscore_bg.png" width="101" height="25" align="right" style="padding-right: 10px; color: #fff">42635</td>
+                <td><img src="/files/images/spacer.gif" height="25" width="1"/></td>
+			</tr>
+			<tr>
+				<td colspan="2" background="/files/images/gamerCard/info1_bg.png" width="125" height="19"></td>
+                <td><img src="/files/images/spacer.gif" height="19" width="1"/></td>
+			</tr>
+			<tr>
+				<td colspan="2" background ="/files/images/gamerCard/info2_bg.png"  width="125" height="20"></td>
+                <td><img src="/files/images/spacer.gif" height="19" width="1"/></td>
+			</tr>
+			<tr>
+				<td colspan="4"><img src="/files/images/gamerCard/padding_bottom.png"/></td>
+                <td><img src="/files/images/spacer.gif" height="3" width="1"/></td>
+			</tr>
+		</table>
+        <!-- End GamerCard -->
+
+    </td>
+  </tr>
+<!-- End Main -->
+
+<!-- Footer -->
+  <tr class="FooterRow">
+    <td class="FooterCol">
+    	<table border="0" cellpadding="0" cellspacing="0" width="100%">
+        	<tr>
+            	<td width="150"><b>IP :</b> 192.168.1.110</td>
+                <td><b>Status :</b> </td>
+    			<td width ="150"><b>CPU :</b> 57.93C , 57%</td>
+   				<td width ="150"><b>GPU :</b> 60.75C , 67%</td>
+    			<td width ="150"><b>MEM :</b> 67.14C , 67%</td>
+    			<td width ="200"><b>CASE :</b> 29.52C , 29%</td>
+            </tr>
+    	</table>
+    </td>
+  </tr>
+<!-- End Footer -->
+</table>
+
+</body>
+</html>

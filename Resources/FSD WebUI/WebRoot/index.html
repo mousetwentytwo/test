@@ -1,0 +1,517 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"
+     data-group="liveinfo" data-name="liveinfo.images.background" data-type="background">
+	<head profile="http://www.w3.org/2005/10/profile">
+        <link rel="icon" type="image/ico" href="favicon.ico">
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>Freestyle WebUI</title>
+		<link href="stylesheets/f3.reset.css" rel="stylesheet" type="text/css" />
+		<link href="stylesheets/camera.css" rel="stylesheet" type="text/css" />
+        <link href="stylesheets/rickshaw.min.css" rel="stylesheet" type="text/css" />
+        <link href="stylesheets/fancybox.css" rel="stylesheet" type="text/css" />
+        <link rel="stylesheet" href="stylesheets/notes.style.css" type="text/css" />
+        <!--[if lte IE 8]>
+            <link rel="stylesheet" href="stylesheets/notes.lteIE8.css" type="text/css" />
+        <![endif]-->
+        
+        <link href="stylesheets/f3.plugin.css" rel="stylesheet" type="text/css" />
+		
+		<script type="text/javascript" src="libraries/jquery.min.js"></script>
+        <script type="text/javascript" src="libraries/jquery.ui.min.js"></script>
+        <script type="text/javascript" src="libraries/jquery.scrollTo.min.js"></script>
+        <script type="text/javascript" src="libraries/jquery.dateFormat.min.js"></script>
+        <script type="text/javascript" src="libraries/jquery.easing.min.js"></script>
+        <script type="text/javascript" src="libraries/jquery.camera.min.js"></script>
+        <script type="text/javascript" src="libraries/d3.v2.min.js"></script>
+        <script type="text/javascript" src="libraries/rickshaw.min.js"></script>
+        <script type="text/javascript" src="libraries/jquery.fancybox.min.js"></script>
+        <script type="text/javascript" src="libraries/f3.jquery.notes.js"></script>
+        <script type="text/javascript" src="libraries/jquery.checkall.min.js"></script>
+        
+        <script type="text/javascript" src="libraries/f3.plugin.js"></script>
+        <script type="text/javascript" src="libraries/f3.plugin.main.js"></script>
+        <script type="text/javascript" src="libraries/f3.plugin.common.js"></script>
+        <script type="text/javascript" src="libraries/f3.plugin.behavior.js"></script>
+        <script type="text/javascript" src="libraries/f3.plugin.dashlaunch.js"></script>
+    </head>
+	<body>
+        <div class="f3 all light"></div>
+        
+        <div id="message" data-name="message" data-type="message"><span></span><div class="f3 close right" data-hide="#message">close</div></div>
+
+ 		<div class="f3 top_container">
+        
+        
+		    <div class="f3 top"><div class="f3 m_btn mb_notselected system launcher" data-group="plugininfo" data-name="plugininfo.path.launcher">&lt;&lt; Launcher</div></div>
+		
+		    <div class="f3 menu" id="menu">
+			    <div class="f3 m_btn mb_selected" onclick="javascript:btn_click(this);" id="btn_game">Game</div>
+			    <div class="f3 m_btn mb_notselected" onclick="javascript:btn_click(this);" id="btn_notes">Notes</div>
+			    <div class="f3 m_btn mb_notselected" onclick="javascript:btn_click(this);" id="btn_profile">Profiles</div>
+			    <div class="f3 m_btn system mb_notselected" onclick="javascript:btn_click(this);" id="btn_system">System</div>
+            </div>
+		
+		    <div class="f3 line"></div>
+        </div>
+        <div class="f3 top_logo"></div>
+        <div class="f3 copyright">Copyright teamFSD &copy; 2012 - 2013</div>
+        <div class="f3 side">
+            <div class="f3 all dark"></div>
+            <div class="f3 boxart xright" data-group="liveinfo" data-name="liveinfo.images.boxart.large" data-type="background"></div>
+            <div class="f3 rating right">
+                <div class="f3 part" data-group="liveinfo" data-name="liveinfo.ratingaggregate" data-part="1"></div>
+                <div class="f3 part" data-group="liveinfo" data-name="liveinfo.ratingaggregate" data-part="2"></div>
+                <div class="f3 part" data-group="liveinfo" data-name="liveinfo.ratingaggregate" data-part="3"></div>
+                <div class="f3 part" data-group="liveinfo" data-name="liveinfo.ratingaggregate" data-part="4"></div>
+                <div class="f3 part last" data-group="liveinfo" data-name="liveinfo.ratingaggregate" data-part="5"></div>
+                <div class="f3 raters" data-group="liveinfo" data-name="liveinfo.numberofratings"></div>
+            </div>
+            <div class="f3 clear gameinfo" data-group="gameinfo" data-name="gameinfo" data-condition="showhidegameinfo">
+                <div class="f3 path"><span class="f3 fieldname">Path: </span><abbr class="f3 fieldvalue" data-group="gameinfo" data-name="gameinfo.path"></abbr></div>
+                <div><span class="f3 fieldname">TitleId: </span><span class="f3 fieldvalue" data-group="gameinfo" data-name="gameinfo.titleid"></span></div>
+                <div><span class="f3 fieldname">MediaId: </span><span class="f3 fieldvalue" data-group="gameinfo" data-name="gameinfo.mediaid"></span></div>
+                <div><span class="f3 fieldname">Disc: </span><span class="f3 fieldvalue" data-group="gameinfo" data-name="gameinfo.disc.current"></span> of <span class="f3 fieldvalue" data-group="gameinfo" data-name="gameinfo.disc.count"></span></div>
+                <div><span class="f3 fieldname">Game version: </span><span class="f3 fieldvalue" data-group="gameinfo" data-name="gameinfo.version.base"></span> / <span class="f3 fieldvalue" data-group="gameinfo" data-name="gameinfo.version.current"></span></div>
+                <div><span class="f3 fieldname">TU version: </span><span class="f3 fieldvalue" data-group="gameinfo" data-name="gameinfo.tuver"></span></div>
+                <div><span class="f3 fieldname">Resolution: </span><span class="f3 fieldvalue" data-group="gameinfo" data-name="gameinfo.resolution.width"></span> x <span class="f3 fieldvalue" data-group="gameinfo" data-name="gameinfo.resolution.height"></span></div>
+            </div>
+        </div>
+        <div class="f3 container">
+            <ul class="f3 content">
+                
+<!-----------------------------------------------------------------------------
+|                                 TAB: Game                                   |
+------------------------------------------------------------------------------>                
+                
+                <li class="f3 content">
+                    <div id="cnt_game" class="f3 content c_selected">
+                    
+                    
+                        <div class="f3 button refresh right" data-refresh-once="liveinfo"></div>
+                        <div class="f3 title" data-group="liveinfo" data-name="liveinfo.fulltitle" data-type="text"></div>
+                        <div class="f3 icon left" data-group="liveinfo" data-name="liveinfo.images.icon" data-type="background"></div>
+                        <div class="f3 info">
+                            <div><span class="f3 fieldname">Original release date: </span><span class="f3 fieldvalue" data-group="liveinfo" data-name="liveinfo.releasedate" data-type="date" data-format="ddd yyyy/MM/dd"></span></div>
+                            <div><span class="f3 fieldname">Developer: </span><span class="f3 fieldvalue" data-group="liveinfo" data-name="liveinfo.developer" data-type="text"></span></div>
+                            <div><span class="f3 fieldname">Publisher: </span><span class="f3 fieldvalue" data-group="liveinfo" data-name="liveinfo.publisher" data-type="text"></span></div>
+                            <div><span class="f3 fieldname">Genre: </span><span class="f3 fieldvalue" data-group="liveinfo" data-name="liveinfo.categories" data-type="text"></span></div>
+                        </div>
+                        <div class="f3 clear" data-group="liveinfo" data-name="liveinfo.gamecapabilities" data-condition="showhidegamecapabilities">
+                            <div class="f3 features left">
+                                <div class="f3 fieldname">Features:</div>
+                                <ul class="f3 features list">
+                                    <li>Offline players <span class="f3 fieldvalue" data-group="liveinfo" data-name="liveinfo.gamecapabilities.offlineplayersmin" data-type="text"></span> - <span class="f3 fieldvalue" data-group="liveinfo" data-name="liveinfo.gamecapabilities.offlineplayersmax" data-type="text"></span></li>
+                                    <li>Offline co-op <span class="f3 fieldvalue" data-group="liveinfo" data-name="liveinfo.gamecapabilities.offlinecoopplayersmin" data-type="text"></span> - <span class="f3 fieldvalue" data-group="liveinfo" data-name="liveinfo.gamecapabilities.offlinecoopplayersmax" data-type="text"></span></li>
+                                    <li>System Link <span class="f3 fieldvalue" data-group="liveinfo" data-name="liveinfo.gamecapabilities.offlinesystemlinkmin" data-type="text"></span> - <span class="f3 fieldvalue" data-group="liveinfo" data-name="liveinfo.gamecapabilities.offlinesystemlinkmax" data-type="text"></span></li>
+                                    <!-- <li>offlinemaxhdtvmodeid ??? <span class="f3 fieldvalue" data-group="liveinfo" data-name="liveinfo.gamecapabilities.offlinemaxhdtvmodeid" data-type="text"></span></span></li> -->
+                                    <li data-group="liveinfo" data-name="liveinfo.gamecapabilities.offlinedolbydigital" data-type="text"></li>
+                                </ul>
+                            </div>
+                            <div class="f3 features left">
+                                <div class="f3 fieldname">Online features:</div>
+                                <ul class="f3 features list">
+                                    <li>Online multiplayer <span class="f3 fieldvalue" data-group="liveinfo" data-name="liveinfo.gamecapabilities.onlinemultiplayermin" data-type="text"></span> - <span class="f3 fieldvalue" data-group="liveinfo" data-name="liveinfo.gamecapabilities.onlinemultiplayermax" data-type="text"></span></li>
+                                    <li>Online co-op <span class="f3 fieldvalue" data-group="liveinfo" data-name="liveinfo.gamecapabilities.onlinecoopplayersmin" data-type="text"></span> - <span class="f3 fieldvalue" data-group="liveinfo" data-name="liveinfo.gamecapabilities.onlinecoopplayersmax" data-type="text"></span></li>
+                                    <li data-group="liveinfo" data-name="liveinfo.gamecapabilities.onlinecontentdownload">Content download</li>
+                                    <li data-group="liveinfo" data-name="liveinfo.gamecapabilities.onlineleaderboards">Leaderboards</li>
+                                    <li data-group="liveinfo" data-name="liveinfo.gamecapabilities.onlinevoice">Voice chat</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="f3 description clear" data-group="liveinfo" data-name="liveinfo.description" data-type="html"></div>
+                    
+                        
+                        <div class="f3 screenshots section clear">
+                            <div id="slides" data-group="liveinfo" data-name="liveinfo.images.screenshots" data-type="html">
+                                <div class="f3 screenshot"></div>
+                            </div>
+                            <div class="f3 clear"></div>
+                        </div>
+
+                        
+                        <!--
+                        <div class="f3 video clear">
+                            <video class="f3 video" data-group="liveinfo" data-name="liveinfo.images.background" data-type="attribute" data-attribute="poster" controls>
+                                <source data-group="liveinfo" data-name="liveinfo.video.url" data-type="source" src="" />
+                                HTML5 is required
+                            </video>  
+                        </div>
+                        -->
+                        
+                    </div>
+                </li>
+                
+<!-----------------------------------------------------------------------------
+|                                 TAB: Notes                                  |
+------------------------------------------------------------------------------>                
+                
+                <li class="f3 content">
+                    <div id="cnt_notes" class="f3 content c_notselected">
+
+<!-----------------------------------------------------------------------------
+|                              ScreenCapture                                  |
+------------------------------------------------------------------------------>
+
+                        <div class="f3 section clear wide">
+                            <div class="f3 title medium">Screen Capture <div class="f3 button refresh right" data-name="screencapture" data-refresh-once="screencapture"></div></div>
+                            <div class="f3 screencapture container">
+                                <div class="f3 screencapture loader"></div>
+                                <div class="f3 screencapture wrapper" data-group="screencapture" data-name="screencapture.filename" data-type="image"></div>
+                                <div class="f3 captureinfo">
+                                    <div><span class="f3 fieldname">Timestamp:</span> <span data-group="screencapture" data-name="screencapture.timestamp" data-type="date" data-format="ddd yyyy/MM/dd HH:mm:ss.SSS"></span></div>
+                                    <div>
+                                        <span class="f3 fieldname">Resolution:</span>
+                                        <span data-group="screencapture" data-name="screencapture.info.width"></span>x<span data-group="screencapture" data-name="screencapture.info.height"></span>
+                                    </div>
+                                    <div><span class="f3 fieldname">Format:</span> <span data-group="screencapture" data-name="screencapture.info.format"></span></div>
+                                </div>
+                            </div>
+                        </div>
+
+
+<!-----------------------------------------------------------------------------
+|                              ScreenCaptures                                 |
+------------------------------------------------------------------------------>
+
+                        <div class="f3 section clear wide">
+                            <div class="f3 title medium">Screen Captures <div class="f3 button refresh right" data-name="screencaptures" data-refresh-once="screencaptures"></div></div>
+                            <table class="f3 screencaptures">
+                                <thead>
+                                    <tr>
+                                        <th>Select</th><th>Timestamp</th><th>Resolution</th><th>Size</th><th>Format</th><th>Notes</th>
+                                    </tr>
+                                </thead>
+                                <tbody data-group="screencaptures" data-name="screencaptures" data-type="html">
+                                    <tr>
+                                        <td><input class="f3 pointer" type="checkbox" data-group="screencaptures" data-name="screencaptures.filename" data-type="attribute" data-attribute="data-uuid" /></td>
+                                        <td data-group="screencaptures" data-name="screencaptures.timestamp" data-type="date" data-format="ddd yyyy/MM/dd HH:mm:ss.SSS"></td>
+                                        <td><span data-group="screencaptures" data-name="screencaptures.info.width"></span>x<span data-group="screencaptures" data-name="screencaptures.info.height"></span></td>
+                                        <td data-group="screencaptures" data-name="screencaptures.filesize"></td>
+                                        <td data-group="screencaptures" data-name="screencaptures.info.format"></td>
+                                        <td><span class="notecount"></span></td>
+                                    </tr>
+                                </tbody>
+                                <tbody>
+                                    <tr>
+                                        <td><input class="f3 pointer" id="screencapturesall" type="checkbox" /><label for="screencapturesall">all / none</label></td>
+                                        <td><div class="f3 delete xright" id="deletescreencaptures">Delete</div></td>
+                                        <td colspan="4">&nbsp</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                        </div>
+                    </div>
+                </li>
+                
+<!-----------------------------------------------------------------------------
+|                                TAB: Profiles                                |
+------------------------------------------------------------------------------>                
+                
+                <li class="f3 content">
+                    <div id="cnt_profile" class="f3 content c_notselected">
+                        <div class="f3 button refresh right" data-refresh-once="profileinfo"></div>
+                        <div class="f3 title">Profiles</div>
+                        
+                        <div class="f3 left profile lefttop" data-group="profileinfo" data-name="profileinfo" data-type="html" data-index="0">
+                            <div class="f3 space medium">
+                                <div class="f3 icon left" data-group="profileinfo" data-name="profileinfo.index" data-type="background"></div>
+                                <div class="f3 info">
+                                    <div class="f3 title medium" data-group="profileinfo" data-name="profileinfo.gamertag"></div>
+                                    <div class="f3 space small"><img class="f3 gamerscore" src="images/gamerscore.png" alt="" />
+                                    <span class="f3 fieldvalue" data-group="profileinfo" data-name="profileinfo.gamerscore"></span></div>
+                                    <div><span class="f3 fieldname">xuid:</span> <span class="f3 fieldvalue" data-group="profileinfo" data-name="profileinfo.xuid"></span></div>
+                                </div>
+                            </div>                                
+                        </div>
+                    
+                        <div class="f3 left profile righttop" data-group="profileinfo" data-name="profileinfo" data-type="html" data-index="1">
+                            <div class="f3 space medium">
+                                <div class="f3 icon right" data-group="profileinfo" data-name="profileinfo.index" data-type="background"></div>
+                                <div class="f3 info">
+                                    <div class="f3 title medium" data-group="profileinfo" data-name="profileinfo.gamertag"></div>
+                                    <div class="f3 space small"><span class="f3 fieldvalue" data-group="profileinfo" data-name="profileinfo.gamerscore"></span>
+                                    <img class="f3 gamerscore" src="images/gamerscore.png" alt="" /></div>
+                                    <div><span class="f3 fieldname">xuid:</span> <span class="f3 fieldvalue" data-group="profileinfo" data-name="profileinfo.xuid"></span></div>
+                                </div>
+                            </div>                                
+                        </div>
+                    
+                        <div class="f3 clear"></div>
+                        
+                        <div class="f3 left profile leftbottom" data-group="profileinfo" data-name="profileinfo" data-type="html" data-index="2">
+                            <div class="f3 space medium">
+                                <div class="f3 icon left" data-group="profileinfo" data-name="profileinfo.index" data-type="background"></div>
+                                <div class="f3 info">
+                                    <div class="f3 title medium" data-group="profileinfo" data-name="profileinfo.gamertag"></div>
+                                    <div class="f3 space small"><img class="f3 gamerscore" src="images/gamerscore.png" alt="" />
+                                    <span class="f3 fieldvalue" data-group="profileinfo" data-name="profileinfo.gamerscore"></span></div>
+                                    <div><span class="f3 fieldname">xuid:</span> <span class="f3 fieldvalue" data-group="profileinfo" data-name="profileinfo.xuid"></span></div>
+                                </div>
+                            </div>                                
+                        </div>
+                    
+                        <div class="f3 left profile rightbottom" data-group="profileinfo" data-name="profileinfo" data-type="html" data-index="3">
+                            <div class="f3 space medium">
+                                <div class="f3 icon right" data-group="profileinfo" data-name="profileinfo.index" data-type="background"></div>
+                                <div class="f3 info">
+                                    <div class="f3 title medium" data-group="profileinfo" data-name="profileinfo.gamertag"></div>
+                                    <div class="f3 space small">
+                                        <span class="f3 fieldvalue" data-group="profileinfo" data-name="profileinfo.gamerscore"></span>
+                                        <img class="f3 gamerscore" src="images/gamerscore.png" alt="" />
+                                    </div>
+                                    <div><span class="f3 fieldname">xuid:</span> <span class="f3 fieldvalue" data-group="profileinfo" data-name="profileinfo.xuid"></span></div>
+                                </div>
+                            </div>                                
+                        </div>
+                    
+                        <div class="f3 clear"></div>
+                        
+                        <div class="f3 section clear wide">
+                            <div class="f3 title medium">Achievements<div class="f3 button refresh right" data-name="achievementinfo" data-refresh-once="achievementinfo"></div></div>
+                                <div class="f3 space medium">
+                                    <input class="f3 pointer" id="checkshowsecret" type="checkbox" data-group="userdata" data-name="userdata.settings.achievements.showsecret" data-name="achievementinfo" data-type="attribute" data-attribute="checked" data-refresh-once="achievementinfo" /><label for="checkshowsecret">Always show description of secret achievements.</label>
+                                </div>
+                                <table class="f3 achievementinfo">
+                                    <thead>
+                                        <tr>
+                                            <th colspan="2">Achievement</th>
+                                            <th>Type</th>
+                                            <th><img class="f3 gamerscore" src="images/gamerscore.png" alt="" /></th>
+                                            <th class="f3 hide" data-group="profileinfo" data-name="profileinfo" data-type="html" data-index="0"><span class="f3 achievement gamertag" data-group="profileinfo" data-name="profileinfo.gamertag"></span></th>
+                                            <th class="f3 hide" data-group="profileinfo" data-name="profileinfo" data-type="html" data-index="1"><span class="f3 achievement gamertag" data-group="profileinfo" data-name="profileinfo.gamertag"></span></th>
+                                            <th class="f3 hide" data-group="profileinfo" data-name="profileinfo" data-type="html" data-index="2"><span class="f3 achievement gamertag" data-group="profileinfo" data-name="profileinfo.gamertag"></span></th>
+                                            <th class="f3 hide" data-group="profileinfo" data-name="profileinfo" data-type="html" data-index="3"><span class="f3 achievement gamertag" data-group="profileinfo" data-name="profileinfo.gamertag"></span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody data-group="achievementinfo" data-name="achievementinfo" data-type="html">
+                                        <tr>
+                                            <td class="f3 achievement image">
+                                                <img class="f3 icon" data-group="achievementinfo" data-name="achievementinfo.imageid" data-type="image" alt="" src="" />
+                                                <img class="f3 secret" alt="secret" src="images/secretachievement.png" />
+                                            </td>
+                                            <td>
+                                                <div class="f3 fieldname hide" data-group="achievementinfo" data-name="achievementinfo.strings.caption"></div>
+                                                <div class="f3 hide" data-group="achievementinfo" data-name="achievementinfo.strings.unachieved"></div>
+                                                <div class="f3 hide" data-group="achievementinfo" data-name="achievementinfo.strings.description"></div>
+                                            </td>
+                                            <td class="f3 hide" data-group="achievementinfo" data-name="achievementinfo.type"></td>
+                                            <td class="f3 hide" data-group="achievementinfo" data-name="achievementinfo.cred"></td>
+                                            <td class="f3 achieved hide"><img data-group="achievementinfo" data-name="achievementinfo.player" data-index="0" data-type="image" alt="" src="" /></td>
+                                            <td class="f3 achieved hide"><img data-group="achievementinfo" data-name="achievementinfo.player" data-index="1" data-type="image" alt="" src="" /></td>
+                                            <td class="f3 achieved hide"><img data-group="achievementinfo" data-name="achievementinfo.player" data-index="2" data-type="image" alt="" src="" /></td>
+                                            <td class="f3 achieved hide"><img data-group="achievementinfo" data-name="achievementinfo.player" data-index="3" data-type="image" alt="" src="" /></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                    </div>
+                </li>
+                
+<!-----------------------------------------------------------------------------
+|                                TAB: System                                  |
+------------------------------------------------------------------------------>                
+
+                <li class="f3 content">
+                    <div id="cnt_system" class="f3 content c_notselected">
+                    
+                        <div class="f3 graph wrapper">
+                                                    
+                            <div class="f3 graph section left">
+                                <div class="f3 title medium">Memory<div class="f3 button refresh right off" data-name="memoryinfo" data-refresh-toggle="memoryinfo"></div></div>
+                                <div>
+                                    <span class="f3 fieldname">Free: </span><span class="f3 fieldvalue" data-group="memoryinfo" data-name="memoryinfo.free"></span>,
+                                    <span class="f3 fieldname">Used: </span><span class="f3 fieldvalue" data-group="memoryinfo" data-name="memoryinfo.used"></span>
+                                    (<span class="f3 fieldname">Total: </span><span class="f3 fieldvalue" data-group="memoryinfo" data-name="memoryinfo.total"></span>)
+                                </div>
+                                <div class="f3 graph memory clear" data-group="memoryinfo" data-name="memoryinfo" data-type="html">
+                                    <div class="f3 graph container">
+                                        <div class="f3 chart"></div>
+		                                <div class="f3 legend"></div>
+                                    </div>
+                                </div>                                
+                            </div>
+           
+                            <div class="f3 graph section left">
+                                <div class="f3 title medium">Temperatures<div class="f3 button refresh right off" data-name="temperatureinfo" data-refresh-toggle="temperatureinfo"></div></div>
+                                <div>
+                                    <div class="f3 left near"><span class="f3 fieldname">CPU: </span><span class="f3 fieldvalue" data-group="temperatureinfo" data-name="temperatureinfo.cpu"></span>&deg;<span data-group="temperatureinfo" data-name="temperatureinfo.celsius">C</span></div>
+                                    <div class="f3 left near"><span class="f3 fieldname">GPU: </span><span class="f3 fieldvalue" data-group="temperatureinfo" data-name="temperatureinfo.gpu"></span>&deg;<span data-group="temperatureinfo" data-name="temperatureinfo.celsius">C</span></div>
+                                    <div class="f3 left near"><span class="f3 fieldname">Memory: </span><span class="f3 fieldvalue" data-group="temperatureinfo" data-name="temperatureinfo.memory"></span>&deg;<span data-group="temperatureinfo" data-name="temperatureinfo.celsius">C</span></div>
+                                    <div class="f3 left near"><span class="f3 fieldname">Case: </span><span class="f3 fieldvalue" data-group="temperatureinfo" data-name="temperatureinfo.case"></span>&deg;<span data-group="temperatureinfo" data-name="temperatureinfo.celsius">C</span></div>
+                                </div>
+
+                                <div class="f3 graph temperature clear" data-group="temperatureinfo" data-name="temperatureinfo" data-type="html">
+                                    <div class="f3 graph container">
+                                        <div class="f3 chart"></div>
+		                                <div class="f3 legend"></div>
+                                    </div>
+                                </div>                                
+                            </div>
+                            
+                            <div class="f3 clear"></div>
+
+                            <div class="f3 section left">
+                                <div class="f3 title medium">System LiNK<div class="f3 button refresh right" data-refresh-once="systemlinkinfo"></div></div>
+                                <div class="f3 space medium">
+                                    <div class="f3 column">
+                                        <div><span class="f3 fieldname">Enabled: </span><span class="f3 fieldvalue" data-group="systemlinkinfo" data-name="systemlinkinfo.enabled"></span></div>
+                                        <div><span class="f3 fieldname">Xbox IP: </span><span class="f3 fieldvalue" data-group="systemlinkinfo" data-name="systemlinkinfo.xboxip"></span></div>
+                                        <div><span class="f3 fieldname">Xbox MAC: </span><span class="f3 fieldvalue" data-group="systemlinkinfo" data-name="systemlinkinfo.xboxmac"></span></div>
+                                        <div><span class="f3 fieldname">Broadcast port: </span><span class="f3 fieldvalue" data-group="systemlinkinfo" data-name="systemlinkinfo.broadcastport"></span></div>
+                                    </div>
+                                    <div class="f3 column left">
+                                        <div>&nbsp;</div>
+                                        <div><span class="f3 fieldname">Gateway IP: </span><span class="f3 fieldvalue" data-group="systemlinkinfo" data-name="systemlinkinfo.gatewayip"></span></div>
+                                        <div><span class="f3 fieldname">Gateway MAC: </span><span class="f3 fieldvalue" data-group="systemlinkinfo" data-name="systemlinkinfo.gatewaymac"></span></div>
+                                        <div><span class="f3 fieldname">Data port: </span><span class="f3 fieldvalue" data-group="systemlinkinfo" data-name="systemlinkinfo.dataport"></span></div>
+                                    </div>
+                                </div>
+                                <div class="f3 clear"><span class="f3 fieldname">JQE360 username: </span><span class="f3 fieldvalue" data-group="systemlinkinfo" data-name="systemlinkinfo.username"></span></div>
+                                <div class="f3 clear"><span class="f3 fieldname">JQE360 api key: </span><span class="f3 fieldvalue" data-group="systemlinkinfo" data-name="systemlinkinfo.apikey"></span></div>
+                            </div>
+
+                            <div class="f3 graph section left">
+                                <div class="f3 title medium">Bandwidth System LiNK<div class="f3 button refresh right off" data-name="systemlinkbandwidth" data-refresh-toggle="systemlinkbandwidth"></div></div>
+                                <div>
+                                    <div class="f3 column">
+                                        <span class="f3 fieldname">Uploaded: </span><span class="f3 fieldvalue" data-group="systemlinkbandwidth" data-name="systemlinkbandwidth.bytes.upstream" data-type="html"></span>
+                                    </div>
+                                    <div class="f3 column left">
+                                        <span class="f3 fieldname">Downloaded: </span><span class="f3 fieldvalue" data-group="systemlinkbandwidth" data-name="systemlinkbandwidth.bytes.downstream" data-type="html"></span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="f3 column">
+                                        <span class="f3 fieldname">Upstream: </span><span class="f3 fieldvalue" data-group="systemlinkbandwidth" data-name="systemlinkbandwidth.rate.upstream" data-type="html"></span>
+                                    </div>
+                                    <div class="f3 column left">
+                                        <span class="f3 fieldname">Downstream: </span><span class="f3 fieldvalue" data-group="systemlinkbandwidth" data-name="systemlinkbandwidth.rate.downstream" data-type="html"></span>
+                                    </div>
+                                </div>
+
+                                <div class="f3 graph bandwidth clear" data-group="systemlinkbandwidth" data-name="systemlinkbandwidth" data-type="html">
+                                    <div class="f3 graph container">
+                                        <div class="f3 chart"></div>
+		                                <div class="f3 legend"></div>
+                                    </div>
+                                </div>                                
+                            </div>
+
+                            <div class="f3 clear"></div>
+                            
+                            <div class="f3 section left">
+                                <div class="f3 title medium">Plugin</div>
+                                <div class="f3 space medium">
+                                    <div class="f3 column">
+                                        <div>
+                                            <span class="f3 fieldname">Version: </span>
+                                            <span class="f3 fieldvalue" data-group="plugininfo" data-name="plugininfo.version.number.major"></span>.<span class="f3 fieldvalue" data-group="plugininfo" data-name="plugininfo.version.number.minor"></span>.<span class="f3 fieldvalue" data-group="plugininfo" data-name="plugininfo.version.number.build"></span>
+                                            <span class="f3 fieldvalue" data-group="plugininfo" data-name="plugininfo.version.number.type"></span>
+                                        </div>
+                                    </div>
+                                    <div class="f3 column left">
+                                        <span class="f3 fieldname">WebUI api: </span><span class="f3 fieldvalue" data-group="plugininfo" data-name="plugininfo.version.api"></span><span class="f3 fieldname">, notes: </span><span class="f3 fieldvalue" data-group="userdata" data-name="userdata.version"></span>
+                                    </div>
+                                </div>
+                                <div class="f3 clear"><span class="f3 fieldname">Root path: </span><span class="f3 fieldvalue" data-group="plugininfo" data-name="plugininfo.path.root"></span></div>
+                                <div><span class="f3 fieldname">User data: </span><span class="f3 fieldvalue" data-group="plugininfo" data-name="plugininfo.path.user"></span></div>
+                                <div><span class="f3 fieldname">Web root: </span><span class="f3 fieldvalue" data-group="plugininfo" data-name="plugininfo.path.web"></span></div>
+                                <div class="f3 space medium"><span class="f3 fieldname">Launcher: </span><span class="f3 fieldvalue" data-group="plugininfo" data-name="plugininfo.path.launcher"></span></div>
+                                <div class="f3 fieldname space small">Features:</div>
+                                <div class="f3 column">
+                                    <ul class="f3 pluginfeatures yes" data-group="plugininfo" data-name="plugininfo.features" data-part="yes" data-type="html"></ul>
+                                </div>
+                                <div class="f3 column left">
+                                    <ul class="f3 pluginfeatures no" data-group="plugininfo" data-name="plugininfo.features" data-part="no" data-type="html"></ul>
+                                </div>
+                                
+                            </div>
+                    
+                            <div class="f3 section left">
+                                <div class="f3 title medium">MultiDisk<div class="f3 button refresh right" data-refresh-once="multidiscinfo"></div></div>
+                                <div class="f3 space medium">
+                                    <div class="f3 column"><span class="f3 fieldname">TitleID: </span><span class="f3 fieldvalue" data-group="multidiscinfo" data-name="multidiscinfo.titleid"></span></div>
+                                    <div class="f3 column left"><span class="f3 fieldname">Disc: </span><span class="f3 fieldvalue" data-group="multidiscinfo" data-name="multidiscinfo.disc.current"></span> of 
+                                    <span class="f3 fieldvalue" data-group="multidiscinfo" data-name="multidiscinfo.disc.total"></span></div>
+                                </div>
+                                <div class="f3 clear fieldname">Discs:</div>
+                                <ol class="f3 list clear">
+                                    <li data-group="multidiscinfo" data-name="multidiscinfo.entries" data-type="html" data-part="1"></li>
+                                    <li data-group="multidiscinfo" data-name="multidiscinfo.entries" data-type="html" data-part="2"></li>
+                                    <li data-group="multidiscinfo" data-name="multidiscinfo.entries" data-type="html" data-part="3"></li>
+                                    <li data-group="multidiscinfo" data-name="multidiscinfo.entries" data-type="html" data-part="4"></li>
+                                    <li data-group="multidiscinfo" data-name="multidiscinfo.entries" data-type="html" data-part="5"></li>
+                                </ol> 
+                            </div>
+                        
+                            <div class="f3 clear"></div>
+                            
+                            <div class="f3 section left">
+                                <div class="f3 title medium">Console</div>
+                                <div class="f3 column space small">
+                                    <div><span class="f3 fieldname">Serial: </span><span class="f3 fieldvalue" data-group="systeminfo" data-name="systeminfo.serial"></span></div>
+                                    <div><span class="f3 fieldname">ConsoleId: </span><span class="f3 fieldvalue" data-group="systeminfo" data-name="systeminfo.consoleid"></span></div>
+                                </div>
+                                <div class="f3 column left">
+                                    <div>
+                                        <span class="f3 fieldname">Dashboard: </span>
+                                        <span class="f3 fieldvalue" data-group="systeminfo" data-name="systeminfo.version.major"></span>.<span class="f3 fieldvalue" data-group="systeminfo" data-name="systeminfo.version.minor"></span>.<span class="f3 fieldvalue bold" data-group="systeminfo" data-name="systeminfo.version.build"></span>.<span class="f3 fieldvalue" data-group="systeminfo" data-name="systeminfo.version.qfe"></span>
+                                    </div>
+                                    <div><span class="f3 fieldname">Type: </span><span class="f3 fieldvalue" data-group="systeminfo" data-name="systeminfo.console.motherboard"></span> <span class="f3 fieldvalue" data-group="systeminfo" data-name="systeminfo.console.type"></span></div>
+                                </div>
+                                <div class="f3 clear"><span class="f3 fieldname">CPU Key: </span><span class="f3 fieldvalue" data-group="systeminfo" data-name="systeminfo.cpukey"></span></div>
+                                <div class="f3 clear"><span class="f3 fieldname">DVD Key: </span><span class="f3 fieldvalue" data-group="systeminfo" data-name="systeminfo.dvdkey"></span></div>
+                            </div>
+
+                            <div class="f3 clear"></div>
+                            
+                            <div class="f3 section clear wide">
+                                <div class="f3 title medium">
+                                    Active game threads
+                                    <div class="f3 button refresh right" data-refresh-once="threadinfo"></div>
+                                    <div class="f3 button resume right" title="Resume (experimental)" data-name="threadinfo" data-refresh-once="threadinfo" data-suspend="0"></div>
+                                    <div class="f3 button suspend right" title="Pause (experimental)" data-name="threadinfo" data-refresh-once="threadinfo" data-suspend="1"></div>
+                                </div>
+                                <table class="f3 threads" data-group="threadinfo" data-name="threadinfo" data-type="html"></table>
+                            </div>
+                                                    
+                            <div class="f3 clear"></div>
+                            
+                            <div class="f3 section clear wide dashlaunchinfo">
+                                <div class="f3 title medium">DashLaunch Info<div class="f3 button refresh right" data-name="dashlaunchinfo" data-refresh-once="dashlaunchinfo"></div></div>
+                                    <span class="f3 fieldname">Version: </span>
+                                    <span class="f3 fieldvalue" data-group="dashlaunchinfo" data-name="dashlaunchinfo.version.number.major">
+                                    </span>.<span class="f3 fieldvalue" data-group="dashlaunchinfo" data-name="dashlaunchinfo.version.number.minor"></span>
+                                    (<span class="f3 fieldvalue" data-group="dashlaunchinfo" data-name="dashlaunchinfo.version.number.build"></span>)
+                            <!--    <div class="f3 dashlaunchinfo categories" data-group="dashlaunchinfo" data-name="dashlaunchinfo.categories" data-type="html">
+                                    <div class="f3 title small italic" data-group="dashlaunchinfo" data-name="dashlaunchinfo.category"></div> -->
+                                    <table class="f3 dashlaunchinfo" data-group="dashlaunchinfo" data-name="dashlaunchinfo.categories" data-type="html">
+                                        <thead>
+                                            <tr>
+                                                <th class="f3 dashlaunchinfo title small italic" colspan="9" data-group="dashlaunchinfo" data-name="dashlaunchinfo.category"></th>
+                                            </tr>
+                                            <tr>
+                                                <th colspan="2">Setting</th><th colspan="4">Description</th><th colspan="3">Value</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody data-group="dashlaunchinfo" data-name="dashlaunchinfo.options" data-type="html">
+                                            <tr>
+                                                <td colspan="2" class="f3 dashlaunchinfo name" data-group="dashlaunchinfo" data-name="dashlaunchinfo.option.name"></td>
+                                                <td colspan="4" class="f3 dashlaunchinfo description" data-group="dashlaunchinfo" data-name="dashlaunchinfo.option.description" data-type="html"></td>
+                                                <td colspan="3" class="f3 dashlaunchinfo value" data-group="dashlaunchinfo" data-name="dashlaunchinfo.option.value" data-type="html"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                               <!--</div>-->
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <!--<div class="f3 bottom_spacer">&nbsp;</div>-->
+            <!-- <div class="f3 clear" style="width: 400%;position:relative;height:10px;border:1px solid red"></div> -->
+            <!-- div class="f3 bottom">&nbsp;</div -->
+        </div>
+	</body>
+</html>

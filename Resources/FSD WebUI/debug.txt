@@ -1,0 +1,262 @@
+21:20:14.977|TimerManager|F9000000|Init Timer Manager
+21:20:14.977|StorageDeviceMonitor|F9000000|Storage Device Monitor Constructor
+21:20:14.977|DrivesManager|F9000000|Mounting Flash:
+21:20:14.988|CThread|F9000004|This thread is named [TimerManager]
+21:20:15.010|DrivesManager|F9000000|Mounting Results:  \??\Flash:, \SystemRoot - serial: D98E20F5596B23B99DA58C6BBDAAA5219684E682 - DeviceId: ffffffff
+21:20:15.010|DrivesManager|F9000000|Mounting OnBoardMU:
+21:20:15.011|DrivesManager|F9000000|Mounting Results:  \??\OnBoardMU:, \Device\BuiltInMuSfc - serial: FFFFFFFFFFFF064B24EB14000000000000000000 - DeviceId: 00000007
+21:20:15.011|DrivesManager|F9000000|Mounting Dvd:
+21:20:15.019|DrivesManager|F9000000|Failed Mounting Dvd:
+21:20:15.019|DrivesManager|F9000000|Mounting Hdd1:
+21:20:15.027|DrivesManager|F9000000|Mounting Results:  \??\Hdd1:, \Device\Harddisk0\Partition1 - serial: 2020202057202D44585731433741333039343037 - DeviceId: 00000001
+21:20:15.027|DrivesManager|F9000000|Mounting Hdd0:
+21:20:15.027|DrivesManager|F9000000|Failed Mounting Hdd0:
+21:20:15.027|DrivesManager|F9000000|Mounting HddX:
+21:20:15.044|DrivesManager|F9000000|Mounting Results:  \??\HddX:, \Device\Harddisk0\SystemPartition - serial: AA45C008F7FD37C4939BC7D3D1B24DE0F2A1AAE4 - DeviceId: ffffffff
+21:20:15.044|DrivesManager|F9000000|Mounting SysExt:
+21:20:15.061|DrivesManager|F9000000|Mounting Results:  \??\SysExt:, \sep - serial: 349F35B8FA97B35AAFCED9E04E858C8039343037 - DeviceId: ffffffff
+21:20:15.061|DrivesManager|F9000000|Mounting Memunit0:
+21:20:15.061|DrivesManager|F9000000|Failed Mounting Memunit0:
+21:20:15.061|DrivesManager|F9000000|Mounting Memunit1:
+21:20:15.061|DrivesManager|F9000000|Failed Mounting Memunit1:
+21:20:15.061|DrivesManager|F9000000|Mounting Usb0:
+21:20:15.077|DrivesManager|F9000000|Mounting Results:  \??\Usb0:, \Device\Mass0 - serial: E8B8055A362BFC28C287B43D3F7848F3BE1FC4E7 - DeviceId: 00000003
+21:20:15.077|DrivesManager|F9000000|Mounting Usb1:
+21:20:15.077|DrivesManager|F9000000|Failed Mounting Usb1:
+21:20:15.077|DrivesManager|F9000000|Mounting Usb2:
+21:20:15.077|DrivesManager|F9000000|Failed Mounting Usb2:
+21:20:15.077|DrivesManager|F9000000|Mounting HdDvdPlayer:
+21:20:15.077|DrivesManager|F9000000|Failed Mounting HdDvdPlayer:
+21:20:15.077|DrivesManager|F9000000|Mounting HdDvdStorage:
+21:20:15.077|DrivesManager|F9000000|Failed Mounting HdDvdStorage:
+21:20:15.078|DrivesManager|F9000000|Mounting Transfercable:
+21:20:15.078|DrivesManager|F9000000|Failed Mounting Transfercable:
+21:20:15.078|DrivesManager|F9000000|Mounting TransfercableXbox1:
+21:20:15.078|DrivesManager|F9000000|Failed Mounting TransfercableXbox1:
+21:20:15.078|DrivesManager|F9000000|Mounting USBMU0:
+21:20:15.094|DrivesManager|F9000000|Mounting Results:  \??\USBMU0:, \Device\Mass0PartitionFile\Storage - serial: E8B8055A362BFC28C287B43D3F7848F3BE1FC4E7 - DeviceId: 00000005
+21:20:15.094|DrivesManager|F9000000|Mounting USBMU1:
+21:20:15.094|DrivesManager|F9000000|Failed Mounting USBMU1:
+21:20:15.094|DrivesManager|F9000000|Mounting USBMU2:
+21:20:15.094|DrivesManager|F9000000|Failed Mounting USBMU2:
+21:20:15.094|DrivesManager|F9000000|Mounting USBMUCache0:
+21:20:15.111|DrivesManager|F9000000|Mounting Results:  \??\USBMUCache0:, \Device\Mass0PartitionFile\StorageSystem - serial: E8B8055A362BFC28C287B43D3F7848F3BE1FC4E7 - DeviceId: ffffffff
+21:20:15.111|DrivesManager|F9000000|Mounting USBMUCache1:
+21:20:15.111|DrivesManager|F9000000|Failed Mounting USBMUCache1:
+21:20:15.111|DrivesManager|F9000000|Mounting USBMUCache2:
+21:20:15.111|DrivesManager|F9000000|Failed Mounting USBMUCache2:
+21:20:15.111|DrivesManager|F9000000|Mounting ConX:
+21:20:15.111|DrivesManager|F9000000|Failed Mounting ConX:
+21:20:15.111|FSDSql|F9000000|In Constructor
+21:20:15.205|FSDSql|F9000000|version is 0
+21:20:15.206|FSDSql|F9000000|version of Settings schema is 8
+21:20:15.206|FSDSql|F9000000|settings cache size is 20000
+21:20:15.206|FSDSql|F9000000|main cache size is 20000
+21:20:15.206|FSDSql|F9000000|temp_store is 2
+21:20:15.206|FSDSql|F9000000|temp_store is 2
+21:20:15.206|KompexSQLiteStatement|F9000000|FAILED TO PREPARE: SELECT version FROM schemaVersion
+21:20:15.206|FSDSql|F9000000|schemaVersion table not there
+21:20:15.240|FSDSql|F9000000|DELETED CONTENT
+21:20:15.245|PluginLoader|F9000000|Initializing Plugin
+21:20:15.278|Settings|F9000000|Datapath does not exist
+21:20:15.278|Settings|F9000000|Reading Settings from DB
+21:20:15.292|Settings|F9000000|Reading Settings from DB
+21:20:15.297|Settings|F9000000|DoSaveSettings
+21:20:15.303|KompexSQLiteStatement|F9000000|Step returned 19
+21:20:15.304|KompexSQLiteStatement|F9000000|Step returned 19
+21:20:15.306|KompexSQLiteStatement|F9000000|Step returned 19
+21:20:15.306|main|F9000000|FirstRun(false)
+21:20:15.390|VersionManager|F9000000|VersionManager Activated
+21:20:15.395|VersionManager|F9000000|Extracting From Compressed Skin
+21:20:15.424|FreestyleApp|F9000000|********************************************************************************
+21:20:15.424|FreestyleApp|F9000000|*********       Dash version: 3.0b Rev775
+21:20:15.425|FreestyleApp|F9000000|*********       Skin version: 3.0b Rev775
+21:20:15.425|FreestyleApp|F9000000|*********       Plugin version: 3.0b Rev801
+21:20:15.425|FreestyleApp|F9000000|*********       Kernel version: 2.0.16547.0
+21:20:15.425|FreestyleApp|F9000000|********************************************************************************
+21:20:15.425|CFreestyleApp|F9000000|Loading Skin File:  Main.Xur
+21:20:15.425|SkinManager|F9000000|Try to load skin : Default.xzp
+21:20:15.425|Settings|F9000000|DoSaveSettings
+21:20:15.432|KompexSQLiteStatement|F9000000|Step returned 19
+21:20:15.435|KompexSQLiteStatement|F9000000|Step returned 19
+21:20:15.436|KompexSQLiteStatement|F9000000|Step returned 19
+21:20:15.437|SkinManager|F9000000|Scanning game:\Skins\* for skins
+21:20:15.458|SkinManager|F9000000|Extracting Visual XML files
+21:20:15.458|SkinManager|F9000000|Reading VisualList.xml
+21:20:15.458|SkinManager|F9000000|Path: XML\BlueVisual.xml
+21:20:15.458|SkinManager|F9000000|TempPath: game:\Data\Skins\Default.xzp\XML\BlueVisual.xml
+21:20:15.458|SkinManager|F9000000|Reading VisualList.xml
+21:20:15.458|SkinManager|F9000000|Path: XML\DarkGreyVisual.xml
+21:20:15.458|SkinManager|F9000000|TempPath: game:\Data\Skins\Default.xzp\XML\DarkGreyVisual.xml
+21:20:15.458|SkinManager|F9000000|Reading VisualList.xml
+21:20:15.458|SkinManager|F9000000|Path: XML\GreenVisual.xml
+21:20:15.458|SkinManager|F9000000|TempPath: game:\Data\Skins\Default.xzp\XML\GreenVisual.xml
+21:20:15.458|SkinManager|F9000000|Reading VisualList.xml
+21:20:15.458|SkinManager|F9000000|Path: XML\F3Visual.xml
+21:20:15.458|SkinManager|F9000000|TempPath: game:\Data\Skins\Default.xzp\XML\F3Visual.xml
+21:20:15.458|SkinManager|F9000000|Reading VisualList.xml
+21:20:15.458|SkinManager|F9000000|Path: XML\LightGreyVisual.xml
+21:20:15.459|SkinManager|F9000000|TempPath: game:\Data\Skins\Default.xzp\XML\LightGreyVisual.xml
+21:20:15.459|SkinManager|F9000000|Reading VisualList.xml
+21:20:15.459|SkinManager|F9000000|Path: XML\OrangeVisual.xml
+21:20:15.459|SkinManager|F9000000|TempPath: game:\Data\Skins\Default.xzp\XML\OrangeVisual.xml
+21:20:15.459|SkinManager|F9000000|Reading VisualList.xml
+21:20:15.459|SkinManager|F9000000|Path: XML\RedVisual.xml
+21:20:15.459|SkinManager|F9000000|TempPath: game:\Data\Skins\Default.xzp\XML\RedVisual.xml
+21:20:15.459|SkinManager|F9000000|Reading VisualList.xml
+21:20:15.459|SkinManager|F9000000|Path: XML\BlackVisual.xml
+21:20:15.459|SkinManager|F9000000|TempPath: game:\Data\Skins\Default.xzp\XML\BlackVisual.xml
+21:20:15.459|SkinManager|F9000000|Reading VisualList.xml
+21:20:15.459|SkinManager|F9000000|Path: XML\KinectVisual.xml
+21:20:15.459|SkinManager|F9000000|TempPath: game:\Data\Skins\Default.xzp\XML\KinectVisual.xml
+21:20:15.459|SkinManager|F9000000|Reading VisualList.xml
+21:20:15.459|SkinManager|F9000000|Path: XML\KinectBlueVisual.xml
+21:20:15.459|SkinManager|F9000000|TempPath: game:\Data\Skins\Default.xzp\XML\KinectBlueVisual.xml
+21:20:15.506|SkinManager|F9000000|Setting Variables Compressed
+21:20:15.507|SkinManager|F9000000|Setting active Skin
+21:20:15.592|NotificationMonitor|F9000004|Sign In Event has been triggered.
+21:20:15.895|NotificationMonitor|F9000004|DVD Event has been triggered.
+21:20:16.223|SkinManager|F9000000|Loading no default font memory://40200030,2ef2b1a#Font/ERASBD.TTF as ConsoleFonts
+21:20:16.223|SkinManager|F9000000|loading memory://40200030,2ef2b1a#skin.xur as default skin
+21:20:16.240|SkinManager|F9000000|loading memory://40200030,2ef2b1a# SplashScreen.xur as default scene
+21:20:16.251|CThread|F9000024|This thread is named [ContentManager]
+21:20:16.394|TabManager|F9000000|Loading config from game:\Data\Skins\Default.xzp\Settings\MenuSettings.xml
+21:20:16.557|NotificationMonitor|F9000004|Kinect State Event has been triggered.
+21:20:16.557|KinectMonitor|F9000004|Kinnect Ready...
+21:20:16.986|LoadingEngine|F9000020|Time:  0.74
+21:20:21.081|NetworkMonitor|F9000028|Network Changed
+21:20:21.081|NetMonitor|F9000028|Final IP: 192.168.1.110
+21:20:21.081|NetMonitor|F9000028|Network initialized successfully!
+21:20:21.081|HTTPDownloader|F9000028|HTTP Downloader Resumed
+21:20:21.081|FTPServer|F9000028|XNetGetTitleXnAddr returned 192.168.1.110
+21:20:21.082|SambaServer|F9000028|XNetGetTitleXnAddr returned 1882455648
+21:20:21.092|CThread|F900005C|This thread is named [FTP Server]
+21:20:21.092|CThread|F9000058|This thread is named [HTTPClient]
+21:20:21.092|CThread|F9000054|This thread is named [HTTPWorker]
+21:20:21.092|CThread|F9000050|This thread is named [HTTPWorker]
+21:20:21.092|CThread|F900004C|This thread is named [HTTPWorker]
+21:20:21.092|CThread|F9000048|This thread is named [HTTPWorker]
+21:20:21.162|libsmb|F9000028|Netbios nameserver version 3.0.23b started.
+21:20:21.162|libsmb|F9000028|Copyright Andrew Tridgell and the Samba Team 1992-2006
+21:20:21.348|libsmb|F9000028|standard input is not a socket, assuming -D option
+21:20:21.481|NTP|F9000028|Starting Thread
+21:20:21.481|NTP|F9000028|Thread Created
+21:20:21.481|AutoUpdater|F9000028|AutoUpdater Initialized
+21:20:21.481|libsmb|F9000068|smbd version 3.0.23b started.
+21:20:21.482|libsmb|F9000068|Copyright Andrew Tridgell and the Samba Team 1992-2006
+21:20:21.482|NTP|F900006C|NTP Thread Work Begun
+21:20:21.482|NTP|F900006C|CurSysTime from 1600
+21:20:21.482|NTP|F900006C|01 cf 5f 29 11 d9 d4 a0
+21:20:21.482|NTP|F900006C|300 year is
+21:20:21.482|NTP|F900006C|01 4f 37 3b fd e0 40 00
+21:20:21.482|NTP|F900006C|CurSysTime from 1900
+21:20:21.482|NTP|F900006C|00 80 27 ed 13 f9 94 a0
+21:20:21.482|NTP|F900006C|Waiting for dns...
+21:20:21.498|AutoUpdater|F9000028|URLPATH:  http://update.jqe360.com/
+21:20:21.498|HTTPDownload|F9000028|Queue Size:  1
+21:20:21.502|NTP|F900006C|DNS OK
+21:20:21.502|NTP|F900006C|Connected
+21:20:21.539|NTP|F900006C|Final Set from 1900
+21:20:21.540|NTP|F900006C|00 80 27 ed 14 48 9f 00
+21:20:21.540|NTP|F900006C|Final Set from 1600
+21:20:21.540|NTP|F900006C|01 cf 5f 29 12 28 df 00
+21:20:22.000|NTP|F900006C|SET RESULT : 00000000
+21:20:22.000|NTP|F900006C|NTP Thread Work Complete
+21:20:22.059|LoadingEngine|F9000020|SplashScreen:  5.35
+21:20:22.059|DVDMonitor|F9000020|Starting Thread
+21:20:22.059|DVDMonitor|F9000020|Thread Created
+21:20:22.059|DVDMonitor|F900006C|DVDMonitor Thread Work Begun
+21:20:22.059|DVDMonitor|F900006C|Attempting to force first trigger
+21:20:22.059|LoadingThread|F9000028|Thread Started
+21:20:22.059|DVDMonitor|F900006C|Notify NO DVD
+21:20:22.059|DVDMonitor|F900006C|Notify NO DVD
+21:20:22.059|DVDMonitor|F900006C|Force First Trigger Completed Successfully
+21:20:22.059|LoadingThread|F9000028|Loaded ContentList
+21:20:22.059|DVDMonitor|F900006C|DVDMonitor Thread Work Complete
+21:20:22.059|LoadingThread|F9000028|Thread Finished
+21:20:22.092|SkinXMLReader|F9000000|Configurable Scene:   InstanceID:  [CustomBackdrop] - ClassName:  [ScnCanvasPresenter]
+21:20:22.092|CanvasPresenter|F9000000|Background B Path: Images\Backgrounds\Stages\stage3.png
+21:20:22.092|CanvasPresenter|F9000000|Has BackgroundA Present: Kinect
+21:20:22.092|CanvasPresenter|F9000000|Has BackgroundB Present: NXE Lite
+21:20:22.093|SkinXMLReader|F9000000|Configurable Scene:   InstanceID:  [CustomBackdrop] - ClassName:  [ScnCanvasPresenter]
+21:20:22.093|CanvasPresenter|F9000000|Background B Path: Images\Backgrounds\Stages\stage3.png
+21:20:22.093|CanvasPresenter|F9000000|Has BackgroundA Present: Kinect
+21:20:22.093|CanvasPresenter|F9000000|Has BackgroundB Present: NXE Lite
+21:20:22.093|SkinXMLReader|F9000000|Configurable Scene:   InstanceID:  [WeatherPopup] - ClassName:  [ScnPopup]
+21:20:22.093|SkinXMLReader|F9000000|Configurable Scene:   InstanceID:  [ProfileScene] - ClassName:  [ScnProfile]
+21:20:22.095|ScnProfile|F9000000|Notified of profile change... THIS:  43FCF530
+21:20:22.095|ScnProfile|F9000000|Showing Profile Scene.
+21:20:22.535|AutoUpdater|F9000048|Download Completed
+21:20:22.536|AutoUpdater|F9000048|Version Definition File:  Header Data Loaded
+21:20:22.537|AutoUpdater|F9000048|Version Definition File:  Dash Data Loaded: 1
+21:20:22.537|AutoUpdater|F9000048|Version Definition File:  Skin Data Loaded: 1
+21:20:22.538|AutoUpdater|F9000048|Version Definition File:  Plugin Data Loaded: 1
+21:20:22.542|AutoUpdater|F9000048|Version Definition File:  Plugin Data Loaded: 1
+21:20:22.542|AutoUpdater|F9000048|TotalCount:  3
+21:20:22.542|AutoUpdater|F9000048|Plugin Count:  1
+21:20:22.542|AutoUpdater|F9000048|Skin Count:  1
+21:20:22.542|AutoUpdater|F9000048|Dash Count:  1
+21:20:22.728|ScnProfile|F9000000|Notified of profile change... completed
+21:20:22.728|SignInMonitor|F9000000|SignIn Monitor Constructor
+21:20:22.728|SkinXMLReader|F9000000|Configurable Scene:   InstanceID:  [CustomMenuItem] - ClassName:  [ScnTabPresenter]
+21:20:22.729|SkinXMLReader|F9000000|Configurable Scene:   InstanceID:  [CustomMenuItem] - ClassName:  [ScnTabPresenter]
+21:20:22.729|SkinXMLReader|F9000000|Configurable Scene:   InstanceID:  [CustomMenuItem] - ClassName:  [ScnTabPresenter]
+21:20:22.729|SkinXMLReader|F9000000|Configurable Scene:   InstanceID:  [CustomMenuItem] - ClassName:  [ScnTabPresenter]
+21:20:22.729|SkinXMLReader|F9000000|Configurable Scene:   InstanceID:  [CustomMenuItem] - ClassName:  [ScnTabPresenter]
+21:20:22.730|SkinXMLReader|F9000000|Configurable Scene:   InstanceID:  [CustomMenuItem] - ClassName:  [ScnTabPresenter]
+21:20:22.731|SkinXMLReader|F9000000|Configurable Scene:   InstanceID:  [CustomMenuItem] - ClassName:  [ScnTabPresenter]
+21:20:22.731|SkinXMLReader|F9000000|Configurable Scene:   InstanceID:  [CustomMenuItem] - ClassName:  [ScnTabPresenter]
+21:20:22.731|SkinXMLReader|F9000000|Configurable Scene:   InstanceID:  [CustomMenuItem] - ClassName:  [ScnTabPresenter]
+21:20:22.731|SkinXMLReader|F9000000|Configurable Scene:   InstanceID:  [CustomMenuItem] - ClassName:  [ScnTabPresenter]
+21:20:22.732|SkinXMLReader|F9000000|Configurable Scene:   InstanceID:  [CustomMenuItem] - ClassName:  [ScnTabPresenter]
+21:20:22.732|SkinXMLReader|F9000000|Configurable Scene:   InstanceID:  [CustomMenuItem] - ClassName:  [ScnTabPresenter]
+21:20:22.732|SkinXMLReader|F9000000|Configurable Scene:   InstanceID:  [CustomMenuItem] - ClassName:  [ScnTabPresenter]
+21:20:22.732|SkinXMLReader|F9000000|Configurable Scene:   InstanceID:  [CustomMenuItem] - ClassName:  [ScnTabPresenter]
+21:20:22.733|SkinXMLReader|F9000000|Configurable Scene:   InstanceID:  [CustomMenuItem] - ClassName:  [ScnTabPresenter]
+21:20:22.733|ScnMain|F9000000|CScnMain::OnInit
+21:20:22.733|ScnMain|F9000000|System Link Patch Active
+21:20:22.733|ScnMain|F9000000|Plugin Loaded
+21:20:22.733|DVDMonitor|F9000000|Starting Thread
+21:20:22.733|DVDMonitor|F9000000|Thread Created
+21:20:22.733|DVDMonitor|F9000028|DVDMonitor Thread Work Begun
+21:20:22.734|SkinXMLReader|F9000000|Configurable Scene:   InstanceID:  [ProfileScene] - ClassName:  [ScnProfile]
+21:20:22.734|DVDMonitor|F9000028|Attempting to force first trigger
+21:20:22.734|DVDMonitor|F9000028|Notify NO DVD
+21:20:22.734|DVDMonitor|F9000028|Notify NO DVD
+21:20:22.734|DVDMonitor|F9000028|Force First Trigger Completed Successfully
+21:20:22.734|DVDMonitor|F9000028|DVDMonitor Thread Work Complete
+21:20:22.739|ScnProfile|F9000000|Notified of profile change... THIS:  4404B180
+21:20:22.739|ScnProfile|F9000000|Showing Profile Scene.
+21:20:23.339|ScnProfile|F9000000|Notified of profile change... completed
+21:20:23.339|SkinXMLReader|F9000000|Configurable Scene:   InstanceID:  [CustomMenuItem] - ClassName:  [ScnTabPresenter]
+21:20:23.339|SkinXMLReader|F9000000|Configurable Scene:   InstanceID:  [AvatarScene] - ClassName:  [ScnAvatar]
+21:20:24.442|AvatarRenderer|F9000000|Player is signed Out and Avatar is Present
+21:20:24.443|AvatarMonitor|F9000000|Avatar Monitor Constructor
+21:20:24.444|ScnMain|F9000000|CScnMain::OnInit
+21:20:24.444|ScnMain|F9000000|System Link Patch Active
+21:20:24.444|ScnMain|F9000000|Plugin Loaded
+21:20:24.484|DVDMonitor|F9000000|Starting Thread
+21:20:24.485|DVDMonitor|F9000000|Thread Created
+21:20:24.485|DVDMonitor|F9000028|DVDMonitor Thread Work Begun
+21:20:24.485|DVDMonitor|F9000028|Attempting to force first trigger
+21:20:24.485|ScnSysInfo|F9000000|CScnSysInfo::OnInit v2
+21:20:24.485|DVDMonitor|F9000028|Notify NO DVD
+21:20:24.485|SkinXMLReader|F9000000|Configurable Scene:   InstanceID:  [BottomStatsBar] - ClassName:  [ScnSysInfo]
+21:20:24.485|ScnSysInfo|F9000000|CScnSysInfo::InitializeChildren
+21:20:24.485|ScnSysInfo|F9000000|Get Space for Hdd1:
+21:20:24.485|ScnSysInfo|F9000000|Get Space for OnBoardMU:
+21:20:24.485|ScnSysInfo|F9000000|Get Space for Usb0:
+21:20:24.485|DVDMonitor|F9000028|Notify NO DVD
+21:20:24.485|ScnSysInfo|F9000000|Get Space for Usb1:
+21:20:24.485|ScnSysInfo|F9000000|CScnSysInfo::OnInit v2
+21:20:24.486|SkinXMLReader|F9000000|Configurable Scene:   InstanceID:  [TopStatsBar] - ClassName:  [ScnSysInfo]
+21:20:24.486|DVDMonitor|F9000028|Force First Trigger Completed Successfully
+21:20:24.486|ScnSysInfo|F9000000|CScnSysInfo::InitializeChildren
+21:20:24.486|DVDMonitor|F9000028|DVDMonitor Thread Work Complete
+21:20:24.486|ScnSysInfo|F9000000|Get Space for Hdd1:
+21:20:24.486|ScnSysInfo|F9000000|Get Space for OnBoardMU:
+21:20:24.486|ScnSysInfo|F9000000|Get Space for Usb0:
+21:20:24.486|ScnSysInfo|F9000000|Get Space for Usb1:
+21:20:24.486|SkinXMLReader|F9000000|Configurable Scene:   InstanceID:  [StatisticsPopup] - ClassName:  [ScnPopup]
+21:20:24.487|ScnKinectVoice|F9000000|ScnKinectVoice::OnInit
+21:20:24.487|SkinManager|F9000000|SceneObjectMap- Scene Name:  Main,  HXUIOBJ:  00010014
