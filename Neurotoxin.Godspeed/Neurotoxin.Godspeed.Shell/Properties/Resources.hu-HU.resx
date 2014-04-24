@@ -866,4 +866,16 @@
   <data name="ItemTypeLink" xml:space="preserve">
     <value>LINK</value>
   </data>
+  <data name="FsdContentScanTriggerDisabled" xml:space="preserve">
+    <value>Kikapcsolva</value>
+  </data>
+  <data name="FsdContentScanTriggerAfterUpload" xml:space="preserve">
+    <value>Feltöltés után</value>
+  </data>
+  <data name="FsdContentScanTriggerAfterConnectionClose" xml:space="preserve">
+    <value>Kapcsolatbontás után</value>
+  </data>
+  <data name="TriggerContentScanAfterUpload" xml:space="preserve">
+    <value>Automatikus FSD/F3 tartalomfrissítés</value>
+  </data>
 </root>

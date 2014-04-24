@@ -756,6 +756,33 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to After connection close.
+        /// </summary>
+        internal static string FsdContentScanTriggerAfterConnectionClose {
+            get {
+                return ResourceManager.GetString("FsdContentScanTriggerAfterConnectionClose", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to After upload.
+        /// </summary>
+        internal static string FsdContentScanTriggerAfterUpload {
+            get {
+                return ResourceManager.GetString("FsdContentScanTriggerAfterUpload", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disabled.
+        /// </summary>
+        internal static string FsdContentScanTriggerDisabled {
+            get {
+                return ResourceManager.GetString("FsdContentScanTriggerDisabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to FTP Log.
         /// </summary>
         internal static string FTPLog {
@@ -2165,6 +2192,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         internal static string TotalUsageTime {
             get {
                 return ResourceManager.GetString("TotalUsageTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to FSD/F3 Content Scan Trigger.
+        /// </summary>
+        internal static string TriggerContentScanAfterUpload {
+            get {
+                return ResourceManager.GetString("TriggerContentScanAfterUpload", resourceCulture);
             }
         }
         

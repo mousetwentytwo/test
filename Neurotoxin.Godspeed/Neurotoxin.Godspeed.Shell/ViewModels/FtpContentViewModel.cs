@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using Microsoft.Practices.ObjectBuilder2;
 using Neurotoxin.Godspeed.Core.Models;
 using Neurotoxin.Godspeed.Core.Net;
 using Neurotoxin.Godspeed.Shell.Constants;
@@ -16,14 +17,16 @@ using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
 using Neurotoxin.Godspeed.Shell.Exceptions;
 using Neurotoxin.Godspeed.Shell.Models;
-using Neurotoxin.Godspeed.Shell.Reporting;
 using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
     public class FtpContentViewModel : FileListPaneViewModelBase<FtpContent>
     {
+        private HashSet<int> _doContentScanOn;
         private readonly Dictionary<string, string> _driveLabelCache = new Dictionary<string, string>();
+        private List<FsdScanPath> _scanFolders;
+        private string _httpSessionId;
 
         public FtpConnectionItemViewModel Connection { get; private set; }
 
@@ -142,6 +145,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void ConnectCallback()
         {
+            _doContentScanOn.Clear();
             Drives = FileManager.GetDrives().Select(d => new FileSystemItemViewModel(d)).ToObservableCollection();
             var r = new Regex("^/[A-Z0-9_-]+/", RegexOptions.IgnoreCase);
             var defaultPath = string.IsNullOrEmpty(Connection.Model.DefaultPath)
@@ -156,6 +160,15 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 if (drive != null && FileManager.FolderExists(defaultPath)) PathCache.Add(drive, defaultPath);
             }
             Drive = drive ?? Drives.First();
+
+            if (UserSettings.FsdContentScanTrigger != FsdContentScanTrigger.Disabled)
+            {
+                if (Connection.HttpUsername == null)
+                {
+                    //TODO: prompt and save
+                }
+                GetScanFolders(Connection.HttpUsername, Connection.HttpPassword);
+            }
         }
 
         public void RestoreConnection()
@@ -170,8 +183,93 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public override void FinishTransferAsTarget()
         {
-            //TODO: determine necessity
-            //TODO: get pathid
+            if ((FileManager.ServerType != FtpServerType.F3 && FileManager.ServerType != FtpServerType.FSD) ||
+                UserSettings.FsdContentScanTrigger == FsdContentScanTrigger.Disabled) return;
+
+            var scanFolder = GetCorrespondingScanFolder(CurrentFolder.Path);
+            if (!scanFolder.HasValue) return;
+
+            switch (UserSettings.FsdContentScanTrigger)
+            {
+                case FsdContentScanTrigger.AfterUpload:
+                    TriggerContentScan(scanFolder.Value);
+                    break;
+                case FsdContentScanTrigger.AfterConnectionClose:
+                    _doContentScanOn.Add(scanFolder.Value);
+                    break;
+            }
+        }
+
+        private void GetScanFolders(string username, string password)
+        {
+            try
+            {
+                using (var client = new WebClient())
+                {
+                    byte[] response;
+                    var url = string.Format("http://{0}/dump", Connection.Address);
+                    if (username == string.Empty)
+                    {
+                        response = client.DownloadData(url);
+                    }
+                    else
+                    {
+                        byte[] body;
+                        using (var ms = new MemoryStream())
+                        {
+                            var sw = new StreamWriter(ms);
+                            sw.Write("j_username={0}&j_password={1}&Action=Login", username, password);
+                            sw.Flush();
+                            body = ms.ToArray();
+                        }
+                        client.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+                        response = client.UploadData(url, body);
+                    }
+                    var responseString = Encoding.UTF8.GetString(response);
+                    var r = new Regex("<br>Scan Path Id:  (?<ScanPathDd>.*?)<br>Path Id:  (?<PathId>.*?)<br>Path:  (?<Path>.*?)<br>Scan Depth:  (?<ScanDepth>.*?)<br>");
+                    _scanFolders = new List<FsdScanPath>();
+                    foreach (Match m in r.Matches(responseString))
+                    {
+                        try
+                        {
+                            _scanFolders.Add(new FsdScanPath
+                            {
+                                ScanPathId = Int32.Parse(m.Groups["ScanPathId"].Value),
+                                PathId = Int32.Parse(m.Groups["PathId"].Value),
+                                Path = "/" + m.Groups["ScanPathId"].Value.Replace(":\\", "\\").Replace("\\", "/"),
+                                ScanDepth = Int32.Parse(m.Groups["ScanDepth"].Value)
+                            });
+                        }
+                        catch
+                        {
+                        }
+                    }
+
+                    const string sessionCookie = "session=";
+                    var setCookie = client.ResponseHeaders[HttpResponseHeader.SetCookie].Split('&');
+                    var session = setCookie.FirstOrDefault(c => c.StartsWith(sessionCookie));
+                    if (session != null) _httpSessionId = session.Substring(sessionCookie.Length);
+                }
+            }
+            catch
+            {
+                //TODO: ???
+            }
+        }
+
+        private int? GetCorrespondingScanFolder(string path)
+        {
+            foreach (var scanPath in _scanFolders.Where(s => s.Path.StartsWith(path)))
+            {
+                var relativePath = path.Replace(scanPath.Path, String.Empty).Trim('/');
+                var depth = relativePath.Split('/').Length;
+                if (scanPath.ScanDepth >= depth) return scanPath.PathId;
+            }
+            return null;
+        }
+
+        private void TriggerContentScan(int pathid)
+        {
             try
             {
                 using (var client = new WebClient())
@@ -180,14 +278,14 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     using (var ms = new MemoryStream())
                     {
                         var sw = new StreamWriter(ms);
-                        sw.Write("pathid=1&Action=scan");
+                        sw.Write("session={0}&pathid={1}&Action=scan", _httpSessionId, pathid);
                         sw.Flush();
                         body = ms.ToArray();
                     }
                     client.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
                     client.UploadData(string.Format("http://{0}/paths.html", Connection.Address), body);
                 }
-            } 
+            }
             catch
             {
                 //TODO: notification message? "auto scan failed, bla-bla-bla, you have to do this manually"
@@ -268,7 +366,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         protected override void ResumeFile(string targetPath, string sourcePath)
         {
-            //FileManager.AppendFile(targetPath, sourcePath);
             FileManager.UploadFile(targetPath, sourcePath, true);
         }
 
@@ -368,6 +465,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public override void Dispose()
         {
             FileManager.Disconnect();
+            _doContentScanOn.ForEach(TriggerContentScan);
             if (CurrentFolder != null) Connection.Model.DefaultPath = CurrentFolder.Path;
             base.Dispose();
         }

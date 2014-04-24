@@ -25,7 +25,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         private readonly IFileManager _fileManager;
         private readonly CacheManager _cacheManager;
         private readonly IEventAggregator _eventAggregator;
-        private readonly Dictionary<string, FileSystemItem> _profileFileCache = new Dictionary<string, FileSystemItem>();
+        private readonly Dictionary<string, ProfileItemWrapper> _profileFileCache = new Dictionary<string, ProfileItemWrapper>();
 
         private static readonly List<RecognitionInformation> RecognitionKeywords = new List<RecognitionInformation>
             {
@@ -107,19 +107,15 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
             var cacheKey = GetCacheKey(item);
             var storedItem = _cacheManager.GetEntry(cacheKey.Key);
-            if (storedItem != null)
-            {
-                if (storedItem.Content != null)
-                {
-                    item.Title = storedItem.Content.Title;
-                    item.TitleType = storedItem.Content.TitleType;
-                    item.ContentType = storedItem.Content.ContentType;
-                    item.Thumbnail = storedItem.Content.Thumbnail;
-                }
-            }
+            if (storedItem != null) MergeItems(item, storedItem.Content);
 
             if (cacheKey.Item == null)
             {
+                if (item.TitleType == TitleType.Profile)
+                {
+                    var common = _cacheManager.GetEntry(item.Name);
+                    if (common != null) MergeItems(item, common.Content);
+                }
                 item.IsCached = true;
                 item.IsLocked = true;
                 item.LockMessage = cacheKey.ErrorMessage ?? Resx.InaccessibleFileErrorMessage;
@@ -131,6 +127,16 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             }
 
             return item.IsCached;
+        }
+
+        private void MergeItems(FileSystemItem a, FileSystemItem b)
+        {
+            if (b == null) return;
+
+            a.Title = b.Title;
+            a.TitleType = b.TitleType;
+            a.ContentType = b.ContentType;
+            a.Thumbnail = b.Thumbnail;
         }
 
         public CacheEntry<FileSystemItem> RecognizeTitle(FileSystemItem item)
@@ -152,6 +158,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                         cacheItem = _cacheManager.SaveEntry(cacheKey.Key, item, profileExpiration);
                         File.Delete(_fileManager.TempFilePath);
                     }
+                    _cacheManager.SaveEntry(item.Name, item);
                     item.IsCached = true;
                     break;
                 case TitleType.Game:
@@ -225,29 +232,29 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             const string pattern = "{1}FFFE07D1{2}00010000{2}{0}";
             var profileFullPath = string.Format(pattern, item.Name, item.FullPath, _fileManager.Slash);
             string message = null;
-            if (!_profileFileCache.ContainsKey(profileFullPath))
+            if (_profileFileCache.ContainsKey(profileFullPath)) return _profileFileCache[profileFullPath];
+
+            var profilePath = string.Format(pattern, item.Name, item.Path, _fileManager.Slash);
+            var profileItem = _fileManager.GetItemInfo(profilePath);
+            if (profileItem != null)
             {
-                var profilePath = string.Format(pattern, item.Name, item.Path, _fileManager.Slash);
-                var profileItem = _fileManager.GetItemInfo(profilePath);
-                if (profileItem != null)
+                if (profileItem.Type == ItemType.File)
                 {
-                    if (profileItem.Type == ItemType.File)
-                    {
-                        RecognizeType(profileItem);
-                    }
-                    else
-                    {
-                        profileItem = null;
-                        message = Resx.ProfileIsInUseErrorMessage;
-                    }
-                } 
+                    RecognizeType(profileItem);
+                }
                 else
                 {
-                    message = Resx.ProfileDoesntExistErrorMessage;
+                    profileItem = null;
+                    message = Resx.ProfileIsInUseErrorMessage;
                 }
-                _profileFileCache.Add(profileFullPath, profileItem);
+            } 
+            else
+            {
+                message = Resx.ProfileDoesntExistErrorMessage;
             }
-            return new ProfileItemWrapper(profileFullPath, _profileFileCache[profileFullPath], message);
+            var wrapper = new ProfileItemWrapper(profileFullPath, profileItem, message);
+            _profileFileCache.Add(profileFullPath, wrapper);
+            return wrapper;
         }
 
         private CacheComplexKey GetCacheKey(FileSystemItem item)

@@ -48,6 +48,7 @@
                     <converters:NameConverter x:Key="NameConverter"/>
                     <converters:ContentTypeConverter x:Key="ContentTypeConverter"/>
 					<converters:ResxConverter x:Key="ResxConverter"/>
+                    <converters:LocalizedEnumConverter x:Key="LocalizedEnumConverter"/>
                     <converters:PaneHeaderBackgroundConverter x:Key="PaneHeaderBackgroundConverter"
                                                   ActivePaneBrush="{StaticResource DefaultedBorderBrush}"
                                                   InactivePaneBrush="{StaticResource NormalBorderBrush}"/>

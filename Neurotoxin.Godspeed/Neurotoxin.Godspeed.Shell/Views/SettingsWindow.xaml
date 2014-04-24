@@ -6,7 +6,6 @@
                        xmlns:converters="clr-namespace:Neurotoxin.Godspeed.Shell.Converters"
                        xmlns:constants="clr-namespace:Neurotoxin.Godspeed.Shell.Constants"
                        xmlns:lex="http://wpflocalizeextension.codeplex.com"
-                       lex:LocalizeDictionary.DesignCulture="en"
                        lex:ResxLocalizationProvider.DefaultAssembly="Neurotoxin.Godspeed.Shell"
                        lex:ResxLocalizationProvider.DefaultDictionary="Resources"
                        Width="420" Title="{lex:LocText Settings}">
@@ -99,13 +98,31 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
-                    <CheckBox Grid.Row="0" Grid.ColumnSpan="2" Content="{lex:LocText UseRemoteCopy}"
+                    <CheckBox Grid.Row="0" Grid.ColumnSpan="2" Content="{lex:LocText CheckForNewerVersionOnStartup}"
+                              Padding="5,0,0,0" IsChecked="{Binding UseVersionChecker}" Margin="0,0,0,5" />
+
+                    <CheckBox Grid.Row="1" Grid.ColumnSpan="2" Content="{lex:LocText UseRemoteCopy}"
                               Padding="5,0,0,0" IsChecked="{Binding UseRemoteCopy}" />
 
-                    <Image Grid.Row="1" Source="/Resources/info.png" Margin="20,10,5,0" VerticalAlignment="Top" />
-                    <TextBlock Grid.Row="1" Grid.Column="1" TextWrapping="Wrap" Margin="0,10,0,0" Text="{lex:LocText UseRemoteCopyRemarks}" />
+                    <Image Grid.Row="2" Source="/Resources/info.png" Margin="20,10,5,0" VerticalAlignment="Top" />
+                    <TextBlock Grid.Row="2" Grid.Column="1" TextWrapping="Wrap" Margin="0,10,0,10" Text="{lex:LocText UseRemoteCopyRemarks}" />
+
+                    <DockPanel Grid.Row="3" Grid.ColumnSpan="2">
+                        <ComboBox DockPanel.Dock="Right" ItemsSource="{Binding FsdContentScanTriggerOptions}"
+                                  SelectedItem="{Binding FsdContentScanTrigger}" VerticalAlignment="Center">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Converter={StaticResource LocalizedEnumConverter}}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        <TextBlock Text="{lex:Loc TriggerContentScanAfterUpload}" VerticalAlignment="Center" />
+                    </DockPanel>
                 </Grid>
             </TabItem>
             <TabItem Header="{lex:LocText Appearance}">
@@ -132,16 +149,6 @@
                     <CheckBox Grid.Row="1" Grid.ColumnSpan="2" Margin="0,10,0,0"
                               Content="{lex:LocText DisableCustomWindowChrome, Suffix={x:Static constants:Strings.Asterisk}}"
                               Padding="5,0,0,0" IsChecked="{Binding DisableCustomChrome}" />
-                </Grid>
-            </TabItem>
-            <TabItem Header="{lex:LocText Misc}">
-                <Grid Margin="5">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-
-                    <CheckBox Grid.Row="0" Grid.ColumnSpan="2" Content="{lex:LocText CheckForNewerVersionOnStartup}"
-                         Padding="5,0,0,0" IsChecked="{Binding UseVersionChecker}" />
                 </Grid>
             </TabItem>
         </TabControl>

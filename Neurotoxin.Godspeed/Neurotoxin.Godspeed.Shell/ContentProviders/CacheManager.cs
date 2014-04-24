@@ -97,6 +97,8 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                     TempFilePath = tmpPath
                 };
             var hashKey = HashKey(key);
+            _inMemoryCache.Remove(hashKey);
+            _inMemoryCache.Add(hashKey, entry);
             _cacheStore.Update(hashKey, entry);
             return entry;
         }
@@ -116,6 +118,8 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             var item = Get(hashKey);
             item.Content = content;
             item.Expiration = null;
+            _inMemoryCache.Remove(hashKey);
+            _inMemoryCache.Add(hashKey, item);
             _cacheStore.Update(hashKey, item);
         }
 

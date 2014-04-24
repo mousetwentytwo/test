@@ -37,6 +37,13 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             set { Set(UseVersionCheckerKey, value); }
         }
 
+        private const string TriggerContentScanAfterUploadKey = "FsdContentScanTrigger";
+        public static FsdContentScanTrigger FsdContentScanTrigger
+        {
+            get { return Get(TriggerContentScanAfterUploadKey, FsdContentScanTrigger.AfterUpload); }
+            set { Set(TriggerContentScanAfterUploadKey, value); }
+        }
+
         private const string UseRemoteCopyKey = "UseRemoteCopy";
         public static bool UseRemoteCopy
         {

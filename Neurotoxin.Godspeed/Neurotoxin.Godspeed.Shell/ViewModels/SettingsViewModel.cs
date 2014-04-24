@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
+using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 using WPFLocalizeExtension.Engine;
@@ -93,6 +96,24 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #region Operation
 
+        public List<FsdContentScanTrigger> FsdContentScanTriggerOptions { get; set; }
+
+        private const string USEVERSIONCHECKER = "UseVersionChecker";
+        private bool _useVersionChecker;
+        public bool UseVersionChecker
+        {
+            get { return _useVersionChecker; }
+            set { _useVersionChecker = value; NotifyPropertyChanged(USEVERSIONCHECKER); }
+        }
+
+        private const string FSDCONTENTSCANTRIGGER = "FsdContentScanTrigger";
+        private FsdContentScanTrigger _fsdContentScanTrigger;
+        public FsdContentScanTrigger FsdContentScanTrigger
+        {
+            get { return _fsdContentScanTrigger; }
+            set { _fsdContentScanTrigger = value; NotifyPropertyChanged(FSDCONTENTSCANTRIGGER); }
+        }
+
         private const string USEREMOTECOPY = "UseRemoteCopy";
         private bool _useRemoteCopy;
         public bool UseRemoteCopy
@@ -125,18 +146,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #endregion
 
-        #region Misc
-
-        private const string USEVERSIONCHECKER = "UseVersionChecker";
-        private bool _useVersionChecker;
-        public bool UseVersionChecker
-        {
-            get { return _useVersionChecker; }
-            set { _useVersionChecker = value; NotifyPropertyChanged(USEVERSIONCHECKER); }
-        }
-
-        #endregion
-
         #region ClearCacheCommand
 
         public DelegateCommand ClearCacheCommand { get; private set; }
@@ -160,6 +169,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             ClearCacheCommand = new DelegateCommand(ExecuteClearCacheCommand);
 
             ExpirationTimeSpans = new List<int> { 0, 1, 2, 3, 4, 5, 6, 7, 14, 21, 30, 60, 90 };
+            FsdContentScanTriggerOptions = Enum.GetValues(typeof (FsdContentScanTrigger)).ToList<FsdContentScanTrigger>();
             AvailableLanguages = CultureInfo.GetCultures(CultureTypes.AllCultures).Where(c =>
             {
                 try
@@ -184,10 +194,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             XboxLiveContentExpiration = UserSettings.XboxLiveContentExpiration;
             XboxLiveContentInvalidation = UserSettings.XboxLiveContentInvalidation;
             UnknownContentExpiration = UserSettings.UnknownContentExpiration;
+            UseVersionChecker = UserSettings.UseVersionChecker;
+            FsdContentScanTrigger = UserSettings.FsdContentScanTrigger;
             UseRemoteCopy = UserSettings.UseRemoteCopy;
             Language = UserSettings.Language ?? LocalizeDictionary.Instance.Culture;
             DisableCustomChrome = UserSettings.DisableCustomChrome;
-            UseVersionChecker = UserSettings.UseVersionChecker;
         }
 
         public void SaveChanges()
@@ -201,10 +212,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             UserSettings.XboxLiveContentExpiration = XboxLiveContentExpiration;
             UserSettings.XboxLiveContentInvalidation = XboxLiveContentInvalidation;
             UserSettings.UnknownContentExpiration = UnknownContentExpiration;
+            UserSettings.UseVersionChecker = UseVersionChecker;
+            UserSettings.FsdContentScanTrigger = FsdContentScanTrigger;
             UserSettings.UseRemoteCopy = UseRemoteCopy;
             UserSettings.Language = Language;
             UserSettings.DisableCustomChrome = DisableCustomChrome;
-            UserSettings.UseVersionChecker = UseVersionChecker;
         }
     }
 }

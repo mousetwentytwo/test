@@ -953,4 +953,16 @@
   <data name="ItemTypeLink" xml:space="preserve">
     <value>LINK</value>
   </data>
+  <data name="TriggerContentScanAfterUpload" xml:space="preserve">
+    <value>FSD/F3 Content Scan Trigger</value>
+  </data>
+  <data name="FsdContentScanTriggerDisabled" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="FsdContentScanTriggerAfterUpload" xml:space="preserve">
+    <value>After upload</value>
+  </data>
+  <data name="FsdContentScanTriggerAfterConnectionClose" xml:space="preserve">
+    <value>After connection close</value>
+  </data>
 </root>
