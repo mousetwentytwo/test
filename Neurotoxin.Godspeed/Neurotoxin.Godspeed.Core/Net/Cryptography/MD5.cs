@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Neurotoxin.Godspeed.Core.Net;
 
-namespace Neurotoxin.Godspeed.Core.Security {
+namespace Neurotoxin.Godspeed.Core.Net.Cryptography {
     /// <summary>
     /// Implementation of the non-standard MD5 command
     /// </summary>
@@ -18,7 +17,7 @@ namespace Neurotoxin.Godspeed.Core.Security {
         /// <param name="client">FtpClient Object</param>
         /// <param name="path">Full or relative path to remote file</param>
         /// <returns>Server response, presumably the MD5 hash.</returns>
-        public static string GetMD5(this Neurotoxin.Godspeed.Core.Net.FtpClient client, string path) {
+        public static string GetMD5(this FtpClient client, string path) {
             // http://tools.ietf.org/html/draft-twine-ftpmd5-00#section-3.1
             FtpReply reply;
             string response;
@@ -43,7 +42,7 @@ namespace Neurotoxin.Godspeed.Core.Security {
         /// <param name="callback">AsyncCallback</param>
         /// <param name="state">State Object</param>
         /// <returns>IAsyncResult</returns>
-        public static IAsyncResult BeginGetMD5(this Neurotoxin.Godspeed.Core.Net.FtpClient client, string path, AsyncCallback callback, object state) {
+        public static IAsyncResult BeginGetMD5(this FtpClient client, string path, AsyncCallback callback, object state) {
             AsyncGetMD5 func = new AsyncGetMD5(client.GetMD5);
             IAsyncResult ar = func.BeginInvoke(path, callback, state); ;
 

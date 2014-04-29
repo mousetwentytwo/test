@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Security.Cryptography;
+using System.Security.Policy;
+using Neurotoxin.Godspeed.Core.Security;
 
 namespace Neurotoxin.Godspeed.Core.Net {
     /// <summary>
@@ -82,7 +84,9 @@ namespace Neurotoxin.Godspeed.Core.Net {
                         hashAlg = new MD5CryptoServiceProvider();
                         break;
                     case FtpHashAlgorithm.CRC:
-                        throw new NotImplementedException("There is no built in support for computing CRC hashes.");
+                        hashAlg = new Crc32();
+                        break;
+                        //throw new NotImplementedException("There is no built in support for computing CRC hashes.");
                     default:
                         throw new NotImplementedException("Unknown hash algorithm: " + m_algorithm.ToString());
                 }

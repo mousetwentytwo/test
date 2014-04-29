@@ -1,34 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
-using Neurotoxin.Godspeed.Core.Net;
 
-namespace Neurotoxin.Godspeed.Core.Security {
+namespace Neurotoxin.Godspeed.Core.Net.Cryptography {
     /// <summary>
-    /// Implementation of the non-standard XSHA1 command
+    /// Implementation of the non-standard XSHA512 command
     /// </summary>
-    public static class XSHA1 {
-        delegate string AsyncGetXSHA1(string path);
-        static Dictionary<IAsyncResult, AsyncGetXSHA1> m_asyncmethods = new Dictionary<IAsyncResult, AsyncGetXSHA1>();
+    public static class XSHA512 {
+        delegate string AsyncGetXSHA512(string path);
+        static Dictionary<IAsyncResult, AsyncGetXSHA512> m_asyncmethods = new Dictionary<IAsyncResult, AsyncGetXSHA512>();
 
         /// <summary>
-        /// Gets the SHA-1 hash of the specified file using XSHA1. This is a non-standard extension
+        /// Gets the SHA-512 hash of the specified file using XSHA512. This is a non-standard extension
         /// to the protocol and may or may not work. A FtpCommandException will be
         /// thrown if the command fails.
         /// </summary>
         /// <param name="client">FtpClient Object</param>
         /// <param name="path">Full or relative path to remote file</param>
-        /// <returns>Server response, presumably the SHA-1 hash.</returns>
-        public static string GetXSHA1(this Neurotoxin.Godspeed.Core.Net.FtpClient client, string path) {
+        /// <returns>Server response, presumably the SHA-512 hash.</returns>
+        public static string GetXSHA512(this FtpClient client, string path) {
             FtpReply reply;
 
-            if (!(reply = client.Execute("XSHA1 {0}", path)).Success)
+            if (!(reply = client.Execute("XSHA512 {0}", path)).Success)
                 throw new FtpCommandException(reply);
 
             return reply.Message;
         }
 
         /// <summary>
-        /// Asynchronusly retrieve a SHA1 hash. The XSHA1 command is non-standard
+        /// Asynchronusly retrieve a SHA512 hash. The XSHA512 command is non-standard
         /// and not guaranteed to work.
         /// </summary>
         /// <param name="client">FtpClient Object</param>
@@ -36,10 +35,10 @@ namespace Neurotoxin.Godspeed.Core.Security {
         /// <param name="callback">AsyncCallback</param>
         /// <param name="state">State Object</param>
         /// <returns>IAsyncResult</returns>
-        public static IAsyncResult BeginGetXSHA1(this Neurotoxin.Godspeed.Core.Net.FtpClient client, string path, AsyncCallback callback, object state) {
-            AsyncGetXSHA1 func = new AsyncGetXSHA1(client.GetXSHA1);
+        public static IAsyncResult BeginGetXSHA512(this FtpClient client, string path, AsyncCallback callback, object state) {
+            AsyncGetXSHA512 func = new AsyncGetXSHA512(client.GetXSHA512);
             IAsyncResult ar = func.BeginInvoke(path, callback, state); ;
-
+            
             lock (m_asyncmethods) {
                 m_asyncmethods.Add(ar, func);
             }
@@ -48,12 +47,12 @@ namespace Neurotoxin.Godspeed.Core.Security {
         }
 
         /// <summary>
-        /// Ends an asynchronous call to BeginGetXSHA1()
+        /// Ends an asynchronous call to BeginGetXSHA512()
         /// </summary>
-        /// <param name="ar">IAsyncResult returned from BeginGetXSHA1()</param>
-        /// <returns>The SHA-1 hash of the specified file.</returns>
-        public static string EndGetXSHA1(IAsyncResult ar) {
-            AsyncGetXSHA1 func = null;
+        /// <param name="ar">IAsyncResult returned from BeginGetXSHA512()</param>
+        /// <returns>The SHA-512 hash of the specified file.</returns>
+        public static string EndGetXSHA512(IAsyncResult ar) {
+            AsyncGetXSHA512 func = null;
 
             lock (m_asyncmethods) {
                 if (!m_asyncmethods.ContainsKey(ar))

@@ -106,6 +106,14 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             set { _useVersionChecker = value; NotifyPropertyChanged(USEVERSIONCHECKER); }
         }
 
+        private const string VERIFYFILEHASHAFTERFTPUPLOAD = "VerifyFileHashAfterFtpUpload";
+        private bool _verifyFileHashAfterFtpUpload;
+        public bool VerifyFileHashAfterFtpUpload
+        {
+            get { return _verifyFileHashAfterFtpUpload; }
+            set { _verifyFileHashAfterFtpUpload = value; NotifyPropertyChanged(VERIFYFILEHASHAFTERFTPUPLOAD); }
+        }
+
         private const string FSDCONTENTSCANTRIGGER = "FsdContentScanTrigger";
         private FsdContentScanTrigger _fsdContentScanTrigger;
         public FsdContentScanTrigger FsdContentScanTrigger

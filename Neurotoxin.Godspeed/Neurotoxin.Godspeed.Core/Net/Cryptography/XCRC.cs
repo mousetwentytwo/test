@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Neurotoxin.Godspeed.Core.Net;
 
-namespace Neurotoxin.Godspeed.Core.Security {
+namespace Neurotoxin.Godspeed.Core.Net.Cryptography {
     /// <summary>
     /// Implementation of the non-standard XCRC command
     /// </summary>
@@ -17,7 +16,7 @@ namespace Neurotoxin.Godspeed.Core.Security {
         /// <param name="client">FtpClient object</param>
         /// <param name="path">The path of the file you'd like the server to compute the CRC value for.</param>
         /// <returns>The response from the server, typically the CRC value. FtpCommandException thrown on error</returns>
-        public static string GetXCRC(this Neurotoxin.Godspeed.Core.Net.FtpClient client, string path) {
+        public static string GetXCRC(this FtpClient client, string path) {
             FtpReply reply;
             
             if (!(reply = client.Execute("XCRC {0}", path)).Success)
@@ -35,7 +34,7 @@ namespace Neurotoxin.Godspeed.Core.Security {
         /// <param name="callback">AsyncCallback</param>
         /// <param name="state">State Object</param>
         /// <returns>IAsyncResult</returns>
-        public static IAsyncResult BeginGetXCRC(this Neurotoxin.Godspeed.Core.Net.FtpClient client, string path, AsyncCallback callback, object state) {
+        public static IAsyncResult BeginGetXCRC(this FtpClient client, string path, AsyncCallback callback, object state) {
             AsyncGetXCRC func = new AsyncGetXCRC(client.GetXCRC);
             IAsyncResult ar = func.BeginInvoke(path, callback, state); ;
 

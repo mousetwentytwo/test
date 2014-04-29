@@ -22,3 +22,4 @@
 * ADDED: XeXMenu and DashLaunch FTP cannot be access in PASV anymore
 * ADDED: Hungarian language
 * ADDED: Better support of reparse points
+* ADDED: FSD/F3 Content Scan Trigger

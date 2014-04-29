@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Neurotoxin.Godspeed.Core.Net;
 
-namespace Neurotoxin.Godspeed.Core.Security {
+namespace Neurotoxin.Godspeed.Core.Net.Cryptography {
     /// <summary>
     /// Retrieve checksum of file on the server
     /// </summary>
@@ -25,8 +24,7 @@ namespace Neurotoxin.Godspeed.Core.Security {
         /// <returns>FtpHash object containing the value and algorithm. Use the IsValid property to
         /// determine if this command was successfull. FtpCommandException's can be thrown from
         /// the underlying calls.</returns>
-        /// <example><code source="..\Examples\GetChecksum.cs" lang="cs" /></example>
-        public static FtpHash GetChecksum(this Neurotoxin.Godspeed.Core.Net.FtpClient client, string path) {
+        public static FtpHash GetChecksum(this FtpClient client, string path) {
             if (client.HasFeature(FtpCapability.HASH)) {
                 return client.GetHash(path);
             }
@@ -71,7 +69,7 @@ namespace Neurotoxin.Godspeed.Core.Security {
         /// <param name="callback">AsyncCallback</param>
         /// <param name="state">State Object</param>
         /// <returns>IAsyncResult</returns>
-        public static IAsyncResult BeginGetChecksum(this Neurotoxin.Godspeed.Core.Net.FtpClient client, string path, AsyncCallback callback, object state) {
+        public static IAsyncResult BeginGetChecksum(this FtpClient client, string path, AsyncCallback callback, object state) {
             AsyncGetChecksum func = new AsyncGetChecksum(client.GetChecksum);
             IAsyncResult ar = func.BeginInvoke(path, callback, state); ;
 

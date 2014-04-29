@@ -2423,6 +2423,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Verify file hash after FTP upload.
+        /// </summary>
+        internal static string VerifyFileHashAfterFtpUpload {
+            get {
+                return ResourceManager.GetString("VerifyFileHashAfterFtpUpload", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Videos.
         /// </summary>
         internal static string VideoPlural {

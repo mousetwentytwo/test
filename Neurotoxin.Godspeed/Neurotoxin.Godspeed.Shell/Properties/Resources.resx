@@ -986,4 +986,7 @@
   <data name="DisableOptionAll" xml:space="preserve">
     <value>For all connection</value>
   </data>
+  <data name="VerifyFileHashAfterFtpUpload" xml:space="preserve">
+    <value>Verify file hash after FTP upload</value>
+  </data>
 </root>
