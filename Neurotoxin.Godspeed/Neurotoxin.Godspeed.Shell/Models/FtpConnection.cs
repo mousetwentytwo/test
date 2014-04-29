@@ -12,6 +12,8 @@ namespace Neurotoxin.Godspeed.Shell.Models
         public string Password { get; set; }
         public string DefaultPath { get; set; }
         public bool UsePassiveMode { get; set; }
+
+        public bool IsHttpAccessDisabled { get; set; }
         public string HttpUsername { get; set; }
         public string HttpPassword { get; set; }
 
@@ -27,6 +29,7 @@ namespace Neurotoxin.Godspeed.Shell.Models
                            Password = Password,
                            DefaultPath = DefaultPath,
                            UsePassiveMode = UsePassiveMode,
+                           IsHttpAccessDisabled = IsHttpAccessDisabled,
                            HttpUsername = HttpUsername,
                            HttpPassword = HttpPassword
                        };

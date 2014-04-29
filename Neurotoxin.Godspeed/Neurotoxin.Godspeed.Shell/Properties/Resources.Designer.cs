@@ -603,6 +603,51 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Do you want FSD/F3 Content Scan Trigger to be disabled?.
+        /// </summary>
+        internal static string DisableFsdContentScanTriggerMessage {
+            get {
+                return ResourceManager.GetString("DisableFsdContentScanTriggerMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disable FSD/F3 Content Scan Trigger.
+        /// </summary>
+        internal static string DisableFsdContentScanTriggerTitle {
+            get {
+                return ResourceManager.GetString("DisableFsdContentScanTriggerTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to For all connection.
+        /// </summary>
+        internal static string DisableOptionAll {
+            get {
+                return ResourceManager.GetString("DisableOptionAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No.
+        /// </summary>
+        internal static string DisableOptionNone {
+            get {
+                return ResourceManager.GetString("DisableOptionNone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to For this connection only.
+        /// </summary>
+        internal static string DisableOptionSingle {
+            get {
+                return ResourceManager.GetString("DisableOptionSingle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Disconnect.
         /// </summary>
         internal static string Disconnect {
@@ -1139,6 +1184,24 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         internal static string LocalFileSystemFreeSpace {
             get {
                 return ResourceManager.GetString("LocalFileSystemFreeSpace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Login.
+        /// </summary>
+        internal static string Login {
+            get {
+                return ResourceManager.GetString("Login", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The HTTP Authentication with non-default username and/or password is enabled in your FreestyleDash. If you want GODspeed to be able to notify FSD about content changes please enter the corresponding login information:.
+        /// </summary>
+        internal static string LoginToFreestyleDashHttpServer {
+            get {
+                return ResourceManager.GetString("LoginToFreestyleDashHttpServer", resourceCulture);
             }
         }
         

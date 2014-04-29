@@ -106,10 +106,12 @@
     <Compile Include="Constants\CopyAction.cs" />
     <Compile Include="Constants\CopyActionScope.cs" />
     <Compile Include="Constants\CopyMode.cs" />
+    <Compile Include="Constants\DisableOption.cs" />
     <Compile Include="Constants\ErrorResolutionBehavior.cs" />
     <Compile Include="Constants\FsdContentScanTrigger.cs" />
     <Compile Include="Constants\FtpServerType.cs" />
     <Compile Include="Constants\FtpTransferDirection.cs" />
+    <Compile Include="Constants\InputDialogMode.cs" />
     <Compile Include="Constants\ItemType.cs" />
     <Compile Include="Constants\MessageFlags.cs" />
     <Compile Include="Constants\Modules.cs" />
@@ -143,6 +145,7 @@
     <Compile Include="Constants\MessageCommand.cs" />
     <Compile Include="Constants\MessageIcon.cs" />
     <Compile Include="Events\CachePopulatedEvent.cs" />
+    <Compile Include="Events\ConnectionDetailsChangedEvent.cs" />
     <Compile Include="Events\MigrationFinishedEventHandler.cs" />
     <Compile Include="Events\CacheMigrationEvent.cs" />
     <Compile Include="Events\ShellInitializedEvent.cs" />
@@ -158,6 +161,7 @@
     <Compile Include="Events\ViewModelGeneratedEvent.cs" />
     <Compile Include="Exceptions\SomethingWentWrongException.cs" />
     <Compile Include="Exceptions\TransferException.cs" />
+    <Compile Include="Extensions\ResourcesExtension.cs" />
     <Compile Include="GlobalVariables.cs" />
     <Compile Include="Helpers\SanityChecker.cs" />
     <Compile Include="Interfaces\IFileListPaneViewModel.cs" />
@@ -166,7 +170,9 @@
     <Compile Include="Models\CacheComplexKey.cs" />
     <Compile Include="Models\FileExistenceInfo.cs" />
     <Compile Include="Models\FileListPaneSettings.cs" />
+    <Compile Include="Models\FsdScanPath.cs" />
     <Compile Include="Models\LoadDataAsyncParameters.cs" />
+    <Compile Include="Models\LoginDialogResult.cs" />
     <Compile Include="Models\ProfileItemWrapper.cs" />
     <Compile Include="Models\UserMessageCommandParameter.cs" />
     <Compile Include="Primitives\BorderlessWindow.cs" />
@@ -190,6 +196,7 @@
     <Compile Include="Constants\FileBlockHealthStatus.cs" />
     <Compile Include="ViewModels\GpdFileEntryViewModel.cs" />
     <Compile Include="ViewModels\GpdFileViewModel.cs" />
+    <Compile Include="ViewModels\InputDialogViewModel.cs" />
     <Compile Include="ViewModels\NoMessagesViewModel.cs" />
     <Compile Include="ViewModels\FileBlockViewModel.cs" />
     <Compile Include="ViewModels\FileEntryViewModel.cs" />
@@ -225,6 +232,9 @@
     </Compile>
     <Compile Include="Views\Controls\ProgressNotificationBar.xaml.cs">
       <DependentUpon>ProgressNotificationBar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Dialogs\LoginDialog.xaml.cs">
+      <DependentUpon>LoginDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Dialogs\UserStatisticsParticipationDialog.xaml.cs">
       <DependentUpon>UserStatisticsParticipationDialog.xaml</DependentUpon>
@@ -338,6 +348,10 @@
     <Page Include="Views\Controls\ProgressNotificationBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Dialogs\LoginDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Dialogs\UserStatisticsParticipationDialog.xaml">
       <Generator>MSBuild:Compile</Generator>

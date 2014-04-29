@@ -79,6 +79,13 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             set { Model.UsePassiveMode = value; NotifyPropertyChanged(USEPASSIVEMODE); }
         }
 
+        private const string ISHTTPACCESSDISABLED = "IsHttpAccessDisabled";
+        public bool IsHttpAccessDisabled
+        {
+            get { return Model.IsHttpAccessDisabled; }
+            set { Model.IsHttpAccessDisabled = value; NotifyPropertyChanged(ISHTTPACCESSDISABLED); }
+        }
+
         private const string HTTPUSERNAME = "HttpUsername";
         public string HttpUsername
         {

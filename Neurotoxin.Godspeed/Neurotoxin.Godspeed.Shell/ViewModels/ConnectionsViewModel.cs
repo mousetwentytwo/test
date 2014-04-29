@@ -94,6 +94,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             ConnectCommand = new DelegateCommand<object>(ExecuteConnectCommand, CanExecuteConnectCommand);
             Items = new ObservableCollection<IStoredConnectionViewModel>();
+
+            eventAggregator.GetEvent<ConnectionDetailsChangedEvent>().Subscribe(OnConnectionDetailsChanged);
         }
 
         public override void LoadDataAsync(LoadCommand cmd, LoadDataAsyncParameters cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase, Exception> error = null)
@@ -131,6 +133,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             if (e.ActivePane == this) return;
             _previouslyFocusedItem = SelectedItem;
             SelectedItem = null;
+        }
+
+        private void OnConnectionDetailsChanged(ConnectionDetailsChangedEventArgs e)
+        {
+            var ftpConnection = e.Connection as FtpConnectionItemViewModel;
+            if (ftpConnection != null) Save(ftpConnection);
         }
 
         public override void RaiseCanExecuteChanges()

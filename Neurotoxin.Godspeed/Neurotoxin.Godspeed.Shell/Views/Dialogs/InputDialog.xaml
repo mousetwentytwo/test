@@ -3,35 +3,45 @@
                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                        xmlns:primitives="clr-namespace:Neurotoxin.Godspeed.Shell.Primitives"
                        xmlns:lex="http://wpflocalizeextension.codeplex.com"
-                       lex:LocalizeDictionary.DesignCulture="en-US"
+                       lex:LocalizeDictionary.DesignCulture="hu"
                        lex:ResxLocalizationProvider.DefaultAssembly="Neurotoxin.Godspeed.Shell"
                        lex:ResxLocalizationProvider.DefaultDictionary="Resources"
-                       Width="400">
+                       Width="400" Title="{Binding Title}">
     <Grid x:Name="LayoutRoot">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.ColumnSpan="4" Grid.Row="0" Margin="5,0,0,5" x:Name="Message" TextWrapping="Wrap" />
-
-        <ComboBox Grid.ColumnSpan="4" Grid.Row="1" Margin="5,0,0,5" x:Name="Input" IsEditable="True" TextSearch.TextPath="DisplayName">
+        <TextBlock Grid.Row="0" Margin="5,0,0,10" Text="{Binding Message}" TextWrapping="Wrap" />
+        
+        <ComboBox Grid.Row="1" Margin="5,0,0,5" x:Name="ComboBox" IsEditable="True" TextSearch.TextPath="DisplayName"
+                  Visibility="{Binding IsComboBox, Converter={StaticResource BoolToVis}}" ItemsSource="{Binding Options}" 
+                  Text="{Binding DefaultValue, Mode=OneWay}">
             <ComboBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding DisplayName}"/>
                 </DataTemplate>
             </ComboBox.ItemTemplate>
         </ComboBox>
+        
+        <ItemsControl Grid.Row="1" Margin="15,0,0,5" x:Name="List" ItemsSource="{Binding Options}"
+                      Visibility="{Binding IsRadioGroup, Converter={StaticResource BoolToVis}}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <DockPanel Margin="0,0,0,5">
+                        <RadioButton GroupName="Options" x:Name="Radio" DockPanel.Dock="Left" Margin="0,0,5,0" IsChecked="{Binding IsSelected, Mode=TwoWay}" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center"/>
+                    </DockPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
 
-        <Button Grid.Column="1" Grid.Row="2" Content="{lex:LocText Ok}" Margin="5" Click="OkButtonClick"/>
-        <Button Grid.Column="2" Grid.Row="2" Content="{lex:LocText Cancel}" Margin="5" Click="CancelButtonClick"/>
+        <StackPanel Grid.Row="2" HorizontalAlignment="Center" Orientation="Horizontal">
+            <Button Content="{lex:LocText Ok}" Margin="5" MinWidth="75" Click="OkButtonClick"/>
+            <Button Content="{lex:LocText Cancel}" Margin="5" MinWidth="75" Click="CancelButtonClick"/>
+        </StackPanel>
 
     </Grid>
 </primitives:DialogBase>

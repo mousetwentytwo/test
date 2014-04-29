@@ -679,18 +679,21 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
                 {
                     if (otherAvatarAwards != null) pec.AddFile(name, otherAvatarAwards.Binary.ReadAll());
 
-                    //Add gpd and title
-                    var otherBinary = otherGame.Binary.ReadAll();
+                    if (otherGame != null)
+                    {
+                        //Add gpd and title
+                        var otherBinary = otherGame.Binary.ReadAll();
 
-                    //File.WriteAllBytes(@"d:\NTX-CNT\Contour\Resources\mergeable\aktualis\q\" + i + "_" + name, otherBinary);
+                        //File.WriteAllBytes(@"d:\NTX-CNT\Contour\Resources\mergeable\aktualis\q\" + i + "_" + name, otherBinary);
 
-                    fileEntry = AddFile(name, otherBinary);
-                    CreateGameFileModel(fileEntry, otherBinary, true);
+                        fileEntry = AddFile(name, otherBinary);
+                        CreateGameFileModel(fileEntry, otherBinary, true);
 
-                    var tid = title.TitleId.ToArray();
-                    Array.Reverse(tid);
-                    var id = BitConverter.ToUInt32(tid, 0);
-                    ProfileInfo.AddNewEntry<TitleEntry>(EntryType.Title, title.AllBytes, id);
+                        var tid = title.TitleId.ToArray();
+                        Array.Reverse(tid);
+                        var id = BitConverter.ToUInt32(tid, 0);
+                        ProfileInfo.AddNewEntry<TitleEntry>(EntryType.Title, title.AllBytes, id);
+                    }
                 }
                 watch.Stop();
                 LogHelper.NotifyStatusBarChange(++i);
@@ -825,6 +828,7 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
 
         private FileEntry AllocateNewFileEntry()
         {
+            HashEntry he = null;
             var block = VolumeDescriptor.FileTableBlockNum;
             for (var x = 0; x < VolumeDescriptor.FileTableBlockCount; x++)
             {
@@ -843,10 +847,32 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
                     fe.AccessTimeStamp = date;
                     return fe;
                 }
-                var he = GetHashEntry(block);
+                he = GetHashEntry(block);
                 block = he.NextBlock;
             }
-            throw new Exception("No space left for a new file!");
+
+            var blocks = AllocateBlocks(1);
+            block = blocks[0];
+            he.NextBlock = block;
+
+            var blockAddr = GetRealAddressOfBlock(block);
+            var fileEntry = CreateNewFileEntry(blockAddr, 0, VolumeDescriptor.FileTableBlockCount);
+            VolumeDescriptor.FileTableBlockCount++;
+            return fileEntry;
+        }
+
+        private FileEntry CreateNewFileEntry(int currentAddr, int index, int tableNum)
+        {
+            var addr = currentAddr + index * 0x40;
+            var fe = ModelFactory.GetModel<FileEntry>(Binary, addr);
+
+            if (fe.Name != String.Empty) return null;
+
+            fe.FileEntryAddress = addr;
+            fe.EntryIndex = (tableNum * 0x40) + index;
+            fe.CreatedTimeStamp = DateTime.Now.ToFatFileTime();
+            fe.AccessTimeStamp = DateTime.Now.ToFatFileTime();
+            return fe;
         }
 
         public void RemoveFile(string path)

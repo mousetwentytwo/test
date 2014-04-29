@@ -965,4 +965,25 @@
   <data name="FsdContentScanTriggerAfterConnectionClose" xml:space="preserve">
     <value>After connection close</value>
   </data>
+  <data name="Login" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="LoginToFreestyleDashHttpServer" xml:space="preserve">
+    <value>The HTTP Authentication with non-default username and/or password is enabled in your FreestyleDash. If you want GODspeed to be able to notify FSD about content changes please enter the corresponding login information:</value>
+  </data>
+  <data name="DisableFsdContentScanTriggerTitle" xml:space="preserve">
+    <value>Disable FSD/F3 Content Scan Trigger</value>
+  </data>
+  <data name="DisableFsdContentScanTriggerMessage" xml:space="preserve">
+    <value>Do you want FSD/F3 Content Scan Trigger to be disabled?</value>
+  </data>
+  <data name="DisableOptionNone" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="DisableOptionSingle" xml:space="preserve">
+    <value>For this connection only</value>
+  </data>
+  <data name="DisableOptionAll" xml:space="preserve">
+    <value>For all connection</value>
+  </data>
 </root>

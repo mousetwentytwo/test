@@ -16,14 +16,16 @@ using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
 using Neurotoxin.Godspeed.Shell.Exceptions;
+using Neurotoxin.Godspeed.Shell.Extensions;
 using Neurotoxin.Godspeed.Shell.Models;
+using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
     public class FtpContentViewModel : FileListPaneViewModelBase<FtpContent>
     {
-        private HashSet<int> _doContentScanOn;
+        private readonly HashSet<int> _doContentScanOn = new HashSet<int>();
         private readonly Dictionary<string, string> _driveLabelCache = new Dictionary<string, string>();
         private List<FsdScanPath> _scanFolders;
         private string _httpSessionId;
@@ -58,6 +60,16 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             get
             {
                 return string.Format(Resx.ConnectionLostMessage, Connection.Name);
+            }
+        }
+
+        private bool IsContentScanTriggerAvailable
+        {
+            get
+            {
+                return UserSettings.FsdContentScanTrigger != FsdContentScanTrigger.Disabled &&
+                       Connection != null && !Connection.IsHttpAccessDisabled &&
+                       (FileManager.ServerType == FtpServerType.FSD || FileManager.ServerType == FtpServerType.F3);
             }
         }
 
@@ -161,14 +173,95 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
             Drive = drive ?? Drives.First();
 
-            if (UserSettings.FsdContentScanTrigger != FsdContentScanTrigger.Disabled)
+            if (!IsContentScanTriggerAvailable) return;
+            var username = Connection.HttpUsername;
+            var password = Connection.Password;
+            if (username == null)
             {
-                if (Connection.HttpUsername == null)
+                switch (FileManager.ServerType)
                 {
-                    //TODO: prompt and save
+                    case FtpServerType.F3:
+                        username = password = "f3http";
+                        break;
+                    case FtpServerType.FSD:
+                        username = password = "fsdhttp";
+                        break;
+                    default:
+                        throw new NotSupportedException("Invalid server type: " + FileManager.ServerType);
                 }
-                GetScanFolders(Connection.HttpUsername, Connection.HttpPassword);
             }
+
+            switch (GetScanFolders(username, password))
+            {
+                case HttpStatusCode.OK:
+                    return;
+                case HttpStatusCode.Unauthorized:
+                    bool result;
+                    do
+                    {
+                        var login = LoginDialog.Show(Resx.Login, Resx.LoginToFreestyleDashHttpServer, username, password);
+                        if (login == null)
+                        {
+                            var answer = (DisableOption)InputDialog.ShowList(Resx.DisableFsdContentScanTriggerTitle, Resx.DisableFsdContentScanTriggerMessage, DisableOption.None, GetDisableOptionList());
+                            switch (answer)
+                            {
+                                case DisableOption.All:
+                                    UserSettings.FsdContentScanTrigger = FsdContentScanTrigger.Disabled;
+                                    break;
+                                case DisableOption.Single:
+                                    Connection.IsHttpAccessDisabled = true;
+                                    break;
+                            }
+                            result = true;
+                        }
+                        else
+                        {
+                            var status = GetScanFolders(username, password);
+                            if (status != HttpStatusCode.OK && status != HttpStatusCode.Unauthorized)
+                            {
+                                //TODO: handle different result then the previous one
+                                result = true;
+                            }
+                            else
+                            {
+                                result = status != HttpStatusCode.Unauthorized;
+                                if (result && login.RememberPassword)
+                                {
+                                    Connection.HttpUsername = username;
+                                    Connection.HttpPassword = password;
+                                    eventAggregator.GetEvent<ConnectionDetailsChangedEvent>().Publish(new ConnectionDetailsChangedEventArgs(Connection));
+                                }
+                            }
+                        }
+                    } while (!result);
+                    break;
+                case HttpStatusCode.RequestTimeout:
+                    {
+                        var answer = (DisableOption)InputDialog.ShowList(Resx.DisableFsdContentScanTriggerTitle, Resx.DisableFsdContentScanTriggerMessage, DisableOption.None, GetDisableOptionList());
+                        switch (answer)
+                        {
+                            case DisableOption.All:
+                                UserSettings.FsdContentScanTrigger = FsdContentScanTrigger.Disabled;
+                                break;
+                            case DisableOption.Single:
+                                Connection.IsHttpAccessDisabled = true;
+                                break;
+                        }
+                    }
+                    break;
+            }
+        }
+
+        private List<InputDialogOptionViewModel> GetDisableOptionList()
+        {
+            return Enum.GetValues(typeof (DisableOption))
+                       .Cast<DisableOption>()
+                       .Select(o => new InputDialogOptionViewModel
+                       {
+                           Value = o,
+                           DisplayName = Resx.ResourceManager.EnumToTranslation(o)
+                       })
+                       .ToList();
         }
 
         public void RestoreConnection()
@@ -183,8 +276,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public override void FinishTransferAsTarget()
         {
-            if ((FileManager.ServerType != FtpServerType.F3 && FileManager.ServerType != FtpServerType.FSD) ||
-                UserSettings.FsdContentScanTrigger == FsdContentScanTrigger.Disabled) return;
+            if (!IsContentScanTriggerAvailable) return;
 
             var scanFolder = GetCorrespondingScanFolder(CurrentFolder.Path);
             if (!scanFolder.HasValue) return;
@@ -200,14 +292,14 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
         }
 
-        private void GetScanFolders(string username, string password)
+        private HttpStatusCode GetScanFolders(string username, string password)
         {
             try
             {
                 using (var client = new WebClient())
                 {
                     byte[] response;
-                    var url = string.Format("http://{0}/dump", Connection.Address);
+                    var url = string.Format("http://{0}/paths.html", Connection.Address);
                     if (username == string.Empty)
                     {
                         response = client.DownloadData(url);
@@ -226,7 +318,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         response = client.UploadData(url, body);
                     }
                     var responseString = Encoding.UTF8.GetString(response);
-                    var r = new Regex("<br>Scan Path Id:  (?<ScanPathDd>.*?)<br>Path Id:  (?<PathId>.*?)<br>Path:  (?<Path>.*?)<br>Scan Depth:  (?<ScanDepth>.*?)<br>");
+                    if (responseString.Contains("j_password")) return HttpStatusCode.Unauthorized;
+
+                    var r = new Regex(@"<tr.*?pathid:'(<?PathId>\d+)'.*?depth"">(<?ScanDepth>\d+).*?path"">(<?Path>.*?)</td>", RegexOptions.Singleline);
                     _scanFolders = new List<FsdScanPath>();
                     foreach (Match m in r.Matches(responseString))
                     {
@@ -234,9 +328,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         {
                             _scanFolders.Add(new FsdScanPath
                             {
-                                ScanPathId = Int32.Parse(m.Groups["ScanPathId"].Value),
                                 PathId = Int32.Parse(m.Groups["PathId"].Value),
-                                Path = "/" + m.Groups["ScanPathId"].Value.Replace(":\\", "\\").Replace("\\", "/"),
+                                Path = "/" + m.Groups["Path"].Value.Replace(":\\", "\\").Replace("\\", "/"),
                                 ScanDepth = Int32.Parse(m.Groups["ScanDepth"].Value)
                             });
                         }
@@ -249,11 +342,13 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     var setCookie = client.ResponseHeaders[HttpResponseHeader.SetCookie].Split('&');
                     var session = setCookie.FirstOrDefault(c => c.StartsWith(sessionCookie));
                     if (session != null) _httpSessionId = session.Substring(sessionCookie.Length);
+
+                    return HttpStatusCode.OK;
                 }
             }
             catch
             {
-                //TODO: ???
+                return HttpStatusCode.RequestTimeout;
             }
         }
 

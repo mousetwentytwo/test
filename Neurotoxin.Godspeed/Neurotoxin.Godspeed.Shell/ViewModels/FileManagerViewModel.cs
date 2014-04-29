@@ -598,10 +598,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 {
                     Value = d,
                     DisplayName = TitleRecognizer.GetTitle(d)
-                });
+                }).ToList();
 
-            var name = InputDialog.Show(Resx.AddNewFolder, Resx.FolderName + Strings.Colon, string.Empty, suggestion);
-            if (string.IsNullOrEmpty(name))
+            var name = InputDialog.ShowText(Resx.AddNewFolder, Resx.FolderName + Strings.Colon, string.Empty, suggestion);
+            if (name == null) return;
+            if (name == string.Empty)
             {
                 NotificationMessage.ShowMessage(Resx.AddNewFolder, Resx.CannotCreateFolderWithNoName);
                 return;
@@ -1208,7 +1209,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private static void RenameExistingFile(TransferException exception, CopyAction? action, Action<CopyAction?, string> rename, Action<Exception> chooseDifferentOption)
         {
-            var name = InputDialog.Show(Resx.Rename, Resx.NewName + Strings.Colon , Path.GetFileName(exception.TargetFile));
+            var name = InputDialog.ShowText(Resx.Rename, Resx.NewName + Strings.Colon , Path.GetFileName(exception.TargetFile));
             if (!string.IsNullOrEmpty(name))
             {
                 rename.Invoke(action, name);

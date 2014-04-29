@@ -31,7 +31,9 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 {
                     var sw = new Stopwatch();
                     sw.Start();
-                    _cacheStore.Keys.Where(k => k.StartsWith(KeyPrefix)).ForEach(k => Get(k));
+                    var keys = _cacheStore.Keys;
+                    Debug.WriteLine("[DEBUG] {0} keys in cache", keys.Length);
+                    keys.Where(k => k.StartsWith(KeyPrefix)).ForEach(k => Get(k));
                     sw.Stop();
                     _cachePopupated = true;
                     Debug.WriteLine("Cache fetched [{0}]", sw.Elapsed);

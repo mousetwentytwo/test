@@ -6,8 +6,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
     {
 
         private const string VALUE = "Value";
-        private string _value;
-        public string Value
+        private object _value;
+        public object Value
         {
             get { return _value; }
             set { _value = value; NotifyPropertyChanged(VALUE); }
@@ -19,8 +19,14 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             get { return _displayName; }
             set { _displayName = value; NotifyPropertyChanged(DISPLAYNAME); }
-        }        
+        }
 
-
+        private const string ISSELECTED = "IsSelected";
+        private bool _isSelected;
+        public bool IsSelected
+        {
+            get { return _isSelected; }
+            set { _isSelected = value; NotifyPropertyChanged(ISSELECTED); }
+        }
     }
 }
