@@ -23,3 +23,4 @@
 * ADDED: Hungarian language
 * ADDED: Better support of reparse points
 * ADDED: FSD/F3 Content Scan Trigger
+* ADDED: File hash verification after FTP upload

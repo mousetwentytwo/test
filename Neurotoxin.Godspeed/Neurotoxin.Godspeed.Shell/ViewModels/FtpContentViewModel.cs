@@ -464,6 +464,29 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             FileManager.UploadFile(targetPath, sourcePath, true);
         }
 
+        public override bool Import(FileSystemItem item, string savePath, CopyAction action)
+        {
+            var result = base.Import(item, savePath, action);
+            if (result) VerifyUpload(savePath, item.Path);
+            return result;
+        }
+
+        private void VerifyUpload(string savePath, string itemPath)
+        {
+            //TODO: check user settings
+            bool match;
+            try
+            {
+                match = FileManager.VerifyUpload(savePath, itemPath);
+            }
+            catch (Exception ex)
+            {
+                throw WrapTransferRelatedExceptions(ex);
+            }
+            //TODO: proper exception
+            if (!match) throw new Exception();
+        }
+
         //protected override string OpenCompressedFile(FileSystemItem item)
         //{
         //    var tempFilePath = string.Format(@"{0}\{1}", AppDomain.CurrentDomain.GetData("DataDirectory"), Guid.NewGuid());
@@ -535,6 +558,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 }
                 var name = RemoteChangeDirectory(savePath);
                 Telnet.Upload(item.Path, name, item.Size ?? 0, resumeStartPosition, TelnetProgressChanged);
+                VerifyUpload(savePath, item.Path);
                 return true;
             }
             catch (Exception ex)

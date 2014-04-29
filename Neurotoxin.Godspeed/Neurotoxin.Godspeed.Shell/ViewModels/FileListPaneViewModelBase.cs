@@ -1370,7 +1370,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
         }
 
-        public bool Import(FileSystemItem item, string savePath, CopyAction action)
+        public virtual bool Import(FileSystemItem item, string savePath, CopyAction action)
         {
             if (item.Type != ItemType.File) throw new NotSupportedException();
             UIThread.Run(() => eventAggregator.GetEvent<TransferActionStartedEvent>().Publish(ImportActionDescription));

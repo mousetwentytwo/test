@@ -154,6 +154,13 @@
     <Compile Include="Io\Stfs\Data\StfsVolumeDescriptor.cs" />
     <Compile Include="Models\OffsetTable.cs" />
     <Compile Include="Models\Tree.cs" />
+    <Compile Include="Net\Cryptography\GetChecksum.cs" />
+    <Compile Include="Net\Cryptography\MD5.cs" />
+    <Compile Include="Net\Cryptography\XCRC.cs" />
+    <Compile Include="Net\Cryptography\XMD5.cs" />
+    <Compile Include="Net\Cryptography\XSHA1.cs" />
+    <Compile Include="Net\Cryptography\XSHA256.cs" />
+    <Compile Include="Net\Cryptography\XSHA512.cs" />
     <Compile Include="Net\FtpClient.cs" />
     <Compile Include="Net\FtpDataStream.cs" />
     <Compile Include="Net\FtpEnums.cs" />
@@ -170,14 +177,8 @@
     <Compile Include="Net\IFtpReply.cs" />
     <Compile Include="Net\Telnet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Security\GetChecksum.cs" />
-    <Compile Include="Security\MD5.cs" />
+    <Compile Include="Security\Crc32.cs" />
     <Compile Include="Security\RC4.cs" />
-    <Compile Include="Security\XCRC.cs" />
-    <Compile Include="Security\XMD5.cs" />
-    <Compile Include="Security\XSHA1.cs" />
-    <Compile Include="Security\XSHA256.cs" />
-    <Compile Include="Security\XSHA512.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

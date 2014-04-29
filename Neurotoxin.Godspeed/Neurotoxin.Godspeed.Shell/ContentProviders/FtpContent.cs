@@ -4,12 +4,15 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Timers;
 using Microsoft.Practices.Composite.Events;
 using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Core.Io.Stfs;
 using Neurotoxin.Godspeed.Core.Net;
+using Neurotoxin.Godspeed.Core.Net.Cryptography;
+using Neurotoxin.Godspeed.Core.Security;
 using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Events;
@@ -503,6 +506,27 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         public void Abort()
         {
             _isAborted = true;
+        }
+
+        public bool VerifyUpload(string remotePath, string localPath)
+        {
+            if (FtpClient.Capabilities.HasFlag(FtpCapability.XCRC))
+            {
+                var remoteChecksum = FtpClient.GetXCRC(remotePath);
+                var crc = new Crc32();
+                using (var f = new FileStream(localPath, FileMode.Open, FileAccess.Read))
+                {
+                    var bytes = crc.ComputeHash(f);
+                    var sb = new StringBuilder();
+                    foreach (var b in bytes)
+                    {
+                        sb.Append(b.ToString("x2"));
+                    }
+                    return sb.ToString().Equals(remoteChecksum, StringComparison.InvariantCultureIgnoreCase);
+                }
+            }
+
+            return FileExists(remotePath) == new FileInfo(localPath).Length;
         }
 
         #region Inherited TraceListener members
