@@ -340,7 +340,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             return result;
         }
 
-        internal void DownloadFile(string remotePath, Stream stream, long remoteStartPosition = 0, long fileSize = -1)
+        internal bool DownloadFile(string remotePath, Stream stream, long remoteStartPosition = 0, long fileSize = -1)
         {
             var downloadStarted = false;
             long transferred = 0;
@@ -382,12 +382,13 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 if (downloadStarted)
                     NotifyFtpOperationProgressChanged(fileSize, bufferSize, transferred, remoteStartPosition, true);
                 NotifyFtpOperationFinished();
-                if (_isAborted && ex.Message == "Broken pipe") return;
+                if (_isAborted && ex.Message == "Broken pipe") return false;
                 throw;
             }
+            return !_isAborted;
         }
 
-        internal void UploadFile(string remotePath, string localPath, bool append = false)
+        internal bool UploadFile(string remotePath, string localPath, bool append = false)
         {
             NotifyFtpOperationStarted(true);
             FileStream fs = null;
@@ -435,6 +436,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 NotifyFtpOperationFinished();
                 if (fs != null) fs.Close();
             }
+            return !_isAborted;
         }
 
         public bool FolderExists(string path)

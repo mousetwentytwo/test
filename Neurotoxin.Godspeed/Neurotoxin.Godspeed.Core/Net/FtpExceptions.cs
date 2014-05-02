@@ -84,4 +84,11 @@ namespace Neurotoxin.Godspeed.Core.Net {
             : base(message) {
         }
     }
+
+    public class FtpHashVerificationException : FtpException
+    {
+        public FtpHashVerificationException(string message) : base(message)
+        {
+        }
+    }
 }

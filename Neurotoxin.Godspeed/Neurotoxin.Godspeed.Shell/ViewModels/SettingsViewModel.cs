@@ -203,6 +203,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             XboxLiveContentInvalidation = UserSettings.XboxLiveContentInvalidation;
             UnknownContentExpiration = UserSettings.UnknownContentExpiration;
             UseVersionChecker = UserSettings.UseVersionChecker;
+            VerifyFileHashAfterFtpUpload = UserSettings.VerifyFileHashAfterFtpUpload;
             FsdContentScanTrigger = UserSettings.FsdContentScanTrigger;
             UseRemoteCopy = UserSettings.UseRemoteCopy;
             Language = UserSettings.Language ?? LocalizeDictionary.Instance.Culture;
@@ -221,6 +222,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             UserSettings.XboxLiveContentInvalidation = XboxLiveContentInvalidation;
             UserSettings.UnknownContentExpiration = UnknownContentExpiration;
             UserSettings.UseVersionChecker = UseVersionChecker;
+            UserSettings.VerifyFileHashAfterFtpUpload = VerifyFileHashAfterFtpUpload;
             UserSettings.FsdContentScanTrigger = FsdContentScanTrigger;
             UserSettings.UseRemoteCopy = UseRemoteCopy;
             UserSettings.Language = Language;

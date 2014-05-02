@@ -342,7 +342,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }            
         }
 
-        private bool CopyInner(FileSystemItem item, CopyAction? action, string rename)
+        private TransferResult CopyInner(FileSystemItem item, CopyAction? action, string rename)
         {
             var sourcePath = item.GetRelativePath(SourcePane.CurrentFolder.Path);
             var targetPath = TargetPane.GetTargetPath(sourcePath);
@@ -352,7 +352,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 case ItemType.Directory:
                 case ItemType.Link:
                     TargetPane.CreateFolder(targetPath);
-                    return true;
+                    return TransferResult.Ok;
                 case ItemType.File:
                     if (action == CopyAction.Rename && !string.IsNullOrEmpty(rename))
                     {
@@ -373,10 +373,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                             var tempFile = Path.Combine(App.DataDirectory, "temp", item.FullPath.Hash());
                             var tempItem = item.Clone();
                             tempItem.Path = tempFile;
-                            var result = SourcePane.Export(item, tempFile, CopyAction.Overwrite) &&
-                                         TargetPane.Import(tempItem, targetPath, action ?? _rememberedCopyAction);
+                            var export = SourcePane.Export(item, tempFile, CopyAction.Overwrite);
+                            var import = TransferResult.Skipped;
+                            if (export == TransferResult.Ok) 
+                                import = TargetPane.Import(tempItem, targetPath, action ?? _rememberedCopyAction);
                             File.Delete(tempFile);
-                            return result;
+                            return export != TransferResult.Ok ? export : import;
                         case CopyMode.RemoteExport:
                             if (new Regex(@"[^\x20-\x7f]").IsMatch(targetPath))
                             {
@@ -405,7 +407,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
         }
 
-        private void CopySuccess(bool result)
+        private void CopySuccess(TransferResult result)
         {
             if (IsPaused)
             {
@@ -415,7 +417,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
             var item = _queue.Dequeue().FileSystemItem;
             FilesTransferred++;
-            if (item.Type == ItemType.File && result) _statistics.FilesTransferred++;
+            if (item.Type == ItemType.File && result == TransferResult.Ok) _statistics.FilesTransferred++;
             var vm = SourcePane.SelectedItems.FirstOrDefault(i => item.Path.StartsWith(i.Path));
             if (vm != null)
             {
@@ -444,7 +446,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     break;
                 case ErrorResolutionBehavior.Skip:
                     BytesTransferred += (_queue.Peek().FileSystemItem.Size ?? 0) - _currentFileBytesTransferred;
-                    CopySuccess(false);
+                    CopySuccess(TransferResult.Skipped);
                     break;
                 case ErrorResolutionBehavior.Cancel:
                     CopyFinish();
@@ -506,15 +508,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         switch (queueitem.TransferType)
                         {
                             case TransferType.Copy:
-                                CopyInner(item, action, rename);
-                                break;
+                                return CopyInner(item, action, rename);
                             case TransferType.Delete:
-                                SourcePane.Delete(item);
-                                break;
+                                return SourcePane.Delete(item);
                             default:
                                 throw new NotSupportedException("Invalid transfer type: " + queueitem.TransferType);
                         }
-                        return true;
                     }, MoveSuccess, MoveError);
             }
             else
@@ -524,7 +523,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
         }
 
-        private void MoveSuccess(bool result)
+        private void MoveSuccess(TransferResult result)
         {
             if (IsPaused)
             {
@@ -537,7 +536,16 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             if (queueitem.TransferType == TransferType.Copy)
             {
                 FilesTransferred++;
-                if (result) _statistics.FilesTransferred++;
+                switch (result)
+                {
+                    case TransferResult.Ok:
+                        _statistics.FilesTransferred++;
+                        break;
+                    case TransferResult.Skipped:
+                        //remove the Delete pair too
+                        _queue.Dequeue();
+                        break;
+                }
             }
             var vm = SourcePane.SelectedItems.FirstOrDefault(i => item.Path == i.Path);
             if (vm != null) vm.IsSelected = false;
@@ -563,7 +571,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     break;
                 case ErrorResolutionBehavior.Skip:
                     BytesTransferred += _queue.Peek().FileSystemItem.Size ?? 0 - _currentFileBytesTransferred;
-                    MoveSuccess(false);
+                    MoveSuccess(TransferResult.Skipped);
                     break;
                 case ErrorResolutionBehavior.Cancel:
                     MoveFinish();
@@ -614,12 +622,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 return;
             }
             var path = string.Format("{0}{1}", SourcePane.CurrentFolder.Path, name);
-            WorkerThread.Run(() => SourcePane.CreateFolder(path), success => NewFolderSuccess(success, name), NewFolderError);
+            WorkerThread.Run(() => SourcePane.CreateFolder(path), result => NewFolderSuccess(result, name), NewFolderError);
         }
 
-        private void NewFolderSuccess(bool success, string name)
+        private void NewFolderSuccess(TransferResult result, string name)
         {
-            if (!success)
+            if (result != TransferResult.Ok)
             {
                 NotificationMessage.ShowMessage(Resx.AddNewFolder, string.Format(Resx.FolderAlreadyExists, name));
                 return;
@@ -687,7 +695,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
         }
 
-        private void DeleteSuccess(bool result)
+        private void DeleteSuccess(TransferResult result)
         {
             var item = _queue.Dequeue().FileSystemItem;
             if (item.Type == ItemType.File) BytesTransferred += item.Size ?? 0;
@@ -709,7 +717,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     DeleteStart();
                     break;
                 case ErrorResolutionBehavior.Skip:
-                    DeleteSuccess(false);
+                    DeleteSuccess(TransferResult.Skipped);
                     break;
                 case ErrorResolutionBehavior.Cancel:
                     DeleteFinish();

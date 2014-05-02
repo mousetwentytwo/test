@@ -989,4 +989,7 @@
   <data name="VerifyFileHashAfterFtpUpload" xml:space="preserve">
     <value>Verify file hash after FTP upload</value>
   </data>
+  <data name="FtpHashVerificationFailed" xml:space="preserve">
+    <value>File hash verification failed. No space left on device?</value>
+  </data>
 </root>

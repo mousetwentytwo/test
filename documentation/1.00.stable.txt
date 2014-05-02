@@ -18,6 +18,7 @@
 * FIXED: Folder creation within Xbox folder structure
 * FIXED: Folder name validation
 * FIXED: Skip All doesn't remember decision
+* FIXED: Move deletes skipped files
 * ADDED: DashLaunch FTP (DLiFTPD) support
 * ADDED: XeXMenu and DashLaunch FTP cannot be access in PASV anymore
 * ADDED: Hungarian language

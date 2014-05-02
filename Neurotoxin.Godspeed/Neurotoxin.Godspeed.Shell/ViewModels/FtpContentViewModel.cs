@@ -431,9 +431,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             return String.Format("{0}{1}", CurrentFolder.Path, path.Replace('\\', '/'));
         }
 
-        protected override void SaveToFileStream(FileSystemItem item, FileStream fs, long remoteStartPosition)
+        protected override bool SaveToFileStream(FileSystemItem item, FileStream fs, long remoteStartPosition)
         {
-            FileManager.DownloadFile(item.Path, fs, remoteStartPosition, item.Size ?? 0);
+            return FileManager.DownloadFile(item.Path, fs, remoteStartPosition, item.Size ?? 0);
         }
 
         protected override Exception WrapTransferRelatedExceptions(Exception exception)
@@ -449,31 +449,32 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             return base.WrapTransferRelatedExceptions(exception);
         }
 
-        protected override void CreateFile(string targetPath, string sourcePath)
+        protected override bool CreateFile(string targetPath, string sourcePath)
         {
-            FileManager.UploadFile(targetPath, sourcePath);
+            return FileManager.UploadFile(targetPath, sourcePath);
         }
 
-        protected override void OverwriteFile(string targetPath, string sourcePath)
+        protected override bool OverwriteFile(string targetPath, string sourcePath)
         {
-            FileManager.UploadFile(targetPath, sourcePath);
+            return FileManager.UploadFile(targetPath, sourcePath);
         }
 
-        protected override void ResumeFile(string targetPath, string sourcePath)
+        protected override bool ResumeFile(string targetPath, string sourcePath)
         {
-            FileManager.UploadFile(targetPath, sourcePath, true);
+            return FileManager.UploadFile(targetPath, sourcePath, true);
         }
 
-        public override bool Import(FileSystemItem item, string savePath, CopyAction action)
+        public override TransferResult Import(FileSystemItem item, string savePath, CopyAction action)
         {
             var result = base.Import(item, savePath, action);
-            if (result) VerifyUpload(savePath, item.Path);
+            if (result == TransferResult.Ok) VerifyUpload(savePath, item.Path);
             return result;
         }
 
         private void VerifyUpload(string savePath, string itemPath)
         {
-            //TODO: check user settings
+            if (!UserSettings.VerifyFileHashAfterFtpUpload) return;
+
             bool match;
             try
             {
@@ -483,8 +484,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             {
                 throw WrapTransferRelatedExceptions(ex);
             }
-            //TODO: proper exception
-            if (!match) throw new Exception();
+            
+            if (!match) throw new FtpHashVerificationException(Resx.FtpHashVerificationFailed); 
         }
 
         //protected override string OpenCompressedFile(FileSystemItem item)
@@ -495,7 +496,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         //    return tempFilePath;
         //}
 
-        public bool RemoteDownload(FileSystemItem item, string savePath, CopyAction action)
+        public TransferResult RemoteDownload(FileSystemItem item, string savePath, CopyAction action)
         {
             if (item.Type != ItemType.File) throw new NotSupportedException();
             UIThread.Run(() => eventAggregator.GetEvent<TransferActionStartedEvent>().Publish(ExportActionDescription));
@@ -512,7 +513,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         break;
                     case CopyAction.OverwriteOlder:
                         var fileDate = File.GetLastWriteTime(savePath);
-                        if (fileDate > item.Date) return false;
+                        if (fileDate > item.Date) return TransferResult.Skipped;
                         File.Delete(savePath);
                         break;
                     case CopyAction.Resume:
@@ -523,7 +524,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
                 var name = RemoteChangeDirectory(item.Path);
                 Telnet.Download(name, savePath, item.Size ?? 0, resumeStartPosition, TelnetProgressChanged);
-                return true;
+                return TransferResult.Ok;
             }
             catch (Exception ex)
             {
@@ -531,7 +532,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
         }
 
-        public bool RemoteUpload(FileSystemItem item, string savePath, CopyAction action)
+        public TransferResult RemoteUpload(FileSystemItem item, string savePath, CopyAction action)
         {
             if (item.Type != ItemType.File) throw new NotSupportedException();
             UIThread.Run(() => eventAggregator.GetEvent<TransferActionStartedEvent>().Publish(ImportActionDescription));
@@ -548,7 +549,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         break;
                     case CopyAction.OverwriteOlder:
                         var fileDate = FileManager.GetFileModificationTime(savePath);
-                        if (fileDate > item.Date) return false;
+                        if (fileDate > item.Date) return TransferResult.Skipped;
                         FileManager.DeleteFile(savePath);
                         break;
                     case CopyAction.Resume:
@@ -559,7 +560,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 var name = RemoteChangeDirectory(savePath);
                 Telnet.Upload(item.Path, name, item.Size ?? 0, resumeStartPosition, TelnetProgressChanged);
                 VerifyUpload(savePath, item.Path);
-                return true;
+                return TransferResult.Ok;
             }
             catch (Exception ex)
             {

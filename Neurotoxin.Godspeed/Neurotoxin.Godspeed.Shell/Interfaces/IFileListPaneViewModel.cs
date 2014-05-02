@@ -21,14 +21,14 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
         bool IsInEditMode { get; }
 
         Queue<QueueItem> PopulateQueue(TransferType type);
-        bool CreateFolder(string path);
-        bool Delete(FileSystemItem item);
+        TransferResult CreateFolder(string path);
+        TransferResult Delete(FileSystemItem item);
 
         void GetItemViewModel(string itemPath);
         string GetTargetPath(string sourcePath);
 
-        bool Export(FileSystemItem item, string savePath, CopyAction action);
-        bool Import(FileSystemItem item, string savePath, CopyAction action);
+        TransferResult Export(FileSystemItem item, string savePath, CopyAction action);
+        TransferResult Import(FileSystemItem item, string savePath, CopyAction action);
 
         void Refresh();
         void Refresh(Action callback);

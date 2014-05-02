@@ -189,7 +189,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             return bytes;
         }
 
-        public void CopyFile(string path, FileStream fs, long resumeStartPosition)
+        public bool CopyFile(string path, FileStream fs, long resumeStartPosition)
         {
             _isAborted = false;
             var totalBytesTransferred = resumeStartPosition;
@@ -207,6 +207,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 _eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(percentage, bytesRead, totalBytesTransferred, resumeStartPosition));
             }
             readStream.Close();
+            return !_isAborted;
         }
 
         public void AbortCopy()

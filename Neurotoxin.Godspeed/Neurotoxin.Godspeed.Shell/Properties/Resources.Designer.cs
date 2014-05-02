@@ -828,6 +828,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to File hash verification failed. No space left on device?.
+        /// </summary>
+        internal static string FtpHashVerificationFailed {
+            get {
+                return ResourceManager.GetString("FtpHashVerificationFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to FTP Log.
         /// </summary>
         internal static string FTPLog {

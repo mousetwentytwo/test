@@ -100,24 +100,28 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             return string.Format("{0}{1}", CurrentFolder.Path, path.Replace('\\', '/'));
         }
 
-        protected override void SaveToFileStream(FileSystemItem item, FileStream fs, long remoteStartPosition)
+        protected override bool SaveToFileStream(FileSystemItem item, FileStream fs, long remoteStartPosition)
         {
             FileManager.ExtractFile(item.Path, fs, remoteStartPosition);
+            return true;
         }
 
-        protected override void CreateFile(string targetPath, string sourcePath)
+        protected override bool CreateFile(string targetPath, string sourcePath)
         {
             FileManager.AddFile(targetPath, sourcePath);
+            return true;
         }
 
-        protected override void OverwriteFile(string targetPath, string sourcePath)
+        protected override bool OverwriteFile(string targetPath, string sourcePath)
         {
             FileManager.ReplaceFile(targetPath, sourcePath);
+            return true;
         }
 
-        protected override void ResumeFile(string targetPath, string sourcePath)
+        protected override bool ResumeFile(string targetPath, string sourcePath)
         {
             FileManager.ReplaceFile(targetPath, sourcePath);
+            return true;
         }
 
         public override void Abort()

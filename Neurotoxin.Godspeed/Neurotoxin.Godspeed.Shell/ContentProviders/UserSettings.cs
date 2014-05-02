@@ -37,6 +37,13 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             set { Set(UseVersionCheckerKey, value); }
         }
 
+        private const string VerifyFileHashAfterFtpUploadKey = "VerifyFileHashAfterFtpUpload";
+        public static bool VerifyFileHashAfterFtpUpload
+        {
+            get { return Get(VerifyFileHashAfterFtpUploadKey, true); }
+            set { Set(VerifyFileHashAfterFtpUploadKey, value); }
+        }
+
         private const string TriggerContentScanAfterUploadKey = "FsdContentScanTrigger";
         public static FsdContentScanTrigger FsdContentScanTrigger
         {

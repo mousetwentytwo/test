@@ -896,4 +896,7 @@
   <data name="DisableOptionAll" xml:space="preserve">
     <value>Minden kapcsolatnál</value>
   </data>
+  <data name="FtpHashVerificationFailed" xml:space="preserve">
+    <value>Hibás feltöltés. Lehet, hogy elfogyott a hely?</value>
+  </data>
 </root>

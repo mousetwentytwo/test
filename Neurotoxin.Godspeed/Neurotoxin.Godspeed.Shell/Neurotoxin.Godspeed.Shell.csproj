@@ -122,6 +122,7 @@
     <Compile Include="Constants\TitleType.cs" />
     <Compile Include="Constants\ToggleSelectionMode.cs" />
     <Compile Include="Constants\TransferErrorType.cs" />
+    <Compile Include="Constants\TransferResult.cs" />
     <Compile Include="Constants\TransferType.cs" />
     <Compile Include="ContentProviders\CacheManager.cs" />
     <Compile Include="ContentProviders\CompressedFileContent.cs" />

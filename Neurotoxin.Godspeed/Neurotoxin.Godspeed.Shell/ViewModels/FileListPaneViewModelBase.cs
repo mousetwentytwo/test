@@ -1092,10 +1092,10 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         }
 
         public abstract string GetTargetPath(string path);
-        protected abstract void SaveToFileStream(FileSystemItem item, FileStream fs, long remoteStartPosition);
-        protected abstract void CreateFile(string targetPath, string sourcePath);
-        protected abstract void OverwriteFile(string targetPath, string sourcePath);
-        protected abstract void ResumeFile(string targetPath, string sourcePath);
+        protected abstract bool SaveToFileStream(FileSystemItem item, FileStream fs, long remoteStartPosition);
+        protected abstract bool CreateFile(string targetPath, string sourcePath);
+        protected abstract bool OverwriteFile(string targetPath, string sourcePath);
+        protected abstract bool ResumeFile(string targetPath, string sourcePath);
         public abstract void Abort();
 
         public virtual void FinishTransferAsSource()
@@ -1125,7 +1125,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             CurrentRow = Items.FirstOrDefault();
         }
 
-        public bool Delete(FileSystemItem item)
+        public TransferResult Delete(FileSystemItem item)
         {
             try
             {
@@ -1137,7 +1137,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 {
                     FileManager.DeleteFolder(item.Path);
                 }
-                return true;
+                return TransferResult.Ok;
             }
             catch (Exception ex)
             {
@@ -1145,13 +1145,13 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
         }
 
-        public bool CreateFolder(string path)
+        public TransferResult CreateFolder(string path)
         {
             try
             {
-                if (FileManager.FolderExists(path)) return false;
+                if (FileManager.FolderExists(path)) return TransferResult.Skipped;
                 FileManager.CreateFolder(path);
-                return true;
+                return TransferResult.Ok;
             }
             catch (Exception ex)
             {
@@ -1327,7 +1327,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             Parent.ShowCorrespondingErrorDialog(WrapTransferRelatedExceptions(ex), false);
         }
 
-        public bool Export(FileSystemItem item, string savePath, CopyAction action)
+        public TransferResult Export(FileSystemItem item, string savePath, CopyAction action)
         {
             if (item.Type != ItemType.File) throw new NotSupportedException();
             UIThread.Run(() => eventAggregator.GetEvent<TransferActionStartedEvent>().Publish(ExportActionDescription));
@@ -1347,7 +1347,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         break;
                     case CopyAction.OverwriteOlder:
                         var fileDate = File.GetLastWriteTime(savePath);
-                        if (fileDate > item.Date) return false;
+                        if (fileDate > item.Date) return TransferResult.Skipped;
                         mode = FileMode.Create;
                         break;
                     case CopyAction.Resume:
@@ -1358,11 +1358,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     default:
                         throw new ArgumentException("Invalid Copy action: " + action);
                 }
+                bool result;
                 using (var fs = new FileStream(savePath, mode))
                 {
-                    SaveToFileStream(item, fs, remoteStartPosition);
+                    result = SaveToFileStream(item, fs, remoteStartPosition);
                 }
-                return true;
+                return result ? TransferResult.Ok : TransferResult.Aborted;
             }
             catch (Exception ex)
             {
@@ -1370,35 +1371,36 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
         }
 
-        public virtual bool Import(FileSystemItem item, string savePath, CopyAction action)
+        public virtual TransferResult Import(FileSystemItem item, string savePath, CopyAction action)
         {
             if (item.Type != ItemType.File) throw new NotSupportedException();
             UIThread.Run(() => eventAggregator.GetEvent<TransferActionStartedEvent>().Publish(ImportActionDescription));
             var itemPath = item.Path;
             try
             {
+                bool result;
                 switch (action)
                 {
                     case CopyAction.CreateNew:
                         var exists = FileManager.FileExists(savePath);
                         if (exists) throw new TransferException(TransferErrorType.WriteAccessError, Resx.TargetAlreadyExists, itemPath, savePath, exists.Size);
-                        CreateFile(savePath, itemPath);
+                        result = CreateFile(savePath, itemPath);
                         break;
                     case CopyAction.Overwrite:
-                        OverwriteFile(savePath, itemPath);
+                        result = OverwriteFile(savePath, itemPath);
                         break;
                     case CopyAction.OverwriteOlder:
                         var fileDate = FileManager.GetFileModificationTime(savePath);
-                        if (fileDate > item.Date) return false;
-                        OverwriteFile(savePath, itemPath);
+                        if (fileDate > item.Date) return TransferResult.Skipped;
+                        result = OverwriteFile(savePath, itemPath);
                         break;
                     case CopyAction.Resume:
-                        ResumeFile(savePath, itemPath);
+                        result = ResumeFile(savePath, itemPath);
                         break;
                     default:
                         throw new ArgumentException("Invalid Copy action: " + action);
                 }
-                return true;
+                return result ? TransferResult.Ok : TransferResult.Aborted;
             }
             catch (Exception ex)
             {
