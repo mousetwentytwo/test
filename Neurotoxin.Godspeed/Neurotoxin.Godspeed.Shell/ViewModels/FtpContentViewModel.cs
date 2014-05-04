@@ -27,7 +27,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
     {
         private readonly HashSet<int> _doContentScanOn = new HashSet<int>();
         private readonly Dictionary<string, string> _driveLabelCache = new Dictionary<string, string>();
-        private List<FsdScanPath> _scanFolders;
+        private Dictionary<string, FsdScanPath> _scanFolders;
         private string _httpSessionId;
 
         public FtpConnectionItemViewModel Connection { get; private set; }
@@ -320,17 +320,21 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     var responseString = Encoding.UTF8.GetString(response);
                     if (responseString.Contains("j_password")) return HttpStatusCode.Unauthorized;
 
-                    var r = new Regex(@"<tr.*?pathid:'(<?PathId>\d+)'.*?depth"">(<?ScanDepth>\d+).*?path"">(<?Path>.*?)</td>", RegexOptions.Singleline);
-                    _scanFolders = new List<FsdScanPath>();
+                    var r = new Regex(@"<tr.*?pathid:'(?<PathId>\d+)'.*?depth"">(?<ScanDepth>\d+).*?path"">(?<Path>.*?)</td>", RegexOptions.Singleline);
+                    _scanFolders = new Dictionary<string, FsdScanPath>();
                     foreach (Match m in r.Matches(responseString))
                     {
                         try
                         {
-                            _scanFolders.Add(new FsdScanPath
+                            var path = "/" + m.Groups["Path"].Value.Replace(":\\", "\\").Replace("\\", "/");
+                            if (_scanFolders.ContainsKey(path)) continue;
+                            var pathid = Int32.Parse(m.Groups["PathId"].Value);
+                            var depth = Int32.Parse(m.Groups["ScanDepth"].Value);
+                            _scanFolders.Add(path, new FsdScanPath
                             {
-                                PathId = Int32.Parse(m.Groups["PathId"].Value),
-                                Path = "/" + m.Groups["Path"].Value.Replace(":\\", "\\").Replace("\\", "/"),
-                                ScanDepth = Int32.Parse(m.Groups["ScanDepth"].Value)
+                                PathId = pathid,
+                                Path = path,
+                                ScanDepth = depth
                             });
                         }
                         catch
@@ -354,7 +358,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private int? GetCorrespondingScanFolder(string path)
         {
-            foreach (var scanPath in _scanFolders.Where(s => s.Path.StartsWith(path)))
+            foreach (var scanPath in _scanFolders.Where(s => s.Key.StartsWith(path)).Select(s => s.Value))
             {
                 var relativePath = path.Replace(scanPath.Path, String.Empty).Trim('/');
                 var depth = relativePath.Split('/').Length;
