@@ -387,7 +387,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
             catch
             {
-                //TODO: notification message? "auto scan failed, bla-bla-bla, you have to do this manually"
+                NotificationMessage.ShowMessage(Resx.FsdContentScanTrigger, Resx.ContentScanFailedErrorMessage);
             }
         }
 

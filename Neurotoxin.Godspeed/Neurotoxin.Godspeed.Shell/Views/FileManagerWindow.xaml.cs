@@ -14,6 +14,7 @@ using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
 using Neurotoxin.Godspeed.Core.Constants;
 using Neurotoxin.Godspeed.Core.Io;
+using Neurotoxin.Godspeed.Core.Net;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Commands;
 using Neurotoxin.Godspeed.Shell.Events;
@@ -132,7 +133,7 @@ namespace Neurotoxin.Godspeed.Shell.Views
 
         private void ExecuteVisitWebsiteCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            Process.Start(e.Parameter.ToString());
+            Web.Browse(e.Parameter.ToString());
         }
 
         private void ExecuteUserStatisticsParticipationCommand(object sender, ExecutedRoutedEventArgs e)

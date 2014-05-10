@@ -875,9 +875,6 @@
   <data name="FsdContentScanTriggerAfterConnectionClose" xml:space="preserve">
     <value>Kapcsolatbontás után</value>
   </data>
-  <data name="TriggerContentScanAfterUpload" xml:space="preserve">
-    <value>Automatikus FSD/F3 tartalomfrissítés</value>
-  </data>
   <data name="Login" xml:space="preserve">
     <value>Bejelentkezés</value>
   </data>
@@ -898,5 +895,20 @@
   </data>
   <data name="FtpHashVerificationFailed" xml:space="preserve">
     <value>Hibás feltöltés. Lehet, hogy elfogyott a hely?</value>
+  </data>
+  <data name="SpecialCharactersNotSupported" xml:space="preserve">
+    <value>A speciális karakterek használata ezen az FTP szerveren nem támogatott!</value>
+  </data>
+  <data name="FsdContentScanTrigger" xml:space="preserve">
+    <value>Automatikus FSD/F3 tartalomfrissítés</value>
+  </data>
+  <data name="ContentScanFailedErrorMessage" xml:space="preserve">
+    <value>Tartalomfrissítés sikertelen. Kérlek frissítsd a játéklistádat manuálisan!</value>
+  </data>
+  <data name="SystemError" xml:space="preserve">
+    <value>Rendszerhiba</value>
+  </data>
+  <data name="UrlCannotBeOpened" xml:space="preserve">
+    <value>A hivatkozást nem lehet megnyitni. (Hiba: {0})</value>
   </data>
 </root>

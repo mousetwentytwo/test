@@ -6,6 +6,14 @@ namespace Neurotoxin.Godspeed.Shell.Primitives
 {
     public abstract class DialogBase : BorderlessWindow
     {
+        public static readonly DependencyProperty CloseButtonVisibilityProperty = DependencyProperty.Register("CloseButtonVisibility", typeof(Visibility), typeof(DialogBase), new PropertyMetadata(Visibility.Visible));
+
+        public Visibility CloseButtonVisibility
+        {
+            get { return (Visibility)GetValue(CloseButtonVisibilityProperty); }
+            set { SetValue(CloseButtonVisibilityProperty, value); }
+        }
+
         protected DialogBase()
         {
             ResizeMode = ResizeMode.NoResize;

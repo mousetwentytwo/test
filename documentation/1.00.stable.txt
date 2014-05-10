@@ -1,3 +1,4 @@
+* FIXED Issue #61: Null reference when showing non-closable notification message
 * FIXED Issue #135: DialogResult can be set only after Window is created and shown as dialog.
 * FIXED Issue #168: Application crashes if item cannot be deleted
 * FIXED Issue #171: Uploading and empty folder browsing with XeXMenu
@@ -6,6 +7,10 @@
 * FIXED Issue #181: Application crashes if parent folder doesn't exist anymore but I call an UpDirectory
 * FIXED Issue #182: Application crashes if folder cannot be renamed
 * FIXED Issue #187: Application crashes if reparse points cannot be accessed
+* FIXED Issue #220: Handle errors on the right thread during changing directory
+* FIXED Issue #237: STFS DateTime parsing
+* FIXED Issue #244: Special characters in FTP item names
+* FIXED Issue #267: No application is associated with URLs
 * FIXED: Misbehaving [..] folder on local file system
 * FIXED: Stored participation answer isn't displayed if I open the User Participation Window again
 * FIXED: Editing connection highlight name as an already existing one

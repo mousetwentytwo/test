@@ -953,9 +953,6 @@
   <data name="ItemTypeLink" xml:space="preserve">
     <value>LINK</value>
   </data>
-  <data name="TriggerContentScanAfterUpload" xml:space="preserve">
-    <value>FSD/F3 Content Scan Trigger</value>
-  </data>
   <data name="FsdContentScanTriggerDisabled" xml:space="preserve">
     <value>Disabled</value>
   </data>
@@ -991,5 +988,20 @@
   </data>
   <data name="FtpHashVerificationFailed" xml:space="preserve">
     <value>File hash verification failed. No space left on device?</value>
+  </data>
+  <data name="SpecialCharactersNotSupported" xml:space="preserve">
+    <value>This FTP server does not support special characters in file and folder names!</value>
+  </data>
+  <data name="FsdContentScanTrigger" xml:space="preserve">
+    <value>FSD/F3 Content Scan Trigger</value>
+  </data>
+  <data name="ContentScanFailedErrorMessage" xml:space="preserve">
+    <value>Content scan failed. Please update your FSD game list manually.</value>
+  </data>
+  <data name="SystemError" xml:space="preserve">
+    <value>System Error</value>
+  </data>
+  <data name="UrlCannotBeOpened" xml:space="preserve">
+    <value>URL cannot be opened (Reason: {0})</value>
   </data>
 </root>

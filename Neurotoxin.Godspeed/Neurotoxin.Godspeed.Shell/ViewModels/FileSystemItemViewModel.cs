@@ -63,7 +63,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                                 bytes = ApplicationExtensions.GetContentByteArray(dirIconPath);
                                 break;
                             case ItemType.Link:
-                                //TODO: link
                                 bytes = ApplicationExtensions.GetContentByteArray("/Resources/reparse_point.png");
                                 break;
                             case ItemType.File:

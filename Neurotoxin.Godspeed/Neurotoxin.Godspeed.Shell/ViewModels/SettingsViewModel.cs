@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Constants;
@@ -163,7 +164,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             WorkerThread.Run(() =>
                                  {
                                      UIThread.Run(() => NotificationMessage.ShowMessage(Resx.ApplicationIsBusy, Resx.PleaseWait, NotificationMessageFlags.NonClosable));
-                                     _cacheManager.ClearCache(); 
+                                     _cacheManager.ClearCache();
                                      return true;
                                  }, 
                              r => NotificationMessage.CloseMessage());

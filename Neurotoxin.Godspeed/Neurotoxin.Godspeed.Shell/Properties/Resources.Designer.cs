@@ -450,6 +450,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Content scan failed. Please update your FSD game list manually..
+        /// </summary>
+        internal static string ContentScanFailedErrorMessage {
+            get {
+                return ResourceManager.GetString("ContentScanFailedErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Continue.
         /// </summary>
         internal static string Continue {
@@ -797,6 +806,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         internal static string FolderName {
             get {
                 return ResourceManager.GetString("FolderName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to FSD/F3 Content Scan Trigger.
+        /// </summary>
+        internal static string FsdContentScanTrigger {
+            get {
+                return ResourceManager.GetString("FsdContentScanTrigger", resourceCulture);
             }
         }
         
@@ -2043,6 +2061,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This FTP server does not support special characters in file and folder names!.
+        /// </summary>
+        internal static string SpecialCharactersNotSupported {
+            get {
+                return ResourceManager.GetString("SpecialCharactersNotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Statistics.
         /// </summary>
         internal static string Statistics {
@@ -2093,6 +2120,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         internal static string SystemData {
             get {
                 return ResourceManager.GetString("SystemData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to System Error.
+        /// </summary>
+        internal static string SystemError {
+            get {
+                return ResourceManager.GetString("SystemError", resourceCulture);
             }
         }
         
@@ -2268,15 +2304,6 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to FSD/F3 Content Scan Trigger.
-        /// </summary>
-        internal static string TriggerContentScanAfterUpload {
-            get {
-                return ResourceManager.GetString("TriggerContentScanAfterUpload", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Turn off Remote Copy and Continue.
         /// </summary>
         internal static string TurnOffRemoteCopyAndContinue {
@@ -2354,6 +2381,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         internal static string Upload {
             get {
                 return ResourceManager.GetString("Upload", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to URL cannot be opened (Reason: {0}).
+        /// </summary>
+        internal static string UrlCannotBeOpened {
+            get {
+                return ResourceManager.GetString("UrlCannotBeOpened", resourceCulture);
             }
         }
         

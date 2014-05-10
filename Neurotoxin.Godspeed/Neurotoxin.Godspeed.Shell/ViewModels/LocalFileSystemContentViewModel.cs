@@ -199,6 +199,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             FileManager.AbortCopy();
         }
 
+        protected override string GetStfsPackagePath(CacheComplexKey cacheKey, CacheEntry<FileSystemItem> cacheEntry)
+        {
+            return cacheKey.Item.Path;
+        }
+
+
         private void OnUsbDeviceChanged(UsbDeviceChangedEventArgs e)
         {
             var drives = FileManager.GetDrives();

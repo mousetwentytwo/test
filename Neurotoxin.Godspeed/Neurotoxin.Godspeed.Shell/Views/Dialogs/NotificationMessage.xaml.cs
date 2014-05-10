@@ -44,25 +44,19 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
         private NotificationMessage(string title, string message, NotificationMessageFlags flags)
         {
             if (Application.Current.MainWindow.IsVisible) Owner = Application.Current.MainWindow;
+            DataContext = this;
             InitializeComponent();
             Message.Text = message;
             Title = title;
             _flags = flags;
             if (flags.HasFlag(NotificationMessageFlags.NonClosable))
             {
-                Ok.Visibility = Visibility.Collapsed;
+                CloseButtonVisibility = Visibility.Collapsed;
             } 
             else
             {
                 Loaded += OnLoaded;
             }
-        }
-
-        public override void OnApplyTemplate()
-        {
-            if (!_flags.HasFlag(NotificationMessageFlags.NonClosable)) return;
-            var buttons = Template.FindName("CaptionButtons", this) as CaptionButtons;
-            buttons.Visibility = Visibility.Collapsed;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)

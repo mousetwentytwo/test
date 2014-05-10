@@ -17,7 +17,8 @@
         </Grid.RowDefinitions>
 
         <TextBlock Grid.Row="0" Margin="5,0,0,5" x:Name="Message" TextWrapping="Wrap" />
-        <Button Grid.Row="1" Content="{lex:LocText}" Margin="5" x:Name="Ok" Click="OkButtonClick" Width="80"/>
+        <Button Grid.Row="1" Content="{lex:LocText}" Margin="5" x:Name="Ok" Click="OkButtonClick" Width="80"
+                Visibility="{Binding CloseButtonVisibility}"/>
         
     </Grid>
 </primitives:DialogBase>

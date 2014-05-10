@@ -13,12 +13,14 @@ using Microsoft.Practices.Unity;
 using Microsoft.Win32;
 using Neurotoxin.Godspeed.Core.Io.Stfs;
 using Neurotoxin.Godspeed.Core.Models;
+using Neurotoxin.Godspeed.Core.Net;
 using Neurotoxin.Godspeed.Presentation.Formatters;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Exceptions;
+using Neurotoxin.Godspeed.Shell.Helpers;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
 using Neurotoxin.Godspeed.Presentation.Extensions;
@@ -217,6 +219,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 }
                 var destination = CurrentRow.IsUpDirectory ? UpDirectory() : CurrentRow;
                 if (destination == null) return;
+                if (destination.Name.Contains("?"))
+                {
+                    NotificationMessage.ShowMessage(Resx.IOError, Resx.SpecialCharactersNotSupported);
+                    return;
+                }
                 CurrentFolder = destination;
             }
             ChangeDirectory();
@@ -229,19 +236,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             IsBusy = true;
             ExecuteCancelCommand();
 
-            WorkerThread.Run(() =>
-                {
-                    try
-                    {
-                        return ChangeDirectoryInner(CurrentFolder.Path);
-                    }
-                    catch (Exception ex)
-                    {
-                        ex = WrapTransferRelatedExceptions(ex);
-                        Parent.ShowCorrespondingErrorDialog(ex, false);
-                        return new List<FileSystemItem>();
-                    }
-                },
+            WorkerThread.Run(() => ChangeDirectoryInner(CurrentFolder.Path),
                 result =>
                 {
                     ChangeDirectoryCallback(result);
@@ -318,22 +313,20 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             WorkerThread.Run(() => OpenStfsPackage(CurrentRow.Model), b => OpenStfsPackageCallback(b, mode), AsyncErrorCallback);
         }
 
+        protected virtual string GetStfsPackagePath(CacheComplexKey cacheKey, CacheEntry<FileSystemItem> cacheEntry)
+        {
+            if (cacheEntry.TempFilePath == null)
+            {
+                throw new ApplicationException(string.Format("Temp file for entry {0} not found.", cacheKey.Item.Path));
+            }
+            return cacheEntry.TempFilePath;
+        }
+
         private BinaryContent OpenStfsPackage(FileSystemItem item)
         {
-            var contentType = item.ContentType;
-            if (item.IsLocked)
-            {
-                //TODO
-                throw new Exception();
-            }
-            
-            //if (item.Type == ItemType.Directory)
-            //{
-            //    var recognition = TitleRecognizer.GetProfileItem(item);
-            //    item = recognition.Item;
-            //    if (item == null) throw new TransferException(TransferErrorType.NotSpecified, recognition.ErrorMessage);
-            //}
+            if (item.IsLocked) throw new ApplicationException(item.LockMessage);
 
+            var contentType = item.ContentType;
             CacheComplexKey cacheKey;
             var cacheEntry = TitleRecognizer.GetCacheEntry(item, out cacheKey);
             if (cacheEntry == null)
@@ -341,14 +334,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 cacheEntry = TitleRecognizer.RecognizeTitle(item);
                 if (cacheEntry == null)
                 {
-                    //TODO
-                    throw new Exception();
+                    throw new ApplicationException(string.Format("Item cannot be recognized anymore: {0}", cacheKey.Item.Path));
                 }
             }
 
-            //TODO: if ftp throw exception
-            var path = cacheEntry.TempFilePath ?? cacheKey.Item.Path;
-
+            var path = GetStfsPackagePath(cacheKey, cacheEntry);
             return new BinaryContent(item.Path, path, File.ReadAllBytes(path), contentType);
         }
 
@@ -811,7 +801,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void ExecuteSearchGoogleCommand()
         {
-            Process.Start(string.Format("http://www.google.com/#q={0}", CurrentRow.Name));
+            Web.Browse(string.Format("http://www.google.com/#q={0}", CurrentRow.Name));
         }
 
         #endregion

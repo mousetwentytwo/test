@@ -125,7 +125,7 @@
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
-                        <TextBlock Text="{lex:Loc TriggerContentScanAfterUpload}" VerticalAlignment="Center" />
+                        <TextBlock Text="{lex:Loc FsdContentScanTrigger}" VerticalAlignment="Center" />
                     </DockPanel>
                 </Grid>
             </TabItem>

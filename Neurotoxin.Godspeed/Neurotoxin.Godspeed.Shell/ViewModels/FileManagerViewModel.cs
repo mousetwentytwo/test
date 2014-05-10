@@ -793,8 +793,10 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             switch (p.Command)
             {
                 case MessageCommand.OpenUrl:
-                    Process.Start((string)p.Parameter);
-                    if (message.Flags.HasFlag(MessageFlags.IgnoreAfterOpen)) UserSettings.IgnoreMessage(message.Message);
+                    if (Web.Browse((string)p.Parameter))
+                    {
+                        if (message.Flags.HasFlag(MessageFlags.IgnoreAfterOpen)) UserSettings.IgnoreMessage(message.Message);
+                    }
                     break;
                 case MessageCommand.OpenDialog:
                     var dialogType = (Type) p.Parameter;
