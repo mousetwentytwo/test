@@ -911,4 +911,16 @@
   <data name="UrlCannotBeOpened" xml:space="preserve">
     <value>A hivatkozást nem lehet megnyitni. (Hiba: {0})</value>
   </data>
+  <data name="RememberPassword" xml:space="preserve">
+    <value>Jelszó mentése</value>
+  </data>
+  <data name="LaunchGame" xml:space="preserve">
+    <value>Játék elindítása</value>
+  </data>
+  <data name="CheckFreestyleDatabase" xml:space="preserve">
+    <value>Az FSD adatbázisának ellenőrzése</value>
+  </data>
+  <data name="LaunchXex" xml:space="preserve">
+    <value>Alkalmazás elindítása</value>
+  </data>
 </root>

@@ -6,7 +6,9 @@ using System.Net.Sockets;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using HtmlAgilityPack;
 using Microsoft.Practices.ObjectBuilder2;
+using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Core.Models;
 using Neurotoxin.Godspeed.Core.Net;
 using Neurotoxin.Godspeed.Shell.Constants;
@@ -20,6 +22,7 @@ using Neurotoxin.Godspeed.Shell.Extensions;
 using Neurotoxin.Godspeed.Shell.Models;
 using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
+using Fizzler.Systems.HtmlAgilityPack;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
@@ -27,7 +30,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
     {
         private readonly HashSet<int> _doContentScanOn = new HashSet<int>();
         private readonly Dictionary<string, string> _driveLabelCache = new Dictionary<string, string>();
-        private Dictionary<string, FsdScanPath> _scanFolders;
+        private Dictionary<int, FsdScanPath> _scanFolders;
         private string _httpSessionId;
 
         public FtpConnectionItemViewModel Connection { get; private set; }
@@ -68,12 +71,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             get
             {
                 return UserSettings.FsdContentScanTrigger != FsdContentScanTrigger.Disabled &&
-                       Connection != null && !Connection.IsHttpAccessDisabled &&
-                       (FileManager.ServerType == FtpServerType.FSD || FileManager.ServerType == FtpServerType.F3);
+                       Connection != null && !Connection.IsHttpAccessDisabled && FileManager.IsFSD;
             }
         }
 
-        #region Commands
+        #region Command overrides
 
         private void ExecuteCloseCommand()
         {
@@ -88,9 +90,112 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #endregion
 
+        #region CheckFreestyleDatabaseCommand
+
+        public DelegateCommand CheckFreestyleDatabaseCommand { get; private set; }
+
+        public bool CanExecuteCheckFreestyleDatabaseCommand()
+        {
+            return FileManager.IsFSD;
+        }
+
+        public void ExecuteCheckFreestyleDatabaseCommand()
+        {
+            try
+            {
+                var missing = new StringBuilder();
+                var html = new HtmlDocument();
+                html.LoadHtml(HttpGet("gettable.html?name=ContentItems"));
+                foreach (var row in html.DocumentNode.QuerySelectorAll("table.GameContentHeader > tr").Skip(2))
+                {
+                    var cells = row.SelectNodes("td");
+                    var scanPathId = Int32.Parse(cells[1].InnerText.Trim());
+                    var f = _scanFolders[scanPathId];
+                    var path = string.Format("/{0}{1}", f.Drive, cells[5].InnerText.Trim().Replace("\\", "/"));
+                    if (!FileManager.FileExists(path))
+                    {
+                        missing.AppendFormat("{0} ({1})", cells[12].InnerText.Trim(), path);
+                    }
+                }
+                NotificationMessage.ShowMessage(string.Empty, missing.ToString());
+            }
+            catch
+            {
+                //TODO
+            }
+        }
+
+        #endregion
+
+        #region LaunchGameCommand
+
+        public DelegateCommand LaunchGameCommand { get; private set; }
+
+        public bool CanExecuteLaunchGameCommand()
+        {
+            return FileManager.IsFSD;
+        }
+
+        public void ExecuteLaunchGameCommand()
+        {
+            try
+            {
+                var scanFolder = GetCorrespondingScanFolder(CurrentRow.Path);
+                if (scanFolder != null)
+                {
+                    var prefix = CurrentRow.Path.Replace("/", "\\").SubstringAfter(scanFolder.Drive);
+                    var html = new HtmlDocument();
+                    html.LoadHtml(HttpGet("gettable.html?name=ContentItems"));
+                    foreach (var row in html.DocumentNode.QuerySelectorAll("table.GameContentHeader > tr").Skip(2))
+                    {
+                        var cells = row.SelectNodes("td");
+                        if (Int32.Parse(cells[1].InnerText.Trim()) == scanFolder.PathId && cells[6].InnerText.Trim().StartsWith(prefix))
+                        {
+                            var contentId = Int32.Parse(cells[0].InnerText.Trim());
+                            HttpPost("launch", string.Format("sessionid={0}&contentid={1:X2}&Action=launch", _httpSessionId, contentId));
+                            ExecuteCloseCommand();
+                            return;
+                        }
+                    }
+                    //TODO
+                } 
+                else
+                {
+                    //TODO
+                }
+            }
+            catch
+            {
+                //TODO
+            }
+        }
+
+        #endregion
+
+        #region LaunchXexCommand
+
+        public DelegateCommand LaunchXexCommand { get; private set; }
+
+        public bool CanExecuteLaunchXexCommand()
+        {
+            return FileManager.IsFSD;
+        }
+
+        public void ExecuteLaunchXexCommand()
+        {
+            FileManager.Execute(CurrentRow.Path);
+            ExecuteCloseCommand();
+        }
+
+        #endregion
+
+
         public FtpContentViewModel(FileManagerViewModel parent) : base(parent)
         {
             CloseCommand = new DelegateCommand(ExecuteCloseCommand);
+            CheckFreestyleDatabaseCommand = new DelegateCommand(ExecuteCheckFreestyleDatabaseCommand, CanExecuteCheckFreestyleDatabaseCommand);
+            LaunchGameCommand = new DelegateCommand(ExecuteLaunchGameCommand, CanExecuteLaunchGameCommand);
+            LaunchXexCommand = new DelegateCommand(ExecuteLaunchXexCommand, CanExecuteLaunchXexCommand);
         }
 
         public override void LoadDataAsync(LoadCommand cmd, LoadDataAsyncParameters cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase, Exception> error = null)
@@ -216,6 +321,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         }
                         else
                         {
+                            username = login.Username;
+                            password = login.Password;
                             var status = GetScanFolders(username, password);
                             if (status != HttpStatusCode.OK && status != HttpStatusCode.Unauthorized)
                             {
@@ -279,15 +386,15 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             if (!IsContentScanTriggerAvailable) return;
 
             var scanFolder = GetCorrespondingScanFolder(CurrentFolder.Path);
-            if (!scanFolder.HasValue) return;
+            if (scanFolder == null) return;
 
             switch (UserSettings.FsdContentScanTrigger)
             {
                 case FsdContentScanTrigger.AfterUpload:
-                    TriggerContentScan(scanFolder.Value);
+                    TriggerContentScan(scanFolder.PathId);
                     break;
                 case FsdContentScanTrigger.AfterConnectionClose:
-                    _doContentScanOn.Add(scanFolder.Value);
+                    _doContentScanOn.Add(scanFolder.PathId);
                     break;
             }
         }
@@ -321,20 +428,22 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     if (responseString.Contains("j_password")) return HttpStatusCode.Unauthorized;
 
                     var r = new Regex(@"<tr.*?pathid:'(?<PathId>\d+)'.*?depth"">(?<ScanDepth>\d+).*?path"">(?<Path>.*?)</td>", RegexOptions.Singleline);
-                    _scanFolders = new Dictionary<string, FsdScanPath>();
+                    _scanFolders = new Dictionary<int, FsdScanPath>();
                     foreach (Match m in r.Matches(responseString))
                     {
                         try
                         {
                             var path = "/" + m.Groups["Path"].Value.Replace(":\\", "\\").Replace("\\", "/");
-                            if (_scanFolders.ContainsKey(path)) continue;
+                            if (_scanFolders.Any(kvp => kvp.Value.Path == path)) continue;
                             var pathid = Int32.Parse(m.Groups["PathId"].Value);
                             var depth = Int32.Parse(m.Groups["ScanDepth"].Value);
-                            _scanFolders.Add(path, new FsdScanPath
+                            var drive = m.Groups["Path"].Value.SubstringBefore(":");
+                            _scanFolders.Add(pathid, new FsdScanPath
                             {
                                 PathId = pathid,
                                 Path = path,
-                                ScanDepth = depth
+                                ScanDepth = depth,
+                                Drive = drive
                             });
                         }
                         catch
@@ -356,13 +465,13 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
         }
 
-        private int? GetCorrespondingScanFolder(string path)
+        private FsdScanPath GetCorrespondingScanFolder(string path)
         {
-            foreach (var scanPath in _scanFolders.Where(s => s.Key.StartsWith(path)).Select(s => s.Value))
+            foreach (var scanPath in _scanFolders.Where(s => path.StartsWith(s.Value.Path)).Select(s => s.Value))
             {
                 var relativePath = path.Replace(scanPath.Path, String.Empty).Trim('/');
                 var depth = relativePath.Split('/').Length;
-                if (scanPath.ScanDepth >= depth) return scanPath.PathId;
+                if (scanPath.ScanDepth >= depth) return scanPath;
             }
             return null;
         }
@@ -371,23 +480,40 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             try
             {
-                using (var client = new WebClient())
-                {
-                    byte[] body;
-                    using (var ms = new MemoryStream())
-                    {
-                        var sw = new StreamWriter(ms);
-                        sw.Write("session={0}&pathid={1}&Action=scan", _httpSessionId, pathid);
-                        sw.Flush();
-                        body = ms.ToArray();
-                    }
-                    client.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
-                    client.UploadData(string.Format("http://{0}/paths.html", Connection.Address), body);
-                }
+                HttpPost("paths.html", string.Format("sessionid={0}&pathid={1}&Action=scan", _httpSessionId, pathid));
             }
             catch
             {
                 NotificationMessage.ShowMessage(Resx.FsdContentScanTrigger, Resx.ContentScanFailedErrorMessage);
+            }
+        }
+
+        private string HttpGet(string target)
+        {
+            using (var client = new WebClient())
+            {
+                client.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+                client.Headers[HttpRequestHeader.Cookie] = "session=" + _httpSessionId;
+                var result = client.DownloadData(string.Format("http://{0}/{1}", Connection.Address, target));
+                return Encoding.Default.GetString(result);
+            }
+        }
+
+        private void HttpPost(string target, string formData)
+        {
+            using (var client = new WebClient())
+            {
+                byte[] body;
+                using (var ms = new MemoryStream())
+                {
+                    var sw = new StreamWriter(ms);
+                    sw.Write(formData);
+                    sw.Flush();
+                    body = ms.ToArray();
+                }
+                client.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+                client.Headers[HttpRequestHeader.Cookie] = "session=" + _httpSessionId;
+                client.UploadDataAsync(new Uri(string.Format("http://{0}/{1}", Connection.Address, target)), body);
             }
         }
 
@@ -478,6 +604,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void VerifyUpload(string savePath, string itemPath)
         {
             if (!UserSettings.VerifyFileHashAfterFtpUpload) return;
+
+            //TODO: !!!!!!
+            return;
 
             bool match;
             try
@@ -584,6 +713,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             var dir = path.Substring(0, path.LastIndexOf('/') + 1);
             Telnet.ChangeFtpDirectory(dir);
             return path.Replace(dir, string.Empty);
+        }
+
+        public override void RaiseCanExecuteChanges()
+        {
+            base.RaiseCanExecuteChanges();
+            if (CheckFreestyleDatabaseCommand != null) CheckFreestyleDatabaseCommand.RaiseCanExecuteChanged();
         }
 
         public override void Dispose()

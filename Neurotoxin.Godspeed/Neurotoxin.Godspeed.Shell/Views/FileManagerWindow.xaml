@@ -100,8 +100,9 @@
                     <MenuItem Header="{lex:LocText Exit}" Command="{x:Static commands:FileManagerCommands.ExitCommand}" />
                 </MenuItem>
                 <MenuItem Header="{lex:LocText CommandsMenu}">
-                    <MenuItem Command="{Binding ActivePane.CalculateSizeCommand}" CommandParameter="{StaticResource True}"
-                              Header="{lex:LocText CalculateOccupiedSpace}" InputGestureText="Ctrl+L" />
+                    <MenuItem Header="{lex:LocText CalculateOccupiedSpace}" InputGestureText="Ctrl+L"
+                              Command="{Binding ActivePane.CalculateSizeCommand}" CommandParameter="{StaticResource True}" />
+                    <MenuItem Header="{lex:LocText CheckFreestyleDatabase}" Command="{Binding ActivePane.CheckFreestyleDatabaseCommand}" />
                 </MenuItem>
                 <MenuItem Header="{lex:LocText OptionsMenu}">
                     <MenuItem Header="{lex:LocText Settings, Suffix={x:Static constants:Strings.DotDotDot}}" Command="{x:Static commands:FileManagerCommands.SettingsCommand}" />

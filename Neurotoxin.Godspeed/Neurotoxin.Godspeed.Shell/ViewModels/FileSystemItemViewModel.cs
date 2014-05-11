@@ -173,6 +173,16 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             get { return TitleType == TitleType.Profile; }
         }
 
+        private const string ISXEX = "IsXex";
+        public bool IsXex
+        {
+            get
+            {
+                var ext = System.IO.Path.GetExtension(Name);
+                return ext != null && ext.ToLower() == ".xex";
+            }
+        }
+
         public string TempFilePath { get; set; }
 
         public bool IsCompressedFile
@@ -198,6 +208,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             NotifyPropertyChanged(CONTENTTYPE);
             NotifyPropertyChanged(ISGAME);
             NotifyPropertyChanged(ISPROFILE);
+            NotifyPropertyChanged(ISXEX);
             NotifyPropertyChanged(SIZE);
         }
     }

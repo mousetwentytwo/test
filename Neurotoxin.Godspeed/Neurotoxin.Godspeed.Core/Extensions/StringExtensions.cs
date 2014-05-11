@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using System;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -17,6 +18,18 @@ namespace Neurotoxin.Godspeed.Core.Extensions
             path = "/" + path.TrimEnd('/', '\\');
             var r = new Regex(@"^(.*[\\/]).*$");
             return r.Replace(path, "$1").Substring(1);
+        }
+
+        public static string SubstringBefore(this string haystack, string needle)
+        {
+            var i = haystack.IndexOf(needle, StringComparison.InvariantCultureIgnoreCase);
+            return i > -1 ? haystack.Substring(0, i) : null;
+        }
+
+        public static string SubstringAfter(this string haystack, string needle)
+        {
+            var i = haystack.IndexOf(needle, StringComparison.InvariantCultureIgnoreCase);
+            return i > -1 ? haystack.Substring(i + needle.Length) : null;
         }
     }
 }

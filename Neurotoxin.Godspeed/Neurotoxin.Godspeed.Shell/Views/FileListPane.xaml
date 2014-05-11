@@ -258,6 +258,30 @@
                                         <controls:GreyableImage Source="/Resources/cog.png" Width="16" Height="16" SnapsToDevicePixels="True" />
                                     </MenuItem.Icon>
                                 </MenuItem>
+                                <MenuItem Header="{lex:LocText Neurotoxin.Godspeed.Shell:Resources:LaunchGame}" 
+                                          Command="{Binding Source={StaticResource ViewModel}, Path=Data.LaunchGameCommand}">
+                                    <MenuItem.Visibility>
+                                        <MultiBinding Converter="{StaticResource BoolToVis}" FallbackValue="Collapsed">
+                                            <Binding Source="{StaticResource ViewModel}" Path="Data.CurrentRow.IsGame"/>
+                                            <Binding Source="{StaticResource ViewModel}" Path="Data.LaunchGameCommand"/>
+                                        </MultiBinding>
+                                    </MenuItem.Visibility>
+                                    <MenuItem.Icon>
+                                        <controls:GreyableImage Source="/Resources/control_play.png" Width="16" Height="16" SnapsToDevicePixels="True" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="{lex:LocText Neurotoxin.Godspeed.Shell:Resources:LaunchXex}" 
+                                          Command="{Binding Source={StaticResource ViewModel}, Path=Data.LaunchXexCommand}">
+                                    <MenuItem.Visibility>
+                                        <MultiBinding Converter="{StaticResource BoolToVis}" FallbackValue="Collapsed">
+                                            <Binding Source="{StaticResource ViewModel}" Path="Data.CurrentRow.IsXex"/>
+                                            <Binding Source="{StaticResource ViewModel}" Path="Data.LaunchXexCommand"/>
+                                        </MultiBinding>
+                                    </MenuItem.Visibility>
+                                    <MenuItem.Icon>
+                                        <controls:GreyableImage Source="/Resources/control_play.png" Width="16" Height="16" SnapsToDevicePixels="True" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
                                 <MenuItem Header="{lex:LocText Neurotoxin.Godspeed.Shell:Resources:OpenProfile}" 
                                           Visibility="{Binding Source={StaticResource ViewModel}, Path=Data.CurrentRow.IsProfile, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}"
                                           Command="{Binding Source={StaticResource ViewModel}, Path=Data.OpenStfsPackageCommand}"
@@ -266,13 +290,13 @@
                                         <controls:GreyableImage Source="/Resources/package.png" Width="16" Height="16" SnapsToDevicePixels="True" />
                                     </MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem Header="{lex:Loc Neurotoxin.Godspeed.Shell:Resources:RepairProfile}" 
+                                <!--<MenuItem Header="{lex:Loc Neurotoxin.Godspeed.Shell:Resources:RepairProfile}" 
                                           Visibility="{Binding Source={StaticResource ViewModel}, Path=Data.CurrentRow.IsProfile, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}"
                                           Command="{Binding Source={StaticResource ViewModel}, Path=Data.OpenStfsPackageCommand}" CommandParameter="{StaticResource Repair}">
                                     <MenuItem.Icon>
                                         <controls:GreyableImage Source="/Resources/package.png" Width="16" Height="16" SnapsToDevicePixels="True"/>
                                     </MenuItem.Icon>
-                                </MenuItem>
+                                </MenuItem>-->
                                 <MenuItem Header="{lex:LocText Neurotoxin.Godspeed.Shell:Resources:CopyTitleIDtoClipboard}"
                                           Visibility="{Binding Source={StaticResource ViewModel}, Path=Data.CurrentRow.IsGame, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}"
                                           Command="{Binding Source={StaticResource ViewModel}, Path=Data.CopyTitleIdToClipboardCommand}">

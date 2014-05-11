@@ -55,6 +55,18 @@
   </PropertyGroup>
   <PropertyGroup />
   <ItemGroup>
+    <Reference Include="Fizzler">
+      <HintPath>..\packages\Fizzler.0.9.3\lib\net35\Fizzler.dll</HintPath>
+    </Reference>
+    <Reference Include="Fizzler.Sandbox">
+      <HintPath>..\packages\Fizzler.0.9.3\lib\net35\Fizzler.Sandbox.dll</HintPath>
+    </Reference>
+    <Reference Include="Fizzler.Systems.HtmlAgilityPack">
+      <HintPath>..\packages\Fizzler.0.9.3\lib\net35\Fizzler.Systems.HtmlAgilityPack.dll</HintPath>
+    </Reference>
+    <Reference Include="HtmlAgilityPack">
+      <HintPath>..\packages\HtmlAgilityPack.1.4.6\lib\Net40-client\HtmlAgilityPack.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Practices.Composite">
       <HintPath>..\packages\Prism\Microsoft.Practices.Composite.dll</HintPath>
     </Reference>
@@ -165,6 +177,7 @@
     <Compile Include="Extensions\ResourcesExtension.cs" />
     <Compile Include="GlobalVariables.cs" />
     <Compile Include="Helpers\SanityChecker.cs" />
+    <Compile Include="Helpers\Web.cs" />
     <Compile Include="Interfaces\IFileListPaneViewModel.cs" />
     <Compile Include="Interfaces\IFileManager.cs" />
     <Compile Include="Interfaces\IUserMessageViewModel.cs" />
@@ -615,6 +628,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\reparse_point.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\control_play.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

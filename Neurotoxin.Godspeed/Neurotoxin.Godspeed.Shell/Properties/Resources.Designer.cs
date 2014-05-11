@@ -306,6 +306,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Check FSD database for errors.
+        /// </summary>
+        internal static string CheckFreestyleDatabase {
+            get {
+                return ResourceManager.GetString("CheckFreestyleDatabase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Clear Cache.
         /// </summary>
         internal static string ClearCache {
@@ -1188,6 +1197,24 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Launch game.
+        /// </summary>
+        internal static string LaunchGame {
+            get {
+                return ResourceManager.GetString("LaunchGame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Launch application.
+        /// </summary>
+        internal static string LaunchXex {
+            get {
+                return ResourceManager.GetString("LaunchXex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to License Stores.
         /// </summary>
         internal static string LicenseStorePlural {
@@ -1805,6 +1832,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         internal static string RefreshingDirectory {
             get {
                 return ResourceManager.GetString("RefreshingDirectory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remember password.
+        /// </summary>
+        internal static string RememberPassword {
+            get {
+                return ResourceManager.GetString("RememberPassword", resourceCulture);
             }
         }
         

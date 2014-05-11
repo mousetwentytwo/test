@@ -176,7 +176,6 @@
     <Compile Include="Net\IFtpListItem.cs" />
     <Compile Include="Net\IFtpReply.cs" />
     <Compile Include="Net\Telnet.cs" />
-    <Compile Include="Net\Web.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Security\Crc32.cs" />
     <Compile Include="Security\RC4.cs" />

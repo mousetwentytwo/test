@@ -69,6 +69,11 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             get { return FtpClient.IsConnected; }
         }
 
+        public bool IsFSD
+        {
+            get { return ServerType == FtpServerType.F3 || ServerType == FtpServerType.FSD; }
+        }
+
         public FtpContent(IEventAggregator eventAggregator)
         {
             _eventAggregator = eventAggregator;
@@ -529,6 +534,11 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             }
 
             return FileExists(remotePath) == new FileInfo(localPath).Length;
+        }
+
+        public void Execute(string path)
+        {
+            FtpClient.Execute("EXEC " + path);
         }
 
         #region Inherited TraceListener members

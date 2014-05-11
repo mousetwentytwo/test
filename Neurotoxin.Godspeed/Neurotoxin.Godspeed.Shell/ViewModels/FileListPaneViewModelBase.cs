@@ -1113,6 +1113,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 return;
             }
             CurrentRow = Items.FirstOrDefault();
+            RaiseCanExecuteChanges();
         }
 
         public TransferResult Delete(FileSystemItem item)

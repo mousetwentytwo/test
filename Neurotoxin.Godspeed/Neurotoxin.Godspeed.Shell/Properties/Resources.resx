@@ -1004,4 +1004,16 @@
   <data name="UrlCannotBeOpened" xml:space="preserve">
     <value>URL cannot be opened (Reason: {0})</value>
   </data>
+  <data name="RememberPassword" xml:space="preserve">
+    <value>Remember password</value>
+  </data>
+  <data name="LaunchGame" xml:space="preserve">
+    <value>Launch game</value>
+  </data>
+  <data name="CheckFreestyleDatabase" xml:space="preserve">
+    <value>Check FSD database for errors</value>
+  </data>
+  <data name="LaunchXex" xml:space="preserve">
+    <value>Launch application</value>
+  </data>
 </root>
