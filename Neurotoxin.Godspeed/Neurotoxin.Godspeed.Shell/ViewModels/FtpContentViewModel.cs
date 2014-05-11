@@ -596,6 +596,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public override TransferResult Import(FileSystemItem item, string savePath, CopyAction action)
         {
+            //TODO: remove this override and introduce Verify TransferType
             var result = base.Import(item, savePath, action);
             if (result == TransferResult.Ok) VerifyUpload(savePath, item.Path);
             return result;
@@ -604,9 +605,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void VerifyUpload(string savePath, string itemPath)
         {
             if (!UserSettings.VerifyFileHashAfterFtpUpload) return;
-
-            //TODO: !!!!!!
-            return;
 
             bool match;
             try

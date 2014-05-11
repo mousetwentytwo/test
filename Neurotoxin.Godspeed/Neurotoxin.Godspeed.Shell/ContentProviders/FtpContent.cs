@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Timers;
 using Microsoft.Practices.Composite.Events;
 using Neurotoxin.Godspeed.Core.Extensions;
@@ -19,6 +20,7 @@ using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
 using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
+using Timer = System.Timers.Timer;
 
 namespace Neurotoxin.Godspeed.Shell.ContentProviders
 {
@@ -517,9 +519,14 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public bool VerifyUpload(string remotePath, string localPath)
         {
+            if (FileExists(remotePath) != new FileInfo(localPath).Length) return false;
+
             if (FtpClient.Capabilities.HasFlag(FtpCapability.XCRC))
             {
+                var readTimeout = FtpClient.ReadTimeout;
+                FtpClient.ReadTimeout = Timeout.Infinite;
                 var remoteChecksum = FtpClient.GetXCRC(remotePath);
+                FtpClient.ReadTimeout = readTimeout;
                 var crc = new Crc32();
                 using (var f = new FileStream(localPath, FileMode.Open, FileAccess.Read))
                 {
@@ -533,7 +540,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 }
             }
 
-            return FileExists(remotePath) == new FileInfo(localPath).Length;
+            return false;
         }
 
         public void Execute(string path)

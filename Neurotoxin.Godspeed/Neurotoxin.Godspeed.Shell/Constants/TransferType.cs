@@ -4,6 +4,7 @@
     {
         Copy,
         Move,
-        Delete
+        Delete,
+        Verify
     }
 }

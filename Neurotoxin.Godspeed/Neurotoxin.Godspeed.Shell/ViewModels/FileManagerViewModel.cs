@@ -1208,6 +1208,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void FinishTransfer()
         {
             if (_copyMode == CopyMode.RemoteExport || _copyMode == CopyMode.RemoteImport) CloseTelnetSession();
+            //TODO: SetActive might fuck these property values up
             SourcePane.FinishTransferAsSource();
             TargetPane.FinishTransferAsTarget();
             if (Ftp != null) Ftp.IsKeepAliveEnabled = false;
