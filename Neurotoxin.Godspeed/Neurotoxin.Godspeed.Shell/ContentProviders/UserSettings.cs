@@ -40,7 +40,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         private const string VerifyFileHashAfterFtpUploadKey = "VerifyFileHashAfterFtpUpload";
         public static bool VerifyFileHashAfterFtpUpload
         {
-            get { return Get(VerifyFileHashAfterFtpUploadKey, true); }
+            get { return Get(VerifyFileHashAfterFtpUploadKey, false); }
             set { Set(VerifyFileHashAfterFtpUploadKey, value); }
         }
 

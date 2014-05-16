@@ -1116,6 +1116,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             RaiseCanExecuteChanges();
         }
 
+        public bool FileExists(string path)
+        {
+            return FileManager.FileExists(path);
+        }
+
         public TransferResult Delete(FileSystemItem item)
         {
             try

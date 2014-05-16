@@ -1,20 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
-using Neurotoxin.Godspeed.Presentation.Events;
 
 namespace Neurotoxin.Godspeed.Presentation.Infrastructure
 {
-    public abstract class ViewModelBase : INotifyPropertyChanged, IDisposable
+    public abstract class ViewModelBase : IViewModel, INotifyPropertyChanged, IDisposable
     {
         protected readonly IUnityContainer container;
         protected readonly IEventAggregator eventAggregator;
 
         public bool IsDisposed { get; private set; }
+
+        private const string ISBUSY = "IsBusy";
+        private bool _isBusy;
+        public bool IsBusy
+        {
+            get { return _isBusy; }
+            set { _isBusy = value; NotifyPropertyChanged(ISBUSY); }
+        }
 
         public ViewModelBase()
         {
@@ -30,7 +34,6 @@ namespace Neurotoxin.Godspeed.Presentation.Infrastructure
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        public event DisposedEventHandler Disposed;
 
         /// <summary>
         /// Raises the PropertyChanged event.
@@ -48,8 +51,6 @@ namespace Neurotoxin.Godspeed.Presentation.Infrastructure
         public virtual void Dispose()
         {
             IsDisposed = true;
-            var handler = Disposed;
-            if (handler != null) handler(this);
         }
 
     }

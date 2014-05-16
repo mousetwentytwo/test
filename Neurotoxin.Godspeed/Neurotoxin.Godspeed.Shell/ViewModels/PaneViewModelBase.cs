@@ -28,14 +28,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
         }
 
-        private const string ISBUSY = "IsBusy";
-        private bool _isBusy;
-        public bool IsBusy
-        {
-            get { return _isBusy; }
-            set { _isBusy = value; NotifyPropertyChanged(ISBUSY); }
-        }
-
         private const string ISLOADED = "IsLoaded";
         private bool _isLoaded;
         public bool IsLoaded

@@ -8,6 +8,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
 using Microsoft.Practices.ObjectBuilder2;
+using Microsoft.Practices.Unity;
 using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Core.Models;
 using Neurotoxin.Godspeed.Core.Net;
@@ -20,6 +21,7 @@ using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
 using Neurotoxin.Godspeed.Shell.Exceptions;
 using Neurotoxin.Godspeed.Shell.Extensions;
 using Neurotoxin.Godspeed.Shell.Models;
+using Neurotoxin.Godspeed.Shell.Views;
 using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 using Fizzler.Systems.HtmlAgilityPack;
@@ -30,12 +32,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
     {
         private readonly HashSet<int> _doContentScanOn = new HashSet<int>();
         private readonly Dictionary<string, string> _driveLabelCache = new Dictionary<string, string>();
-        private Dictionary<int, FsdScanPath> _scanFolders;
         private string _httpSessionId;
 
         public FtpConnectionItemViewModel Connection { get; private set; }
-
-        public Stack<string> Log { get { return FileManager.Log; } } 
+        public Stack<string> Log { get { return FileManager.Log; } }
+        public Dictionary<int, FsdScanPath> ScanFolders { get; private set; }
 
         public bool IsKeepAliveEnabled
         {
@@ -101,28 +102,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public void ExecuteCheckFreestyleDatabaseCommand()
         {
-            try
-            {
-                var missing = new StringBuilder();
-                var html = new HtmlDocument();
-                html.LoadHtml(HttpGet("gettable.html?name=ContentItems"));
-                foreach (var row in html.DocumentNode.QuerySelectorAll("table.GameContentHeader > tr").Skip(2))
-                {
-                    var cells = row.SelectNodes("td");
-                    var scanPathId = Int32.Parse(cells[1].InnerText.Trim());
-                    var f = _scanFolders[scanPathId];
-                    var path = string.Format("/{0}{1}", f.Drive, cells[5].InnerText.Trim().Replace("\\", "/"));
-                    if (!FileManager.FileExists(path))
-                    {
-                        missing.AppendFormat("{0} ({1})", cells[12].InnerText.Trim(), path);
-                    }
-                }
-                NotificationMessage.ShowMessage(string.Empty, missing.ToString());
-            }
-            catch
-            {
-                //TODO
-            }
+            FreestyleDatabaseCheckerWindow.Show(this);
         }
 
         #endregion
@@ -145,7 +125,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 {
                     var prefix = CurrentRow.Path.Replace("/", "\\").SubstringAfter(scanFolder.Drive);
                     var html = new HtmlDocument();
-                    html.LoadHtml(HttpGet("gettable.html?name=ContentItems"));
+                    html.LoadHtml(HttpGetString("gettable.html?name=ContentItems"));
                     foreach (var row in html.DocumentNode.QuerySelectorAll("table.GameContentHeader > tr").Skip(2))
                     {
                         var cells = row.SelectNodes("td");
@@ -428,17 +408,17 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     if (responseString.Contains("j_password")) return HttpStatusCode.Unauthorized;
 
                     var r = new Regex(@"<tr.*?pathid:'(?<PathId>\d+)'.*?depth"">(?<ScanDepth>\d+).*?path"">(?<Path>.*?)</td>", RegexOptions.Singleline);
-                    _scanFolders = new Dictionary<int, FsdScanPath>();
+                    ScanFolders = new Dictionary<int, FsdScanPath>();
                     foreach (Match m in r.Matches(responseString))
                     {
                         try
                         {
                             var path = "/" + m.Groups["Path"].Value.Replace(":\\", "\\").Replace("\\", "/");
-                            if (_scanFolders.Any(kvp => kvp.Value.Path == path)) continue;
+                            if (ScanFolders.Any(kvp => kvp.Value.Path == path)) continue;
                             var pathid = Int32.Parse(m.Groups["PathId"].Value);
                             var depth = Int32.Parse(m.Groups["ScanDepth"].Value);
                             var drive = m.Groups["Path"].Value.SubstringBefore(":");
-                            _scanFolders.Add(pathid, new FsdScanPath
+                            ScanFolders.Add(pathid, new FsdScanPath
                             {
                                 PathId = pathid,
                                 Path = path,
@@ -467,7 +447,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private FsdScanPath GetCorrespondingScanFolder(string path)
         {
-            foreach (var scanPath in _scanFolders.Where(s => path.StartsWith(s.Value.Path)).Select(s => s.Value))
+            foreach (var scanPath in ScanFolders.Where(s => path.StartsWith(s.Value.Path)).Select(s => s.Value))
             {
                 var relativePath = path.Replace(scanPath.Path, String.Empty).Trim('/');
                 var depth = relativePath.Split('/').Length;
@@ -488,15 +468,21 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
         }
 
-        private string HttpGet(string target)
+        public byte[] HttpGet(string target)
         {
             using (var client = new WebClient())
             {
                 client.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
                 client.Headers[HttpRequestHeader.Cookie] = "session=" + _httpSessionId;
                 var result = client.DownloadData(string.Format("http://{0}/{1}", Connection.Address, target));
-                return Encoding.Default.GetString(result);
+                return result;
             }
+        }
+
+        public string HttpGetString(string target, Encoding encoding = null)
+        {
+            if (encoding == null) encoding = Encoding.Default;
+            return encoding.GetString(HttpGet(target));
         }
 
         private void HttpPost(string target, string formData)

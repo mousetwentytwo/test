@@ -38,11 +38,13 @@ namespace Neurotoxin.Godspeed.Shell
             Container.RegisterType<LocalFileSystemContentViewModel>();
             Container.RegisterType<StfsPackageContentViewModel>();
             Container.RegisterType<CompressedFileContentViewModel>();
+            Container.RegisterType<FreestyleDatabaseCheckerViewModel>();
 
             // Views
             Container.RegisterType<FileManagerWindow>(new ContainerControlledLifetimeManager());
             Container.RegisterType<SettingsWindow>();
             Container.RegisterType<StatisticsWindow>();
+            Container.RegisterType<FreestyleDatabaseCheckerWindow>();
 
             // Helpers
             Container.RegisterType<SanityChecker>(new ContainerControlledLifetimeManager());

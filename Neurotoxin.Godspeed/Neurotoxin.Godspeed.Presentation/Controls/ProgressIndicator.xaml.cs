@@ -41,13 +41,13 @@ namespace Neurotoxin.Godspeed.Presentation.Controls
 
         public void Stop()
         {
-            _sleep.Stop();
+            if (_sleep != null) _sleep.Stop();
         }
 
         public void Start()
         {
             Restore();
-            _sleep.Start();
+            if (_sleep != null) _sleep.Start();
         }
 
         private void Step()
