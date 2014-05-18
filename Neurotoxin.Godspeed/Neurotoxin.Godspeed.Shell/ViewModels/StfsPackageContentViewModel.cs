@@ -31,6 +31,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             get { return Resx.Inject; }
         }
 
+        public override bool IsVerificationEnabled
+        {
+            get { return false; }
+        }
+
         #region SaveAndCloseCommand
 
         public DelegateCommand SaveAndCloseCommand { get; private set; }

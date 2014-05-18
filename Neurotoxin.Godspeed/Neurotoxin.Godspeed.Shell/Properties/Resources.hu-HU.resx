@@ -923,4 +923,25 @@
   <data name="LaunchXex" xml:space="preserve">
     <value>Alkalmazás elindítása</value>
   </data>
+  <data name="GettingData" xml:space="preserve">
+    <value>Adatok betöltése</value>
+  </data>
+  <data name="Checking" xml:space="preserve">
+    <value>Ellenőrzés</value>
+  </data>
+  <data name="TheFollowingGamesAreMissing" xml:space="preserve">
+    <value>Az alábbi játékok már hiányoznak az Xboxodról, töröld őket az FSD adatbázisából!</value>
+  </data>
+  <data name="Path" xml:space="preserve">
+    <value>Útvonal</value>
+  </data>
+  <data name="ErrorsInFreestyleDatabase" xml:space="preserve">
+    <value>Hibák az FSD adatbázisában</value>
+  </data>
+  <data name="VerifyFileHashAfterFtpUploadRemarks" xml:space="preserve">
+    <value>Ez a művelet meglehetősen időigényes és csak az FSD támogatja. Az általa használt algoritmus kb. 18 megabájtot képes leellenőrizni másodpercenként.</value>
+  </data>
+  <data name="Verifying" xml:space="preserve">
+    <value>Ellenőrzés</value>
+  </data>
 </root>

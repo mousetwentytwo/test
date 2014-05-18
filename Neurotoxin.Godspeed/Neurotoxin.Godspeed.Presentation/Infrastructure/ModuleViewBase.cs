@@ -7,10 +7,8 @@ using Microsoft.Practices.Composite;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
 using System.Windows.Input;
-using System.Windows.Data;
 using System.Windows.Controls.Primitives;
 using System.ComponentModel;
-using Neurotoxin.Godspeed.Presentation.Controls;
 using Neurotoxin.Godspeed.Presentation.Events;
 using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
@@ -20,7 +18,7 @@ namespace Neurotoxin.Godspeed.Presentation.Infrastructure
     /// <summary>
     /// Class <see cref="ModuleViewBase"/> is a base class for user controls presenting views.
     /// </summary>
-    public class ModuleViewBase : UserControl, IView, IActiveAware
+    public class ModuleViewBase : UserControl, IView<ModuleViewModelBase>, IActiveAware
     {
         #region Fields
         

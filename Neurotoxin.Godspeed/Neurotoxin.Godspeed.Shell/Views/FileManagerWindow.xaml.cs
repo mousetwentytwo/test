@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Reflection;
 using System.Threading;
 using System.Windows;
@@ -14,7 +13,7 @@ using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
 using Neurotoxin.Godspeed.Core.Constants;
 using Neurotoxin.Godspeed.Core.Io;
-using Neurotoxin.Godspeed.Core.Net;
+using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Commands;
 using Neurotoxin.Godspeed.Shell.Events;
@@ -27,12 +26,13 @@ using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 
 namespace Neurotoxin.Godspeed.Shell.Views
 {
-    public partial class FileManagerWindow
+    public partial class FileManagerWindow : IView<FileManagerViewModel>
     {
+        private readonly IUnityContainer _container;
         private readonly IEventAggregator _eventAggregator;
         private bool _isAbortionInProgress;
         private TransferProgressDialog _transferProgressDialog;
-        private MigrationProgressDialog _migrationProgressDialog;
+        private ProgressDialog _progressDialog;
         private Queue<Timer> _userMessageReadTimers;
 
         public FileManagerViewModel ViewModel
@@ -42,6 +42,7 @@ namespace Neurotoxin.Godspeed.Shell.Views
 
         public FileManagerWindow(FileManagerViewModel viewModel, IEventAggregator eventAggregator)
         {
+            _container = UnityInstance.Container;
             _eventAggregator = eventAggregator;
             var assembly = Assembly.GetAssembly(typeof(FileManagerWindow));
             var assemblyName = assembly.GetName();
@@ -50,8 +51,6 @@ namespace Neurotoxin.Godspeed.Shell.Views
 
             InitializeComponent();
             DataContext = viewModel;
-            viewModel.TransferStarted += ViewModelOnTransferStarted;
-            viewModel.TransferFinished += ViewModelOnTransferFinished;
             CommandBindings.Add(new CommandBinding(FileManagerCommands.OpenDriveDropdownCommand, ExecuteOpenDriveDropdownCommand));
             CommandBindings.Add(new CommandBinding(FileManagerCommands.SettingsCommand, ExecuteSettingsCommand));
             CommandBindings.Add(new CommandBinding(FileManagerCommands.StatisticsCommand, ExecuteStatisticsCommand));
@@ -63,7 +62,10 @@ namespace Neurotoxin.Godspeed.Shell.Views
             LayoutRoot.PreviewKeyDown += LayoutRootOnPreviewKeyDown;
             Closing += OnClosing;
 
+            eventAggregator.GetEvent<TransferStartedEvent>().Subscribe(OnTransferStarted);
+            eventAggregator.GetEvent<TransferFinishedEvent>().Subscribe(OnTransferFinished);
             eventAggregator.GetEvent<CacheMigrationEvent>().Subscribe(OnCacheMigration);
+            eventAggregator.GetEvent<FreestyleDatabaseCheckEvent>().Subscribe(OnFreestyleDatabaseCheck);
         }
 
         private void OnClosing(object sender, CancelEventArgs args)
@@ -71,7 +73,7 @@ namespace Neurotoxin.Godspeed.Shell.Views
             ViewModel.Dispose();
         }
 
-        //HACK: Temporary solution. KeyBinding doesn't work with Key.Delete (requires investigation)
+        //TODO: Temporary solution. KeyBinding doesn't work with Key.Delete (requires investigation)
         private void LayoutRootOnPreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key != Key.Delete) return;
@@ -147,11 +149,11 @@ namespace Neurotoxin.Godspeed.Shell.Views
             Application.Current.Shutdown();
         }
 
-        private void ViewModelOnTransferStarted()
+        private void OnTransferStarted(TransferStartedEventArgs e)
         {
             if (_transferProgressDialog == null)
             {
-                _transferProgressDialog = new TransferProgressDialog(ViewModel);
+                _transferProgressDialog = new TransferProgressDialog(e.Sender);
                 _transferProgressDialog.Closing += TransferProgressDialogOnClosing;
                 _transferProgressDialog.Closed += TransferProgressDialogOnClosed;
             }
@@ -171,7 +173,7 @@ namespace Neurotoxin.Godspeed.Shell.Views
             }
             _transferProgressDialog.Abort.IsEnabled = false;
             _isAbortionInProgress = true;
-            ViewModel.AbortTransfer();
+            _transferProgressDialog.ViewModel.AbortTransfer();
         }
 
         private void TransferProgressDialogOnClosed(object sender, EventArgs e)
@@ -181,7 +183,7 @@ namespace Neurotoxin.Godspeed.Shell.Views
             _transferProgressDialog = null;
         }
 
-        private void ViewModelOnTransferFinished()
+        private void OnTransferFinished(TransferFinishedEventArgs e)
         {
             if (_transferProgressDialog == null) return;
             _transferProgressDialog.Closing -= TransferProgressDialogOnClosing;
@@ -191,18 +193,40 @@ namespace Neurotoxin.Godspeed.Shell.Views
         private void OnCacheMigration(CacheMigrationEventArgs e)
         {
             IsHitTestVisible = false;
-            _migrationProgressDialog = UnityInstance.Container.Resolve<MigrationProgressDialog>();
-            var vm = (CacheMigrationViewModel) _migrationProgressDialog.DataContext;
-            vm.MigrationFinished += OnMigrationFinished;
+            _progressDialog = _container.Resolve<ProgressDialog, CacheMigrationViewModel>();
+            var vm = (CacheMigrationViewModel) _progressDialog.ViewModel;
+            vm.Finished += OnMigrationFinished;
             vm.Initialize(e);
-            _migrationProgressDialog.Show();
+            _progressDialog.Show();
         }
 
-        private void OnMigrationFinished(CacheMigrationViewModel sender)
+        private void OnMigrationFinished(IProgressViewModel sender)
         {
-            sender.MigrationFinished -= OnMigrationFinished;
+            sender.Finished -= OnMigrationFinished;
             IsHitTestVisible = true;
-            _migrationProgressDialog.Close();
+            _progressDialog.Close();
+            _progressDialog = null;
+        }
+
+        private void OnFreestyleDatabaseCheck(FreestyleDatabaseCheckEventArgs e)
+        {
+            IsHitTestVisible = false;
+            var vm = _container.Resolve<FreestyleDatabaseCheckerViewModel>(new ParameterOverride("parent", e.FtpContentViewModel));
+            _progressDialog = _container.Resolve<ProgressDialog, FreestyleDatabaseCheckerViewModel>(vm);
+            vm.Finished += OnFreestyleDatabaseCheckFinished;
+            vm.Check();
+            _progressDialog.Show();
+        }
+
+        private void OnFreestyleDatabaseCheckFinished(IProgressViewModel sender)
+        {
+            sender.Finished -= OnFreestyleDatabaseCheckFinished;
+            IsHitTestVisible = true;
+            _progressDialog.Close();
+            var vm = (FreestyleDatabaseCheckerViewModel)_progressDialog.ViewModel;
+            var window = _container.Resolve<FreestyleDatabaseCheckerWindow, FreestyleDatabaseCheckerViewModel>(vm);
+            window.ShowDialog();
+            _progressDialog = null;
         }
 
         private void OnUserMessagesOpened(object sender, RoutedEventArgs e)

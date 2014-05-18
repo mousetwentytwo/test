@@ -306,11 +306,20 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Check FSD database for errors.
+        ///   Looks up a localized string similar to FSD Database check for errors.
         /// </summary>
         internal static string CheckFreestyleDatabase {
             get {
                 return ResourceManager.GetString("CheckFreestyleDatabase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Checking.
+        /// </summary>
+        internal static string Checking {
+            get {
+                return ResourceManager.GetString("Checking", resourceCulture);
             }
         }
         
@@ -756,6 +765,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Errors in your FSD database.
+        /// </summary>
+        internal static string ErrorsInFreestyleDatabase {
+            get {
+                return ResourceManager.GetString("ErrorsInFreestyleDatabase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Exit.
         /// </summary>
         internal static string Exit {
@@ -1004,6 +1022,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         internal static string GameVideoSingular {
             get {
                 return ResourceManager.GetString("GameVideoSingular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Getting data.
+        /// </summary>
+        internal static string GettingData {
+            get {
+                return ResourceManager.GetString("GettingData", resourceCulture);
             }
         }
         
@@ -1647,6 +1674,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Path.
+        /// </summary>
+        internal static string Path {
+            get {
+                return ResourceManager.GetString("Path", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Pause.
         /// </summary>
         internal static string Pause {
@@ -2205,6 +2241,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The following games do not exist on your Xbox anymore. You should delete them manually from your FSD database..
+        /// </summary>
+        internal static string TheFollowingGamesAreMissing {
+            get {
+                return ResourceManager.GetString("TheFollowingGamesAreMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Themes.
         /// </summary>
         internal static string ThemePlural {
@@ -2509,6 +2554,24 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         internal static string VerifyFileHashAfterFtpUpload {
             get {
                 return ResourceManager.GetString("VerifyFileHashAfterFtpUpload", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please note that file hash verification takes time and supported only by FSD. It&apos;s hash algorithm can verify approx. 18 megabytes per second..
+        /// </summary>
+        internal static string VerifyFileHashAfterFtpUploadRemarks {
+            get {
+                return ResourceManager.GetString("VerifyFileHashAfterFtpUploadRemarks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Verifying.
+        /// </summary>
+        internal static string Verifying {
+            get {
+                return ResourceManager.GetString("Verifying", resourceCulture);
             }
         }
         

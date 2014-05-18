@@ -5,12 +5,12 @@ using Neurotoxin.Godspeed.Shell.Constants;
 
 namespace Neurotoxin.Godspeed.Shell.Converters
 {
-    public class TransferTypeConverter : IValueConverter
+    public class FileOperationConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            var e = (TransferType)value;
-            return e == TransferType.Copy || e == TransferType.Move
+            var e = (FileOperation)value;
+            return e == FileOperation.Copy || e == FileOperation.Move
                        ? Visibility.Visible
                        : Visibility.Hidden;
         }

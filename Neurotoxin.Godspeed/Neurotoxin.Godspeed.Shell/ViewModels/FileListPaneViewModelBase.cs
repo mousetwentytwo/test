@@ -13,7 +13,6 @@ using Microsoft.Practices.Unity;
 using Microsoft.Win32;
 using Neurotoxin.Godspeed.Core.Io.Stfs;
 using Neurotoxin.Godspeed.Core.Models;
-using Neurotoxin.Godspeed.Core.Net;
 using Neurotoxin.Godspeed.Presentation.Formatters;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
 using Neurotoxin.Godspeed.Shell.Constants;
@@ -173,6 +172,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         }
 
         public abstract bool IsReadOnly { get; }
+
+        public abstract bool IsVerificationEnabled { get; }
 
         #endregion
 
@@ -1288,30 +1289,32 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             eventAggregator.GetEvent<ViewModelGeneratedEvent>().Publish(new ViewModelGeneratedEventArgs(vm));
         }
 
-        public Queue<QueueItem> PopulateQueue(TransferType type)
+        public Queue<QueueItem> PopulateQueue(FileOperation action)
         {
             if (!SelectedItems.Any()) CurrentRow.IsSelected = true;
-            var res = PopulateQueue(SelectedItems.Select(vm => vm.Model), type);
+            var direction = action == FileOperation.Delete
+                                ? TreeTraversalDirection.Upward
+                                : TreeTraversalDirection.Downward;
+            var res = PopulateQueue(SelectedItems.Select(vm => vm.Model), direction, action);
             SelectedItems.ForEach(item => item.NotifyModelChanges());
             var queue = new Queue<QueueItem>();
             res.ForEach(queue.Enqueue);
             return queue;
         }
 
-        private List<QueueItem> PopulateQueue(IEnumerable<FileSystemItem> items, TransferType type)
+        private List<QueueItem> PopulateQueue(IEnumerable<FileSystemItem> items, TreeTraversalDirection direction, FileOperation action)
         {
             var result = new List<QueueItem>();
             foreach (var item in items)
             {
-                if (type != TransferType.Delete) result.Add(new QueueItem(item, TransferType.Copy));
-                //TODO: Link?
-                if (item.Type == ItemType.Directory)
+                if (direction == TreeTraversalDirection.Downward) result.Add(new QueueItem(item, action));
+                if (item.Type == ItemType.Directory) //TODO: Link?
                 {
-                    var sub = PopulateQueue(ChangeDirectoryInner(item.Path), type);
+                    var sub = PopulateQueue(ChangeDirectoryInner(item.Path), direction, action);
                     item.Size = sub.Where(i => i.FileSystemItem.Type == ItemType.File).Sum(i => i.FileSystemItem.Size ?? 0);
                     result.AddRange(sub);
                 }
-                if (type != TransferType.Copy) result.Add(new QueueItem(item, TransferType.Delete));
+                if (direction == TreeTraversalDirection.Upward) result.Add(new QueueItem(item, action));
             }
             return result;
         }
@@ -1320,7 +1323,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             _calculationIsRunning = false;
             IsBusy = false;
-            Parent.ShowCorrespondingErrorDialog(WrapTransferRelatedExceptions(ex), false);
+            eventAggregator.GetEvent<ShowCorrespondingErrorEvent>().Publish(new ShowCorrespondingErrorEventArgs(WrapTransferRelatedExceptions(ex), false));
         }
 
         public TransferResult Export(FileSystemItem item, string savePath, CopyAction action)
@@ -1367,7 +1370,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
         }
 
-        public virtual TransferResult Import(FileSystemItem item, string savePath, CopyAction action)
+        public TransferResult Import(FileSystemItem item, string savePath, CopyAction action)
         {
             if (item.Type != ItemType.File) throw new NotSupportedException();
             UIThread.Run(() => eventAggregator.GetEvent<TransferActionStartedEvent>().Publish(ImportActionDescription));

@@ -3,4 +3,10 @@
     public interface IView
     {
     }
+
+    public interface IView<T> : IView
+    {
+        T ViewModel { get; }
+    }
+
 }

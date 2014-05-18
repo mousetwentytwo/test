@@ -24,12 +24,12 @@
     </primitives:DialogBase.TaskbarItemInfo>
     <primitives:DialogBase.Title>
         <MultiBinding StringFormat="{x:Static dialogs:TransferProgressDialog.TitleFormat}">
-            <Binding Path="TransferType" Converter="{StaticResource ResxConverter}" />
+            <Binding Path="UserAction" Converter="{StaticResource ResxConverter}" />
             <Binding Path="TotalProgress" />
         </MultiBinding>
     </primitives:DialogBase.Title>
     <primitives:DialogBase.Resources>
-        <converters:TransferTypeConverter x:Key="TransferTypeConverter" />
+        <converters:FileOperationConverter x:Key="FileOperationConverter" />
     </primitives:DialogBase.Resources>
     
     <Grid x:Name="LayoutRoot" Margin="10">
@@ -50,7 +50,7 @@
             <TextBlock Grid.Column="0" Text="{Binding Path=TransferAction, StringFormat={x:Static dialogs:TransferProgressDialog.ActionFormat}}" />
             <TextBlock Grid.Column="1" Text="{Binding SourceFile}" TextTrimming="CharacterEllipsis" />
         </Grid>
-        <DockPanel Grid.Row="1" Margin="0,2,0,2" Visibility="{Binding TransferType, Converter={StaticResource TransferTypeConverter}}">
+        <DockPanel Grid.Row="1" Margin="0,2,0,2" Visibility="{Binding UserAction, Converter={StaticResource FileOperationConverter}}">
             <TextBlock DockPanel.Dock="Right" Text="%" Margin="2,0,0,0" />
             <TextBlock DockPanel.Dock="Right" Text="{Binding CurrentFileProgress}" Margin="5,0,0,0"
                  Width="30" TextAlignment="Right" />
@@ -71,7 +71,7 @@
                     </MultiBinding>
                 </TextBlock.Text>
             </TextBlock>
-            <TextBlock HorizontalAlignment="Right" Visibility="{Binding TransferType, Converter={StaticResource TransferTypeConverter}}">
+            <TextBlock HorizontalAlignment="Right" Visibility="{Binding UserAction, Converter={StaticResource FileOperationConverter}}">
                 <TextBlock.Text>
                     <MultiBinding StringFormat="{x:Static dialogs:TransferProgressDialog.BytesFormat}">
                         <Binding Path="BytesTransferred" />

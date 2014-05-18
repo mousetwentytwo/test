@@ -1011,9 +1011,30 @@
     <value>Launch game</value>
   </data>
   <data name="CheckFreestyleDatabase" xml:space="preserve">
-    <value>Check FSD database for errors</value>
+    <value>FSD Database check for errors</value>
   </data>
   <data name="LaunchXex" xml:space="preserve">
     <value>Launch application</value>
+  </data>
+  <data name="GettingData" xml:space="preserve">
+    <value>Getting data</value>
+  </data>
+  <data name="Checking" xml:space="preserve">
+    <value>Checking</value>
+  </data>
+  <data name="TheFollowingGamesAreMissing" xml:space="preserve">
+    <value>The following games do not exist on your Xbox anymore. You should delete them manually from your FSD database.</value>
+  </data>
+  <data name="Path" xml:space="preserve">
+    <value>Path</value>
+  </data>
+  <data name="ErrorsInFreestyleDatabase" xml:space="preserve">
+    <value>Errors in your FSD database</value>
+  </data>
+  <data name="VerifyFileHashAfterFtpUploadRemarks" xml:space="preserve">
+    <value>Please note that file hash verification takes time and supported only by FSD. It's hash algorithm can verify approx. 18 megabytes per second.</value>
+  </data>
+  <data name="Verifying" xml:space="preserve">
+    <value>Verifying</value>
   </data>
 </root>

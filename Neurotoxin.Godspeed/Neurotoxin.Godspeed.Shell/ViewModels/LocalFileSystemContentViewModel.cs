@@ -44,6 +44,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             get { return null; }
         }
 
+        public override bool IsVerificationEnabled
+        {
+            get { return false; }
+        }
+
         public LocalFileSystemContentViewModel(FileManagerViewModel parent, IEventAggregator eventAggregator) : base(parent)
         {
             _eventAggregator = eventAggregator;

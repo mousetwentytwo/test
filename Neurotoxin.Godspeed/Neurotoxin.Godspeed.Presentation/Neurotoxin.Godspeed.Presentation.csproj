@@ -95,6 +95,7 @@
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\IconExtensions.cs" />
     <Compile Include="Extensions\StfsPackageExtensions.cs" />
+    <Compile Include="Extensions\UnityExtensions.cs" />
     <Compile Include="Formatters\HtmlConverter\HtmlCssParser.cs" />
     <Compile Include="Formatters\HtmlConverter\HtmlFromXamlConverter.cs" />
     <Compile Include="Formatters\HtmlConverter\HtmlLexicalAnalyzer.cs" />

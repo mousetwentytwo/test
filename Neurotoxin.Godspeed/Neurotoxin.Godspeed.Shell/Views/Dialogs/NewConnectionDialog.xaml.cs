@@ -1,14 +1,21 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.ViewModels;
 using System.Linq;
 
 namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
 {
-    public partial class NewConnectionDialog
+    public partial class NewConnectionDialog : IView<FtpConnectionItemViewModel>
     {
+        public FtpConnectionItemViewModel ViewModel
+        {
+            get { return this.DataContext as FtpConnectionItemViewModel; }
+            private set { this.DataContext = value; }
+        }
+
         public ConnectionImage[] ConnectionImages { get; private set; }
 
         public NewConnectionDialog(FtpConnectionItemViewModel viewModel)
@@ -16,7 +23,7 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
             Owner = Application.Current.MainWindow;
             ConnectionImages = Enum.GetValues(typeof(ConnectionImage)).Cast<ConnectionImage>().ToArray();
             InitializeComponent();
-            DataContext = viewModel;
+            ViewModel = viewModel;
             if (string.IsNullOrEmpty(viewModel.Username)) AnonymousLogin.IsChecked = true;
             Loaded += OnLoaded;
         }

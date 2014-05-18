@@ -3,22 +3,23 @@
                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
                        xmlns:e="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                        xmlns:primitives="clr-namespace:Neurotoxin.Godspeed.Shell.Primitives" 
-                       xmlns:converters="clr-namespace:Neurotoxin.Godspeed.Shell.Converters"
-                       xmlns:constants="clr-namespace:Neurotoxin.Godspeed.Shell.Constants"
                        xmlns:lex="http://wpflocalizeextension.codeplex.com"
-                       xmlns:c="clr-namespace:Neurotoxin.Godspeed.Presentation.Controls;assembly=Neurotoxin.Godspeed.Presentation"
                        lex:ResxLocalizationProvider.DefaultAssembly="Neurotoxin.Godspeed.Shell"
                        lex:ResxLocalizationProvider.DefaultDictionary="Resources"
-                       Width="720" Title="{lex:LocText CheckFreestyleDatabase}">
+                       Width="720" Title="{lex:LocText ErrorsInFreestyleDatabase}">
     <primitives:DialogBase.Resources>
     </primitives:DialogBase.Resources>
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
-            <RowDefinition Height="400" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="300" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <DataGrid ItemsSource="{Binding MissingEntries}" 
+        <TextBlock Text="{lex:Loc TheFollowingGamesAreMissing}" HorizontalAlignment="Left" Margin="0,0,0,10" TextWrapping="Wrap" />
+
+        <DataGrid Grid.Row="1"
+                  ItemsSource="{Binding MissingEntries}" 
                   AutoGenerateColumns="False" 
                   IsTextSearchEnabled="False" 
                   Background="White" 
@@ -44,7 +45,7 @@
                 </Style>
             </DataGrid.Resources>-->
             <DataGrid.Columns>
-                <DataGridTemplateColumn Header="{lex:LocText Neurotoxin.Godspeed.Shell:Resources:Name}" Width="*" IsReadOnly="True">
+                <DataGridTemplateColumn Header="{lex:LocText Neurotoxin.Godspeed.Shell:Resources:Name}" Width="Auto" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Grid Background="Transparent">
@@ -56,18 +57,12 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn Header="{lex:LocText Neurotoxin.Godspeed.Shell:Resources:Path}" Width="2*" IsReadOnly="True" Binding="{Binding Path}"/>
+                <DataGridTextColumn Header="{lex:LocText Neurotoxin.Godspeed.Shell:Resources:Path}" Width="*" IsReadOnly="True" Binding="{Binding Path}"/>
             </DataGrid.Columns>
         </DataGrid>
 
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}">
-            <c:ProgressIndicator/>
-            <TextBlock Text="{Binding ProgressMessage}" MaxWidth="400" TextTrimming="CharacterEllipsis"/>
-        </StackPanel>
-
-        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
             <Button Width="75" Content="{lex:LocText Ok}" Margin="5" Click="OkButtonClick" />
-            <Button Width="75" Content="{lex:LocText Cancel}" Margin="5" Click="CancelButtonClick" />
         </StackPanel>
 
         <e:Interaction.Triggers>

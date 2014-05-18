@@ -4,25 +4,19 @@ using Neurotoxin.Godspeed.Shell.ViewModels;
 
 namespace Neurotoxin.Godspeed.Shell.Views
 {
-    public partial class FreestyleDatabaseCheckerWindow
+    public partial class FreestyleDatabaseCheckerWindow : IView<FreestyleDatabaseCheckerViewModel>
     {
-        public static void Show(FtpContentViewModel parent)
+        public FreestyleDatabaseCheckerViewModel ViewModel
         {
-            if (!UIThread.IsUIThread)
-            {
-                UIThread.BeginRun(() => Show(parent));
-                return;
-            }
-
-            var instance = new FreestyleDatabaseCheckerWindow(new FreestyleDatabaseCheckerViewModel(parent));
-            instance.ShowDialog();
+            get { return this.DataContext as FreestyleDatabaseCheckerViewModel; }
+            private set { this.DataContext = value; }
         }
 
         public FreestyleDatabaseCheckerWindow(FreestyleDatabaseCheckerViewModel viewModel)
         {
             Owner = Application.Current.MainWindow;
             InitializeComponent();
-            DataContext = viewModel;
+            ViewModel = viewModel;
         }
     }
 }

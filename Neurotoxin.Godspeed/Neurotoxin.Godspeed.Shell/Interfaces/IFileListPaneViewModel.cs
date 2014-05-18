@@ -19,8 +19,9 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
         bool HasValidSelection { get; }
         bool IsReadOnly { get; }
         bool IsInEditMode { get; }
+        bool IsVerificationEnabled { get; }
 
-        Queue<QueueItem> PopulateQueue(TransferType type);
+        Queue<QueueItem> PopulateQueue(FileOperation action);
         TransferResult CreateFolder(string path);
         TransferResult Delete(FileSystemItem item);
 

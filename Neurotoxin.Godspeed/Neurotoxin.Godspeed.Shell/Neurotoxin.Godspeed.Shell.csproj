@@ -136,7 +136,8 @@
     <Compile Include="Constants\ToggleSelectionMode.cs" />
     <Compile Include="Constants\TransferErrorType.cs" />
     <Compile Include="Constants\TransferResult.cs" />
-    <Compile Include="Constants\TransferType.cs" />
+    <Compile Include="Constants\FileOperation.cs" />
+    <Compile Include="Constants\TreeTraversalDirection.cs" />
     <Compile Include="ContentProviders\CacheManager.cs" />
     <Compile Include="ContentProviders\CompressedFileContent.cs" />
     <Compile Include="ContentProviders\FtpContent.cs" />
@@ -160,7 +161,9 @@
     <Compile Include="Constants\MessageIcon.cs" />
     <Compile Include="Events\CachePopulatedEvent.cs" />
     <Compile Include="Events\ConnectionDetailsChangedEvent.cs" />
-    <Compile Include="Events\MigrationFinishedEventHandler.cs" />
+    <Compile Include="Events\ShowCorrespondingErrorEvent.cs" />
+    <Compile Include="Events\FreestyleDatabaseCheckEvent.cs" />
+    <Compile Include="Events\WorkFinishedEventHandler.cs" />
     <Compile Include="Events\CacheMigrationEvent.cs" />
     <Compile Include="Events\ShellInitializedEvent.cs" />
     <Compile Include="Events\NotifyUserMessageEvent.cs" />
@@ -181,8 +184,10 @@
     <Compile Include="Helpers\Web.cs" />
     <Compile Include="Interfaces\IFileListPaneViewModel.cs" />
     <Compile Include="Interfaces\IFileManager.cs" />
+    <Compile Include="Interfaces\IProgressViewModel.cs" />
     <Compile Include="Interfaces\IUserMessageViewModel.cs" />
     <Compile Include="Models\CacheComplexKey.cs" />
+    <Compile Include="Models\CopyResult.cs" />
     <Compile Include="Models\FileExistenceInfo.cs" />
     <Compile Include="Models\FileListPaneSettings.cs" />
     <Compile Include="Models\FsdScanPath.cs" />
@@ -209,6 +214,7 @@
     <Compile Include="ViewModels\CacheMigrationViewModel.cs" />
     <Compile Include="ViewModels\CompressedFileContentViewModel.cs" />
     <Compile Include="Constants\FileBlockHealthStatus.cs" />
+    <Compile Include="ViewModels\TransferManagerViewModel.cs" />
     <Compile Include="ViewModels\FreestyleDatabaseCheckerViewModel.cs" />
     <Compile Include="ViewModels\GpdFileEntryViewModel.cs" />
     <Compile Include="ViewModels\GpdFileViewModel.cs" />
@@ -258,8 +264,8 @@
     <Compile Include="Views\Dialogs\UserStatisticsParticipationDialog.xaml.cs">
       <DependentUpon>UserStatisticsParticipationDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Dialogs\MigrationProgressDialog.xaml.cs">
-      <DependentUpon>MigrationProgressDialog.xaml</DependentUpon>
+    <Compile Include="Views\Dialogs\ProgressDialog.xaml.cs">
+      <DependentUpon>ProgressDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Selectors\ProfileRebuilderContentTemplateSelector.cs" />
     <Compile Include="Views\StatisticsWindow.xaml.cs">
@@ -380,7 +386,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Dialogs\MigrationProgressDialog.xaml">
+    <Page Include="Views\Dialogs\ProgressDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

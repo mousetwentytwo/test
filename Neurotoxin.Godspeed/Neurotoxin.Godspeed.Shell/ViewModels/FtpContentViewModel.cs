@@ -8,7 +8,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
 using Microsoft.Practices.ObjectBuilder2;
-using Microsoft.Practices.Unity;
 using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Core.Models;
 using Neurotoxin.Godspeed.Core.Net;
@@ -21,7 +20,6 @@ using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
 using Neurotoxin.Godspeed.Shell.Exceptions;
 using Neurotoxin.Godspeed.Shell.Extensions;
 using Neurotoxin.Godspeed.Shell.Models;
-using Neurotoxin.Godspeed.Shell.Views;
 using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 using Fizzler.Systems.HtmlAgilityPack;
@@ -76,6 +74,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
         }
 
+        public override bool IsVerificationEnabled
+        {
+            get { return UserSettings.VerifyFileHashAfterFtpUpload && FileManager.IsFSD; }
+        }
+
         #region Command overrides
 
         private void ExecuteCloseCommand()
@@ -102,7 +105,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public void ExecuteCheckFreestyleDatabaseCommand()
         {
-            FreestyleDatabaseCheckerWindow.Show(this);
+            eventAggregator.GetEvent<FreestyleDatabaseCheckEvent>().Publish(new FreestyleDatabaseCheckEventArgs(this));
         }
 
         #endregion
@@ -361,8 +364,15 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             FileManager.Abort();
         }
 
+        public override void FinishTransferAsSource()
+        {
+            IsKeepAliveEnabled = false;
+        }
+
         public override void FinishTransferAsTarget()
         {
+            IsKeepAliveEnabled = false;
+
             if (!IsContentScanTriggerAvailable) return;
 
             var scanFolder = GetCorrespondingScanFolder(CurrentFolder.Path);
@@ -580,17 +590,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             return FileManager.UploadFile(targetPath, sourcePath, true);
         }
 
-        public override TransferResult Import(FileSystemItem item, string savePath, CopyAction action)
+        public TransferResult VerifyUpload(string savePath, string itemPath)
         {
-            //TODO: remove this override and introduce Verify TransferType
-            var result = base.Import(item, savePath, action);
-            if (result == TransferResult.Ok) VerifyUpload(savePath, item.Path);
-            return result;
-        }
-
-        private void VerifyUpload(string savePath, string itemPath)
-        {
-            if (!UserSettings.VerifyFileHashAfterFtpUpload) return;
+            if (!FileManager.IsFSD) return TransferResult.Skipped;
 
             bool match;
             try
@@ -602,7 +604,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 throw WrapTransferRelatedExceptions(ex);
             }
             
-            if (!match) throw new FtpHashVerificationException(Resx.FtpHashVerificationFailed); 
+            if (!match) throw new FtpHashVerificationException(Resx.FtpHashVerificationFailed);
+            return TransferResult.Ok;
         }
 
         //protected override string OpenCompressedFile(FileSystemItem item)

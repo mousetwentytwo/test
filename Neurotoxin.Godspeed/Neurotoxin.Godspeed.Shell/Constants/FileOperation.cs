@@ -1,6 +1,6 @@
 ﻿namespace Neurotoxin.Godspeed.Shell.Constants
 {
-    public enum TransferType
+    public enum FileOperation
     {
         Copy,
         Move,

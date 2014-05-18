@@ -1,20 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Neurotoxin.Godspeed.Shell.Constants;
+﻿using Neurotoxin.Godspeed.Shell.Constants;
 
 namespace Neurotoxin.Godspeed.Shell.Models
 {
     public class QueueItem
     {
         public FileSystemItem FileSystemItem { get; private set; }
-        public TransferType TransferType { get; private set; }
+        public FileOperation Operation { get; set; }
+        public object Payload { get; set; }
 
-        public QueueItem(FileSystemItem fileSystemItem, TransferType transferType)
+        public QueueItem(FileSystemItem fileSystemItem, FileOperation fileOperation, object payload = null)
         {
             FileSystemItem = fileSystemItem;
-            TransferType = transferType;
+            Operation = fileOperation;
+            Payload = payload;
         }
     }
 }
