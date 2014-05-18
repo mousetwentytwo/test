@@ -52,7 +52,7 @@ namespace Neurotoxin.Godspeed.Presentation.Controls
 
         private void Step()
         {
-            foreach (UIElement o in Content.Children)
+            foreach (UIElement o in Parts.Children)
             {
                 RotateTransform rt = (RotateTransform)o.RenderTransform;
                 rt.Angle += 30;
@@ -64,7 +64,7 @@ namespace Neurotoxin.Godspeed.Presentation.Controls
         private void Restore()
         {
             int i = 0;
-            foreach (UIElement o in Content.Children)
+            foreach (UIElement o in Parts.Children)
             {
                 ((RotateTransform)o.RenderTransform).Angle = i;
                 i += 30;

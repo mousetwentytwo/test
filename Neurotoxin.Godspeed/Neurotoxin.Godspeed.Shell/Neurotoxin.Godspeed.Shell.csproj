@@ -184,8 +184,11 @@
     <Compile Include="Helpers\Web.cs" />
     <Compile Include="Interfaces\IFileListPaneViewModel.cs" />
     <Compile Include="Interfaces\IFileManager.cs" />
+    <Compile Include="Interfaces\IFileManagerViewModel.cs" />
     <Compile Include="Interfaces\IProgressViewModel.cs" />
+    <Compile Include="Interfaces\IStatisticsViewModel.cs" />
     <Compile Include="Interfaces\IUserMessageViewModel.cs" />
+    <Compile Include="Interfaces\IUserSettings.cs" />
     <Compile Include="Models\CacheComplexKey.cs" />
     <Compile Include="Models\CopyResult.cs" />
     <Compile Include="Models\FileExistenceInfo.cs" />
@@ -214,6 +217,7 @@
     <Compile Include="ViewModels\CacheMigrationViewModel.cs" />
     <Compile Include="ViewModels\CompressedFileContentViewModel.cs" />
     <Compile Include="Constants\FileBlockHealthStatus.cs" />
+    <Compile Include="Interfaces\ISettingsViewModel.cs" />
     <Compile Include="ViewModels\TransferManagerViewModel.cs" />
     <Compile Include="ViewModels\FreestyleDatabaseCheckerViewModel.cs" />
     <Compile Include="ViewModels\GpdFileEntryViewModel.cs" />

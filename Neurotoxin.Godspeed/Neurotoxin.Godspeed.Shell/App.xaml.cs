@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Threading;
+using Microsoft.Practices.Unity;
 using Neurotoxin.Godspeed.Core.Caching;
 using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
@@ -125,8 +126,10 @@ namespace Neurotoxin.Godspeed.Shell
 
                 statistics.PersistData();
 
+                var userSettings = _bootstrapper.Container.Resolve<IUserSettings>();
+
                 //TODO: Better detection
-                if (!Debugger.IsAttached && UserSettings.DisableUserStatisticsParticipation != false)
+                if (!Debugger.IsAttached && userSettings.DisableUserStatisticsParticipation != false)
                 {
                     var commandUsage = new StringBuilder();
                     foreach (var kvp in statistics.CommandUsage)

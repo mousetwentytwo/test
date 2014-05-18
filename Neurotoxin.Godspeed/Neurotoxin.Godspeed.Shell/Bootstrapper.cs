@@ -8,6 +8,7 @@ using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Shell.Controllers;
 using Neurotoxin.Godspeed.Shell.Helpers;
+using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.ViewModels;
 using Neurotoxin.Godspeed.Shell.Views;
 using WPFLocalizeExtension.Engine;
@@ -23,6 +24,7 @@ namespace Neurotoxin.Godspeed.Shell
             Container.RegisterType<IGeneralController, ModuleController>(new ContainerControlledLifetimeManager());
 
             // Content providers
+            Container.RegisterType<IUserSettings, UserSettings>();
             Container.RegisterType<FtpContent>();
             Container.RegisterType<LocalFileSystemContent>();
             Container.RegisterType<StfsPackageContent>();
@@ -32,8 +34,8 @@ namespace Neurotoxin.Godspeed.Shell
             // ViewModels
             Container.RegisterType<FileManagerViewModel>(new ContainerControlledLifetimeManager());
             Container.RegisterType<TransferManagerViewModel>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<SettingsViewModel>();
-            Container.RegisterType<StatisticsViewModel>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<ISettingsViewModel, SettingsViewModel>();
+            Container.RegisterType<IStatisticsViewModel, StatisticsViewModel>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ConnectionsViewModel>(new ContainerControlledLifetimeManager());
             Container.RegisterType<FtpContentViewModel>();
             Container.RegisterType<LocalFileSystemContentViewModel>();
@@ -61,7 +63,8 @@ namespace Neurotoxin.Godspeed.Shell
 
         protected override DependencyObject CreateShell()
         {
-            LocalizeDictionary.Instance.Culture = UserSettings.Language ?? CultureInfo.CurrentCulture;
+            var userSettings = Container.Resolve<IUserSettings>();
+            LocalizeDictionary.Instance.Culture = userSettings.Language ?? CultureInfo.CurrentCulture;
             Container.Resolve<SanityChecker>();
             var shell = Container.Resolve<FileManagerWindow>();
             var viewModel = (FileManagerViewModel)shell.DataContext;

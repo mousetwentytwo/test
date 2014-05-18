@@ -37,7 +37,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private bool _isContinued;
         private bool _sourceChanged;
         private bool _targetChanged;
-        private readonly StatisticsViewModel _statistics;
+
+        private readonly IStatisticsViewModel _statistics;
+        private readonly IUserSettings _userSettings;
 
         #region Properties
 
@@ -183,8 +185,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #endregion
 
-        public TransferManagerViewModel(StatisticsViewModel statistics)
+        public TransferManagerViewModel(IUserSettings userSettings, IStatisticsViewModel statistics)
         {
+            _userSettings = userSettings;
             _statistics = statistics;
             eventAggregator.GetEvent<TransferActionStartedEvent>().Subscribe(OnTransferActionStarted);
             eventAggregator.GetEvent<TransferProgressChangedEvent>().Subscribe(OnTransferProgressChanged);
@@ -491,7 +494,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         var targetPane = TargetPane as LocalFileSystemContentViewModel;
                         if (targetPane != null)
                         {
-                            if (targetPane.IsNetworkDrive && UserSettings.UseRemoteCopy)
+                            if (targetPane.IsNetworkDrive && _userSettings.UseRemoteCopy)
                             {
                                 try
                                 {
@@ -509,7 +512,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         var sourcePane = SourcePane as LocalFileSystemContentViewModel;
                         if (sourcePane != null)
                         {
-                            if (sourcePane.IsNetworkDrive && UserSettings.UseRemoteCopy)
+                            if (sourcePane.IsNetworkDrive && _userSettings.UseRemoteCopy)
                             {
                                 try
                                 {
@@ -531,7 +534,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         {
                             var dialog = new RemoteCopyErrorDialog(ex);
                             if (dialog.ShowDialog() == false) return;
-                            if (dialog.TurnOffRemoteCopy) UserSettings.UseRemoteCopy = false;
+                            if (dialog.TurnOffRemoteCopy) _userSettings.UseRemoteCopy = false;
                         }
                         if (copyMode == CopyMode.Indirect) TotalBytes *= 2;
                         _copyMode = copyMode;

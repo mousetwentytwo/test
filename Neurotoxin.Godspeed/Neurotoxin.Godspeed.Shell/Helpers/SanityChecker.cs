@@ -18,6 +18,7 @@ using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Shell.Events;
+using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
 using Neurotoxin.Godspeed.Shell.Reporting;
 using Neurotoxin.Godspeed.Shell.ViewModels;
@@ -39,23 +40,25 @@ namespace Neurotoxin.Godspeed.Shell.Helpers
         private readonly Timer _facebookTimer;
         private readonly Timer _codeplexTimer;
 
+        private readonly IUserSettings _userSettings;
         private readonly IEventAggregator _eventAggregator;
 
-        public SanityChecker(IEventAggregator eventAggregator, StatisticsViewModel statistics)
+        public SanityChecker(IStatisticsViewModel statistics, IUserSettings userSettings, IEventAggregator eventAggregator)
         {
+            _userSettings = userSettings;
             _eventAggregator = eventAggregator;
             eventAggregator.GetEvent<CachePopulatedEvent>().Subscribe(OnCachePopulated);
             eventAggregator.GetEvent<ShellInitializedEvent>().Subscribe(OnShellInitialized);
 
-            if (!UserSettings.DisableUserStatisticsParticipation.HasValue)
+            if (!_userSettings.DisableUserStatisticsParticipation.HasValue)
             {
                 _participationTimer = new Timer(ParticipationMessage, null, 60000, -1);
             }
-            if (!UserSettings.IsMessageIgnored(FACEBOOKMESSAGEKEY))
+            if (!_userSettings.IsMessageIgnored(FACEBOOKMESSAGEKEY))
             {
                 _facebookTimer = new Timer(FacebookMessage, null, 600000, -1);
             }
-            if (!UserSettings.IsMessageIgnored(CODEPLEXMESSAGEKEY) && statistics.ApplicationStarted > 9 && statistics.TotalUsageTime > new TimeSpan(0, 2, 0, 0))
+            if (!_userSettings.IsMessageIgnored(CODEPLEXMESSAGEKEY) && statistics.ApplicationStarted > 9 && statistics.TotalUsageTime > new TimeSpan(0, 2, 0, 0))
             {
                 _codeplexTimer = new Timer(CodeplexMessage, null, 60000, -1);
             }
@@ -105,7 +108,7 @@ namespace Neurotoxin.Godspeed.Shell.Helpers
         {
             CheckFrameworkVersion();
             RetryFailedUserReports();
-            if (UserSettings.UseVersionChecker) CheckForNewerVersion();
+            if (_userSettings.UseVersionChecker) CheckForNewerVersion();
         }
 
         private void CheckFrameworkVersion()

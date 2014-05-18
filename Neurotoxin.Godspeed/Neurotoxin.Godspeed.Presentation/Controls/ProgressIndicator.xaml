@@ -5,8 +5,8 @@
     <UserControl.Clip>
         <RectangleGeometry Rect="0,0,32,32" RadiusX="4" RadiusY="4"/>
     </UserControl.Clip>
-    <Grid x:Name="LayoutRoot" Background="Transparent">
-        <Grid Margin="0,2,0,0" x:Name="Content" Background="Transparent">
+    <Grid Background="Transparent">
+        <Grid Margin="0,2,0,0" x:Name="Parts" Background="Transparent">
             <Rectangle Width="2" Fill="#FF18307A" Height="6" Margin="0,0,0,20" RenderTransformOrigin="0.5,2" x:Name="Piece01">
                 <Rectangle.RenderTransform>
                     <RotateTransform Angle="0"/>

@@ -6,10 +6,11 @@ using Neurotoxin.Godspeed.Core.Constants;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
+using Neurotoxin.Godspeed.Shell.Interfaces;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
-    public class StatisticsViewModel : ViewModelBase
+    public class StatisticsViewModel : ViewModelBase, IStatisticsViewModel
     {
         private readonly CacheManager _cacheManager;
         private readonly EsentPersistentDictionary _cacheStore = EsentPersistentDictionary.Instance;

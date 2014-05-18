@@ -11,7 +11,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
     public abstract class PaneViewModelBase : ViewModelBase, IPaneViewModel
     {
         public FileListPaneSettings Settings { get; protected set; }
-        protected FileManagerViewModel Parent { get; private set; }
+        protected IFileManagerViewModel Parent { get; private set; }
 
         private const string ISACTIVE = "IsActive";
         private bool _isActive;
@@ -60,7 +60,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #endregion
 
-        protected PaneViewModelBase(FileManagerViewModel parent)
+        protected PaneViewModelBase(IFileManagerViewModel parent)
         {
             Parent = parent;
             SetActiveCommand = new DelegateCommand<EventInformation<MouseEventArgs>>(ExecuteSetActiveCommand);

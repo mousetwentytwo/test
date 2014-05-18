@@ -38,6 +38,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private Queue<FileSystemItem> _queue;
         protected readonly TitleRecognizer TitleRecognizer;
         protected readonly T FileManager;
+        protected readonly IUserSettings UserSettings;
         protected readonly Dictionary<FileSystemItemViewModel, string> PathCache = new Dictionary<FileSystemItemViewModel, string>();
 
         #region Constants
@@ -1049,10 +1050,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #endregion
 
-        protected FileListPaneViewModelBase(FileManagerViewModel parent) : base(parent)
+        protected FileListPaneViewModelBase(IFileManagerViewModel parent) : base(parent)
         {
             FileManager = container.Resolve<T>();
-            TitleRecognizer = new TitleRecognizer(FileManager, container.Resolve<CacheManager>(), eventAggregator);
+            UserSettings = container.Resolve<IUserSettings>();
+            TitleRecognizer = container.Resolve<TitleRecognizer>(new ParameterOverride("fileManager", FileManager));
 
             ChangeDirectoryCommand = new DelegateCommand<object>(ExecuteChangeDirectoryCommand, CanExecuteChangeDirectoryCommand);
             OpenStfsPackageCommand = new DelegateCommand<OpenStfsPackageMode>(ExecuteOpenStfsPackageCommand, CanExecuteOpenStfsPackageCommand);

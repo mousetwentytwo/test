@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>FakeItEasy</id>
+    <version>1.20.0</version>
+    <title>FakeItEasy</title>
+    <authors>Patrik Hägne,  FakeItEasy contributors</authors>
+    <owners>Patrik Hägne,  FakeItEasy contributors</owners>
+    <licenseUrl>https://github.com/FakeItEasy/FakeItEasy/blob/master/License.txt</licenseUrl>
+    <projectUrl>http://fakeiteasy.github.io/</projectUrl>
+    <iconUrl>http://fakeiteasy.github.io/img/talkingladies.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>It's faking amazing! The easy mocking framework for .NET that works great in C# and VB.NET alike. No need to know the difference between a stub, a mock or a spy, everything's a fake! The easy to use, refactoring friendly API makes faking a breeze.</description>
+    <releaseNotes>New: Updated to Castle.Core 3.3.0 - https://github.com/FakeItEasy/FakeItEasy/issues/299/ 
+Fixed: ArgumentException when OrderedAssertions fail for derived interfaces - https://github.com/FakeItEasy/FakeItEasy/issues/182/ 
+Fixed: Misleading exception message when failing to fake a generic type with inaccessible type parameters - https://github.com/FakeItEasy/FakeItEasy/issues/179/
+
+With special thanks for contributions to this release from:
+
+Brandon Bonds - https://github.com/bondsbw/</releaseNotes>
+    <copyright>Copyright (c) FakeItEasy contributors. (fakeiteasy@hagne.se)</copyright>
+    <language>en-US</language>
+    <tags>TDD unittesting mocks mocking fakes faking stubs stubbing spy spies doubles isolation substitutes substitution</tags>
+  </metadata>
+</package>

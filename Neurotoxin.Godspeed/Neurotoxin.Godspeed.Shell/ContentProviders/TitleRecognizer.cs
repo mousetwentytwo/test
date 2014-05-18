@@ -24,6 +24,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
     {
         private readonly IFileManager _fileManager;
         private readonly CacheManager _cacheManager;
+        private readonly IUserSettings _userSettings;
         private readonly IEventAggregator _eventAggregator;
         private readonly Dictionary<string, ProfileItemWrapper> _profileFileCache = new Dictionary<string, ProfileItemWrapper>();
 
@@ -43,10 +44,11 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 new RecognitionInformation("^TU[\\w\\.]+$|^[0-9A-F]{4,}$", Resx.UnknownDataFile, TitleType.DataFile, ItemType.File),
             };
 
-        public TitleRecognizer(IFileManager fileManager, CacheManager cacheManager, IEventAggregator eventAggregator)
+        public TitleRecognizer(IFileManager fileManager, CacheManager cacheManager, IUserSettings userSettings, IEventAggregator eventAggregator)
         {
-            _cacheManager = cacheManager;
             _fileManager = fileManager;
+            _cacheManager = cacheManager;
+            _userSettings = userSettings;
             _eventAggregator = eventAggregator;
         }
 
@@ -148,8 +150,8 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             {
                 case TitleType.Profile:
                     GetProfileData(item, cacheKey.Item);
-                    var profileExpiration = GetExpirationFrom(UserSettings.ProfileExpiration);
-                    if (UserSettings.ProfileInvalidation)
+                    var profileExpiration = GetExpirationFrom(_userSettings.ProfileExpiration);
+                    if (_userSettings.ProfileInvalidation)
                     {
                         cacheItem = _cacheManager.SaveEntry(cacheKey.Key, item, profileExpiration, cacheKey.Date, cacheKey.Size, _fileManager.TempFilePath);
                     }
@@ -165,15 +167,15 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                     if (item.Type == ItemType.File)
                     {
                         GetGameDataFromGpd(item);
-                        cacheItem = _cacheManager.SaveEntry(cacheKey.Key, item, GetExpirationFrom(UserSettings.RecognizedGameExpiration));
+                        cacheItem = _cacheManager.SaveEntry(cacheKey.Key, item, GetExpirationFrom(_userSettings.RecognizedGameExpiration));
                     } 
                     else
                     {
                         var gameExpiration = GetGameData(item)
-                                                 ? UserSettings.RecognizedGameExpiration
-                                                 : UserSettings.UseJqe360 && GetGameDataFromJqe360(item)
-                                                       ? UserSettings.PartiallyRecognizedGameExpiration
-                                                       : UserSettings.UnrecognizedGameExpiration;
+                                                 ? _userSettings.RecognizedGameExpiration
+                                                 : _userSettings.UseJqe360 && GetGameDataFromJqe360(item)
+                                                       ? _userSettings.PartiallyRecognizedGameExpiration
+                                                       : _userSettings.UnrecognizedGameExpiration;
                         cacheItem = _cacheManager.SaveEntry(cacheKey.Key, item, GetExpirationFrom(gameExpiration));
                     }
                     item.IsCached = true;
@@ -194,8 +196,8 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                                 item.Title = svod.DisplayName;
                                 item.Thumbnail = svod.ThumbnailImage;
                                 item.ContentType = svod.ContentType;
-                                var svodExpiration = GetExpirationFrom(UserSettings.XboxLiveContentExpiration);
-                                if (UserSettings.XboxLiveContentInvalidation)
+                                var svodExpiration = GetExpirationFrom(_userSettings.XboxLiveContentExpiration);
+                                if (_userSettings.XboxLiveContentInvalidation)
                                 {
                                     cacheItem = _cacheManager.SaveEntry(cacheKey.Key, item, svodExpiration, item.Date, item.Size);
                                 }
@@ -206,7 +208,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                             }
                             else
                             {
-                                cacheItem = _cacheManager.SaveEntry(cacheKey.Key, item, GetExpirationFrom(UserSettings.UnknownContentExpiration));
+                                cacheItem = _cacheManager.SaveEntry(cacheKey.Key, item, GetExpirationFrom(_userSettings.UnknownContentExpiration));
                             }
                         } 
                         catch

@@ -24,9 +24,10 @@ using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
 
-    public class FileManagerViewModel : ViewModelBase
+    public class FileManagerViewModel : ViewModelBase, IFileManagerViewModel
     {
-        private TransferManagerViewModel _transferManager;
+        private readonly TransferManagerViewModel _transferManager;
+        private readonly IUserSettings _userSettings;
 
         #region Main window properties
 
@@ -306,14 +307,14 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 case MessageCommand.OpenUrl:
                     if (Web.Browse((string)p.Parameter))
                     {
-                        if (message.Flags.HasFlag(MessageFlags.IgnoreAfterOpen)) UserSettings.IgnoreMessage(message.Message);
+                        if (message.Flags.HasFlag(MessageFlags.IgnoreAfterOpen)) _userSettings.IgnoreMessage(message.Message);
                     }
                     break;
                 case MessageCommand.OpenDialog:
                     var dialogType = (Type) p.Parameter;
                     var c = dialogType.GetConstructor(Type.EmptyTypes);
                     var d = c.Invoke(new object[0]) as Window;
-                    if (d.ShowDialog() == true) UserSettings.IgnoreMessage(message.Message);
+                    if (d.ShowDialog() == true) _userSettings.IgnoreMessage(message.Message);
                     break;
             }
         }
@@ -329,7 +330,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             if (message.Flags.HasFlag(MessageFlags.Ignorable) && 
                 new ConfirmationDialog(Resx.RemoveUserMessage, Resx.RemoveUserMessageConfirmation).ShowDialog() == true)
             {
-                UserSettings.IgnoreMessage(message.Message);
+                _userSettings.IgnoreMessage(message.Message);
             }
             UserMessages.Remove(message);
             if (UserMessages.Count == 0) UserMessages.Add(new NoMessagesViewModel());
@@ -337,9 +338,10 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #endregion
 
-        public FileManagerViewModel(TransferManagerViewModel transferManager)
+        public FileManagerViewModel(TransferManagerViewModel transferManager, IUserSettings userSettings)
         {
             _transferManager = transferManager;
+            _userSettings = userSettings;
             UserMessages = new ObservableCollection<IUserMessageViewModel> { new NoMessagesViewModel() };
             UserMessages.CollectionChanged += (sender, args) => NotifyPropertyChanged(UNREADMESSAGECOUNT);
 
@@ -362,12 +364,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public void Initialize()
         {
-            LeftPane = (IPaneViewModel)container.Resolve(GetStoredPaneType(UserSettings.LeftPaneType));
-            var leftParam = UserSettings.LeftPaneFileListPaneSettings;
+            LeftPane = (IPaneViewModel)container.Resolve(GetStoredPaneType(_userSettings.LeftPaneType));
+            var leftParam = _userSettings.LeftPaneFileListPaneSettings;
             LeftPane.LoadDataAsync(LoadCommand.Load, new LoadDataAsyncParameters(leftParam), PaneLoaded);
 
-            RightPane = (IPaneViewModel)container.Resolve(GetStoredPaneType(UserSettings.RightPaneType));
-            var rightParam = UserSettings.RightPaneFileListPaneSettings;
+            RightPane = (IPaneViewModel)container.Resolve(GetStoredPaneType(_userSettings.RightPaneType));
+            var rightParam = _userSettings.RightPaneFileListPaneSettings;
             RightPane.LoadDataAsync(LoadCommand.Load, new LoadDataAsyncParameters(rightParam), PaneLoaded);
         }
 
@@ -444,7 +446,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 UIThread.Run(() => OnNotifyUserMessage(e));
                 return;
             }
-            if (UserSettings.IsMessageIgnored(e.MessageKey)) return;
+            if (_userSettings.IsMessageIgnored(e.MessageKey)) return;
             var message = string.Format(Resx.ResourceManager.GetString(e.MessageKey), e.MessageArgs);
             var i = UserMessages.IndexOf(m => m.Message == message);
             if (i == -1)
@@ -479,8 +481,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 LeftPane = _leftPaneStack.Count > 0 ? _leftPaneStack.Pop() : null;
             } 
             while (LeftPane != null);  
-            UserSettings.LeftPaneType = left.GetType().FullName;
-            UserSettings.LeftPaneFileListPaneSettings = left.Settings;
+            _userSettings.LeftPaneType = left.GetType().FullName;
+            _userSettings.LeftPaneFileListPaneSettings = left.Settings;
 
             data = null;
             IPaneViewModel right;
@@ -491,8 +493,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 RightPane = _rightPaneStack.Count > 0 ? _rightPaneStack.Pop() : null;
             }
             while (RightPane != null);
-            UserSettings.RightPaneType = right.GetType().FullName;
-            UserSettings.RightPaneFileListPaneSettings = right.Settings;
+            _userSettings.RightPaneType = right.GetType().FullName;
+            _userSettings.RightPaneFileListPaneSettings = right.Settings;
 
             base.Dispose();
         }

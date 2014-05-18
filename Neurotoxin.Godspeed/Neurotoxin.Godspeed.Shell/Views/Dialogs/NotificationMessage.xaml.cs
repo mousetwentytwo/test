@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Windows;
+using Microsoft.Practices.Unity;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
+using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Primitives;
 
 namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
@@ -21,7 +23,8 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
 
         public static void ShowMessage(string title, string message, NotificationMessageFlags flags = NotificationMessageFlags.None)
         {
-            if (UserSettings.IsMessageIgnored(message)) return;
+            var userSettings = UnityInstance.Container.Resolve<IUserSettings>();
+            if (userSettings.IsMessageIgnored(message)) return;
 
             if (!UIThread.IsUIThread)
             {
