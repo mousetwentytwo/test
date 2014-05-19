@@ -187,6 +187,7 @@
     <Compile Include="Interfaces\IFileManagerViewModel.cs" />
     <Compile Include="Interfaces\IProgressViewModel.cs" />
     <Compile Include="Interfaces\IStatisticsViewModel.cs" />
+    <Compile Include="Interfaces\ITitleRecognizer.cs" />
     <Compile Include="Interfaces\IUserMessageViewModel.cs" />
     <Compile Include="Interfaces\IUserSettings.cs" />
     <Compile Include="Models\CacheComplexKey.cs" />

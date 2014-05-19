@@ -35,7 +35,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             _eventAggregator = eventAggregator;
         }
 
-        public List<FileSystemItem> GetDrives()
+        public IList<FileSystemItem> GetDrives()
         {
             const string path = @"\Root\";
             return new List<FileSystemItem>
@@ -52,7 +52,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                        };
         }
 
-        public List<FileSystemItem> GetList(string path = null)
+        public IList<FileSystemItem> GetList(string path = null)
         {
             if (path == null) throw new NotSupportedException();
 

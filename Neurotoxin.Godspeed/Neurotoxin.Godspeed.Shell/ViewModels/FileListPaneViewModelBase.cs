@@ -16,7 +16,6 @@ using Neurotoxin.Godspeed.Core.Models;
 using Neurotoxin.Godspeed.Presentation.Formatters;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
 using Neurotoxin.Godspeed.Shell.Constants;
-using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Exceptions;
 using Neurotoxin.Godspeed.Shell.Helpers;
@@ -36,7 +35,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
     {
         private readonly object _queueLock = new object();
         private Queue<FileSystemItem> _queue;
-        protected readonly TitleRecognizer TitleRecognizer;
+        protected readonly ITitleRecognizer TitleRecognizer;
         protected readonly T FileManager;
         protected readonly IUserSettings UserSettings;
         protected readonly Dictionary<FileSystemItemViewModel, string> PathCache = new Dictionary<FileSystemItemViewModel, string>();
@@ -247,14 +246,14 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 AsyncErrorCallback);
         }
 
-        protected virtual List<FileSystemItem> ChangeDirectoryInner(string selectedPath)
+        protected virtual IList<FileSystemItem> ChangeDirectoryInner(string selectedPath)
         {
             var list = FileManager.GetList(selectedPath);
             list.ForEach(item => TitleRecognizer.RecognizeType(item));
             return list;
         }
 
-        protected virtual void ChangeDirectoryCallback(List<FileSystemItem> result)
+        protected virtual void ChangeDirectoryCallback(IList<FileSystemItem> result)
         {
             IsBusy = false;
             lock (_queueLock)
@@ -466,7 +465,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             if (_calculationIsAborted) return 0;
 
-            List<FileSystemItem> list;
+            IList<FileSystemItem> list;
             try
             {
                 list = FileManager.GetList(path);
@@ -1054,7 +1053,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             FileManager = container.Resolve<T>();
             UserSettings = container.Resolve<IUserSettings>();
-            TitleRecognizer = container.Resolve<TitleRecognizer>(new ParameterOverride("fileManager", FileManager));
+            TitleRecognizer = container.Resolve<ITitleRecognizer>(new ParameterOverride("fileManager", FileManager));
 
             ChangeDirectoryCommand = new DelegateCommand<object>(ExecuteChangeDirectoryCommand, CanExecuteChangeDirectoryCommand);
             OpenStfsPackageCommand = new DelegateCommand<OpenStfsPackageMode>(ExecuteOpenStfsPackageCommand, CanExecuteOpenStfsPackageCommand);
@@ -1090,6 +1089,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         protected abstract bool OverwriteFile(string targetPath, string sourcePath);
         protected abstract bool ResumeFile(string targetPath, string sourcePath);
         public abstract void Abort();
+
+        protected void Initialize()
+        {
+            Drives = FileManager.GetDrives().Select(d => new FileSystemItemViewModel(d)).ToObservableCollection();
+        }
 
         public virtual void FinishTransferAsSource()
         {

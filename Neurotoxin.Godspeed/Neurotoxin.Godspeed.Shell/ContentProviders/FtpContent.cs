@@ -141,7 +141,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             FtpClient.Dispose();
         }
 
-        public List<FileSystemItem> GetDrives()
+        public IList<FileSystemItem> GetDrives()
         {
             List<FileSystemItem> result;
             NotifyFtpOperationStarted(false);
@@ -170,7 +170,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             return result;
         }
 
-        public List<FileSystemItem> GetList(string path = null)
+        public IList<FileSystemItem> GetList(string path = null)
         {
 
             List<FileSystemItem> result;

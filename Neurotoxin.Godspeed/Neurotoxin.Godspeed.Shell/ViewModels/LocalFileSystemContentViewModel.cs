@@ -62,7 +62,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             switch (cmd)
             {
                 case LoadCommand.Load:
-                    Drives = FileManager.GetDrives().Select(d => new FileSystemItemViewModel(d)).ToObservableCollection();
+                    Initialize();
                     var storedDrive = Path.GetPathRoot(Settings.Directory);
                     var drive = Drives.FirstOrDefault(d => d.Path == storedDrive);
                     if (drive != null) PathCache.Add(drive, Settings.Directory);
@@ -150,7 +150,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             base.ChangeDirectory(message, callback);
         }
 
-        protected override void ChangeDirectoryCallback(List<FileSystemItem> result)
+        protected override void ChangeDirectoryCallback(IList<FileSystemItem> result)
         {
             base.ChangeDirectoryCallback(result);
             UpdateDriveInfo();

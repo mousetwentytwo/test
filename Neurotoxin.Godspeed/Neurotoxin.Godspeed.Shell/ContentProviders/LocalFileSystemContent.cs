@@ -41,7 +41,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             _eventAggregator = eventAggregator;
         }
 
-        public List<FileSystemItem> GetDrives()
+        public IList<FileSystemItem> GetDrives()
         {
             var drives = DriveInfo.GetDrives();
             var result = new List<FileSystemItem>();
@@ -82,7 +82,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             return result;
         }
 
-        public List<FileSystemItem> GetList(string path = null)
+        public IList<FileSystemItem> GetList(string path = null)
         {
             if (path == null) throw new NotSupportedException();
             var list = Directory.GetDirectories(path).Select(p => GetDirectoryInfo(p)).ToList();

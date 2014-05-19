@@ -25,6 +25,7 @@ namespace Neurotoxin.Godspeed.Shell
 
             // Content providers
             Container.RegisterType<IUserSettings, UserSettings>();
+            Container.RegisterType<ITitleRecognizer, TitleRecognizer>();
             Container.RegisterType<FtpContent>();
             Container.RegisterType<LocalFileSystemContent>();
             Container.RegisterType<StfsPackageContent>();

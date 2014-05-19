@@ -20,7 +20,7 @@ using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 
 namespace Neurotoxin.Godspeed.Shell.ContentProviders
 {
-    public class TitleRecognizer
+    public class TitleRecognizer : ITitleRecognizer
     {
         private readonly IFileManager _fileManager;
         private readonly CacheManager _cacheManager;
@@ -52,7 +52,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             _eventAggregator = eventAggregator;
         }
 
-        public static bool RecognizeType(FileSystemItem item)
+        public bool RecognizeType(FileSystemItem item)
         {
             var recognition = RecognizeByName(item.Name, item.Type);
             if (recognition == null) return false;

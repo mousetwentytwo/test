@@ -8,6 +8,8 @@ using Microsoft.Practices.Unity;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Interfaces;
+using Neurotoxin.Godspeed.Shell.Tests.Dummies;
+using Neurotoxin.Godspeed.Shell.Tests.Helpers;
 using Neurotoxin.Godspeed.Shell.ViewModels;
 
 namespace Neurotoxin.Godspeed.Shell.Tests
@@ -26,9 +28,9 @@ namespace Neurotoxin.Godspeed.Shell.Tests
             Container.RegisterType<IEventAggregator, EventAggregator>(new ContainerControlledLifetimeManager());
             Container.RegisterInstance(A.Fake<IStatisticsViewModel>());
             Container.RegisterInstance(A.Fake<IUserSettings>());
+            Container.RegisterInstance(A.Fake<ITitleRecognizer>());
             Container.RegisterType<TransferManagerViewModel>();
-
-
+            Container.RegisterInstance(A.Fake<IFileManagerViewModel>());
             UnityInstance.Container = Container;
         }
 
@@ -49,11 +51,23 @@ namespace Neurotoxin.Godspeed.Shell.Tests
         public void BasicCopyTest()
         {
             var vm = GetInstance();
+            var a = GetDummyContentViewModel();
+            var b = GetDummyContentViewModel();
+            vm.Copy(a, b);
         }
 
         private TransferManagerViewModel GetInstance()
         {
             return Container.Resolve<TransferManagerViewModel>();
+        }
+
+        private DummyContentViewModel GetDummyContentViewModel()
+        {
+            var fm = Container.Resolve<IFileManagerViewModel>();
+            var dummy = new DummyContentViewModel(fm);
+            dummy.Drive = dummy.Drives.First();
+            //TODO: setup
+            return dummy;
         }
 
     }

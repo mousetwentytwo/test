@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Models;
 
@@ -11,7 +10,8 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
         string TempFilePath { get; }
         char Slash { get; }
 
-        List<FileSystemItem> GetList(string path = null);
+        IList<FileSystemItem> GetDrives();
+        IList<FileSystemItem> GetList(string path = null);
 
         FileSystemItem GetItemInfo(string itemPath);
         FileSystemItem GetItemInfo(string itemPath, ItemType? type);
