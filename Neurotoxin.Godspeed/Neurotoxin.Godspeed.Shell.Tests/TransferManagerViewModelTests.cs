@@ -1,7 +1,4 @@
-﻿using System;
-using System.Text;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using FakeItEasy;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
@@ -9,7 +6,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Tests.Dummies;
-using Neurotoxin.Godspeed.Shell.Tests.Helpers;
 using Neurotoxin.Godspeed.Shell.ViewModels;
 
 namespace Neurotoxin.Godspeed.Shell.Tests
