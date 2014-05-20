@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Neurotoxin.Godspeed.Core.Models;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
@@ -9,13 +10,42 @@ namespace Neurotoxin.Godspeed.Shell.Tests.Dummies
 {
     public class DummyContent : IFileManager
     {
+        private Tree<FileSystemItem> _tree;
         public string TempFilePath { get; private set; }
         public char Slash { get; private set; }
 
+        private FakingRules _fakingRules;
+        public FakingRules FakingRules
+        {
+            get { return _fakingRules; }
+            set
+            {
+                _fakingRules = value;
+                if (_fakingRules.ItemTypes == null) _fakingRules.ItemTypes = new[] { ItemType.Directory, ItemType.File };
+                if (_fakingRules.ItemTypesOnLevel == null)
+                    _fakingRules.ItemTypesOnLevel = new Dictionary<int, ItemType[]>
+                                                        {
+                                                            {0, new[] {ItemType.Drive}}
+                                                        };
+                _tree = new Tree<FileSystemItem>();
+                GenerateTree(_tree, C.Random<int>(_fakingRules.TreeDepth));
+            }
+        }
+
+        private void GenerateTree(TreeItem<FileSystemItem> node, int depth, int level = 0)
+        {
+            var itemCount = C.Random<int>(_fakingRules.GetItemCount(level));
+            var nodes = node.AddRange(C.CollectionOfFake<FileSystemItem>(itemCount, new { Type = _fakingRules.GetItemTypes(level), Name = new Range(8,13) }));
+            if (level == depth) return;
+            foreach (var n in nodes)
+            {
+                GenerateTree(n, depth, level+1);
+            }
+        }
+
         public IList<FileSystemItem> GetDrives()
         {
-            var itemCount = C.Random<int>(1,5);
-            return C.CollectionOfFake<FileSystemItem>(itemCount);
+            return _tree.GetChildren("/");
         }
 
         public IList<FileSystemItem> GetList(string path = null)
@@ -51,20 +81,19 @@ namespace Neurotoxin.Godspeed.Shell.Tests.Dummies
 
         public bool DriveIsReady(string drive)
         {
-            //TODO
             return true;
         }
 
         public FileExistenceInfo FileExists(string path)
         {
-            //TODO
-            return true;
+            var fake = _tree.Find(path);
+            return fake != null && fake.Type == ItemType.File;
         }
 
         public bool FolderExists(string path)
         {
-            //TODO
-            return true;
+            var fake = _tree.Find(path);
+            return fake != null && fake.Type == ItemType.Directory;
         }
 
         public void DeleteFolder(string path)
@@ -79,7 +108,7 @@ namespace Neurotoxin.Godspeed.Shell.Tests.Dummies
 
         public void CreateFolder(string path)
         {
-            //TODO
+            _tree.Insert(path);
         }
 
         public byte[] ReadFileContent(string path, bool saveToTempFile, long fileSize)
@@ -94,10 +123,14 @@ namespace Neurotoxin.Godspeed.Shell.Tests.Dummies
 
         public FileSystemItem Rename(string path, string newName)
         {
-            var fake = C.Fake<FileSystemItem>();
-            //TODO: fake.Path
+            var fake = _tree.Find(path);
             fake.Name = newName;
             return fake;
+        }
+
+        public void AddFile(FileSystemItem item)
+        {
+            _tree.Insert(item.Path, item);
         }
     }
 }

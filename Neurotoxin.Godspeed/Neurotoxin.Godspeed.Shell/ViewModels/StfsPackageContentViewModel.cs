@@ -4,7 +4,6 @@ using System.Linq;
 using Neurotoxin.Godspeed.Core.Models;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
-using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
 using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Models;
@@ -111,21 +110,21 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             return true;
         }
 
-        protected override bool CreateFile(string targetPath, string sourcePath)
+        protected override bool CreateFile(string targetPath, FileSystemItem source)
         {
-            FileManager.AddFile(targetPath, sourcePath);
+            FileManager.AddFile(targetPath, source.Path);
             return true;
         }
 
-        protected override bool OverwriteFile(string targetPath, string sourcePath)
+        protected override bool OverwriteFile(string targetPath, FileSystemItem source)
         {
-            FileManager.ReplaceFile(targetPath, sourcePath);
+            FileManager.ReplaceFile(targetPath, source.Path);
             return true;
         }
 
-        protected override bool ResumeFile(string targetPath, string sourcePath)
+        protected override bool ResumeFile(string targetPath, FileSystemItem source)
         {
-            FileManager.ReplaceFile(targetPath, sourcePath);
+            FileManager.ReplaceFile(targetPath, source.Path);
             return true;
         }
 

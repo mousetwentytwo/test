@@ -574,19 +574,19 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             return base.WrapTransferRelatedExceptions(exception);
         }
 
-        protected override bool CreateFile(string targetPath, string sourcePath)
+        protected override bool CreateFile(string targetPath, FileSystemItem source)
         {
-            return FileManager.UploadFile(targetPath, sourcePath);
+            return FileManager.UploadFile(targetPath, source.Path);
         }
 
-        protected override bool OverwriteFile(string targetPath, string sourcePath)
+        protected override bool OverwriteFile(string targetPath, FileSystemItem source)
         {
-            return FileManager.UploadFile(targetPath, sourcePath);
+            return FileManager.UploadFile(targetPath, source.Path);
         }
 
-        protected override bool ResumeFile(string targetPath, string sourcePath)
+        protected override bool ResumeFile(string targetPath, FileSystemItem source)
         {
-            return FileManager.UploadFile(targetPath, sourcePath, true);
+            return FileManager.UploadFile(targetPath, source.Path, true);
         }
 
         public TransferResult VerifyUpload(string savePath, string itemPath)

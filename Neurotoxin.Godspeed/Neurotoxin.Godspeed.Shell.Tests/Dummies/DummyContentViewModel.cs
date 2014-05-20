@@ -9,8 +9,9 @@ namespace Neurotoxin.Godspeed.Shell.Tests.Dummies
 {
     public class DummyContentViewModel : FileListPaneViewModelBase<DummyContent>
     {
-        public DummyContentViewModel(IFileManagerViewModel parent) : base(parent)
+        public DummyContentViewModel(IFileManagerViewModel parent, FakingRules rules) : base(parent)
         {
+            FileManager.FakingRules = rules;
             Initialize();
         }
 
@@ -45,19 +46,21 @@ namespace Neurotoxin.Godspeed.Shell.Tests.Dummies
             return true;
         }
 
-        protected override bool CreateFile(string targetPath, string sourcePath)
+        protected override bool CreateFile(string targetPath, FileSystemItem source)
+        {
+            var target = source.Clone();
+            target.Path = targetPath;
+            FileManager.AddFile(target);
+            return true;
+        }
+
+        protected override bool OverwriteFile(string targetPath, FileSystemItem source)
         {
             //TODO: implement mimic logic
             return true;
         }
 
-        protected override bool OverwriteFile(string targetPath, string sourcePath)
-        {
-            //TODO: implement mimic logic
-            return true;
-        }
-
-        protected override bool ResumeFile(string targetPath, string sourcePath)
+        protected override bool ResumeFile(string targetPath, FileSystemItem source)
         {
             //TODO: implement mimic logic
             return true;

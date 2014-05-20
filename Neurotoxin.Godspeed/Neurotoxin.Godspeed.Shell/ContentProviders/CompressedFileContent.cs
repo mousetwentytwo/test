@@ -73,8 +73,8 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         public FileSystemItem GetItemInfo(string path, ItemType? type, bool swallowException)
         {
             if (type.HasValue && type.Value == ItemType.Directory && _archive is RarArchive && path[path.Length -1] != BACKSLASH) path += BACKSLASH;
-            FileSystemItem item;
-            if (!_fileStructure.TryGetItem(path, out item)) return null;
+            var item = _fileStructure.Find(path);
+            if (item == null) return null;
             if (type != null)
             {
                 if ((type == ItemType.File && item.Type != ItemType.File) ||
@@ -133,15 +133,15 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public FileExistenceInfo FileExists(string path)
         {
-            FileSystemItem item;
-            if (!_fileStructure.TryGetItem(path, out item) || item.Type != ItemType.File) return false;
+            var item = _fileStructure.Find(path);
+            if (item == null || item.Type != ItemType.File) return false;
             return item.Size;
         }
 
         public bool FolderExists(string path)
         {
-            FileSystemItem item;
-            return _fileStructure.TryGetItem(path, out item) && item.Type == ItemType.Directory;
+            var item = _fileStructure.Find(path);
+            return item != null && item.Type == ItemType.Directory;
         }
 
         public void DeleteFolder(string path)
@@ -223,13 +223,13 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             {
                 var entryPath = entry.FilePath;
                 if (isRar) entryPath += BACKSLASH;
-                _fileStructure.AddItem(entryPath, CreateModel(entry));
+                _fileStructure.Insert(entryPath, CreateModel(entry), name => CreateModel(name, true, DateTime.MinValue, null));
             }
 
-            foreach (var key in _fileStructure.Keys.Where(key => key != string.Empty && !_fileStructure.ItemHasContent(key)))
-            {
-                _fileStructure.UpdateItem(key, CreateModel(key, true, DateTime.MinValue, null));
-            }
+            //foreach (var key in _fileStructure.Keys.Where(key => key != string.Empty && !_fileStructure.ItemHasContent(key)))
+            //{
+            //    _fileStructure.UpdateItem(key, );
+            //}
         }
 
         public void Dispose()

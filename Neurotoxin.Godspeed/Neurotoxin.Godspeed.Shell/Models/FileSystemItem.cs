@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using Neurotoxin.Godspeed.Core.Constants;
+using Neurotoxin.Godspeed.Core.Models;
 using Neurotoxin.Godspeed.Shell.Constants;
 
 namespace Neurotoxin.Godspeed.Shell.Models
 {
-    [Serializable]
-    public class FileSystemItem
+    public class FileSystemItem : INamed
     {
         public string Title
         {
@@ -19,7 +20,9 @@ namespace Neurotoxin.Godspeed.Shell.Models
         public ContentType ContentType { get; set; }
         public RecognitionState RecognitionState { get; set; }
 
-        public string Name;
+        [IgnoreDataMember]
+        public string Name { get; set; }
+
         public string Path;
         public string FullPath;
         public long? Size;

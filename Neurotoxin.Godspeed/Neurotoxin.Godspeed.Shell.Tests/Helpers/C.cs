@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using FakeItEasy;
 using Microsoft.Practices.ObjectBuilder2;
+using Neurotoxin.Godspeed.Shell.Tests.Dummies;
 
 namespace Neurotoxin.Godspeed.Shell.Tests.Helpers
 {
@@ -10,30 +11,85 @@ namespace Neurotoxin.Godspeed.Shell.Tests.Helpers
     {
         private static readonly Random RandomObject = new Random();
 
-        public static T Fake<T>()
+        public static T Fake<T>(object fakingRules = null)
         {
-            //TODO: faking rules
             var fake = A.Fake<T>();
             var type = typeof (T);
+            var fakingType = fakingRules != null ? fakingRules.GetType() : null;
             foreach (var pi in type.GetProperties())
             {
-                var generator = GetGenerator(pi.PropertyType);
-                if (generator != null) pi.SetValue(fake, generator(pi.PropertyType, null, null), null);
+                var value = GetFakingRuleValue(fakingRules, fakingType, pi.Name);
+                if (!(value is T))
+                {
+                    var generator = GetGenerator(pi.PropertyType);
+                    int? min = null;
+                    int? max = null;
+                    if (value is Range)
+                    {
+                        var r = (Range) value;
+                        min = r.Min;
+                        max = r.Max;
+                    }
+                    if (generator != null) value = generator(pi.PropertyType, min, max);
+                }
+                if (value is T) pi.SetValue(fake, value, null);
+
             }
             return fake;
         }
 
-        public static IList<T> CollectionOfFake<T>(int? itemCount = null)
+        public static IList<T> CollectionOfFake<T>(int? itemCount = null, object fakingRules = null)
         {
             var fakes = A.CollectionOfFake<T>(itemCount ?? Random<int>(2, 100));
             var type = typeof(T);
+            var fakingType = fakingRules != null ? fakingRules.GetType() : null;
             foreach (var pi in type.GetProperties())
             {
+                var value = GetFakingRuleValue(fakingRules, fakingType, pi.Name);
                 var generator = GetGenerator(pi.PropertyType);
-                if (generator != null) fakes.ForEach(fake => pi.SetValue(fake, generator(pi.PropertyType, null, null), null));
+                if (value != null || generator != null)
+                    fakes.ForEach(fake =>
+                                      {
+                                          int? min = null;
+                                          int? max = null;
+                                          if (value is Range)
+                                          {
+                                              var r = (Range) value;
+                                              min = r.Min;
+                                              max = r.Max;
+                                          }
+                                          pi.SetValue(fake, value is T ? value : generator(pi.PropertyType, min, max), null);
+                                      });
             }
             return fakes;
         } 
+
+        private static object GetFakingRuleValue(object fakingRules, Type fakingType, string propertyName)
+        {
+            var fakingProperty = fakingType != null ? fakingType.GetProperty(propertyName) : null;
+            if (fakingProperty != null)
+            {
+                if (fakingProperty.PropertyType == typeof(Range))
+                    return fakingProperty.GetValue(fakingRules, null);
+
+                if (fakingProperty.PropertyType.IsArray)
+                {
+                    var a = (Array)fakingProperty.GetValue(fakingRules, null);
+                    if (a.Length == 1)
+                    {
+                        var e = a.GetEnumerator();
+                        e.MoveNext();
+                        return e.Current;
+                    } 
+                    if (fakingProperty.PropertyType.GetElementType().IsEnum)
+                    {
+                        return RandomEnum(a, null, null);
+                    }
+                }
+                throw new NotSupportedException(fakingProperty.PropertyType.Name + " is a not supported type for faking.");
+            }
+            return null;
+        }
 
         public static T Random<T>()
         {
@@ -48,6 +104,11 @@ namespace Neurotoxin.Godspeed.Shell.Tests.Helpers
         public static T Random<T>(int min, int max)
         {
             return (T) Random(typeof (T), min, max);
+        }
+
+        public static T Random<T>(Range range)
+        {
+            return (T)Random(typeof(T), range.Min, range.Max);
         }
 
         private static Func<Type, int?, int?, object> GetGenerator(Type type)
@@ -142,10 +203,14 @@ namespace Neurotoxin.Godspeed.Shell.Tests.Helpers
 
         private static object RandomEnum(Type type, int? min, int? max)
         {
-            var values = Enum.GetValues(type);
+            return RandomEnum(Enum.GetValues(type), min, max);
+        }
+
+        private static object RandomEnum(Array values, int? min, int? max)
+        {
             var minValue = min ?? 0;
             var maxValue = max ?? values.Length;
-            if (minValue < 0 || minValue > values.Length - 1 || maxValue < 0 || maxValue > values.Length) 
+            if (minValue < 0 || minValue > values.Length - 1 || maxValue < 0 || maxValue > values.Length)
                 throw new ArgumentException("Index was outside of bounds of Array");
 
             var index = Random<int>(minValue, maxValue);

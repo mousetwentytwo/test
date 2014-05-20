@@ -181,19 +181,19 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             return base.WrapTransferRelatedExceptions(exception);
         }
 
-        protected override bool CreateFile(string targetPath, string sourcePath)
+        protected override bool CreateFile(string targetPath, FileSystemItem source)
         {
             //TODO: local2local
             throw new NotImplementedException();
         }
 
-        protected override bool OverwriteFile(string targetPath, string sourcePath)
+        protected override bool OverwriteFile(string targetPath, FileSystemItem source)
         {
             //TODO: local2local
             throw new NotImplementedException();
         }
 
-        protected override bool ResumeFile(string targetPath, string sourcePath)
+        protected override bool ResumeFile(string targetPath, FileSystemItem source)
         {
             //TODO: local2local
             throw new NotImplementedException();

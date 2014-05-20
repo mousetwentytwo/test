@@ -1085,9 +1085,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public abstract string GetTargetPath(string path);
         protected abstract bool SaveToFileStream(FileSystemItem item, FileStream fs, long remoteStartPosition);
-        protected abstract bool CreateFile(string targetPath, string sourcePath);
-        protected abstract bool OverwriteFile(string targetPath, string sourcePath);
-        protected abstract bool ResumeFile(string targetPath, string sourcePath);
+        protected abstract bool CreateFile(string targetPath, FileSystemItem source);
+        protected abstract bool OverwriteFile(string targetPath, FileSystemItem source);
+        protected abstract bool ResumeFile(string targetPath, FileSystemItem source);
         public abstract void Abort();
 
         protected void Initialize()
@@ -1380,7 +1380,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             if (item.Type != ItemType.File) throw new NotSupportedException();
             UIThread.Run(() => eventAggregator.GetEvent<TransferActionStartedEvent>().Publish(ImportActionDescription));
-            var itemPath = item.Path;
             try
             {
                 bool result;
@@ -1388,19 +1387,19 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 {
                     case CopyAction.CreateNew:
                         var exists = FileManager.FileExists(savePath);
-                        if (exists) throw new TransferException(TransferErrorType.WriteAccessError, Resx.TargetAlreadyExists, itemPath, savePath, exists.Size);
-                        result = CreateFile(savePath, itemPath);
+                        if (exists) throw new TransferException(TransferErrorType.WriteAccessError, Resx.TargetAlreadyExists, item.Path, savePath, exists.Size);
+                        result = CreateFile(savePath, item);
                         break;
                     case CopyAction.Overwrite:
-                        result = OverwriteFile(savePath, itemPath);
+                        result = OverwriteFile(savePath, item);
                         break;
                     case CopyAction.OverwriteOlder:
                         var fileDate = FileManager.GetFileModificationTime(savePath);
                         if (fileDate > item.Date) return TransferResult.Skipped;
-                        result = OverwriteFile(savePath, itemPath);
+                        result = OverwriteFile(savePath, item);
                         break;
                     case CopyAction.Resume:
-                        result = ResumeFile(savePath, itemPath);
+                        result = ResumeFile(savePath, item);
                         break;
                     default:
                         throw new ArgumentException("Invalid Copy action: " + action);
