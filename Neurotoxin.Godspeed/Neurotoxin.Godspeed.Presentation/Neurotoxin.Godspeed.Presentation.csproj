@@ -89,7 +89,6 @@
     <Compile Include="Events\ModuleCloseEvent.cs" />
     <Compile Include="Events\ModuleViewShownEvent.cs" />
     <Compile Include="Events\RequestWindowCloseEvent.cs" />
-    <Compile Include="Extensions\ApplicationExtensions.cs" />
     <Compile Include="Extensions\DataGridExtensions.cs" />
     <Compile Include="Extensions\FrameworkElementExtensions.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />

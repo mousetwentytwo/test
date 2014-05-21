@@ -58,7 +58,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #endregion
 
-        public StfsPackageContentViewModel(FileManagerViewModel parent) : base(parent)
+        public StfsPackageContentViewModel()
         {
             SaveAndCloseCommand = new DelegateCommand(ExecuteSaveAndCloseCommand);
             CloseCommand = new DelegateCommand(ExecuteCloseCommand);

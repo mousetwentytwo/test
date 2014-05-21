@@ -7,7 +7,7 @@ using Neurotoxin.Godspeed.Presentation.Infrastructure;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
-    public class FtpConnectionItemViewModel : ViewModelBase, IStoredConnectionViewModel
+    public class FtpConnectionItemViewModel : CommonViewModelBase, IStoredConnectionViewModel
     {
         public FtpConnection Model { get; private set; }
 
@@ -37,7 +37,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             {
                 if (_thumbnail == null)
                 {
-                    var png = ApplicationExtensions.GetContentByteArray(string.Format("/Resources/Connections/{0}.png", ConnectionImage));
+                    var png = ResourceManager.GetContentByteArray(string.Format("/Resources/Connections/{0}.png", ConnectionImage));
                     _thumbnail = StfsPackageExtensions.GetBitmapFromByteArray(png);
                 }
                 return _thumbnail;

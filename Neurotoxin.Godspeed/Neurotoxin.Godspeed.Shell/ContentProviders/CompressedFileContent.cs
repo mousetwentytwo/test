@@ -6,7 +6,6 @@ using System.Threading;
 using Microsoft.Practices.Composite.Events;
 using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Core.Models;
-using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Interfaces;
@@ -23,6 +22,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         private IArchive _archive;
         private Tree<FileSystemItem> _fileStructure;
         private readonly IEventAggregator _eventAggregator;
+        private readonly IResourceManager _resourceManager;
 
         public string TempFilePath { get; set; }
 
@@ -34,9 +34,10 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             get { return _archive is RarArchive ? BACKSLASH : SLASH; }
         }
 
-        public CompressedFileContent(IEventAggregator eventAggregator)
+        public CompressedFileContent(IEventAggregator eventAggregator, IResourceManager resourceManager)
         {
             _eventAggregator = eventAggregator;
+            _resourceManager = resourceManager;
         }
 
         public IList<FileSystemItem> GetDrives()
@@ -49,7 +50,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                                    Path = string.Empty,
                                    FullPath = string.Format(@"{0}:\", _archivePath),
                                    Type = ItemType.Drive,
-                                   Thumbnail = ApplicationExtensions.GetContentByteArray("Resources/package.png")
+                                   Thumbnail = _resourceManager.GetContentByteArray("Resources/package.png")
                                }
                        };
         }

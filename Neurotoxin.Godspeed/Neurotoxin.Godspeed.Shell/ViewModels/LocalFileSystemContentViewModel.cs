@@ -4,26 +4,21 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Microsoft.Practices.Composite.Events;
 using Neurotoxin.Godspeed.Core.Io;
 using Neurotoxin.Godspeed.Core.Models;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
-using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
 using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Exceptions;
 using Neurotoxin.Godspeed.Shell.Models;
-using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
     public class LocalFileSystemContentViewModel : FileListPaneViewModelBase<LocalFileSystemContent>
     {
-        private readonly IEventAggregator _eventAggregator;
-
         public bool IsNetworkDrive
         {
             get { return Drive.FullPath.StartsWith(@"\\"); }
@@ -49,11 +44,10 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             get { return false; }
         }
 
-        public LocalFileSystemContentViewModel(FileManagerViewModel parent, IEventAggregator eventAggregator) : base(parent)
+        public LocalFileSystemContentViewModel()
         {
-            _eventAggregator = eventAggregator;
             IsResumeSupported = true;
-            _eventAggregator.GetEvent<UsbDeviceChangedEvent>().Subscribe(OnUsbDeviceChanged);
+            eventAggregator.GetEvent<UsbDeviceChangedEvent>().Subscribe(OnUsbDeviceChanged);
         }
 
         public override void LoadDataAsync(LoadCommand cmd, LoadDataAsyncParameters cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase, Exception> error = null)
@@ -135,14 +129,14 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
                     if (string.IsNullOrEmpty(path))
                     {
-                        NotificationMessage.ShowMessage(Resx.IOError, reparsePoint.LastError == 5 ? Resx.ReparsePointCannotBeAccessed : Resx.ReparsePointCannotBeResolved);
+                        WindowManager.ShowMessage(Resx.IOError, reparsePoint.LastError == 5 ? Resx.ReparsePointCannotBeAccessed : Resx.ReparsePointCannotBeResolved);
                         return;
                     }
                 }
                 var model = FileManager.GetItemInfo(path, ItemType.Directory);
                 if (model == null)
                 {
-                    NotificationMessage.ShowMessage(Resx.IOError, string.Format(Resx.ItemNotExistsOnPath, path));
+                    WindowManager.ShowMessage(Resx.IOError, string.Format(Resx.ItemNotExistsOnPath, path));
                     return;
                 }
                 CurrentFolder = new FileSystemItemViewModel(model);
@@ -233,7 +227,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public override void Dispose()
         {
-            _eventAggregator.GetEvent<UsbDeviceChangedEvent>().Unsubscribe(OnUsbDeviceChanged);
+            eventAggregator.GetEvent<UsbDeviceChangedEvent>().Unsubscribe(OnUsbDeviceChanged);
             base.Dispose();
         }
     }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
-using Neurotoxin.Godspeed.Shell.Views.Dialogs;
+using Microsoft.Practices.Unity;
+using Neurotoxin.Godspeed.Presentation.Infrastructure;
+using Neurotoxin.Godspeed.Shell.Interfaces;
 using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 
 namespace Neurotoxin.Godspeed.Shell.Helpers
@@ -16,7 +18,8 @@ namespace Neurotoxin.Godspeed.Shell.Helpers
             }
             catch (Exception ex)
             {
-                NotificationMessage.ShowMessage(Resx.SystemError, string.Format(Resx.UrlCannotBeOpened, ex.Message));
+                var wm = UnityInstance.Container.Resolve<IWindowManager>();
+                wm.ShowMessage(Resx.SystemError, string.Format(Resx.UrlCannotBeOpened, ex.Message));
                 return false;
             }
         }

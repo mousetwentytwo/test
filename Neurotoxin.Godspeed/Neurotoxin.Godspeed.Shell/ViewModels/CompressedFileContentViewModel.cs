@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
-using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
 using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Models;
@@ -42,7 +41,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #endregion
 
-        public CompressedFileContentViewModel(FileManagerViewModel parent) : base(parent)
+        public CompressedFileContentViewModel()
         {
             CloseCommand = new DelegateCommand(ExecuteCloseCommand);
             IsResumeSupported = true;

@@ -9,7 +9,6 @@ using Neurotoxin.Godspeed.Core.Exceptions;
 using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Core.Net;
 using Neurotoxin.Godspeed.Shell.Constants;
-using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Exceptions;
 using Neurotoxin.Godspeed.Shell.Interfaces;
@@ -22,7 +21,7 @@ using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
 
-    public class TransferManagerViewModel : ViewModelBase
+    public class TransferManagerViewModel : CommonViewModelBase
     {
         private const string RenameFromPattern = @"([\/]){0}$";
         private const string RenameToPattern = @"${{1}}{0}";
@@ -559,16 +558,16 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         {
                             if (feedbackNeeded)
                             {
-                                var dialog = new IoErrorDialog(exception);
-                                if (dialog.ShowDialog() == true)
+                                var r = WindowManager.ShowIoErrorDialog(exception);
+                                if (r != null)
                                 {
-                                    result = dialog.Result;
+                                    result = r;
                                     if (TargetPane != null) result.Action = TargetPane.IsResumeSupported ? CopyAction.Resume : CopyAction.Overwrite;
                                 }
                             } 
                             else
                             {
-                                NotificationMessage.ShowMessage(Resx.IOError, exception.Message);
+                                WindowManager.ShowMessage(Resx.IOError, exception.Message);
                             }
                         }
                         break;
@@ -581,18 +580,14 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                             else
                             {
                                 var sourceFile = _queue.Peek().FileSystemItem;
-                                var dialog = new WriteErrorDialog(eventAggregator, sourceFile.Path, transferException.TargetFile, TargetPane.IsResumeSupported && sourceFile.Size > transferException.TargetFileSize);
-                                SourcePane.GetItemViewModel(sourceFile.Path);
-                                TargetPane.GetItemViewModel(transferException.TargetFile);
-                                if (dialog.ShowDialog() == true) result = dialog.Result;
+                                var r = WindowManager.ShowWriteErrorDialog(sourceFile.Path, transferException.TargetFile, TargetPane.IsResumeSupported && sourceFile.Size > transferException.TargetFileSize, SourcePane, TargetPane);
+                                if (r != null) result = r;
                             }
                         }
                         break;
                     case TransferErrorType.LostConnection:
-                        result = new TransferErrorDialogResult(ErrorResolutionBehavior.Cancel);
                         var ftp = SourcePane as FtpContentViewModel ?? TargetPane as FtpContentViewModel;
-                        var reconnectionDialog = new ReconnectionDialog(exception);
-                        if (reconnectionDialog.ShowDialog() == true)
+                        if (WindowManager.ShowReconnectionDialog(exception) == true)
                         {
                             try
                             {
@@ -601,7 +596,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                             } 
                             catch (Exception ex)
                             {
-                                NotificationMessage.ShowMessage(Resx.ConnectionFailed, string.Format(Resx.CannotReestablishConnection, ex.Message));
+                                WindowManager.ShowMessage(Resx.ConnectionFailed, string.Format(Resx.CannotReestablishConnection, ex.Message));
                                 ftp.CloseCommand.Execute();
                             }
                         }
@@ -699,9 +694,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             eventAggregator.GetEvent<TransferFinishedEvent>().Publish(new TransferFinishedEventArgs(this));
         }
 
-        private static void RenameExistingFile(TransferException exception, CopyAction? action, Action<CopyAction?, string> rename, Action<Exception> chooseDifferentOption)
+        private void RenameExistingFile(TransferException exception, CopyAction? action, Action<CopyAction?, string> rename, Action<Exception> chooseDifferentOption)
         {
-            var name = InputDialog.ShowText(Resx.Rename, Resx.NewName + Strings.Colon , Path.GetFileName(exception.TargetFile));
+            var name = WindowManager.ShowTextInputDialog(Resx.Rename, Resx.NewName + Strings.Colon, Path.GetFileName(exception.TargetFile));
             if (!string.IsNullOrEmpty(name))
             {
                 rename.Invoke(action, name);
@@ -712,7 +707,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
         }
 
-        private static void AsyncJob<T>(Func<T> work, Action<T> success, Action<Exception> error = null)
+        private void AsyncJob<T>(Func<T> work, Action<T> success, Action<Exception> error = null)
         {
             var finished = false;
             WorkerThread.Run(
@@ -724,18 +719,18 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 b =>
                 {
                     if (finished) return;
-                    NotificationMessage.ShowMessage(Resx.ApplicationIsBusy, Resx.PleaseWait, NotificationMessageFlags.NonClosable);
+                    WindowManager.ShowMessage(Resx.ApplicationIsBusy, Resx.PleaseWait, NotificationMessageFlags.NonClosable);
                 });
             WorkerThread.Run(work,
                 b =>
                 {
-                    NotificationMessage.CloseMessage();
+                    WindowManager.CloseMessage();
                     finished = true;
                     success.Invoke(b);
                 },
                 e =>
                 {
-                    NotificationMessage.CloseMessage();
+                    WindowManager.CloseMessage();
                     finished = true;
                     if (error != null) error.Invoke(e);
                 });

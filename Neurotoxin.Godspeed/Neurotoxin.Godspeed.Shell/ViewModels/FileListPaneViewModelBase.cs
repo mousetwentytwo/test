@@ -25,7 +25,6 @@ using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Microsoft.Practices.Composite;
 using Microsoft.Practices.ObjectBuilder2;
-using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 using Neurotoxin.Godspeed.Core.Extensions;
 using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 
@@ -82,7 +81,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     var name = string.IsNullOrEmpty(value.Title)
                                    ? value.Name
                                    : string.Format("{0} ({1})", value.Title, value.Name);
-                    NotificationMessage.ShowMessage(Resx.DriveChangeFailed, string.Format(Resx.DriveIsNotAccessible, name));
+                    WindowManager.ShowMessage(Resx.DriveChangeFailed, string.Format(Resx.DriveIsNotAccessible, name));
                     if (_drive == null) _drive = Drives.FirstOrDefault();
                 }
                 ChangeDrive();
@@ -222,7 +221,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 if (destination == null) return;
                 if (destination.Name.Contains("?"))
                 {
-                    NotificationMessage.ShowMessage(Resx.IOError, Resx.SpecialCharactersNotSupported);
+                    WindowManager.ShowMessage(Resx.IOError, Resx.SpecialCharactersNotSupported);
                     return;
                 }
                 CurrentFolder = destination;
@@ -276,7 +275,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                             Type = CurrentFolder.Type,
                             Date = CurrentFolder.Date,
                             Path = CurrentFolder.Path,
-                            Thumbnail = ApplicationExtensions.GetContentByteArray("/Resources/up.png")
+                            Thumbnail = ResourceManager.GetContentByteArray("/Resources/up.png")
                         });
                 }
 
@@ -370,7 +369,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void OpenStfsPackageError(PaneViewModelBase pane, Exception exception)
         {
             IsBusy = false;
-            NotificationMessage.ShowMessage(Resx.OpenFailed, string.Format("{0}: {1}", string.Format(Resx.CantOpenFile, CurrentRow.ComputedName), exception.Message));
+            WindowManager.ShowMessage(Resx.OpenFailed, string.Format("{0}: {1}", string.Format(Resx.CantOpenFile, CurrentRow.ComputedName), exception.Message));
         }
 
         #endregion
@@ -411,7 +410,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void OpenCompressedFileError(PaneViewModelBase pane, Exception exception)
         {
             IsBusy = false;
-            NotificationMessage.ShowMessage(Resx.OpenFailed, string.Format("{0}: {1}", string.Format(Resx.CantOpenFile, CurrentRow.ComputedName), exception.Message));
+            WindowManager.ShowMessage(Resx.OpenFailed, string.Format("{0}: {1}", string.Format(Resx.CantOpenFile, CurrentRow.ComputedName), exception.Message));
         }
 
         #endregion
@@ -770,7 +769,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             IsBusy = false;
             var message = count < 1 ? Resx.NoNewTitlesFound : string.Format(count > 1 ? Resx.NewTitleFoundPlural : Resx.NewTitleFoundSingular, count);
-            NotificationMessage.ShowMessage(Resx.TitleRecognition, message);
+            WindowManager.ShowMessage(Resx.TitleRecognition, message);
         }
 
         #endregion
@@ -1004,7 +1003,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     return new FileSystemItemViewModel(folder);
                 }
 
-                NotificationMessage.ShowMessage(Resx.IOError, string.Format(Resx.ItemNotExistsOnPath, parentPath));
+                WindowManager.ShowMessage(Resx.IOError, string.Format(Resx.ItemNotExistsOnPath, parentPath));
                 return Drive;
             }
             catch (Exception ex)
@@ -1049,7 +1048,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #endregion
 
-        protected FileListPaneViewModelBase(IFileManagerViewModel parent) : base(parent)
+        protected FileListPaneViewModelBase()
         {
             FileManager = container.Resolve<T>();
             UserSettings = container.Resolve<IUserSettings>();
@@ -1213,7 +1212,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             SaveThumbnailCommand.RaiseCanExecuteChanged();
             RenameTitleCommand.RaiseCanExecuteChanged();
             RenameFileSystemItemCommand.RaiseCanExecuteChanged();
-            Parent.RaiseCanExecuteChanges();
         }
 
         public void GetItemViewModel(string itemPath)

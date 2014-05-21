@@ -8,7 +8,7 @@ using Neurotoxin.Godspeed.Presentation.Infrastructure;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
-    public class FileSystemItemViewModel : ViewModelBase
+    public class FileSystemItemViewModel : CommonViewModelBase
     {
         private readonly FileSystemItem _model;
         public FileSystemItem Model
@@ -60,14 +60,14 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         {
                             case ItemType.Directory:
                                 var dirIconPath = IsRefreshing ? "/Resources/refresh_folder.png" : "/Resources/folder.png";
-                                bytes = ApplicationExtensions.GetContentByteArray(dirIconPath);
+                                bytes = ResourceManager.GetContentByteArray(dirIconPath);
                                 break;
                             case ItemType.Link:
-                                bytes = ApplicationExtensions.GetContentByteArray("/Resources/reparse_point.png");
+                                bytes = ResourceManager.GetContentByteArray("/Resources/reparse_point.png");
                                 break;
                             case ItemType.File:
                                 var fileIconPath = IsCompressedFile ? "/Resources/package.png" : "/Resources/file.png";
-                                bytes = ApplicationExtensions.GetContentByteArray(fileIconPath);
+                                bytes = ResourceManager.GetContentByteArray(fileIconPath);
                                 break;
                         }
                     }

@@ -7,13 +7,14 @@ using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Shell.Interfaces;
+using Neurotoxin.Godspeed.Shell.Views;
 using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 using WPFLocalizeExtension.Engine;
 using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
-    public class SettingsViewModel : ViewModelBase, ISettingsViewModel
+    public class SettingsViewModel : CommonViewModelBase, ISettingsViewModel
     {
         private readonly IUserSettings _userSettings;
         private readonly CacheManager _cacheManager;
@@ -164,11 +165,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             WorkerThread.Run(() =>
                                  {
-                                     UIThread.Run(() => NotificationMessage.ShowMessage(Resx.ApplicationIsBusy, Resx.PleaseWait, NotificationMessageFlags.NonClosable));
+                                     UIThread.Run(() => WindowManager.ShowMessage(Resx.ApplicationIsBusy, Resx.PleaseWait, NotificationMessageFlags.NonClosable));
                                      _cacheManager.ClearCache();
                                      return true;
                                  }, 
-                             r => NotificationMessage.CloseMessage());
+                             r => WindowManager.CloseMessage());
         }
 
         #endregion

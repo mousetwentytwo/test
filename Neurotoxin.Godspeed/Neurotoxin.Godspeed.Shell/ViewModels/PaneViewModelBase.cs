@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Windows.Input;
+using Microsoft.Practices.Unity;
 using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
 using Neurotoxin.Godspeed.Shell.Models;
+using Neurotoxin.Godspeed.Shell.Views;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
-    public abstract class PaneViewModelBase : ViewModelBase, IPaneViewModel
+    public abstract class PaneViewModelBase : CommonViewModelBase, IPaneViewModel
     {
         public FileListPaneSettings Settings { get; protected set; }
-        protected IFileManagerViewModel Parent { get; private set; }
 
         private const string ISACTIVE = "IsActive";
         private bool _isActive;
@@ -60,9 +61,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #endregion
 
-        protected PaneViewModelBase(IFileManagerViewModel parent)
+        protected PaneViewModelBase()
         {
-            Parent = parent;
             SetActiveCommand = new DelegateCommand<EventInformation<MouseEventArgs>>(ExecuteSetActiveCommand);
             eventAggregator.GetEvent<ActivePaneChangedEvent>().Subscribe(OnActivePaneChanged);
         }
@@ -83,6 +83,24 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             Dispose();
             return null;
+        }
+    }
+
+    public abstract class CommonViewModelBase : ViewModelBase
+    {
+        protected readonly IWindowManager WindowManager;
+        protected readonly IResourceManager ResourceManager;
+
+        protected CommonViewModelBase()
+        {
+            WindowManager = container.Resolve<IWindowManager>();
+            ResourceManager = container.Resolve<IResourceManager>();
+        }
+
+        public override void RaiseCanExecuteChanges()
+        {
+            base.RaiseCanExecuteChanges();
+            eventAggregator.GetEvent<RaiseCanExecuteChangesEvent>().Publish(new RaiseCanExecuteChangesEventArgs(this));
         }
     }
 }

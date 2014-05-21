@@ -9,7 +9,7 @@ namespace Neurotoxin.Godspeed.Shell.Tests.Dummies
 {
     public class DummyContentViewModel : FileListPaneViewModelBase<DummyContent>
     {
-        public DummyContentViewModel(IFileManagerViewModel parent, FakingRules rules) : base(parent)
+        public DummyContentViewModel(FakingRules rules)
         {
             FileManager.FakingRules = rules;
             Initialize();

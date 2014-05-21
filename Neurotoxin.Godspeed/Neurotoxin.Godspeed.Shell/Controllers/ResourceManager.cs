@@ -1,18 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Resources;
-using System.Text;
 using System.Windows;
+using Neurotoxin.Godspeed.Shell.Interfaces;
 
-namespace Neurotoxin.Godspeed.Presentation.Extensions
+namespace Neurotoxin.Godspeed.Shell.Controllers
 {
-    public static class ApplicationExtensions
+    public class ResourceManager : IResourceManager
     {
-        private static readonly Dictionary<string, byte[]> Cache = new Dictionary<string, byte[]>();
+        private readonly Dictionary<string, byte[]> Cache = new Dictionary<string, byte[]>();
 
-        public static byte[] GetContentByteArray(string path)
+        public byte[] GetContentByteArray(string path)
         {
             if (Cache.ContainsKey(path)) return Cache[path];
 

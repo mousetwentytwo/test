@@ -30,8 +30,9 @@ namespace Neurotoxin.Godspeed.Shell.Tests
             Container.RegisterInstance(A.Fake<IStatisticsViewModel>());
             Container.RegisterInstance(A.Fake<IUserSettings>());
             Container.RegisterInstance(A.Fake<ITitleRecognizer>());
+            Container.RegisterInstance(A.Fake<IWindowManager>());
+            Container.RegisterInstance(A.Fake<IResourceManager>());
             Container.RegisterType<TransferManagerViewModel>();
-            Container.RegisterInstance(A.Fake<IFileManagerViewModel>());
             UnityInstance.Container = Container;
         }
 
@@ -53,6 +54,7 @@ namespace Neurotoxin.Godspeed.Shell.Tests
         {
             var vm = GetInstance();
             var a = GetDummyContentViewModel();
+            //TODO: there are no items!
             a.SelectAllCommand.Execute(null);
             var selection = a.SelectedItems.Select(i => i.Model).ToList();
             var b = GetDummyContentViewModel();
@@ -85,8 +87,7 @@ namespace Neurotoxin.Godspeed.Shell.Tests
 
         private DummyContentViewModel GetDummyContentViewModel()
         {
-            var fm = Container.Resolve<IFileManagerViewModel>();
-            var dummy = new DummyContentViewModel(fm, new FakingRules
+            var dummy = new DummyContentViewModel(new FakingRules
                                                           {
                                                               TreeDepth = new Range(3, 3),
                                                               ItemCount = new Range(0, 20),

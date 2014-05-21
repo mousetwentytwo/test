@@ -34,6 +34,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         private FtpConnection _connection;
         private readonly IEventAggregator _eventAggregator;
+        private readonly IResourceManager _resourceManager;
         private bool _isIdle = true;
         private bool _isAborted;
         private readonly Stopwatch _notificationTimer = new Stopwatch();
@@ -76,9 +77,10 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             get { return ServerType == FtpServerType.F3 || ServerType == FtpServerType.FSD; }
         }
 
-        public FtpContent(IEventAggregator eventAggregator)
+        public FtpContent(IEventAggregator eventAggregator, IResourceManager resourceManager)
         {
             _eventAggregator = eventAggregator;
+            _resourceManager = resourceManager;
             _keepAliveTimer.AutoReset = true;
             _keepAliveTimer.Elapsed += KeepAliveTimerOnElapsed;
         }
@@ -158,7 +160,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                                           Date = item.Modified,
                                           Path = string.Format("/{0}/", item.Name),
                                           FullPath = string.Format("{0}://{1}/", _connection.Name, item.Name),
-                                          Thumbnail = ApplicationExtensions.GetContentByteArray("/Resources/drive.png")
+                                          Thumbnail = _resourceManager.GetContentByteArray("/Resources/drive.png")
                                       })
                                   .ToList();
                 FtpClient.SetWorkingDirectory(currentFolder);

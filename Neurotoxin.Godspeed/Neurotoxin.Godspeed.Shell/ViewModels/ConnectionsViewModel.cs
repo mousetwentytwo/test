@@ -9,6 +9,7 @@ using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Exceptions;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
+using Neurotoxin.Godspeed.Shell.Views;
 using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
@@ -90,7 +91,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #endregion
 
-        public ConnectionsViewModel(FileManagerViewModel parent) : base(parent)
+        public ConnectionsViewModel()
         {
             ConnectCommand = new DelegateCommand<object>(ExecuteConnectCommand, CanExecuteConnectCommand);
             Items = new ObservableCollection<IStoredConnectionViewModel>();
@@ -139,13 +140,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             var ftpConnection = e.Connection as FtpConnectionItemViewModel;
             if (ftpConnection != null) Save(ftpConnection);
-        }
-
-        public override void RaiseCanExecuteChanges()
-        {
-            base.RaiseCanExecuteChanges();
-            Parent.EditCommand.RaiseCanExecuteChanged();
-            Parent.DeleteCommand.RaiseCanExecuteChanged();
         }
 
         public void Edit()
@@ -222,7 +216,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             } 
             else
             {
-                NotificationMessage.ShowMessage(Resx.ConnectionFailed, string.Format(Resx.CantConnectToFtp, connectionName));
+                WindowManager.ShowMessage(Resx.ConnectionFailed, string.Format(Resx.CantConnectToFtp, connectionName));
             }
             ConnectedFtp = null;
         }

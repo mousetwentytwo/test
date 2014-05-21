@@ -9,19 +9,15 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
-using System.Windows.Input;
 using Microsoft.Practices.Composite.Events;
 using Neurotoxin.Godspeed.Core.Caching;
 using Neurotoxin.Godspeed.Core.Extensions;
-using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Constants;
-using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
 using Neurotoxin.Godspeed.Shell.Reporting;
-using Neurotoxin.Godspeed.Shell.ViewModels;
 using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 using System.Linq;
 using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
@@ -42,11 +38,13 @@ namespace Neurotoxin.Godspeed.Shell.Helpers
 
         private readonly IUserSettings _userSettings;
         private readonly IEventAggregator _eventAggregator;
+        private readonly IResourceManager _resourceManager;
 
-        public SanityChecker(IStatisticsViewModel statistics, IUserSettings userSettings, IEventAggregator eventAggregator)
+        public SanityChecker(IStatisticsViewModel statistics, IUserSettings userSettings, IEventAggregator eventAggregator, IResourceManager resourceManager)
         {
             _userSettings = userSettings;
             _eventAggregator = eventAggregator;
+            _resourceManager = resourceManager;
             eventAggregator.GetEvent<CachePopulatedEvent>().Subscribe(OnCachePopulated);
             eventAggregator.GetEvent<ShellInitializedEvent>().Subscribe(OnShellInitialized);
 
@@ -90,7 +88,7 @@ namespace Neurotoxin.Godspeed.Shell.Helpers
 
             if (actualCacheVersion == 1 && e.InMemoryCacheItems.Count != 0)
             {
-                var payload = ApplicationExtensions.GetContentByteArray("/Resources/xbox_logo.png");
+                var payload = _resourceManager.GetContentByteArray("/Resources/xbox_logo.png");
                 var args = new CacheMigrationEventArgs(MigrateCacheItemVersion1ToVersion2,
                     setCacheVersion,
                     e.InMemoryCacheItems,

@@ -146,6 +146,7 @@
     <Compile Include="ContentProviders\UserSettings.cs" />
     <Compile Include="ContentProviders\StfsPackageContent.cs" />
     <Compile Include="ContentProviders\TitleRecognizer.cs" />
+    <Compile Include="Controllers\ResourceManager.cs" />
     <Compile Include="Converters\ContentTypeConverter.cs" />
     <Compile Include="Converters\LocalizedEnumConverter.cs" />
     <Compile Include="Converters\ResxConverter.cs" />
@@ -162,6 +163,7 @@
     <Compile Include="Constants\MessageIcon.cs" />
     <Compile Include="Events\CachePopulatedEvent.cs" />
     <Compile Include="Events\ConnectionDetailsChangedEvent.cs" />
+    <Compile Include="Events\RaiseCanExecuteChangesEvent.cs" />
     <Compile Include="Events\ShowCorrespondingErrorEvent.cs" />
     <Compile Include="Events\FreestyleDatabaseCheckEvent.cs" />
     <Compile Include="Events\WorkFinishedEventHandler.cs" />
@@ -187,10 +189,12 @@
     <Compile Include="Interfaces\IFileManager.cs" />
     <Compile Include="Interfaces\IFileManagerViewModel.cs" />
     <Compile Include="Interfaces\IProgressViewModel.cs" />
+    <Compile Include="Interfaces\IResourceManager.cs" />
     <Compile Include="Interfaces\IStatisticsViewModel.cs" />
     <Compile Include="Interfaces\ITitleRecognizer.cs" />
     <Compile Include="Interfaces\IUserMessageViewModel.cs" />
     <Compile Include="Interfaces\IUserSettings.cs" />
+    <Compile Include="Interfaces\IWindowManager.cs" />
     <Compile Include="Models\CacheComplexKey.cs" />
     <Compile Include="Models\CopyResult.cs" />
     <Compile Include="Models\FileExistenceInfo.cs" />
@@ -334,8 +338,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Controllers\ModuleController.cs" />
     <Compile Include="Views\Validations\IsNonExistentConnection.cs" />
+    <Compile Include="Controllers\WindowManager.cs" />
     <Page Include="Primitives\CaptionButtons.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

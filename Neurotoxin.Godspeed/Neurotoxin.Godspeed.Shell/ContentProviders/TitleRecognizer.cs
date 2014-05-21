@@ -15,7 +15,6 @@ using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
-using Neurotoxin.Godspeed.Presentation.Extensions;
 using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 
 namespace Neurotoxin.Godspeed.Shell.ContentProviders
@@ -26,6 +25,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         private readonly CacheManager _cacheManager;
         private readonly IUserSettings _userSettings;
         private readonly IEventAggregator _eventAggregator;
+        private readonly IResourceManager _resourceManager;
         private readonly Dictionary<string, ProfileItemWrapper> _profileFileCache = new Dictionary<string, ProfileItemWrapper>();
 
         private static readonly List<RecognitionInformation> RecognitionKeywords = new List<RecognitionInformation>
@@ -44,12 +44,13 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 new RecognitionInformation("^TU[\\w\\.]+$|^[0-9A-F]{4,}$", Resx.UnknownDataFile, TitleType.DataFile, ItemType.File),
             };
 
-        public TitleRecognizer(IFileManager fileManager, CacheManager cacheManager, IUserSettings userSettings, IEventAggregator eventAggregator)
+        public TitleRecognizer(IFileManager fileManager, CacheManager cacheManager, IUserSettings userSettings, IEventAggregator eventAggregator, IResourceManager resourceManager)
         {
             _fileManager = fileManager;
             _cacheManager = cacheManager;
             _userSettings = userSettings;
             _eventAggregator = eventAggregator;
+            _resourceManager = resourceManager;
         }
 
         public bool RecognizeType(FileSystemItem item)
@@ -391,7 +392,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 item.Title = title;
                 item.RecognitionState = RecognitionState.PartiallyRecognized;
             }
-            item.Thumbnail = ApplicationExtensions.GetContentByteArray("/Resources/xbox_logo.png");
+            item.Thumbnail = _resourceManager.GetContentByteArray("/Resources/xbox_logo.png");
             return result;
         }
 

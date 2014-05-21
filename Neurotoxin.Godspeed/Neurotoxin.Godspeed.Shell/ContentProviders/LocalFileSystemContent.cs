@@ -11,7 +11,7 @@ using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
-using Neurotoxin.Godspeed.Shell.Views.Dialogs;
+using Neurotoxin.Godspeed.Shell.Views;
 using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 
 namespace Neurotoxin.Godspeed.Shell.ContentProviders
@@ -19,6 +19,8 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
     public class LocalFileSystemContent : IFileManager
     {
         private readonly IEventAggregator _eventAggregator;
+        private readonly IWindowManager _windowManager;
+        private readonly IResourceManager _resourceManager;
         private bool _isAborted;
 
         private const char SLASH = '\\';
@@ -35,9 +37,11 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             [MarshalAs(UnmanagedType.LPTStr)] StringBuilder remoteName,
             ref int length);
 
-        public LocalFileSystemContent(IEventAggregator eventAggregator)
+        public LocalFileSystemContent(IEventAggregator eventAggregator, IWindowManager windowManager, IResourceManager resourceManager)
         {
             _eventAggregator = eventAggregator;
+            _windowManager = windowManager;
+            _resourceManager = resourceManager;
         }
 
         public IList<FileSystemItem> GetDrives()
@@ -74,7 +78,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                     FullPath = fullPath ?? drive.Name,
                     Name = name,
                     Type = ItemType.Drive,
-                    Thumbnail = ApplicationExtensions.GetContentByteArray(string.Format("/Resources/{0}.png", icon))
+                    Thumbnail = _resourceManager.GetContentByteArray(string.Format("/Resources/{0}.png", icon))
                 };
                 result.Add(item);
             }
@@ -239,7 +243,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 }
                 catch (Exception ex)
                 {
-                    NotificationMessage.ShowMessage(Resx.IOError, ex.Message);
+                    _windowManager.ShowMessage(Resx.IOError, ex.Message);
                     return GetDirectoryInfo(path);
                 }
             }
@@ -255,7 +259,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 }
                 catch (Exception ex)
                 {
-                    NotificationMessage.ShowMessage(Resx.IOError, ex.Message);
+                    _windowManager.ShowMessage(Resx.IOError, ex.Message);
                     return GetFileInfo(path);
                 }
             }

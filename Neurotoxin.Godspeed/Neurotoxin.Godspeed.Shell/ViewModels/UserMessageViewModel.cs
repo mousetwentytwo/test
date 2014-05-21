@@ -13,7 +13,7 @@ using Neurotoxin.Godspeed.Shell.Models;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
-    public class UserMessageViewModel : ViewModelBase, IUserMessageViewModel
+    public class UserMessageViewModel : CommonViewModelBase, IUserMessageViewModel
     {
         public string Message { get; private set; }
         public ImageSource Icon { get; private set; }
@@ -39,7 +39,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public UserMessageViewModel(string message, NotifyUserMessageEventArgs e)
         {
             Message = message;
-            var png = ApplicationExtensions.GetContentByteArray(string.Format("/Resources/{0}.png", e.Icon));
+            var png = ResourceManager.GetContentByteArray(string.Format("/Resources/{0}.png", e.Icon));
             Icon = StfsPackageExtensions.GetBitmapFromByteArray(png);
             CommandParameter = new UserMessageCommandParameter(this, e.Command, e.CommandParameter);
             Flags = e.Flags;

@@ -12,6 +12,7 @@ using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Models;
+using Neurotoxin.Godspeed.Shell.Views;
 using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
@@ -103,7 +104,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #endregion
 
-        public ProfileRebuilderViewModel(FileManagerViewModel parent) : base(parent)
+        public ProfileRebuilderViewModel()
         {
             Tabs = new ObservableCollection<ProfileRebuilderTabItemViewModel>();
             CloseCommand = new DelegateCommand(ExecuteCloseCommand);

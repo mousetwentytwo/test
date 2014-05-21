@@ -12,9 +12,9 @@ using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Helpers;
-using Neurotoxin.Godspeed.Shell.Helpers;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
+using Neurotoxin.Godspeed.Shell.Views;
 using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
@@ -25,7 +25,7 @@ using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
 
-    public class FileManagerViewModel : ViewModelBase, IFileManagerViewModel
+    public class FileManagerViewModel : CommonViewModelBase, IFileManagerViewModel
     {
         private readonly TransferManagerViewModel _transferManager;
         private readonly IUserSettings _userSettings;
@@ -206,13 +206,13 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             if (name == null) return;
             if (name == string.Empty)
             {
-                NotificationMessage.ShowMessage(Resx.AddNewFolder, Resx.CannotCreateFolderWithNoName);
+                WindowManager.ShowMessage(Resx.AddNewFolder, Resx.CannotCreateFolderWithNoName);
                 return;
             }
             var invalidChars = Path.GetInvalidFileNameChars();
             if (invalidChars.Any(name.Contains))
             {
-                NotificationMessage.ShowMessage(Resx.AddNewFolder, Resx.CannotCreateFolderWithInvalidCharacters);
+                WindowManager.ShowMessage(Resx.AddNewFolder, Resx.CannotCreateFolderWithInvalidCharacters);
                 return;
             }
             var path = string.Format("{0}{1}", SourcePane.CurrentFolder.Path, name);
@@ -223,7 +223,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             if (result != TransferResult.Ok)
             {
-                NotificationMessage.ShowMessage(Resx.AddNewFolder, string.Format(Resx.FolderAlreadyExists, name));
+                WindowManager.ShowMessage(Resx.AddNewFolder, string.Format(Resx.FolderAlreadyExists, name));
                 return;
             }
             SourcePane.Refresh(() =>
@@ -360,6 +360,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             eventAggregator.GetEvent<OpenNestedPaneEvent>().Subscribe(OnOpenNestedPane);
             eventAggregator.GetEvent<CloseNestedPaneEvent>().Subscribe(OnCloseNestedPane);
             eventAggregator.GetEvent<ActivePaneChangedEvent>().Subscribe(OnActivePaneChanged);
+            eventAggregator.GetEvent<RaiseCanExecuteChangesEvent>().Subscribe(OnRaiseCanExecuteChanges);
             eventAggregator.GetEvent<NotifyUserMessageEvent>().Subscribe(OnNotifyUserMessage);
         }
 
@@ -438,6 +439,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void OnActivePaneChanged(ActivePaneChangedEventArgs e)
         {
             NotifyPropertyChanged(ACTIVEPANE);
+        }
+
+        private void OnRaiseCanExecuteChanges(RaiseCanExecuteChangesEventArgs e)
+        {
+            RaiseCanExecuteChanges();
         }
 
         private void OnNotifyUserMessage(NotifyUserMessageEventArgs e)

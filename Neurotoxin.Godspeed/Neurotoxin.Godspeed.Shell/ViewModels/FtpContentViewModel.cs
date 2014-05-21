@@ -19,6 +19,7 @@ using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
 using Neurotoxin.Godspeed.Shell.Exceptions;
 using Neurotoxin.Godspeed.Shell.Extensions;
 using Neurotoxin.Godspeed.Shell.Models;
+using Neurotoxin.Godspeed.Shell.Views;
 using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 using Fizzler.Systems.HtmlAgilityPack;
@@ -172,7 +173,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         #endregion
 
 
-        public FtpContentViewModel(FileManagerViewModel parent) : base(parent)
+        public FtpContentViewModel()
         {
             CloseCommand = new DelegateCommand(ExecuteCloseCommand);
             CheckFreestyleDatabaseCommand = new DelegateCommand(ExecuteCheckFreestyleDatabaseCommand, CanExecuteCheckFreestyleDatabaseCommand);
@@ -473,7 +474,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
             catch
             {
-                NotificationMessage.ShowMessage(Resx.FsdContentScanTrigger, Resx.ContentScanFailedErrorMessage);
+                WindowManager.ShowMessage(Resx.FsdContentScanTrigger, Resx.ContentScanFailedErrorMessage);
             }
         }
 
