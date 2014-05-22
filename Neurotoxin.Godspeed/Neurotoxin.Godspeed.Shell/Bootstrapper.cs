@@ -6,6 +6,7 @@ using Microsoft.Practices.Composite.UnityExtensions;
 using Microsoft.Practices.Unity;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
+using Neurotoxin.Godspeed.Shell.Controllers;
 using Neurotoxin.Godspeed.Shell.Helpers;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.ViewModels;
@@ -21,6 +22,10 @@ namespace Neurotoxin.Godspeed.Shell
             base.ConfigureContainer();
             UnityInstance.Container = Container;
             //Container.RegisterType<IGeneralController, ModuleController>(new ContainerControlledLifetimeManager());
+
+            // Managers
+            Container.RegisterType<IResourceManager, ResourceManager>();
+            Container.RegisterType<IWindowManager, WindowManager>();
 
             // Content providers
             Container.RegisterType<IUserSettings, UserSettings>();

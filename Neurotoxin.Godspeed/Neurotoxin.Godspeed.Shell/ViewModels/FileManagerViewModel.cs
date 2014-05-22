@@ -14,7 +14,6 @@ using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Helpers;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
-using Neurotoxin.Godspeed.Shell.Views;
 using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
@@ -443,7 +442,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void OnRaiseCanExecuteChanges(RaiseCanExecuteChangesEventArgs e)
         {
-            RaiseCanExecuteChanges();
+            if (e.Sender is IFileListPaneViewModel) RaiseCanExecuteChanges();
         }
 
         private void OnNotifyUserMessage(NotifyUserMessageEventArgs e)

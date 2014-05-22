@@ -340,13 +340,13 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             switch (result.Result)
             {
                 case TransferResult.Ok:
-                    if (queueItem.Operation == FileOperation.Copy && TargetPane.IsVerificationEnabled)
+                    if (queueItem.Operation == FileOperation.Copy) _targetChanged = true;
+                    if (queueItem.Operation == FileOperation.Copy && TargetPane.IsVerificationEnabled && queueItem.FileSystemItem.Type == ItemType.File)
                     {
-                        _targetChanged = true;
                         queueItem.Operation = FileOperation.Verify;
                         queueItem.Payload = result.TargetPath;
-                    }
-                    else if (queueItem.Operation != FileOperation.Delete && UserAction == FileOperation.Move)
+                    } 
+                    else if ((queueItem.Operation == FileOperation.Copy || queueItem.Operation == FileOperation.Verify) && UserAction == FileOperation.Move)
                     {
                         if (queueItem.FileSystemItem.Type == ItemType.Directory)
                         {
