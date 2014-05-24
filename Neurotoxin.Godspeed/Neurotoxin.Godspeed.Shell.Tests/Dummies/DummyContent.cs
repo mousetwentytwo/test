@@ -5,6 +5,7 @@ using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
 using Neurotoxin.Godspeed.Shell.Tests.Helpers;
+using Microsoft.Practices.ObjectBuilder2;
 
 namespace Neurotoxin.Godspeed.Shell.Tests.Dummies
 {
@@ -27,7 +28,7 @@ namespace Neurotoxin.Godspeed.Shell.Tests.Dummies
                                                         {
                                                             {0, new[] {ItemType.Drive}}
                                                         };
-                _tree = new Tree<FileSystemItem>();
+                _tree = new Tree<FileSystemItem>(new FileSystemItem { Name = string.Empty, Path = string.Empty });
                 GenerateTree(_tree, C.Random<int>(_fakingRules.TreeDepth));
             }
         }
@@ -36,10 +37,10 @@ namespace Neurotoxin.Godspeed.Shell.Tests.Dummies
         {
             var itemCount = C.Random<int>(_fakingRules.GetItemCount(level));
             var nodes = node.AddRange(C.CollectionOfFake<FileSystemItem>(itemCount, new { Type = _fakingRules.GetItemTypes(level), Name = new Range(8,13) }));
-            if (level == depth) return;
             foreach (var n in nodes)
             {
-                GenerateTree(n, depth, level+1);
+                n.Content.Path = node.Content.Path + "/" + n.Content.Name;
+                if (level < depth) GenerateTree(n, depth, level+1);
             }
         }
 
@@ -50,8 +51,8 @@ namespace Neurotoxin.Godspeed.Shell.Tests.Dummies
 
         public IList<FileSystemItem> GetList(string path = null)
         {
-            var itemCount = C.Random<int>(0, 100);
-            return C.CollectionOfFake<FileSystemItem>(itemCount);
+            if (path == null) throw new ArgumentNullException("path");
+            return _tree.GetChildren(path);
         }
 
         public FileSystemItem GetItemInfo(string itemPath)

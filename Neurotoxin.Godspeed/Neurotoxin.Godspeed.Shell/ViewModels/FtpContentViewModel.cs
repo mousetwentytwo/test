@@ -74,6 +74,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
         }
 
+        public override bool IsVerificationSupported
+        {
+            get { return FileManager.IsFSD; }
+        }
+
         public override bool IsVerificationEnabled
         {
             get { return UserSettings.VerifyFileHashAfterFtpUpload && FileManager.IsFSD; }

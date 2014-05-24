@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using Neurotoxin.Godspeed.Presentation.Infrastructure;
 
 namespace Neurotoxin.Godspeed.Presentation.Extensions
 {
@@ -35,7 +36,7 @@ namespace Neurotoxin.Godspeed.Presentation.Extensions
             return output;
         }
 
-        public static ObservableCollection<T> ToObservableCollection<T>(this IEnumerable<T> items)
+        public static ObservableCollection<T> ToObservableCollection<T>(this IEnumerable<T> items) where T : class
         {
             var list = items.ToList();
             return new ObservableCollection<T>(list);

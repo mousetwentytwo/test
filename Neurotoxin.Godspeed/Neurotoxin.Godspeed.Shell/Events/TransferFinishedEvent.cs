@@ -1,17 +1,14 @@
 using Microsoft.Practices.Composite.Presentation.Events;
-using Neurotoxin.Godspeed.Shell.ViewModels;
+using Neurotoxin.Godspeed.Presentation.Events;
 
 namespace Neurotoxin.Godspeed.Shell.Events
 {
     public class TransferFinishedEvent : CompositePresentationEvent<TransferFinishedEventArgs> { }
 
-    public class TransferFinishedEventArgs
+    public class TransferFinishedEventArgs : EventArgsBase
     {
-        public TransferManagerViewModel Sender { get; private set; }
-
-        public TransferFinishedEventArgs(TransferManagerViewModel sender)
+        public TransferFinishedEventArgs(object sender) : base(sender)
         {
-            Sender = sender;
         }
     }
 }

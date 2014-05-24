@@ -19,6 +19,7 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
         bool HasValidSelection { get; }
         bool IsReadOnly { get; }
         bool IsInEditMode { get; }
+        bool IsVerificationSupported { get; }
         bool IsVerificationEnabled { get; }
 
         Queue<QueueItem> PopulateQueue(FileOperation action);

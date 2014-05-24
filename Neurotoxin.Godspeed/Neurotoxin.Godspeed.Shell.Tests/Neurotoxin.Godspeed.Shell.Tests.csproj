@@ -57,6 +57,10 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dummies\ConsoleWriter.cs" />
+    <Compile Include="Dummies\Range.cs" />
+    <Compile Include="Extensions\ListExtensions.cs" />
+    <Compile Include="FakingTests.cs" />
     <Compile Include="Dummies\DummyContent.cs" />
     <Compile Include="Dummies\DummyContentViewModel.cs" />
     <Compile Include="Dummies\FakingRules.cs" />

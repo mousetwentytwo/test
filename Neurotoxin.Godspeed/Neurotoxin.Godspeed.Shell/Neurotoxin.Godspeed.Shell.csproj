@@ -163,6 +163,7 @@
     <Compile Include="Constants\MessageIcon.cs" />
     <Compile Include="Events\CachePopulatedEvent.cs" />
     <Compile Include="Events\ConnectionDetailsChangedEvent.cs" />
+    <Compile Include="Events\FileListPaneViewModelItemsChangedEvent.cs" />
     <Compile Include="Events\RaiseCanExecuteChangesEvent.cs" />
     <Compile Include="Events\ShowCorrespondingErrorEvent.cs" />
     <Compile Include="Events\FreestyleDatabaseCheckEvent.cs" />

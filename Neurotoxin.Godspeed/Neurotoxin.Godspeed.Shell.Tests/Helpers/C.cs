@@ -19,12 +19,12 @@ namespace Neurotoxin.Godspeed.Shell.Tests.Helpers
             foreach (var pi in type.GetProperties())
             {
                 var value = GetFakingRuleValue(fakingRules, fakingType, pi.Name);
-                if (!(value is T))
+                if (value == null || value is Range)
                 {
                     var generator = GetGenerator(pi.PropertyType);
                     int? min = null;
                     int? max = null;
-                    if (value is Range)
+                    if (value != null)
                     {
                         var r = (Range) value;
                         min = r.Min;
@@ -32,8 +32,7 @@ namespace Neurotoxin.Godspeed.Shell.Tests.Helpers
                     }
                     if (generator != null) value = generator(pi.PropertyType, min, max);
                 }
-                if (value is T) pi.SetValue(fake, value, null);
-
+                if (value != null && value.GetType() == pi.PropertyType) pi.SetValue(fake, value, null);
             }
             return fake;
         }
@@ -58,7 +57,7 @@ namespace Neurotoxin.Godspeed.Shell.Tests.Helpers
                                               min = r.Min;
                                               max = r.Max;
                                           }
-                                          pi.SetValue(fake, value is T ? value : generator(pi.PropertyType, min, max), null);
+                                          pi.SetValue(fake, value != null && value.GetType() == pi.PropertyType ? value : generator(pi.PropertyType, min, max), null);
                                       });
             }
             return fakes;

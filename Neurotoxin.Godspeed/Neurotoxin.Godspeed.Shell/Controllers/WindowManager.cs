@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.ComponentModel;
+using System.Windows;
+using System.Windows.Input;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
+using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
+using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
+using Neurotoxin.Godspeed.Shell.Properties;
 using Neurotoxin.Godspeed.Shell.ViewModels;
 using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 
@@ -17,11 +21,24 @@ namespace Neurotoxin.Godspeed.Shell.Views
         private readonly IUnityContainer _container;
         private readonly IEventAggregator _eventAggregator;
         private static NotificationMessage _notificationMessage;
+        private bool _isAbortionInProgress;
+        private TransferProgressDialog _transferProgressDialog;
+        private ProgressDialog _progressDialog;
 
         public WindowManager(IEventAggregator eventAggregator)
         {
             _eventAggregator = eventAggregator;
             _container = UnityInstance.Container;
+
+            eventAggregator.GetEvent<TransferStartedEvent>().Subscribe(OnTransferStarted);
+            eventAggregator.GetEvent<TransferFinishedEvent>().Subscribe(OnTransferFinished);
+            eventAggregator.GetEvent<CacheMigrationEvent>().Subscribe(OnCacheMigration);
+            eventAggregator.GetEvent<FreestyleDatabaseCheckEvent>().Subscribe(OnFreestyleDatabaseCheck);
+        }
+
+        public void ShowErrorMessage(Exception exception)
+        {
+            ErrorMessage.Show(exception);
         }
 
         public TransferErrorDialogResult ShowIoErrorDialog(Exception exception)
@@ -70,6 +87,103 @@ namespace Neurotoxin.Godspeed.Shell.Views
         public string ShowTextInputDialog(string title, string message, string defaultValue, IList<InputDialogOptionViewModel> options = null)
         {
             return InputDialog.ShowText(title, message, defaultValue, options);
+        }
+
+        private void OnTransferStarted(TransferStartedEventArgs e)
+        {
+            if (_transferProgressDialog == null)
+            {
+                _transferProgressDialog = new TransferProgressDialog(e.Sender as TransferManagerViewModel);
+                _transferProgressDialog.Closing += TransferProgressDialogOnClosing;
+                _transferProgressDialog.Closed += TransferProgressDialogOnClosed;
+            }
+
+            MainWindowHitTestVisible(false);
+            _isAbortionInProgress = false;
+            _transferProgressDialog.Show();
+        }
+
+        private void TransferProgressDialogOnClosing(object sender, CancelEventArgs e)
+        {
+            e.Cancel = true;
+            if (_isAbortionInProgress) return;
+            var vm = ((TransferProgressDialog) sender).ViewModel;
+            if (!vm.TargetPane.IsResumeSupported)
+            {
+                var d = new ConfirmationDialog(Resources.Warning, Resources.ResumeIsNotAvailableConfirmation);
+                if (d.ShowDialog() != true) return;
+            }
+            _transferProgressDialog.Abort.IsEnabled = false;
+            _isAbortionInProgress = true;
+            _transferProgressDialog.ViewModel.AbortTransfer();
+        }
+
+        private void TransferProgressDialogOnClosed(object sender, EventArgs e)
+        {
+            MainWindowHitTestVisible(true);
+            _transferProgressDialog.Closed -= TransferProgressDialogOnClosed;
+            _transferProgressDialog = null;
+        }
+
+        private void OnTransferFinished(TransferFinishedEventArgs e)
+        {
+            if (_transferProgressDialog == null) return;
+            _transferProgressDialog.Closing -= TransferProgressDialogOnClosing;
+            _transferProgressDialog.Close();
+        }
+
+        private void OnCacheMigration(CacheMigrationEventArgs e)
+        {
+            MainWindowHitTestVisible(false);
+            _progressDialog = _container.Resolve<ProgressDialog, CacheMigrationViewModel>();
+            var vm = (CacheMigrationViewModel)_progressDialog.ViewModel;
+            vm.Finished += OnMigrationFinished;
+            vm.Initialize(e);
+            _progressDialog.Show();
+        }
+
+        private void OnMigrationFinished(IProgressViewModel sender)
+        {
+            sender.Finished -= OnMigrationFinished;
+            MainWindowHitTestVisible(true);
+            _progressDialog.Close();
+            _progressDialog = null;
+        }
+
+        private void OnFreestyleDatabaseCheck(FreestyleDatabaseCheckEventArgs e)
+        {
+            MainWindowHitTestVisible(false);
+            var vm = _container.Resolve<FreestyleDatabaseCheckerViewModel>(new ParameterOverride("parent", e.FtpContentViewModel));
+            _progressDialog = _container.Resolve<ProgressDialog, FreestyleDatabaseCheckerViewModel>(vm);
+            vm.Finished += OnFreestyleDatabaseCheckFinished;
+            vm.Check();
+            _progressDialog.Show();
+        }
+
+        private void OnFreestyleDatabaseCheckFinished(IProgressViewModel sender)
+        {
+            sender.Finished -= OnFreestyleDatabaseCheckFinished;
+            MainWindowHitTestVisible(true);
+            _progressDialog.Close();
+            var vm = (FreestyleDatabaseCheckerViewModel)_progressDialog.ViewModel;
+            var window = _container.Resolve<FreestyleDatabaseCheckerWindow, FreestyleDatabaseCheckerViewModel>(vm);
+            window.ShowDialog();
+            _progressDialog = null;
+        }
+
+        private void MainWindowHitTestVisible(bool value)
+        {
+            var w = Application.Current.MainWindow;
+            w.IsHitTestVisible = value;
+            if (value)
+                w.PreviewKeyDown -= PreventAllKeyboardActions;
+            else
+                w.PreviewKeyDown += PreventAllKeyboardActions;
+        }
+
+        private void PreventAllKeyboardActions(object sender, KeyEventArgs e)
+        {
+            e.Handled = true;
         }
     }
 }

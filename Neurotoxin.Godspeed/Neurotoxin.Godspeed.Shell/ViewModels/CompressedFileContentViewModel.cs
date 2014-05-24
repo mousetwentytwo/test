@@ -27,6 +27,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             get { return Resx.Inject; }
         }
 
+        public override bool IsVerificationSupported
+        {
+            get { return false; }
+        }
+
         public override bool IsVerificationEnabled
         {
             get { return false; }

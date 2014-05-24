@@ -944,4 +944,7 @@
   <data name="Verifying" xml:space="preserve">
     <value>Ellenőrzés</value>
   </data>
+  <data name="VerifyFileHashAfterFtpUpload" xml:space="preserve">
+    <value>Ellenőrzés feltöltés után</value>
+  </data>
 </root>

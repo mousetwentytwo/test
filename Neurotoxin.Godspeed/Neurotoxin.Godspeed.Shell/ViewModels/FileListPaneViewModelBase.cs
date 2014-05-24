@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -9,6 +10,7 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Microsoft.Practices.Composite;
 using Microsoft.Practices.Unity;
 using Microsoft.Win32;
 using Neurotoxin.Godspeed.Core.Io.Stfs;
@@ -23,7 +25,6 @@ using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
 using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
-using Microsoft.Practices.Composite;
 using Microsoft.Practices.ObjectBuilder2;
 using Neurotoxin.Godspeed.Core.Extensions;
 using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
@@ -172,6 +173,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public abstract bool IsReadOnly { get; }
 
+        public abstract bool IsVerificationSupported { get; }
         public abstract bool IsVerificationEnabled { get; }
 
         #endregion
@@ -546,8 +548,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
 
             var currentRow = CurrentRow;
+            var oldItems = Items.ToList();
             Items.Clear();
             Items.AddRange(list);
+            eventAggregator.GetEvent<FileListPaneViewModelItemsChangedEvent>()
+                           .Publish(new FileListPaneViewModelItemsChangedEventArgs(NotifyCollectionChangedAction.Replace, list, oldItems, this));
             CurrentRow = currentRow;
             SetActive();
         }
@@ -914,6 +919,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         TitleRecognizer.RecognizeTitle(newModel);
                         var newItem = new FileSystemItemViewModel(newModel);
                         Items.Replace(CurrentRow, newItem);
+                        eventAggregator.GetEvent<FileListPaneViewModelItemsChangedEvent>()
+                                       .Publish(new FileListPaneViewModelItemsChangedEventArgs(NotifyCollectionChangedAction.Replace, newItem, CurrentRow, this));
                         CurrentRow = newItem;
                     }
                     break;

@@ -1,17 +1,14 @@
 using Microsoft.Practices.Composite.Presentation.Events;
-using Neurotoxin.Godspeed.Shell.ViewModels;
+using Neurotoxin.Godspeed.Presentation.Events;
 
 namespace Neurotoxin.Godspeed.Shell.Events
 {
     public class RaiseCanExecuteChangesEvent : CompositePresentationEvent<RaiseCanExecuteChangesEventArgs> { }
 
-    public class RaiseCanExecuteChangesEventArgs
+    public class RaiseCanExecuteChangesEventArgs : EventArgsBase
     {
-        public CommonViewModelBase Sender { get; private set; }
-
-        public RaiseCanExecuteChangesEventArgs(CommonViewModelBase sender)
+        public RaiseCanExecuteChangesEventArgs(object sender) : base(sender)
         {
-            Sender = sender;
         }
     }
 }

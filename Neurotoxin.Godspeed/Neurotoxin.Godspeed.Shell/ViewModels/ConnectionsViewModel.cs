@@ -212,7 +212,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             var connectionName = ((FtpContentViewModel)pane).Connection.Name;
             if (exception is SomethingWentWrongException)
             {
-                ErrorMessage.Show(exception);
+                WindowManager.ShowErrorMessage(exception);
             } 
             else
             {

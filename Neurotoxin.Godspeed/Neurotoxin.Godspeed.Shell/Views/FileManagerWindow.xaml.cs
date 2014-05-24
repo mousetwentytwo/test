@@ -13,7 +13,6 @@ using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
 using Neurotoxin.Godspeed.Core.Constants;
 using Neurotoxin.Godspeed.Core.Io;
-using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Commands;
 using Neurotoxin.Godspeed.Shell.Events;
@@ -28,11 +27,7 @@ namespace Neurotoxin.Godspeed.Shell.Views
 {
     public partial class FileManagerWindow : IView<FileManagerViewModel>
     {
-        private readonly IUnityContainer _container;
         private readonly IEventAggregator _eventAggregator;
-        private bool _isAbortionInProgress;
-        private TransferProgressDialog _transferProgressDialog;
-        private ProgressDialog _progressDialog;
         private Queue<Timer> _userMessageReadTimers;
 
         public FileManagerViewModel ViewModel
@@ -42,7 +37,6 @@ namespace Neurotoxin.Godspeed.Shell.Views
 
         public FileManagerWindow(FileManagerViewModel viewModel, IEventAggregator eventAggregator)
         {
-            _container = UnityInstance.Container;
             _eventAggregator = eventAggregator;
             var assembly = Assembly.GetAssembly(typeof(FileManagerWindow));
             var assemblyName = assembly.GetName();
@@ -61,11 +55,6 @@ namespace Neurotoxin.Godspeed.Shell.Views
 
             LayoutRoot.PreviewKeyDown += LayoutRootOnPreviewKeyDown;
             Closing += OnClosing;
-
-            eventAggregator.GetEvent<TransferStartedEvent>().Subscribe(OnTransferStarted);
-            eventAggregator.GetEvent<TransferFinishedEvent>().Subscribe(OnTransferFinished);
-            eventAggregator.GetEvent<CacheMigrationEvent>().Subscribe(OnCacheMigration);
-            eventAggregator.GetEvent<FreestyleDatabaseCheckEvent>().Subscribe(OnFreestyleDatabaseCheck);
         }
 
         private void OnClosing(object sender, CancelEventArgs args)
@@ -147,86 +136,6 @@ namespace Neurotoxin.Godspeed.Shell.Views
         private void ExecuteExitCommand(object sender, ExecutedRoutedEventArgs e)
         {
             Application.Current.Shutdown();
-        }
-
-        private void OnTransferStarted(TransferStartedEventArgs e)
-        {
-            if (_transferProgressDialog == null)
-            {
-                _transferProgressDialog = new TransferProgressDialog(e.Sender);
-                _transferProgressDialog.Closing += TransferProgressDialogOnClosing;
-                _transferProgressDialog.Closed += TransferProgressDialogOnClosed;
-            }
-            IsHitTestVisible = false;
-            _isAbortionInProgress = false;
-            _transferProgressDialog.Show();
-        }
-
-        private void TransferProgressDialogOnClosing(object sender, CancelEventArgs e)
-        {
-            e.Cancel = true;
-            if (_isAbortionInProgress) return;
-            if (!ViewModel.TargetPane.IsResumeSupported)
-            {
-                var d = new ConfirmationDialog(Resx.Warning, Resx.ResumeIsNotAvailableConfirmation);
-                if (d.ShowDialog() != true) return;
-            }
-            _transferProgressDialog.Abort.IsEnabled = false;
-            _isAbortionInProgress = true;
-            _transferProgressDialog.ViewModel.AbortTransfer();
-        }
-
-        private void TransferProgressDialogOnClosed(object sender, EventArgs e)
-        {
-            IsHitTestVisible = true;
-            _transferProgressDialog.Closed -= TransferProgressDialogOnClosed;
-            _transferProgressDialog = null;
-        }
-
-        private void OnTransferFinished(TransferFinishedEventArgs e)
-        {
-            if (_transferProgressDialog == null) return;
-            _transferProgressDialog.Closing -= TransferProgressDialogOnClosing;
-            _transferProgressDialog.Close();
-        }
-
-        private void OnCacheMigration(CacheMigrationEventArgs e)
-        {
-            IsHitTestVisible = false;
-            _progressDialog = _container.Resolve<ProgressDialog, CacheMigrationViewModel>();
-            var vm = (CacheMigrationViewModel) _progressDialog.ViewModel;
-            vm.Finished += OnMigrationFinished;
-            vm.Initialize(e);
-            _progressDialog.Show();
-        }
-
-        private void OnMigrationFinished(IProgressViewModel sender)
-        {
-            sender.Finished -= OnMigrationFinished;
-            IsHitTestVisible = true;
-            _progressDialog.Close();
-            _progressDialog = null;
-        }
-
-        private void OnFreestyleDatabaseCheck(FreestyleDatabaseCheckEventArgs e)
-        {
-            IsHitTestVisible = false;
-            var vm = _container.Resolve<FreestyleDatabaseCheckerViewModel>(new ParameterOverride("parent", e.FtpContentViewModel));
-            _progressDialog = _container.Resolve<ProgressDialog, FreestyleDatabaseCheckerViewModel>(vm);
-            vm.Finished += OnFreestyleDatabaseCheckFinished;
-            vm.Check();
-            _progressDialog.Show();
-        }
-
-        private void OnFreestyleDatabaseCheckFinished(IProgressViewModel sender)
-        {
-            sender.Finished -= OnFreestyleDatabaseCheckFinished;
-            IsHitTestVisible = true;
-            _progressDialog.Close();
-            var vm = (FreestyleDatabaseCheckerViewModel)_progressDialog.ViewModel;
-            var window = _container.Resolve<FreestyleDatabaseCheckerWindow, FreestyleDatabaseCheckerViewModel>(vm);
-            window.ShowDialog();
-            _progressDialog = null;
         }
 
         private void OnUserMessagesOpened(object sender, RoutedEventArgs e)

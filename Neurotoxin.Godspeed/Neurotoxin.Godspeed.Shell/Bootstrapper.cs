@@ -24,8 +24,8 @@ namespace Neurotoxin.Godspeed.Shell
             //Container.RegisterType<IGeneralController, ModuleController>(new ContainerControlledLifetimeManager());
 
             // Managers
-            Container.RegisterType<IResourceManager, ResourceManager>();
-            Container.RegisterType<IWindowManager, WindowManager>();
+            Container.RegisterType<IResourceManager, ResourceManager>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<IWindowManager, WindowManager>(new ContainerControlledLifetimeManager());
 
             // Content providers
             Container.RegisterType<IUserSettings, UserSettings>();

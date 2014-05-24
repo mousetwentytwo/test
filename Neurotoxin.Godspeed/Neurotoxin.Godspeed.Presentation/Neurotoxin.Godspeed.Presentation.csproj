@@ -81,6 +81,7 @@
     <Compile Include="Events\ActivateModuleContextEvent.cs" />
     <Compile Include="Events\DisposedEvent.cs" />
     <Compile Include="Events\ErrorCheckedEvent.cs" />
+    <Compile Include="Events\EventArgsBase.cs" />
     <Compile Include="Events\ModuleOpenEvent.cs" />
     <Compile Include="Events\DataLoadEvents.cs" />
     <Compile Include="Events\ErrorEvent.cs" />
@@ -93,6 +94,7 @@
     <Compile Include="Extensions\FrameworkElementExtensions.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\IconExtensions.cs" />
+    <Compile Include="Extensions\ObservableCollectionExtensions.cs" />
     <Compile Include="Extensions\StfsPackageExtensions.cs" />
     <Compile Include="Extensions\UnityExtensions.cs" />
     <Compile Include="Formatters\HtmlConverter\HtmlCssParser.cs" />

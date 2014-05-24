@@ -5,7 +5,7 @@ using Microsoft.Practices.Unity;
 
 namespace Neurotoxin.Godspeed.Presentation.Infrastructure
 {
-    public abstract class ViewModelBase : IViewModel, INotifyPropertyChanged, IDisposable
+    public abstract class ViewModelBase : IViewModel
     {
         protected readonly IUnityContainer container;
         protected readonly IEventAggregator eventAggregator;

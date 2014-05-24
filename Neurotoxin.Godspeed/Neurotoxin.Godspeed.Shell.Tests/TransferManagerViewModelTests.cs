@@ -1,11 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using System.Windows.Threading;
 using FakeItEasy;
 using Microsoft.Practices.Composite.Events;
+using Microsoft.Practices.Composite.Presentation.Events;
 using Microsoft.Practices.Unity;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Neurotoxin.Godspeed.Presentation.Events;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Interfaces;
@@ -18,7 +22,8 @@ namespace Neurotoxin.Godspeed.Shell.Tests
     [TestClass]
     public class TransferManagerViewModelTests
     {
-        public static IUnityContainer Container { get; private set; }
+        private static IUnityContainer Container { get; set; }
+        private static IEventAggregator eventAggregator { get; set; }
 
         public TestContext TestContext { get; set; }
 
@@ -27,13 +32,14 @@ namespace Neurotoxin.Godspeed.Shell.Tests
         {
             Container = new UnityContainer();
             Container.RegisterType<IEventAggregator, EventAggregator>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<IWindowManager, ConsoleWriter>(new ContainerControlledLifetimeManager());
             Container.RegisterInstance(A.Fake<IStatisticsViewModel>());
             Container.RegisterInstance(A.Fake<IUserSettings>());
             Container.RegisterInstance(A.Fake<ITitleRecognizer>());
-            Container.RegisterInstance(A.Fake<IWindowManager>());
             Container.RegisterInstance(A.Fake<IResourceManager>());
             Container.RegisterType<TransferManagerViewModel>();
             UnityInstance.Container = Container;
+            eventAggregator = Container.Resolve<IEventAggregator>();
         }
 
         [TestInitialize]
@@ -54,19 +60,15 @@ namespace Neurotoxin.Godspeed.Shell.Tests
         {
             var vm = GetInstance();
             var a = GetDummyContentViewModel();
-            //TODO: there are no items!
+            WaitForEvent<FileListPaneViewModelItemsChangedEvent, FileListPaneViewModelItemsChangedEventArgs>(a);
+
             a.SelectAllCommand.Execute(null);
             var selection = a.SelectedItems.Select(i => i.Model).ToList();
             var b = GetDummyContentViewModel();
+            WaitForEvent<FileListPaneViewModelItemsChangedEvent, FileListPaneViewModelItemsChangedEventArgs>(b);
 
-            var eventAggregator = Container.Resolve<IEventAggregator>();
-            var isBusy = true;
-            eventAggregator.GetEvent<TransferFinishedEvent>().Subscribe(e => isBusy = false);
             vm.Copy(a, b);
-            while (isBusy)
-            {
-                Thread.Sleep(100);
-            }
+            WaitForEvent<TransferFinishedEvent, TransferFinishedEventArgs>();
 
             foreach (var aitem in selection)
             {
@@ -89,8 +91,8 @@ namespace Neurotoxin.Godspeed.Shell.Tests
         {
             var dummy = new DummyContentViewModel(new FakingRules
                                                           {
-                                                              TreeDepth = new Range(3, 3),
-                                                              ItemCount = new Range(0, 20),
+                                                              TreeDepth = 3,
+                                                              ItemCount = new Range(5, 10),
                                                               ItemCountOnLevel = new Dictionary<int, Range>
                                                                                      {
                                                                                          {0, new Range(1,5)}
@@ -98,6 +100,41 @@ namespace Neurotoxin.Godspeed.Shell.Tests
                                                           });
             dummy.Drive = dummy.Drives.First();
             return dummy;
+        }
+
+        private void WaitForProperty(INotifyPropertyChanged vm, string propertyName)
+        {
+            var changed = false;
+            PropertyChangedEventHandler propDelegate = (sender, args) => { if (args.PropertyName == propertyName) changed = true; };
+            vm.PropertyChanged += propDelegate;
+            var sw = new Stopwatch();
+            sw.Start();
+            while (!changed)
+            {
+                Thread.Sleep(100);
+                if (sw.ElapsedMilliseconds > 10000) throw new TimeoutException();
+            }
+            vm.PropertyChanged -= propDelegate;
+        }
+
+        private void WaitForEvent<TEvent, TPayload>(IViewModel vm = null)
+            where TEvent : CompositePresentationEvent<TPayload> 
+            where TPayload : IPayload
+        {
+            var type = typeof (TEvent).Name;
+            var fired = false;
+            Console.WriteLine("[Event] Waiting for event " + type);
+            Action<TPayload> action = payload => { if (vm == null || payload.Sender.Equals(vm)) fired = true; };
+            eventAggregator.GetEvent<TEvent>().Subscribe(action);
+            var sw = new Stopwatch();
+            sw.Start();
+            while (!fired)
+            {
+                Thread.Sleep(100);
+                if (sw.ElapsedMilliseconds > 10000) throw new TimeoutException(type);
+            }
+            Console.WriteLine("[Event] {0} fired after {1}", type, sw.Elapsed);
+            eventAggregator.GetEvent<TEvent>().Unsubscribe(action);
         }
 
     }

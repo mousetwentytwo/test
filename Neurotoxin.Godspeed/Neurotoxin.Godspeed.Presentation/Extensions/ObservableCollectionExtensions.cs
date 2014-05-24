@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 
-namespace Neurotoxin.Godspeed.Core.Extensions
+namespace Neurotoxin.Godspeed.Presentation.Extensions
 {
     public static class ObservableCollectionExtensions
     {

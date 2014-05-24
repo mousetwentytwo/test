@@ -182,6 +182,18 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             set { _isPaused = value; NotifyPropertyChanged(ISPAUSED); }
         }
 
+        public bool IsVerificationSupported
+        {
+            get { return TargetPane.IsVerificationSupported; }
+        }
+
+        private const string ISVERIFICATIONENABLED = "IsVerificationEnabled";
+        public bool IsVerificationEnabled
+        {
+            get { return _userSettings.VerifyFileHashAfterFtpUpload; }
+            set { _userSettings.VerifyFileHashAfterFtpUpload = value; NotifyPropertyChanged(ISVERIFICATIONENABLED); }
+        }
+
         #endregion
 
         public TransferManagerViewModel(IUserSettings userSettings, IStatisticsViewModel statistics)
@@ -618,7 +630,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
             else
             {
-                ErrorMessage.Show(exception);
+                WindowManager.ShowErrorMessage(exception);
             }
             _elapsedTimeMeter.Start();
             return result;
@@ -736,9 +748,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 });
         }
 
-        private static void PopulationError(Exception ex)
+        private void PopulationError(Exception ex)
         {
-            ErrorMessage.Show(new SomethingWentWrongException(Resx.PopulationFailed, ex));
+            WindowManager.ShowErrorMessage(new SomethingWentWrongException(Resx.PopulationFailed, ex));
         }
 
     }

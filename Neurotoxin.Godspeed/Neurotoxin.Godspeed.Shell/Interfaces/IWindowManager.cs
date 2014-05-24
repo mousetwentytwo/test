@@ -8,6 +8,7 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
 {
     public interface IWindowManager
     {
+        void ShowErrorMessage(Exception exception);
         TransferErrorDialogResult ShowIoErrorDialog(Exception exception);
         TransferErrorDialogResult ShowWriteErrorDialog(string sourcePath, string targetPath, bool isResumeSupported, IFileListPaneViewModel sourcePane, IFileListPaneViewModel targetPane);
         bool? ShowReconnectionDialog(Exception exception);

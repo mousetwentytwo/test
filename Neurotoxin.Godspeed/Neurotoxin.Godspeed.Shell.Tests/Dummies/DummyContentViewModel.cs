@@ -1,6 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
 using System.IO;
-using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
 using Neurotoxin.Godspeed.Shell.Tests.Helpers;
 using Neurotoxin.Godspeed.Shell.ViewModels;
@@ -11,6 +11,7 @@ namespace Neurotoxin.Godspeed.Shell.Tests.Dummies
     {
         public DummyContentViewModel(FakingRules rules)
         {
+            Settings = new FileListPaneSettings("/", "ComputedName", ListSortDirection.Ascending);
             FileManager.FakingRules = rules;
             Initialize();
         }
@@ -26,6 +27,11 @@ namespace Neurotoxin.Godspeed.Shell.Tests.Dummies
         }
 
         public override bool IsReadOnly
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public override bool IsVerificationSupported
         {
             get { throw new NotImplementedException(); }
         }
