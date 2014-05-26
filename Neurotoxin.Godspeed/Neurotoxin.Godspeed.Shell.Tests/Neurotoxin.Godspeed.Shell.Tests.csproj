@@ -39,7 +39,9 @@
     <Reference Include="Microsoft.Practices.Composite">
       <HintPath>..\packages\Prism\Microsoft.Practices.Composite.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.Composite.Presentation, Version=2.0.1.0, Culture=neutral, PublicKeyToken=2a57e53aa571c045, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Practices.Composite.Presentation">
+      <HintPath>..\packages\Prism\Microsoft.Practices.Composite.Presentation.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Practices.Unity">
       <HintPath>..\packages\Prism\Microsoft.Practices.Unity.dll</HintPath>
     </Reference>
