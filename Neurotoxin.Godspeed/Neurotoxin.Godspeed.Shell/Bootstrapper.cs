@@ -23,6 +23,9 @@ namespace Neurotoxin.Godspeed.Shell
             UnityInstance.Container = Container;
             //Container.RegisterType<IGeneralController, ModuleController>(new ContainerControlledLifetimeManager());
 
+            // Infrastructure
+            Container.RegisterType<IWorkHandler, AsyncWorkHandler>(new ContainerControlledLifetimeManager());
+
             // Managers
             Container.RegisterType<IResourceManager, ResourceManager>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IWindowManager, WindowManager>(new ContainerControlledLifetimeManager());
@@ -75,7 +78,7 @@ namespace Neurotoxin.Godspeed.Shell
             var viewModel = (FileManagerViewModel)shell.DataContext;
             viewModel.Initialize();
             Application.Current.MainWindow = shell;
-            UIThread.Run(shell.Show);
+            Application.Current.Dispatcher.BeginInvoke(new Action(shell.Show));
             return shell;
         }
 

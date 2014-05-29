@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.ViewModels;
 
@@ -82,11 +81,12 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
                     ComboBox.Focus();
                     break;
                 case InputDialogMode.RadioGroup:
-                    UIThread.BeginRun(() =>
+                    //TODO: reconsider
+                    Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                     {
                         var option = vm.Options.FirstOrDefault(o => o.Equals(vm.DefaultValue)) ?? vm.Options.First();
                         option.IsSelected = true;
-                    });
+                    }));
                     break;
             }
         }

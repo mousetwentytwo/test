@@ -51,7 +51,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public void Initialize(CacheMigrationEventArgs e)
         {
             _itemsCount = e.Items.Count;
-            WorkerThread.Run(() =>
+            WorkHandler.Run(() =>
                 {
                     foreach (var item in e.Items)
                     {

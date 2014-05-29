@@ -47,7 +47,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void ExecuteSaveAndCloseCommand()
         {
             _packageContent.Content = FileManager.Save();
-            eventAggregator.GetEvent<CloseNestedPaneEvent>().Publish(new CloseNestedPaneEventArgs(this, _packageContent));
+            EventAggregator.GetEvent<CloseNestedPaneEvent>().Publish(new CloseNestedPaneEventArgs(this, _packageContent));
             Dispose();
         }
 
@@ -57,7 +57,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void ExecuteCloseCommand()
         {
-            eventAggregator.GetEvent<CloseNestedPaneEvent>().Publish(new CloseNestedPaneEventArgs(this, null));
+            EventAggregator.GetEvent<CloseNestedPaneEvent>().Publish(new CloseNestedPaneEventArgs(this, null));
             Dispose();
         }
 
@@ -76,7 +76,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             switch (cmd)
             {
                 case LoadCommand.Load:
-                    WorkerThread.Run(
+                    WorkHandler.Run(
                         () =>
                             {
                                 _packageContent = (BinaryContent)cmdParam.Payload;

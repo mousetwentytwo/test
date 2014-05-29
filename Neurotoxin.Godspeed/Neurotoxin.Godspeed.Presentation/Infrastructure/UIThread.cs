@@ -6,7 +6,7 @@ namespace Neurotoxin.Godspeed.Presentation.Infrastructure
 {
     public static class UIThread
     {
-        private static readonly Dispatcher Dispatcher = Application.Current != null ? Application.Current.Dispatcher : Dispatcher.CurrentDispatcher;
+        private static readonly Dispatcher Dispatcher = Application.Current.Dispatcher;
 
         public static bool IsUIThread
         {

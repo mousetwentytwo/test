@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Windows;
+using System.Windows.Threading;
 
 namespace Neurotoxin.Godspeed.Presentation.Infrastructure
 {
-    public static class WorkerThread
+    public class AsyncWorkHandler : IWorkHandler
     {
-        public static void Run(Action work)
+        private static readonly Dispatcher Dispatcher = Application.Current.Dispatcher;
+
+        public void Run(Action work)
         {
             work.BeginInvoke(asyncResult =>
             {
@@ -23,7 +27,7 @@ namespace Neurotoxin.Godspeed.Presentation.Infrastructure
             }, null);
         }
 
-        public static void Run<T>(Func<T> work, Action<T> success = null, Action<Exception> error = null)
+        public void Run<T>(Func<T> work, Action<T> success = null, Action<Exception> error = null)
         {
             work.BeginInvoke(asyncResult =>
                 {

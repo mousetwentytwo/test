@@ -20,11 +20,12 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
 
         public static void Show(Exception exception)
         {
-            if (!UIThread.IsUIThread)
-            {
-                UIThread.Run(() => Show(exception));
-                return;
-            }
+            //TODO: non UI calls
+            //if (!UIThread.IsUIThread)
+            //{
+            //    UIThread.Run(() => Show(exception));
+            //    return;
+            //}
 
             var instance = new ErrorMessage(exception);
             instance.ShowDialog();

@@ -7,11 +7,11 @@ namespace Neurotoxin.Godspeed.Core.Models
 {
     public class Tree<T> : TreeItem<T> where T : class, INamed
     {
-        public Tree() : base(GetDefaultContent(), null, null)
+        public Tree() : base(string.Empty, GetDefaultContent(), null, null)
         {
         }
 
-        public Tree(T content) : base(content, null, null)
+        public Tree(string name, T content) : base(name, content, null, null)
         {
             Root = this;
         }
@@ -21,11 +21,13 @@ namespace Neurotoxin.Godspeed.Core.Models
     {
         public TreeItem<T> Root { get; protected set; }
         public TreeItem<T> Parent { get; protected set; }
+        public string Name { get; protected set; }
         public T Content { get; set; }
         public Dictionary<string, TreeItem<T>> Children { get; private set; }
 
-        protected TreeItem(T content, TreeItem<T> parent, TreeItem<T> root)
+        protected TreeItem(string name, T content, TreeItem<T> parent, TreeItem<T> root)
         {
+            Name = name;
             Content = content;
             Parent = parent;
             Root = root;
@@ -39,7 +41,7 @@ namespace Neurotoxin.Godspeed.Core.Models
 
         private TreeItem<T> AddItem(T content)
         {
-            var treeItem = new TreeItem<T>(content, this, Root);
+            var treeItem = new TreeItem<T>(content.Name, content, this, Root);
             Children.Add(content.Name, treeItem);
             return treeItem;
         }
@@ -201,6 +203,7 @@ namespace Neurotoxin.Godspeed.Core.Models
             path = path.Replace('\\', '/');
             if (path.StartsWith("//") && this != Root) return Root.GetNode(path);
             var parts = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+
             var node = this;
             foreach (var part in parts)
             {

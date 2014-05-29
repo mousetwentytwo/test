@@ -14,7 +14,7 @@ namespace Neurotoxin.Godspeed.Shell.Tests.Dummies
     {
         public void ShowErrorMessage(Exception exception)
         {
-            Console.WriteLine("[Error] " + exception.Message);
+            Console.WriteLine("[Error] {0}{1}{2}", exception.Message, Environment.NewLine, exception.StackTrace);
         }
 
         public TransferErrorDialogResult ShowIoErrorDialog(Exception exception)

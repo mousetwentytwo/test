@@ -67,6 +67,7 @@
     <Compile Include="Dummies\DummyContentViewModel.cs" />
     <Compile Include="Dummies\FakingRules.cs" />
     <Compile Include="Helpers\C.cs" />
+    <Compile Include="Helpers\ConsoleStopper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TransferManagerViewModelTests.cs" />
   </ItemGroup>

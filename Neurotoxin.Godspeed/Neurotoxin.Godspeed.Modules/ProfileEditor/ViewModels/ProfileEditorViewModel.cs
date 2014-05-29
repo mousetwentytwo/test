@@ -249,7 +249,7 @@ namespace Neurotoxin.Godspeed.Modules.ProfileEditor.ViewModels
                                   LoadCommand = LoadCommand.Load,
                                   LoadParameter = new Tuple<byte[], BinMap>(gpd.Binary.ReadAll(), gpd.BinMap)
                               };
-                eventAggregator.GetEvent<ModuleOpenEvent>().Publish(new ModuleOpenEventArgs(mli));
+                EventAggregator.GetEvent<ModuleOpenEvent>().Publish(new ModuleOpenEventArgs(mli));
             }
         }
 
@@ -265,7 +265,7 @@ namespace Neurotoxin.Godspeed.Modules.ProfileEditor.ViewModels
             _otherPath = @"..\..\..\..\Resources\mergeable\E0000027FA233BE2";
             //_otherPath = @"..\..\..\..\Resources\newmergeapproach\E00001D5D85ED487.0114";
             LoadSubscribe();
-            WorkerThread.Run(Merge, MergeCallback);
+            WorkHandler.Run(Merge, MergeCallback);
         }
 
         public DelegateCommand<object> SaveCommand { get; private set; }
@@ -316,7 +316,7 @@ namespace Neurotoxin.Godspeed.Modules.ProfileEditor.ViewModels
                 case LoadCommand.Load:
                     _path = (string) cmdParam;
                     LoadSubscribe();
-                    WorkerThread.Run(LoadFile, LoadFileCallback);
+                    WorkHandler.Run(LoadFile, LoadFileCallback);
                     break;
                 case LoadCommand.MergeWith:
                     //_profile.MergeWith((StfsPackage)cmdParam);

@@ -182,7 +182,7 @@ namespace Neurotoxin.Godspeed.Presentation.Infrastructure
         /// <param name="dialogResult">The dialog result to be set when closing the dialog window.</param>
         protected void RequestCloseWindow(bool? dialogResult)
         {
-            eventAggregator.GetEvent<RequestWindowCloseEvent>().Publish(new RequestWindowCloseEventArgs(this, dialogResult));
+            EventAggregator.GetEvent<RequestWindowCloseEvent>().Publish(new RequestWindowCloseEventArgs(this, dialogResult));
         }
 
         /// <summary>
@@ -309,7 +309,7 @@ namespace Neurotoxin.Godspeed.Presentation.Infrastructure
         protected virtual void RaiseDataLoading(int counter, string section, string msg)
         {
             var args = new DataLoadEventArgs(this, DataLoadState.Loading, section, msg);
-            eventAggregator.GetEvent<DataLoadingEvent>().Publish(args);
+            EventAggregator.GetEvent<DataLoadingEvent>().Publish(args);
             if (DataLoading != null) DataLoading(this, args);
         }
 
@@ -317,7 +317,7 @@ namespace Neurotoxin.Godspeed.Presentation.Infrastructure
         protected virtual void RaiseDataLoaded(int counter, string section, string msg)
         {
             var args = new DataLoadEventArgs(this, DataLoadState.Loaded, section, msg);
-            eventAggregator.GetEvent<DataLoadedEvent>().Publish(args);
+            EventAggregator.GetEvent<DataLoadedEvent>().Publish(args);
             if (DataLoaded != null) DataLoaded(this, args);
         }
 

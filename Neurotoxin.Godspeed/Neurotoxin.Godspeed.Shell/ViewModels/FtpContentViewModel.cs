@@ -88,7 +88,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void ExecuteCloseCommand()
         {
-            eventAggregator.GetEvent<CloseNestedPaneEvent>().Publish(new CloseNestedPaneEventArgs(this, Connection));
+            EventAggregator.GetEvent<CloseNestedPaneEvent>().Publish(new CloseNestedPaneEventArgs(this, Connection));
             Dispose();
         }
 
@@ -110,7 +110,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public void ExecuteCheckFreestyleDatabaseCommand()
         {
-            eventAggregator.GetEvent<FreestyleDatabaseCheckEvent>().Publish(new FreestyleDatabaseCheckEventArgs(this));
+            EventAggregator.GetEvent<FreestyleDatabaseCheckEvent>().Publish(new FreestyleDatabaseCheckEventArgs(this));
         }
 
         #endregion
@@ -192,7 +192,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             switch (cmd)
             {
                 case LoadCommand.Load:
-                    WorkerThread.Run(
+                    WorkHandler.Run(
                         () =>
                             {
                                 Connection = (FtpConnectionItemViewModel)cmdParam.Payload;
@@ -222,7 +222,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 case LoadCommand.Restore:
                     var payload = cmdParam.Payload as BinaryContent;
                     if (payload == null) return;
-                    WorkerThread.Run(
+                    WorkHandler.Run(
                         () =>
                             {
                                 File.WriteAllBytes(payload.TempFilePath, payload.Content);
@@ -324,7 +324,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                                 {
                                     Connection.HttpUsername = username;
                                     Connection.HttpPassword = password;
-                                    eventAggregator.GetEvent<ConnectionDetailsChangedEvent>().Publish(new ConnectionDetailsChangedEventArgs(Connection));
+                                    EventAggregator.GetEvent<ConnectionDetailsChangedEvent>().Publish(new ConnectionDetailsChangedEventArgs(Connection));
                                 }
                             }
                         }
@@ -624,7 +624,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public TransferResult RemoteDownload(FileSystemItem item, string savePath, CopyAction action)
         {
             if (item.Type != ItemType.File) throw new NotSupportedException();
-            UIThread.Run(() => eventAggregator.GetEvent<TransferActionStartedEvent>().Publish(ExportActionDescription));
+            UIThread.Run(() => EventAggregator.GetEvent<TransferActionStartedEvent>().Publish(ExportActionDescription));
             long resumeStartPosition = 0;
             try
             {
@@ -660,7 +660,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public TransferResult RemoteUpload(FileSystemItem item, string savePath, CopyAction action)
         {
             if (item.Type != ItemType.File) throw new NotSupportedException();
-            UIThread.Run(() => eventAggregator.GetEvent<TransferActionStartedEvent>().Publish(ImportActionDescription));
+            UIThread.Run(() => EventAggregator.GetEvent<TransferActionStartedEvent>().Publish(ImportActionDescription));
             long resumeStartPosition = 0;
             try {
                 switch (action)
@@ -696,7 +696,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void TelnetProgressChanged(int p, long t, long total, long resumeStartPosition)
         {
             var args = new TransferProgressChangedEventArgs(p, t, total, resumeStartPosition);
-            eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(args);
+            EventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(args);
         }
 
         private string RemoteChangeDirectory(string path)

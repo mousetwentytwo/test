@@ -83,7 +83,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             ProgressMessage = Resx.GettingData + Strings.DotDotDot;
             IsIndetermine = true;
 
-            WorkerThread.Run(() =>
+            WorkHandler.Run(() =>
             {
                 var missing = new List<FileSystemItem>();
                 var html = new HtmlDocument();

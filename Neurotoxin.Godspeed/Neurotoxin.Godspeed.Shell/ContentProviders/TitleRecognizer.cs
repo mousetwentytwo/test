@@ -26,6 +26,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         private readonly IUserSettings _userSettings;
         private readonly IEventAggregator _eventAggregator;
         private readonly IResourceManager _resourceManager;
+        private readonly IWorkHandler _workHandler;
         private readonly Dictionary<string, ProfileItemWrapper> _profileFileCache = new Dictionary<string, ProfileItemWrapper>();
 
         private static readonly List<RecognitionInformation> RecognitionKeywords = new List<RecognitionInformation>
@@ -44,13 +45,14 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 new RecognitionInformation("^TU[\\w\\.]+$|^[0-9A-F]{4,}$", Resx.UnknownDataFile, TitleType.DataFile, ItemType.File),
             };
 
-        public TitleRecognizer(IFileManager fileManager, CacheManager cacheManager, IUserSettings userSettings, IEventAggregator eventAggregator, IResourceManager resourceManager)
+        public TitleRecognizer(IFileManager fileManager, CacheManager cacheManager, IUserSettings userSettings, IEventAggregator eventAggregator, IResourceManager resourceManager, IWorkHandler workHandler)
         {
             _fileManager = fileManager;
             _cacheManager = cacheManager;
             _userSettings = userSettings;
             _eventAggregator = eventAggregator;
             _resourceManager = resourceManager;
+            _workHandler = workHandler;
         }
 
         public bool RecognizeType(FileSystemItem item)

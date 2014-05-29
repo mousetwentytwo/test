@@ -7,8 +7,9 @@ namespace Neurotoxin.Godspeed.Presentation.Infrastructure
 {
     public abstract class ViewModelBase : IViewModel
     {
-        protected readonly IUnityContainer container;
-        protected readonly IEventAggregator eventAggregator;
+        protected readonly IUnityContainer Container;
+        protected readonly IEventAggregator EventAggregator;
+        protected readonly IWorkHandler WorkHandler;
 
         public bool IsDisposed { get; private set; }
 
@@ -22,8 +23,9 @@ namespace Neurotoxin.Godspeed.Presentation.Infrastructure
 
         public ViewModelBase()
         {
-            container = UnityInstance.Container;
-            eventAggregator = container.Resolve<IEventAggregator>();
+            Container = UnityInstance.Container;
+            EventAggregator = Container.Resolve<IEventAggregator>();
+            WorkHandler = Container.Resolve<IWorkHandler>();
         }
 
         /// <summary>

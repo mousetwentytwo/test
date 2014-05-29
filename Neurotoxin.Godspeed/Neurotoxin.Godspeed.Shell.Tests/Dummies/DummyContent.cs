@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Neurotoxin.Godspeed.Core.Models;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Interfaces;
@@ -28,8 +29,11 @@ namespace Neurotoxin.Godspeed.Shell.Tests.Dummies
                                                         {
                                                             {0, new[] {ItemType.Drive}}
                                                         };
-                _tree = new Tree<FileSystemItem>(new FileSystemItem { Name = string.Empty, Path = string.Empty });
+                _tree = new Tree<FileSystemItem>(string.Empty, new FileSystemItem { Name = string.Empty, Path = string.Empty });
+                var sw = new Stopwatch();
+                sw.Start();
                 GenerateTree(_tree, C.Random<int>(_fakingRules.TreeDepth));
+                Console.WriteLine("[DDG] Generation completed in " + sw.Elapsed);
             }
         }
 
@@ -39,7 +43,7 @@ namespace Neurotoxin.Godspeed.Shell.Tests.Dummies
             var nodes = node.AddRange(C.CollectionOfFake<FileSystemItem>(itemCount, new { Type = _fakingRules.GetItemTypes(level), Name = new Range(8,13) }));
             foreach (var n in nodes)
             {
-                n.Content.Path = node.Content.Path + "/" + n.Content.Name;
+                n.Content.FullPath = n.Content.Path = node.Content.Path + "/" + n.Content.Name;
                 if (level < depth) GenerateTree(n, depth, level+1);
             }
         }

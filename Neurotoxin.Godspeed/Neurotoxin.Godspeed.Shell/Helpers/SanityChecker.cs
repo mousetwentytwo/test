@@ -39,12 +39,14 @@ namespace Neurotoxin.Godspeed.Shell.Helpers
         private readonly IUserSettings _userSettings;
         private readonly IEventAggregator _eventAggregator;
         private readonly IResourceManager _resourceManager;
+        private readonly IWorkHandler _workHandler;
 
-        public SanityChecker(IStatisticsViewModel statistics, IUserSettings userSettings, IEventAggregator eventAggregator, IResourceManager resourceManager)
+        public SanityChecker(IStatisticsViewModel statistics, IUserSettings userSettings, IEventAggregator eventAggregator, IResourceManager resourceManager, IWorkHandler workHandler)
         {
             _userSettings = userSettings;
             _eventAggregator = eventAggregator;
             _resourceManager = resourceManager;
+            _workHandler = workHandler;
             eventAggregator.GetEvent<CachePopulatedEvent>().Subscribe(OnCachePopulated);
             eventAggregator.GetEvent<ShellInitializedEvent>().Subscribe(OnShellInitialized);
 
@@ -129,7 +131,7 @@ namespace Neurotoxin.Godspeed.Shell.Helpers
             var asm = Assembly.GetExecutingAssembly();
             var title = asm.GetAttribute<AssemblyTitleAttribute>().Title;
             const string url = "https://godspeed.codeplex.com/";
-            WorkerThread.Run(() =>
+            _workHandler.Run(() =>
             {
                 try
                 {

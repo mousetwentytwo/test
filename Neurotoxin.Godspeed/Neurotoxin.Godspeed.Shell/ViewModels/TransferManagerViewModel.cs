@@ -200,9 +200,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             _userSettings = userSettings;
             _statistics = statistics;
-            eventAggregator.GetEvent<TransferActionStartedEvent>().Subscribe(OnTransferActionStarted);
-            eventAggregator.GetEvent<TransferProgressChangedEvent>().Subscribe(OnTransferProgressChanged);
-            eventAggregator.GetEvent<ShowCorrespondingErrorEvent>().Subscribe(OnShowCorrespondingError);
+            EventAggregator.GetEvent<TransferActionStartedEvent>().Subscribe(OnTransferActionStarted);
+            EventAggregator.GetEvent<TransferProgressChangedEvent>().Subscribe(OnTransferProgressChanged);
+            EventAggregator.GetEvent<ShowCorrespondingErrorEvent>().Subscribe(OnShowCorrespondingError);
         }
 
         public void Copy(IFileListPaneViewModel sourcePane, IFileListPaneViewModel targetPane)
@@ -274,7 +274,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                                 //TODO: not sure this is the right idea
                                 _copyMode = CopyMode.DirectExport;
                                 CloseTelnetSession();
-                                eventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(new NotifyUserMessageEventArgs("RemoteCopySpecialCharsWarningMessage", MessageIcon.Info));
+                                EventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(new NotifyUserMessageEventArgs("RemoteCopySpecialCharsWarningMessage", MessageIcon.Info));
                                 result = SourcePane.Export(item, targetPath, a);
                             } 
                             else
@@ -288,7 +288,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                                 //TODO: not sure this is the right idea
                                 _copyMode = CopyMode.DirectImport;
                                 CloseTelnetSession();
-                                eventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(new NotifyUserMessageEventArgs("RemoteCopySpecialCharsWarningMessage", MessageIcon.Info));
+                                EventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(new NotifyUserMessageEventArgs("RemoteCopySpecialCharsWarningMessage", MessageIcon.Info));
                                 result = TargetPane.Import(item, targetPath, a);
                             } else
                             {
@@ -326,7 +326,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 var queueitem = _queue.Peek();
                 var item = queueitem.FileSystemItem;
                 SourceFile = item.Path.Replace(SourcePane.CurrentFolder.Path, string.Empty);
-                WorkerThread.Run(() =>
+                WorkHandler.Run(() =>
                 {
                     switch (queueitem.Operation)
                     {
@@ -497,7 +497,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             RemainingTime = new TimeSpan(0);
 
             TelnetException ex = null;
-            WorkerThread.Run(
+            WorkHandler.Run(
                 () =>
                     {
                         if (mode == FileOperation.Delete) return CopyMode.Invalid;
@@ -550,7 +550,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         if (copyMode == CopyMode.Indirect) TotalBytes *= 2;
                         _copyMode = copyMode;
                         ProgressState = TaskbarItemProgressState.Normal;
-                        eventAggregator.GetEvent<TransferStartedEvent>().Publish(new TransferStartedEventArgs(this));
+                        EventAggregator.GetEvent<TransferStartedEvent>().Publish(new TransferStartedEventArgs(this));
                         _elapsedTimeMeter.Reset();
                         _elapsedTimeMeter.Start();
                         ProcessQueueItem();
@@ -703,7 +703,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             ProgressState = TaskbarItemProgressState.None;
             if (_sourceChanged) SourcePane.Refresh();
             if (_targetChanged) TargetPane.Refresh();
-            eventAggregator.GetEvent<TransferFinishedEvent>().Publish(new TransferFinishedEventArgs(this));
+            EventAggregator.GetEvent<TransferFinishedEvent>().Publish(new TransferFinishedEventArgs(this));
         }
 
         private void RenameExistingFile(TransferException exception, CopyAction? action, Action<CopyAction?, string> rename, Action<Exception> chooseDifferentOption)
@@ -722,7 +722,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void AsyncJob<T>(Func<T> work, Action<T> success, Action<Exception> error = null)
         {
             var finished = false;
-            WorkerThread.Run(
+            WorkHandler.Run(
                 () =>
                 {
                     Thread.Sleep(3000);
@@ -733,7 +733,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     if (finished) return;
                     WindowManager.ShowMessage(Resx.ApplicationIsBusy, Resx.PleaseWait, NotificationMessageFlags.NonClosable);
                 });
-            WorkerThread.Run(work,
+            WorkHandler.Run(work,
                 b =>
                 {
                     WindowManager.CloseMessage();

@@ -173,11 +173,12 @@ namespace Neurotoxin.Godspeed.Shell.Views
 
         private void CheckUserMessages(object state)
         {
-            UIThread.Run(() =>
+            //TODO: reconsider
+            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                              {
                                  ViewModel.SetUserMessagesToRead((IUserMessageViewModel[])state);
                                  _userMessageReadTimers.Dequeue();
-                             });
+                             }));
         }
 
     }

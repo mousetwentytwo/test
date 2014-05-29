@@ -238,7 +238,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             IsBusy = true;
             ExecuteCancelCommand();
 
-            WorkerThread.Run(() => ChangeDirectoryInner(CurrentFolder.Path),
+            WorkHandler.Run(() => ChangeDirectoryInner(CurrentFolder.Path),
                 result =>
                 {
                     ChangeDirectoryCallback(result);
@@ -312,7 +312,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             ProgressMessage = string.Format("{0} {1}...", Resx.OpeningProfile, CurrentRow.ComputedName);
             IsBusy = true;
-            WorkerThread.Run(() => OpenStfsPackage(CurrentRow.Model), b => OpenStfsPackageCallback(b, mode), AsyncErrorCallback);
+            WorkHandler.Run(() => OpenStfsPackage(CurrentRow.Model), b => OpenStfsPackageCallback(b, mode), AsyncErrorCallback);
         }
 
         protected virtual string GetStfsPackagePath(CacheComplexKey cacheKey, CacheEntry<FileSystemItem> cacheEntry)
@@ -351,10 +351,10 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             switch (mode)
             {
                 case OpenStfsPackageMode.Browsing:
-                    stfs = container.Resolve<StfsPackageContentViewModel>();
+                    stfs = Container.Resolve<StfsPackageContentViewModel>();
                     break;
                 case OpenStfsPackageMode.Repair:
-                    stfs = container.Resolve<ProfileRebuilderViewModel>();
+                    stfs = Container.Resolve<ProfileRebuilderViewModel>();
                     break;
                 default:
                     throw new NotSupportedException("Invalid mode: " + mode);
@@ -365,7 +365,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void OpenStfsPackageSuccess(PaneViewModelBase pane)
         {
             IsBusy = false;
-            eventAggregator.GetEvent<OpenNestedPaneEvent>().Publish(new OpenNestedPaneEventArgs(this, pane));
+            EventAggregator.GetEvent<OpenNestedPaneEvent>().Publish(new OpenNestedPaneEventArgs(this, pane));
         }
 
         private void OpenStfsPackageError(PaneViewModelBase pane, Exception exception)
@@ -389,7 +389,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             ProgressMessage = string.Format("{0} {1}...", Resx.OpeningArchive, CurrentRow.ComputedName);
             IsBusy = true;
-            WorkerThread.Run(() => OpenCompressedFile(CurrentRow.Model), OpenCompressedFileCallback, AsyncErrorCallback);
+            WorkHandler.Run(() => OpenCompressedFile(CurrentRow.Model), OpenCompressedFileCallback, AsyncErrorCallback);
         }
 
         private string OpenCompressedFile(FileSystemItem item)
@@ -399,14 +399,14 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void OpenCompressedFileCallback(string path)
         {
-            var archive = container.Resolve<CompressedFileContentViewModel>();
+            var archive = Container.Resolve<CompressedFileContentViewModel>();
             archive.LoadDataAsync(LoadCommand.Load, new LoadDataAsyncParameters(Settings.Clone("/"), path), OpenCompressedFileSuccess, OpenCompressedFileError);
         }
 
         private void OpenCompressedFileSuccess(PaneViewModelBase pane)
         {
             IsBusy = false;
-            eventAggregator.GetEvent<OpenNestedPaneEvent>().Publish(new OpenNestedPaneEventArgs(this, pane));
+            EventAggregator.GetEvent<OpenNestedPaneEvent>().Publish(new OpenNestedPaneEventArgs(this, pane));
         }
 
         private void OpenCompressedFileError(PaneViewModelBase pane, Exception exception)
@@ -449,7 +449,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
             _calculationIsRunning = true;
             _calculationIsAborted = false;
-            WorkerThread.Run(CalculateSize, CalculateSizeCallback, AsyncErrorCallback);
+            WorkHandler.Run(CalculateSize, CalculateSizeCallback, AsyncErrorCallback);
         }
 
         private bool CanExecuteCalculateSizeCommand(bool calculateAll)
@@ -488,7 +488,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 item.IsRefreshing = false;
                 if (!_calculationIsAborted && _calculationQueue.Count > 0)
                 {
-                    WorkerThread.Run(CalculateSize, CalculateSizeCallback, AsyncErrorCallback);
+                    WorkHandler.Run(CalculateSize, CalculateSizeCallback, AsyncErrorCallback);
                 }
                 else
                 {
@@ -551,7 +551,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             var oldItems = Items.ToList();
             Items.Clear();
             Items.AddRange(list);
-            eventAggregator.GetEvent<FileListPaneViewModelItemsChangedEvent>()
+            EventAggregator.GetEvent<FileListPaneViewModelItemsChangedEvent>()
                            .Publish(new FileListPaneViewModelItemsChangedEventArgs(NotifyCollectionChangedAction.Replace, list, oldItems, this));
             CurrentRow = currentRow;
             SetActive();
@@ -735,7 +735,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             IsBusy = true;
             ProgressMessage = Resx.ScanningProfile + Strings.DotDotDot;
-            WorkerThread.Run(RecognizeFromProfile, RecognizeFromProfileCallback, AsyncErrorCallback);
+            WorkHandler.Run(RecognizeFromProfile, RecognizeFromProfileCallback, AsyncErrorCallback);
         }
 
         private int RecognizeFromProfile()
@@ -919,7 +919,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         TitleRecognizer.RecognizeTitle(newModel);
                         var newItem = new FileSystemItemViewModel(newModel);
                         Items.Replace(CurrentRow, newItem);
-                        eventAggregator.GetEvent<FileListPaneViewModelItemsChangedEvent>()
+                        EventAggregator.GetEvent<FileListPaneViewModelItemsChangedEvent>()
                                        .Publish(new FileListPaneViewModelItemsChangedEventArgs(NotifyCollectionChangedAction.Replace, newItem, CurrentRow, this));
                         CurrentRow = newItem;
                     }
@@ -1057,9 +1057,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         protected FileListPaneViewModelBase()
         {
-            FileManager = container.Resolve<T>();
-            UserSettings = container.Resolve<IUserSettings>();
-            TitleRecognizer = container.Resolve<ITitleRecognizer>(new ParameterOverride("fileManager", FileManager));
+            FileManager = Container.Resolve<T>();
+            UserSettings = Container.Resolve<IUserSettings>();
+            TitleRecognizer = Container.Resolve<ITitleRecognizer>(new ParameterOverride("fileManager", FileManager));
 
             ChangeDirectoryCommand = new DelegateCommand<object>(ExecuteChangeDirectoryCommand, CanExecuteChangeDirectoryCommand);
             OpenStfsPackageCommand = new DelegateCommand<OpenStfsPackageMode>(ExecuteOpenStfsPackageCommand, CanExecuteOpenStfsPackageCommand);
@@ -1086,7 +1086,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
             Items = new ObservableCollection<FileSystemItemViewModel>();
 
-            eventAggregator.GetEvent<TransferProgressChangedEvent>().Subscribe(OnTransferProgressChanged);
+            EventAggregator.GetEvent<TransferProgressChangedEvent>().Subscribe(OnTransferProgressChanged);
         }
 
         public abstract string GetTargetPath(string path);
@@ -1111,7 +1111,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public override void Dispose()
         {
-            eventAggregator.GetEvent<TransferProgressChangedEvent>().Unsubscribe(OnTransferProgressChanged);
+            EventAggregator.GetEvent<TransferProgressChangedEvent>().Unsubscribe(OnTransferProgressChanged);
             if (CurrentFolder != null) Settings.Directory = CurrentFolder.FullPath;
             base.Dispose();
         }
@@ -1197,6 +1197,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             {
                 CurrentFolder = Drive;
             }
+            
             ChangeDirectoryCommand.Execute(null);
         }
 
@@ -1230,7 +1231,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 return;
             }
 
-            WorkerThread.Run(() => FileManager.GetItemInfo(itemPath, ItemType.File), item =>
+            WorkHandler.Run(() => FileManager.GetItemInfo(itemPath, ItemType.File), item =>
                 {
                     if (item == null) throw new ApplicationException(string.Format(Resx.ItemNotExistsOnPath, itemPath));
                     var vm = new FileSystemItemViewModel(item);
@@ -1257,7 +1258,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void RecognitionInner(FileSystemItem item, Action<FileSystemItem> success, Action<Exception> error)
         {
-            WorkerThread.Run(() =>
+            WorkHandler.Run(() =>
             {
                 TitleRecognizer.RecognizeTitle(item);
                 return item;
@@ -1297,7 +1298,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void PublishItemViewModel(ViewModelBase vm)
         {
-            eventAggregator.GetEvent<ViewModelGeneratedEvent>().Publish(new ViewModelGeneratedEventArgs(vm));
+            EventAggregator.GetEvent<ViewModelGeneratedEvent>().Publish(new ViewModelGeneratedEventArgs(vm));
         }
 
         public Queue<QueueItem> PopulateQueue(FileOperation action)
@@ -1332,15 +1333,16 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void AsyncErrorCallback(Exception ex)
         {
+            Console.WriteLine("[Change Directory]", ex.Message);
             _calculationIsRunning = false;
             IsBusy = false;
-            eventAggregator.GetEvent<ShowCorrespondingErrorEvent>().Publish(new ShowCorrespondingErrorEventArgs(WrapTransferRelatedExceptions(ex), false));
+            EventAggregator.GetEvent<ShowCorrespondingErrorEvent>().Publish(new ShowCorrespondingErrorEventArgs(WrapTransferRelatedExceptions(ex), false));
         }
 
         public TransferResult Export(FileSystemItem item, string savePath, CopyAction action)
         {
             if (item.Type != ItemType.File) throw new NotSupportedException();
-            UIThread.Run(() => eventAggregator.GetEvent<TransferActionStartedEvent>().Publish(ExportActionDescription));
+            UIThread.Run(() => EventAggregator.GetEvent<TransferActionStartedEvent>().Publish(ExportActionDescription));
             try
             {
                 FileMode mode;
@@ -1384,7 +1386,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public TransferResult Import(FileSystemItem item, string savePath, CopyAction action)
         {
             if (item.Type != ItemType.File) throw new NotSupportedException();
-            UIThread.Run(() => eventAggregator.GetEvent<TransferActionStartedEvent>().Publish(ImportActionDescription));
+            UIThread.Run(() => EventAggregator.GetEvent<TransferActionStartedEvent>().Publish(ImportActionDescription));
             try
             {
                 bool result;

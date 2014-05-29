@@ -19,15 +19,17 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         private bool _cachePopupated;
         private const string KeyPrefix = "CacheEntry_";
         private readonly IEventAggregator _eventAggregator;
+        private readonly IWorkHandler _workHandler;
         private readonly EsentPersistentDictionary _cacheStore = EsentPersistentDictionary.Instance;
         private readonly Dictionary<string, CacheEntry<FileSystemItem>> _inMemoryCache = new Dictionary<string,CacheEntry<FileSystemItem>>();
 
-        public CacheManager(IEventAggregator eventAggregator)
+        public CacheManager(IEventAggregator eventAggregator, IWorkHandler workHandler)
         {
             _eventAggregator = eventAggregator;
+            _workHandler = workHandler;
 
             //Read cache to memory to fasten access
-            WorkerThread.Run(() =>
+            _workHandler.Run(() =>
                 {
                     var sw = new Stopwatch();
                     sw.Start();

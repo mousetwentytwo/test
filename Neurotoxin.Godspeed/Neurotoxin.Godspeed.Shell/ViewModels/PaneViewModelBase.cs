@@ -25,7 +25,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 _isActive = value;
                 NotifyPropertyChanged(ISACTIVE);
                 if (value && changed) 
-                    eventAggregator.GetEvent<ActivePaneChangedEvent>().Publish(new ActivePaneChangedEventArgs(this));    
+                    EventAggregator.GetEvent<ActivePaneChangedEvent>().Publish(new ActivePaneChangedEventArgs(this));    
             }
         }
 
@@ -64,7 +64,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         protected PaneViewModelBase()
         {
             SetActiveCommand = new DelegateCommand<EventInformation<MouseEventArgs>>(ExecuteSetActiveCommand);
-            eventAggregator.GetEvent<ActivePaneChangedEvent>().Subscribe(OnActivePaneChanged);
+            EventAggregator.GetEvent<ActivePaneChangedEvent>().Subscribe(OnActivePaneChanged);
         }
 
         protected virtual void OnActivePaneChanged(ActivePaneChangedEventArgs e)
@@ -93,14 +93,14 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         protected CommonViewModelBase()
         {
-            WindowManager = container.Resolve<IWindowManager>();
-            ResourceManager = container.Resolve<IResourceManager>();
+            WindowManager = Container.Resolve<IWindowManager>();
+            ResourceManager = Container.Resolve<IResourceManager>();
         }
 
         public override void RaiseCanExecuteChanges()
         {
             base.RaiseCanExecuteChanges();
-            eventAggregator.GetEvent<RaiseCanExecuteChangesEvent>().Publish(new RaiseCanExecuteChangesEventArgs(this));
+            EventAggregator.GetEvent<RaiseCanExecuteChangesEvent>().Publish(new RaiseCanExecuteChangesEventArgs(this));
         }
     }
 }

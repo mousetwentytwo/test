@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
 using Neurotoxin.Godspeed.Presentation.Extensions;
@@ -20,15 +21,17 @@ namespace Neurotoxin.Godspeed.Shell.Views
     {
         private readonly IUnityContainer _container;
         private readonly IEventAggregator _eventAggregator;
-        private static NotificationMessage _notificationMessage;
+        private readonly IWorkHandler _workHandler;
+        private NotificationMessage _notificationMessage;
         private bool _isAbortionInProgress;
         private TransferProgressDialog _transferProgressDialog;
         private ProgressDialog _progressDialog;
 
-        public WindowManager(IEventAggregator eventAggregator)
+        public WindowManager(IEventAggregator eventAggregator, IWorkHandler workHandler)
         {
-            _eventAggregator = eventAggregator;
             _container = UnityInstance.Container;
+            _eventAggregator = eventAggregator;
+            _workHandler = workHandler;
 
             eventAggregator.GetEvent<TransferStartedEvent>().Subscribe(OnTransferStarted);
             eventAggregator.GetEvent<TransferFinishedEvent>().Subscribe(OnTransferFinished);
@@ -65,13 +68,11 @@ namespace Neurotoxin.Godspeed.Shell.Views
         {
             var userSettings = _container.Resolve<IUserSettings>();
             if (userSettings.IsMessageIgnored(message)) return;
+            UIThread.Run(() => ShowMessageInner(title, message, flags));
+        }
 
-            if (!UIThread.IsUIThread)
-            {
-                UIThread.Run(() => ShowMessage(title, message, flags));
-                return;
-            }
-
+        private void ShowMessageInner(string title, string message, NotificationMessageFlags flags)
+        {
             if (_notificationMessage != null) _notificationMessage.Close();
 
             _notificationMessage = new NotificationMessage(title, message, flags);
@@ -79,6 +80,11 @@ namespace Neurotoxin.Godspeed.Shell.Views
         }
 
         public void CloseMessage()
+        {
+            UIThread.Run(CloseMessageInner);
+        }
+
+        private void CloseMessageInner()
         {
             if (_notificationMessage != null) _notificationMessage.Close();
             _notificationMessage = null;

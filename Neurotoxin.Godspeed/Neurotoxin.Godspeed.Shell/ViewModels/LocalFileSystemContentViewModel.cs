@@ -52,7 +52,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public LocalFileSystemContentViewModel()
         {
             IsResumeSupported = true;
-            eventAggregator.GetEvent<UsbDeviceChangedEvent>().Subscribe(OnUsbDeviceChanged);
+            EventAggregator.GetEvent<UsbDeviceChangedEvent>().Subscribe(OnUsbDeviceChanged);
         }
 
         public override void LoadDataAsync(LoadCommand cmd, LoadDataAsyncParameters cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase, Exception> error = null)
@@ -70,7 +70,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 case LoadCommand.Restore:
                     var payload = cmdParam.Payload as BinaryContent;
                     if (payload == null) return;
-                    WorkerThread.Run(
+                    WorkHandler.Run(
                         () =>
                         {
                             File.WriteAllBytes(payload.FilePath, payload.Content);
@@ -232,7 +232,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public override void Dispose()
         {
-            eventAggregator.GetEvent<UsbDeviceChangedEvent>().Unsubscribe(OnUsbDeviceChanged);
+            EventAggregator.GetEvent<UsbDeviceChangedEvent>().Unsubscribe(OnUsbDeviceChanged);
             base.Dispose();
         }
     }

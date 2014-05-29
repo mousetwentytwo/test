@@ -96,7 +96,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             ConnectCommand = new DelegateCommand<object>(ExecuteConnectCommand, CanExecuteConnectCommand);
             Items = new ObservableCollection<IStoredConnectionViewModel>();
 
-            eventAggregator.GetEvent<ConnectionDetailsChangedEvent>().Subscribe(OnConnectionDetailsChanged);
+            EventAggregator.GetEvent<ConnectionDetailsChangedEvent>().Subscribe(OnConnectionDetailsChanged);
         }
 
         public override void LoadDataAsync(LoadCommand cmd, LoadDataAsyncParameters cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase, Exception> error = null)
@@ -195,7 +195,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             IsBusy = true;
             ProgressMessage = string.Format(Resx.ConnectingToFtp, connection.Name);
-            var connectedFtp = container.Resolve<FtpContentViewModel>();
+            var connectedFtp = Container.Resolve<FtpContentViewModel>();
             connectedFtp.LoadDataAsync(LoadCommand.Load, new LoadDataAsyncParameters(Settings.Clone("/"), connection), FtpConnectSuccess, FtpConnectError);
             return connectedFtp;
         }
@@ -203,7 +203,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void FtpConnectSuccess(PaneViewModelBase pane)
         {
             IsBusy = false;
-            eventAggregator.GetEvent<OpenNestedPaneEvent>().Publish(new OpenNestedPaneEventArgs(this, pane));
+            EventAggregator.GetEvent<OpenNestedPaneEvent>().Publish(new OpenNestedPaneEventArgs(this, pane));
         }
 
         private void FtpConnectError(PaneViewModelBase pane, Exception exception)

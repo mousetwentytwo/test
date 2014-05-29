@@ -48,7 +48,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void ExecuteCloseCommand()
         {
-            eventAggregator.GetEvent<CloseNestedPaneEvent>().Publish(new CloseNestedPaneEventArgs(this, null));
+            EventAggregator.GetEvent<CloseNestedPaneEvent>().Publish(new CloseNestedPaneEventArgs(this, null));
         }
 
         #endregion
@@ -118,7 +118,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             switch (cmd)
             {
                 case LoadCommand.Load:
-                    WorkerThread.Run(
+                    WorkHandler.Run(
                         () =>
                         {
                             _packageContent = (BinaryContent)cmdParam.Payload;

@@ -215,7 +215,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 return;
             }
             var path = string.Format("{0}{1}", SourcePane.CurrentFolder.Path, name);
-            WorkerThread.Run(() => SourcePane.CreateFolder(path), result => NewFolderSuccess(result, name), NewFolderError);
+            WorkHandler.Run(() => SourcePane.CreateFolder(path), result => NewFolderSuccess(result, name), NewFolderError);
         }
 
         private void NewFolderSuccess(TransferResult result, string name)
@@ -233,7 +233,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void NewFolderError(Exception ex)
         {
-            eventAggregator.GetEvent<ShowCorrespondingErrorEvent>().Publish(new ShowCorrespondingErrorEventArgs(ex, false));
+            EventAggregator.GetEvent<ShowCorrespondingErrorEvent>().Publish(new ShowCorrespondingErrorEventArgs(ex, false));
         }
 
         #endregion
@@ -356,20 +356,20 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             OpenUserMessageCommand = new DelegateCommand<UserMessageCommandParameter>(ExecuteOpenUserMessageCommand);
             RemoveUserMessageCommand = new DelegateCommand<UserMessageViewModel>(ExecuteRemoveUserMessageCommand);
 
-            eventAggregator.GetEvent<OpenNestedPaneEvent>().Subscribe(OnOpenNestedPane);
-            eventAggregator.GetEvent<CloseNestedPaneEvent>().Subscribe(OnCloseNestedPane);
-            eventAggregator.GetEvent<ActivePaneChangedEvent>().Subscribe(OnActivePaneChanged);
-            eventAggregator.GetEvent<RaiseCanExecuteChangesEvent>().Subscribe(OnRaiseCanExecuteChanges);
-            eventAggregator.GetEvent<NotifyUserMessageEvent>().Subscribe(OnNotifyUserMessage);
+            EventAggregator.GetEvent<OpenNestedPaneEvent>().Subscribe(OnOpenNestedPane);
+            EventAggregator.GetEvent<CloseNestedPaneEvent>().Subscribe(OnCloseNestedPane);
+            EventAggregator.GetEvent<ActivePaneChangedEvent>().Subscribe(OnActivePaneChanged);
+            EventAggregator.GetEvent<RaiseCanExecuteChangesEvent>().Subscribe(OnRaiseCanExecuteChanges);
+            EventAggregator.GetEvent<NotifyUserMessageEvent>().Subscribe(OnNotifyUserMessage);
         }
 
         public void Initialize()
         {
-            LeftPane = (IPaneViewModel)container.Resolve(GetStoredPaneType(_userSettings.LeftPaneType));
+            LeftPane = (IPaneViewModel)Container.Resolve(GetStoredPaneType(_userSettings.LeftPaneType));
             var leftParam = _userSettings.LeftPaneFileListPaneSettings;
             LeftPane.LoadDataAsync(LoadCommand.Load, new LoadDataAsyncParameters(leftParam), PaneLoaded);
 
-            RightPane = (IPaneViewModel)container.Resolve(GetStoredPaneType(_userSettings.RightPaneType));
+            RightPane = (IPaneViewModel)Container.Resolve(GetStoredPaneType(_userSettings.RightPaneType));
             var rightParam = _userSettings.RightPaneFileListPaneSettings;
             RightPane.LoadDataAsync(LoadCommand.Load, new LoadDataAsyncParameters(rightParam), PaneLoaded);
         }
@@ -377,7 +377,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void PaneLoaded(PaneViewModelBase pane)
         {
             if (!LeftPane.IsLoaded || !RightPane.IsLoaded) return;
-            eventAggregator.GetEvent<ShellInitializedEvent>().Publish(new ShellInitializedEventArgs());
+            EventAggregator.GetEvent<ShellInitializedEvent>().Publish(new ShellInitializedEventArgs());
         }
 
         private static Type GetStoredPaneType(string typeName)
@@ -447,11 +447,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void OnNotifyUserMessage(NotifyUserMessageEventArgs e)
         {
-            if (!UIThread.IsUIThread)
-            {
-                UIThread.Run(() => OnNotifyUserMessage(e));
-                return;
-            }
+            UIThread.Run(() => OnNotifyUserMessage(e));
+        }
+
+        private void NotifyUserMessage(NotifyUserMessageEventArgs e)
+        {
             if (_userSettings.IsMessageIgnored(e.MessageKey)) return;
             var message = string.Format(Resx.ResourceManager.GetString(e.MessageKey), e.MessageArgs);
             var i = UserMessages.IndexOf(m => m.Message == message);
@@ -459,7 +459,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             {
                 if (UserMessages.First() is NoMessagesViewModel) UserMessages.RemoveAt(0);
                 UserMessages.Insert(0, new UserMessageViewModel(message, e));
-            } 
+            }
             else if (i != 0)
             {
                 UserMessages.Move(i, 0);

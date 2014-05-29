@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using FakeItEasy;
 using Microsoft.Practices.Composite.Events;
@@ -16,6 +17,7 @@ using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
 using Neurotoxin.Godspeed.Shell.Tests.Dummies;
 using Neurotoxin.Godspeed.Shell.ViewModels;
+using Microsoft.Practices.ObjectBuilder2;
 
 namespace Neurotoxin.Godspeed.Shell.Tests
 {
@@ -31,6 +33,7 @@ namespace Neurotoxin.Godspeed.Shell.Tests
         public static void MyClassInitialize(TestContext testContext)
         {
             Container = new UnityContainer();
+            Container.RegisterType<IWorkHandler, SyncWorkHandler>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IEventAggregator, EventAggregator>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IWindowManager, ConsoleWriter>(new ContainerControlledLifetimeManager());
             Container.RegisterInstance(A.Fake<IStatisticsViewModel>());
@@ -60,20 +63,25 @@ namespace Neurotoxin.Godspeed.Shell.Tests
         {
             var vm = GetInstance();
             var a = GetDummyContentViewModel();
-            WaitForEvent<FileListPaneViewModelItemsChangedEvent, FileListPaneViewModelItemsChangedEventArgs>(a);
-
+            Console.WriteLine("Source:");
+            a.Items.ForEach(i => Console.WriteLine(i.Name));
             a.SelectAllCommand.Execute(null);
+
             var selection = a.SelectedItems.Select(i => i.Model).ToList();
             var b = GetDummyContentViewModel();
-            WaitForEvent<FileListPaneViewModelItemsChangedEvent, FileListPaneViewModelItemsChangedEventArgs>(b);
+            Console.WriteLine("Target:");
+            b.Items.ForEach(i => Console.WriteLine(i.Name));
 
             vm.Copy(a, b);
-            WaitForEvent<TransferFinishedEvent, TransferFinishedEventArgs>();
 
+            var sb = new StringBuilder();
             foreach (var aitem in selection)
             {
-                Assert.IsTrue(b.Items.Any(bitem => IsCopy(aitem, bitem.Model)), aitem.Name + " is missing from target");
+                if (!b.Items.Any(bitem => IsCopy(aitem, bitem.Model)))
+                    sb.AppendLine(aitem.Name + " is missing from target");
             }
+            var errorMessage = sb.ToString();
+            Assert.IsTrue(string.IsNullOrEmpty(errorMessage), errorMessage);
         }
 
         private bool IsCopy(FileSystemItem a, FileSystemItem b)
@@ -117,7 +125,7 @@ namespace Neurotoxin.Godspeed.Shell.Tests
             vm.PropertyChanged -= propDelegate;
         }
 
-        private void WaitForEvent<TEvent, TPayload>(IViewModel vm = null)
+        private void WaitForEvent<TEvent, TPayload>(IViewModel vm = null, int timeout = 10000)
             where TEvent : CompositePresentationEvent<TPayload> 
             where TPayload : IPayload
         {
@@ -131,7 +139,13 @@ namespace Neurotoxin.Godspeed.Shell.Tests
             while (!fired)
             {
                 Thread.Sleep(100);
-                if (sw.ElapsedMilliseconds > 10000) throw new TimeoutException(type);
+                //if (sw.ElapsedMilliseconds > timeout) throw new TimeoutException(type);
+                if (sw.ElapsedMilliseconds > timeout)
+                {
+                    Console.WriteLine("[Event] Timeout occured.");
+                    timeout *= 2;
+                    if (timeout > 100000) throw new TimeoutException(type);
+                }
             }
             Console.WriteLine("[Event] {0} fired after {1}", type, sw.Elapsed);
             eventAggregator.GetEvent<TEvent>().Unsubscribe(action);
