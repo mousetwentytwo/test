@@ -2,13 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
-using Microsoft.Practices.Composite.Events;
-using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Core.Models;
 using Neurotoxin.Godspeed.Shell.Constants;
-using Neurotoxin.Godspeed.Shell.Events;
-using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
 using SharpCompress.Archive;
 using SharpCompress.Archive.Rar;
@@ -16,31 +11,16 @@ using SharpCompress.Archive.SevenZip;
 
 namespace Neurotoxin.Godspeed.Shell.ContentProviders
 {
-    public class CompressedFileContent : IFileManager, IDisposable
+    public class CompressedFileContent : FileSystemContentBase
     {
         private string _archivePath;
         private IArchive _archive;
         private Tree<FileSystemItem> _fileStructure;
-        private readonly IEventAggregator _eventAggregator;
-        private readonly IResourceManager _resourceManager;
-
-        public string TempFilePath { get; set; }
 
         private const char SLASH = '/';
         private const char BACKSLASH = '\\';
 
-        public char Slash
-        {
-            get { return _archive is RarArchive ? BACKSLASH : SLASH; }
-        }
-
-        public CompressedFileContent(IEventAggregator eventAggregator, IResourceManager resourceManager)
-        {
-            _eventAggregator = eventAggregator;
-            _resourceManager = resourceManager;
-        }
-
-        public IList<FileSystemItem> GetDrives()
+        public override IList<FileSystemItem> GetDrives()
         {
             return new List<FileSystemItem>
                        {
@@ -50,28 +30,18 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                                    Path = string.Empty,
                                    FullPath = string.Format(@"{0}:\", _archivePath),
                                    Type = ItemType.Drive,
-                                   Thumbnail = _resourceManager.GetContentByteArray("Resources/package.png")
+                                   Thumbnail = ResourceManager.GetContentByteArray("Resources/package.png")
                                }
                        };
         }
 
-        public IList<FileSystemItem> GetList(string path = null)
+        public override IList<FileSystemItem> GetList(string path = null)
         {
             if (path == null) throw new ArgumentException();
             return _fileStructure.GetChildren(path);
         }
 
-        public FileSystemItem GetItemInfo(string path)
-        {
-            return GetItemInfo(path, null);
-        }
-
-        public FileSystemItem GetItemInfo(string path, ItemType? type)
-        {
-            return GetItemInfo(path, type, true);
-        }
-
-        public FileSystemItem GetItemInfo(string path, ItemType? type, bool swallowException)
+        public override FileSystemItem GetItemInfo(string path, ItemType? type, bool swallowException)
         {
             if (type.HasValue && type.Value == ItemType.Directory && _archive is RarArchive && path[path.Length -1] != BACKSLASH) path += BACKSLASH;
             var item = _fileStructure.Find(path);
@@ -121,97 +91,56 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             };
         }
 
-        public DateTime GetFileModificationTime(string path)
+        public override DateTime GetFileModificationTime(string path)
         {
             var entry = _archive.Entries.First(e => e.FilePath == path);
             return entry.LastModifiedTime ?? DateTime.MinValue;
         }
 
-        public bool DriveIsReady(string drive)
+        public override bool DriveIsReady(string drive)
         {
             return true;
         }
 
-        public FileExistenceInfo FileExists(string path)
+        public override FileExistenceInfo FileExists(string path)
         {
             var item = _fileStructure.Find(path);
             if (item == null || item.Type != ItemType.File) return false;
             return item.Size;
         }
 
-        public bool FolderExists(string path)
+        public override bool FolderExists(string path)
         {
             var item = _fileStructure.Find(path);
             return item != null && item.Type == ItemType.Directory;
         }
 
-        public void DeleteFolder(string path)
+        public override void DeleteFolder(string path)
         {
             throw new NotSupportedException();
         }
 
-        public void DeleteFile(string path)
+        public override void DeleteFile(string path)
         {
             throw new NotSupportedException();
         }
 
-        public void CreateFolder(string path)
+        public override void CreateFolder(string path)
         {
             throw new NotSupportedException();
         }
 
-        public byte[] ReadFileContent(string path)
-        {
-            var stream = _archive.Entries.First(e => e.FilePath == path).OpenEntryStream();
-            return stream.ReadBytes((int)stream.Length);
-        }
-
-        public byte[] ReadFileContent(string path, bool saveTempFile, long fileSize)
-        {
-            return ReadFileContent(path);
-        }
-
-        public byte[] ReadFileHeader(string path)
-        {
-            var stream = _archive.Entries.First(e => e.FilePath == path).OpenEntryStream();
-            return stream.ReadBytes(0x971A);
-        }
-
-        public void ExtractFile(string path, FileStream fs)
-        {
-            var entry = _archive.Entries.First(e => e.FilePath == path);
-            var size = entry.Size;
-            long totalBytesTransferred = 0;
-            var percentage = 0;
-            using (new Timer(s =>
-                                 {
-                                     long streamLength;
-                                     try
-                                     {
-                                         streamLength = fs.Length;
-                                     }
-                                     catch
-                                     {
-                                         streamLength = size;
-                                     }
-                                     var transferred = streamLength - totalBytesTransferred;
-                                     totalBytesTransferred = streamLength;
-                                     percentage = (int) (totalBytesTransferred*100/size);
-                                     var args = new TransferProgressChangedEventArgs(percentage, transferred, totalBytesTransferred, 0);
-                                     _eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(args);
-                                 }, null, 100, 1))
-            {
-                entry.WriteTo(fs);
-                while (percentage != 100)
-                {
-                    Thread.Sleep(100);
-                }
-            }
-        }
-
-        public FileSystemItem Rename(string path, string newName)
+        public override FileSystemItem Rename(string path, string newName)
         {
             throw new NotImplementedException();
+        }
+
+        public override Stream GetStream(string path, FileMode mode, FileAccess access, long startPosition)
+        {
+            if (access != FileAccess.Read) throw new ArgumentException("Write is not supported");
+            var stream = _archive.Entries.First(e => e.FilePath == path).OpenEntryStream();
+            if (startPosition != 0) stream.Seek(startPosition, SeekOrigin.Begin);
+            return stream;
         }
 
         public void Open(string path)
@@ -219,6 +148,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             _archivePath = path;
             _archive = ArchiveFactory.Open(path);
             var isRar = _archive is RarArchive;
+            Slash = isRar ? BACKSLASH : SLASH;
             _fileStructure = new Tree<FileSystemItem>();
             foreach (var entry in _archive.Entries.OrderBy(e => e.FilePath))
             {
@@ -226,14 +156,9 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 if (isRar) entryPath += BACKSLASH;
                 _fileStructure.Insert(entryPath, CreateModel(entry), name => CreateModel(name, true, DateTime.MinValue, null));
             }
-
-            //foreach (var key in _fileStructure.Keys.Where(key => key != string.Empty && !_fileStructure.ItemHasContent(key)))
-            //{
-            //    _fileStructure.UpdateItem(key, );
-            //}
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             _archive.Dispose();
             _archive = null;

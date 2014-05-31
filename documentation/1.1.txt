@@ -26,10 +26,11 @@
 * FIXED: Move deletes skipped files
 * ADDED: DashLaunch FTP (DLiFTPD) support
 * ADDED: XeXMenu and DashLaunch FTP cannot be accessed in PASV anymore
-* ADDED: Hungarian language
 * ADDED: Better support of reparse points
+* ADDED: Completely rewritten copy mechanism
 * ADDED: FSD/F3 Content Scan Trigger
 * ADDED: File hash verification after FTP upload
 * ADDED: Launch games via HTTP
 * ADDED: Launch .xex fila via FTP
 * ADDED: FSD Database Checker
+* ADDED: Hungarian language

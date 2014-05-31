@@ -3,39 +3,22 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Microsoft.Practices.Composite.Events;
 using Neurotoxin.Godspeed.Core.Constants;
 using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Core.Io.Stfs;
 using Neurotoxin.Godspeed.Core.Io.Stfs.Data;
 using Neurotoxin.Godspeed.Core.Models;
 using Neurotoxin.Godspeed.Shell.Constants;
-using Neurotoxin.Godspeed.Shell.Events;
-using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
 
 namespace Neurotoxin.Godspeed.Shell.ContentProviders
 {
-    public class StfsPackageContent : IFileManager, IDisposable
+    public class StfsPackageContent : FileSystemContentBase
     {
-        public string TempFilePath { get; set; }
-
-        private const char SLASH = '\\';
-        public char Slash
-        {
-            get { return SLASH; }
-        }
-
         private ContentType _contentType;
         private StfsPackage _stfs;
-        private readonly IEventAggregator _eventAggregator;
 
-        public StfsPackageContent(IEventAggregator eventAggregator)
-        {
-            _eventAggregator = eventAggregator;
-        }
-
-        public IList<FileSystemItem> GetDrives()
+        public override IList<FileSystemItem> GetDrives()
         {
             const string path = @"\Root\";
             return new List<FileSystemItem>
@@ -52,7 +35,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                        };
         }
 
-        public IList<FileSystemItem> GetList(string path = null)
+        public override IList<FileSystemItem> GetList(string path = null)
         {
             if (path == null) throw new NotSupportedException();
 
@@ -63,17 +46,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             return list;
         }
 
-        public FileSystemItem GetItemInfo(string path)
-        {
-            return GetItemInfo(path, null);
-        }
-
-        public FileSystemItem GetItemInfo(string path, ItemType? type)
-        {
-            return GetItemInfo(path, type, true);
-        }
-
-        public FileSystemItem GetItemInfo(string path, ItemType? type, bool swallowException)
+        public override FileSystemItem GetItemInfo(string path, ItemType? type, bool swallowException)
         {
             var item = GetFileInfo(path) ?? GetFolderInfo(path);
             if (item == null) return null;
@@ -110,92 +83,84 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             };
         }
 
-        public DateTime GetFileModificationTime(string path)
+        public override DateTime GetFileModificationTime(string path)
         {
             var f = _stfs.GetFileEntry(path);
             return DateTimeExtensions.FromFatFileTime(f.AccessTimeStamp);
         }
 
-        public bool DriveIsReady(string drive)
+        public override bool DriveIsReady(string drive)
         {
             return true;
         }
 
-        public FileExistenceInfo FileExists(string path)
+        public override FileExistenceInfo FileExists(string path)
         {
             var entry = _stfs.GetFileEntry(path, true);
             if (entry == null) return false;
             return entry.FileSize;
         }
 
-        public bool FolderExists(string path)
+        public override bool FolderExists(string path)
         {
             return _stfs.GetFolderEntry(path, true) != null;
         }
 
-        public void DeleteFolder(string path)
+        public override void DeleteFolder(string path)
         {
             _stfs.RemoveFolder(path);
         }
 
-        public void DeleteFile(string path)
+        public override void DeleteFile(string path)
         {
             _stfs.RemoveFile(path);
         }
 
-        public void CreateFolder(string path)
+        public override void CreateFolder(string path)
         {
             _stfs.AddFolder(path);
         }
 
-        public byte[] ReadFileContent(string path)
-        {
-            return _stfs.ExtractFile(path);
-        }
+        //public void ExtractFile(string remotePath, FileStream fs, long remoteStartPosition)
+        //{
+        //    _eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(0, 0, 0, 0));
+        //    var bytes = ReadFileContent(remotePath);
+        //    var offset = (int)remoteStartPosition;
+        //    fs.Write(bytes, offset, bytes.Length - offset);
+        //    _eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(100, bytes.Length, bytes.Length, 0));
+        //}
 
-        public byte[] ReadFileContent(string path, bool saveTempFile, long fileSize)
-        {
-            return ReadFileContent(path);
-        }
+        //public void AddFile(string targetPath, string sourcePath)
+        //{
+        //    _eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(0, 0, 0, 0));
+        //    var content = File.ReadAllBytes(sourcePath);
+        //    _stfs.AddFile(targetPath, content);
+        //    _eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(100, content.Length, content.Length, 0));
+        //}
 
-        public byte[] ReadFileHeader(string path)
-        {
-            return _stfs.ExtractFile(path, 0x971A);
-        }
+        //public void ReplaceFile(string targetPath, string sourcePath)
+        //{
+        //    _eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(0, 0, 0, 0));
+        //    var content = File.ReadAllBytes(sourcePath);
+        //    var fileEntry = _stfs.GetFileEntry(targetPath);
+        //    _stfs.ReplaceFile(fileEntry, content);
+        //    _eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(100, content.Length, content.Length, 0));
+        //}
 
-        public void ExtractFile(string remotePath, FileStream fs, long remoteStartPosition)
-        {
-            _eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(0, 0, 0, 0));
-            var bytes = ReadFileContent(remotePath);
-            var offset = (int)remoteStartPosition;
-            fs.Write(bytes, offset, bytes.Length - offset);
-            _eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(100, bytes.Length, bytes.Length, 0));
-        }
-
-        public void AddFile(string targetPath, string sourcePath)
-        {
-            _eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(0, 0, 0, 0));
-            var content = File.ReadAllBytes(sourcePath);
-            _stfs.AddFile(targetPath, content);
-            _eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(100, content.Length, content.Length, 0));
-        }
-
-        public void ReplaceFile(string targetPath, string sourcePath)
-        {
-            _eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(0, 0, 0, 0));
-            var content = File.ReadAllBytes(sourcePath);
-            var fileEntry = _stfs.GetFileEntry(targetPath);
-            _stfs.ReplaceFile(fileEntry, content);
-            _eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(100, content.Length, content.Length, 0));
-        }
-
-        public FileSystemItem Rename(string path, string newName)
+        public override FileSystemItem Rename(string path, string newName)
         {
             var entry = _stfs.Rename(path, newName);
             var oldName = Path.GetFileName(path.TrimEnd('\\'));
             var r = new Regex(string.Format(@"{0}\\?$", Regex.Escape(oldName)), RegexOptions.IgnoreCase);
             var newPath = r.Replace(path, newName);
             return CreateModel(entry, newPath);
+        }
+
+        public override Stream GetStream(string path, FileMode mode, FileAccess access, long startPosition)
+        {
+            var stream = _stfs.OpenEntryStream(path);
+            if (startPosition != 0) stream.Seek(startPosition, SeekOrigin.Begin);
+            return stream;
         }
 
         public Account GetAccount()
@@ -216,7 +181,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         }
 
 
-        public void Dispose()
+        public override void Dispose()
         {
             _stfs = null;
             GC.Collect();

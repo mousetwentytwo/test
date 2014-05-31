@@ -17,16 +17,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             get { return true; }
         }
 
-        protected override string ExportActionDescription
-        {
-            get { return Resx.Extract; }
-        }
-
-        protected override string ImportActionDescription
-        {
-            get { return Resx.Inject; }
-        }
-
         public override bool IsVerificationSupported
         {
             get { return false; }
@@ -82,32 +72,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public override string GetTargetPath(string path)
         {
             return string.Format("{0}{1}", CurrentFolder.Path, path.Replace('\\', '/'));
-        }
-
-        protected override bool SaveToFileStream(FileSystemItem item, FileStream fs, long remoteStartPosition)
-        {
-            FileManager.ExtractFile(item.Path, fs);
-            return true;
-        }
-
-        protected override bool CreateFile(string targetPath, FileSystemItem source)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override bool OverwriteFile(string targetPath, FileSystemItem source)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override bool ResumeFile(string targetPath, FileSystemItem source)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void Abort()
-        {
-            throw new NotImplementedException();
         }
 
         public override void Dispose()

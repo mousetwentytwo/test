@@ -1,20 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using Neurotoxin.Godspeed.Core.Models;
 using Neurotoxin.Godspeed.Shell.Constants;
-using Neurotoxin.Godspeed.Shell.Interfaces;
+using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Shell.Models;
 using Neurotoxin.Godspeed.Shell.Tests.Helpers;
-using Microsoft.Practices.ObjectBuilder2;
+using System.Linq;
 
 namespace Neurotoxin.Godspeed.Shell.Tests.Dummies
 {
-    public class DummyContent : IFileManager
+    public class DummyContent : FileSystemContentBase
     {
         private Tree<FileSystemItem> _tree;
-        public string TempFilePath { get; private set; }
-        public char Slash { get; private set; }
 
         private FakingRules _fakingRules;
         public FakingRules FakingRules
@@ -37,6 +36,10 @@ namespace Neurotoxin.Godspeed.Shell.Tests.Dummies
             }
         }
 
+        public DummyContent() : base('/')
+        {
+        }
+
         private void GenerateTree(TreeItem<FileSystemItem> node, int depth, int level = 0)
         {
             var itemCount = C.Random<int>(_fakingRules.GetItemCount(level));
@@ -44,98 +47,110 @@ namespace Neurotoxin.Godspeed.Shell.Tests.Dummies
             foreach (var n in nodes)
             {
                 n.Content.FullPath = n.Content.Path = node.Content.Path + "/" + n.Content.Name;
+                n.Content.Size = C.Random<int>(0xFF, 0xFFFF);
                 if (level < depth) GenerateTree(n, depth, level+1);
             }
         }
 
-        public IList<FileSystemItem> GetDrives()
+        public override IList<FileSystemItem> GetDrives()
         {
             return _tree.GetChildren("/");
         }
 
-        public IList<FileSystemItem> GetList(string path = null)
+        public override IList<FileSystemItem> GetList(string path = null)
         {
             if (path == null) throw new ArgumentNullException("path");
             return _tree.GetChildren(path);
         }
 
-        public FileSystemItem GetItemInfo(string itemPath)
+        public override FileSystemItem GetItemInfo(string itemPath, ItemType? type, bool swallowException)
         {
             var fake = C.Fake<FileSystemItem>();
             fake.Path = itemPath;
-            return fake;
-        }
-
-        public FileSystemItem GetItemInfo(string itemPath, ItemType? type)
-        {
-            var fake = GetItemInfo(itemPath);
             if (type != null) fake.Type = type.Value;
             return fake;
         }
 
-        public FileSystemItem GetItemInfo(string itemPath, ItemType? type, bool swallowException)
-        {
-            //TODO: implement swallowException handling
-            return GetItemInfo(itemPath, type);
-        }
-
-        public DateTime GetFileModificationTime(string path)
+        public override DateTime GetFileModificationTime(string path)
         {
             return C.Random<DateTime>(-7*24*3600, -1000);
         }
 
-        public bool DriveIsReady(string drive)
+        public override bool DriveIsReady(string drive)
         {
             return true;
         }
 
-        public FileExistenceInfo FileExists(string path)
+        public override FileExistenceInfo FileExists(string path)
         {
             var fake = _tree.Find(path);
-            return fake != null && fake.Type == ItemType.File;
+            if (fake != null && fake.Type == ItemType.File)
+                return fake.Size;
+            return false;
         }
 
-        public bool FolderExists(string path)
+        public override bool FolderExists(string path)
         {
             var fake = _tree.Find(path);
             return fake != null && fake.Type == ItemType.Directory;
         }
 
-        public void DeleteFolder(string path)
+        public override void DeleteFolder(string path)
         {
             //TODO
         }
 
-        public void DeleteFile(string path)
+        public override void DeleteFile(string path)
         {
             //TODO
         }
 
-        public void CreateFolder(string path)
+        public override void CreateFolder(string path)
         {
-            _tree.Insert(path);
+            var parts = path.Split(Slash);
+            var fake = C.Fake<FileSystemItem>();
+            fake.Path = fake.FullPath = path;
+            fake.Type = ItemType.Directory;
+            fake.Name = parts.Last();
+            _tree.Insert(path, fake);
         }
 
-        public byte[] ReadFileContent(string path, bool saveToTempFile, long fileSize)
-        {
-            return C.Random<byte[]>(0x971A, 0xFFFF);
-        }
-
-        public byte[] ReadFileHeader(string path)
-        {
-            return C.Random<byte[]>(0x971A, 0x971A);
-        }
-
-        public FileSystemItem Rename(string path, string newName)
+        public override FileSystemItem Rename(string path, string newName)
         {
             var fake = _tree.Find(path);
             fake.Name = newName;
             return fake;
         }
 
+        public override Stream GetStream(string path, FileMode mode, FileAccess access, long startPosition)
+        {
+            var fake = _tree.Find(path);
+            if (fake == null)
+            {
+                if (access == FileAccess.Write)
+                {
+                    var parts = path.Split(new[] {Slash}, StringSplitOptions.RemoveEmptyEntries);
+                    fake = C.Fake<FileSystemItem>();
+                    fake.Path = fake.FullPath = path;
+                    fake.Type = ItemType.File;
+                    fake.Name = parts.Last();
+                    _tree.Insert(path, fake);
+                }
+                else
+                {
+                    throw new Exception();
+                }
+            } 
+
+            var ms = new MemoryStream(0xFFFF);
+            ms.Seek(startPosition, SeekOrigin.Begin);
+            return ms;
+        }
+
         public void AddFile(FileSystemItem item)
         {
             _tree.Insert(item.Path, item);
         }
+
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Models;
 using Neurotoxin.Godspeed.Shell.ViewModels;
@@ -29,8 +30,12 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
         void GetItemViewModel(string itemPath);
         string GetTargetPath(string sourcePath);
 
-        TransferResult Export(FileSystemItem item, string savePath, CopyAction action);
-        TransferResult Import(FileSystemItem item, string savePath, CopyAction action);
+        //TransferResult Export(FileSystemItem item, string savePath, CopyAction action);
+        //TransferResult Import(FileSystemItem item, string savePath, CopyAction action);
+
+        FileExistenceInfo FileExists(string path);
+        Stream GetStream(string path, FileMode mode, FileAccess access, long startPosition);
+        bool CopyStream(FileSystemItem item, Stream stream, long remoteStartPosition = 0, long? byteLimit = null);
 
         void Refresh();
         void Refresh(Action callback);

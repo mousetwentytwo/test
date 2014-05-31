@@ -5,31 +5,16 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
-using Microsoft.Practices.Composite.Events;
-using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Shell.Constants;
-using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
-using Neurotoxin.Godspeed.Shell.Views;
 using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 
 namespace Neurotoxin.Godspeed.Shell.ContentProviders
 {
-    public class LocalFileSystemContent : IFileManager
+    public class LocalFileSystemContent : FileSystemContentBase
     {
-        private readonly IEventAggregator _eventAggregator;
         private readonly IWindowManager _windowManager;
-        private readonly IResourceManager _resourceManager;
-        private bool _isAborted;
-
-        private const char SLASH = '\\';
-        public char Slash
-        {
-            get { return SLASH; }
-        }
-
-        public string TempFilePath { get; set; }
 
         [DllImport("mpr.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         private static extern int WNetGetConnection(
@@ -37,14 +22,12 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             [MarshalAs(UnmanagedType.LPTStr)] StringBuilder remoteName,
             ref int length);
 
-        public LocalFileSystemContent(IEventAggregator eventAggregator, IWindowManager windowManager, IResourceManager resourceManager)
+        public LocalFileSystemContent(IWindowManager windowManager)
         {
-            _eventAggregator = eventAggregator;
             _windowManager = windowManager;
-            _resourceManager = resourceManager;
         }
 
-        public IList<FileSystemItem> GetDrives()
+        public override IList<FileSystemItem> GetDrives()
         {
             var drives = DriveInfo.GetDrives();
             var result = new List<FileSystemItem>();
@@ -78,14 +61,14 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                     FullPath = fullPath ?? drive.Name,
                     Name = name,
                     Type = ItemType.Drive,
-                    Thumbnail = _resourceManager.GetContentByteArray(string.Format("/Resources/{0}.png", icon))
+                    Thumbnail = ResourceManager.GetContentByteArray(string.Format("/Resources/{0}.png", icon))
                 };
                 result.Add(item);
             }
             return result;
         }
 
-        public IList<FileSystemItem> GetList(string path = null)
+        public override IList<FileSystemItem> GetList(string path = null)
         {
             if (path == null) throw new NotSupportedException();
             var list = Directory.GetDirectories(path).Select(p => GetDirectoryInfo(p)).ToList();
@@ -93,32 +76,22 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             return list;
         }
 
-        public FileSystemItem GetItemInfo(string path)
-        {
-            return GetItemInfo(path, null);
-        }
-
-        public FileSystemItem GetItemInfo(string path, ItemType? type)
-        {
-            return GetItemInfo(path, type, true);
-        }
-
-        public FileSystemItem GetItemInfo(string path, ItemType? type, bool swallowException)
+        public override FileSystemItem GetItemInfo(string path, ItemType? type, bool swallowException)
         {
             if (path.EndsWith("\\") && Directory.Exists(path)) return GetDirectoryInfo(path, type);
             if (File.Exists(path)) return GetFileInfo(path);
-            path += SLASH;
+            path += Slash;
             return Directory.Exists(path) ? GetDirectoryInfo(path, type) : null;
         }
 
-        private static FileSystemItem GetDirectoryInfo(string path, ItemType? type = null)
+        private FileSystemItem GetDirectoryInfo(string path, ItemType? type = null)
         {
-            if (!path.EndsWith("\\")) path += SLASH;
+            if (!path.EndsWith("\\")) path += Slash;
             var dirInfo = new FileInfo(path);
 
             return new FileSystemItem
             {
-                Name = Path.GetFileName(path.TrimEnd(SLASH)),
+                Name = Path.GetFileName(path.TrimEnd(Slash)),
                 Type = type ?? (dirInfo.Attributes.HasFlag(FileAttributes.ReparsePoint) ? ItemType.Link : ItemType.Directory),
                 Date = dirInfo.LastWriteTime,
                 Path = path,
@@ -140,85 +113,45 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             };
         }
 
-        public DateTime GetFileModificationTime(string path)
+        public override DateTime GetFileModificationTime(string path)
         {
             return File.GetLastWriteTime(path);
         }
 
-        public bool DriveIsReady(string drive)
+        public override bool DriveIsReady(string drive)
         {
             var driveInfo = DriveInfo.GetDrives().FirstOrDefault(d => d.Name == drive);
             return driveInfo != null && driveInfo.IsReady;
         }
 
-        public FileExistenceInfo FileExists(string path)
+        public override FileExistenceInfo FileExists(string path)
         {
             var file = new FileInfo(path);
             if (file.Exists) return file.Length;
             return false;
         }
 
-        public bool FolderExists(string path)
+        public override bool FolderExists(string path)
         {
             return Directory.Exists(path);
         }
 
-        public void DeleteFolder(string path)
+        public override void DeleteFolder(string path)
         {
             Directory.Delete(path);
         }
 
-        public void DeleteFile(string path)
+        public override void DeleteFile(string path)
         {
             File.Delete(path);
         }
 
-        public void CreateFolder(string path)
+        public override void CreateFolder(string path)
         {
             Directory.CreateDirectory(path);
         }
 
-        public byte[] ReadFileContent(string path, bool saveTempFile, long fileSize)
-        {
-            return File.ReadAllBytes(path);
-        }
-
-        public byte[] ReadFileHeader(string path)
-        {
-            var fs = new FileStream(path, FileMode.Open, FileAccess.Read);
-            var bytes = new byte[0x971A];
-            fs.Read(bytes, 0, bytes.Length);
-            fs.Close();
-            return bytes;
-        }
-
-        public bool CopyFile(string path, FileStream fs, long resumeStartPosition)
-        {
-            _isAborted = false;
-            var totalBytesTransferred = resumeStartPosition;
-            var readStream = File.Open(path, FileMode.Open, FileAccess.Read);
-            var totalBytes = readStream.Length;
-            readStream.Seek(resumeStartPosition, SeekOrigin.Begin);
-            var buffer = new byte[32768];
-            int bytesRead;
-            _eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(-1, resumeStartPosition, resumeStartPosition, resumeStartPosition));
-            while ((bytesRead = readStream.Read(buffer, 0, buffer.Length)) > 0 && !_isAborted)
-            {
-                fs.Write(buffer, 0, bytesRead);
-                totalBytesTransferred += bytesRead;
-                var percentage = (int)(totalBytesTransferred / totalBytes * 100);
-                _eventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(new TransferProgressChangedEventArgs(percentage, bytesRead, totalBytesTransferred, resumeStartPosition));
-            }
-            readStream.Close();
-            return !_isAborted;
-        }
-
-        public void AbortCopy()
-        {
-            _isAborted = true;
-        }
-
-        public FileSystemItem Rename(string path, string newName)
+        public override FileSystemItem Rename(string path, string newName)
         {
             var oldName = Path.GetFileName(path.TrimEnd(Slash));
             var r = new Regex(string.Format(@"{0}\\?$", Regex.Escape(oldName)), RegexOptions.IgnoreCase);
@@ -263,6 +196,13 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                     return GetFileInfo(path);
                 }
             }
+        }
+
+        public override Stream GetStream(string path, FileMode mode, FileAccess access, long startPosition)
+        {
+            var stream = new FileStream(path, mode, access);
+            if (startPosition != 0) stream.Seek(startPosition, SeekOrigin.Begin);
+            return stream;
         }
     }
 }

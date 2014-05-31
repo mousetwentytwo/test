@@ -19,7 +19,6 @@ using Neurotoxin.Godspeed.Presentation.Formatters;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Events;
-using Neurotoxin.Godspeed.Shell.Exceptions;
 using Neurotoxin.Godspeed.Shell.Helpers;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
@@ -39,13 +38,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         protected readonly T FileManager;
         protected readonly IUserSettings UserSettings;
         protected readonly Dictionary<FileSystemItemViewModel, string> PathCache = new Dictionary<FileSystemItemViewModel, string>();
-
-        #region Constants
-
-        protected abstract string ExportActionDescription { get; }
-        protected abstract string ImportActionDescription { get; }
-
-        #endregion
 
         #region Properties
 
@@ -1090,11 +1082,10 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         }
 
         public abstract string GetTargetPath(string path);
-        protected abstract bool SaveToFileStream(FileSystemItem item, FileStream fs, long remoteStartPosition);
-        protected abstract bool CreateFile(string targetPath, FileSystemItem source);
-        protected abstract bool OverwriteFile(string targetPath, FileSystemItem source);
-        protected abstract bool ResumeFile(string targetPath, FileSystemItem source);
-        public abstract void Abort();
+        public void Abort()
+        {
+            FileManager.Abort();
+        }
 
         protected void Initialize()
         {
@@ -1129,43 +1120,29 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             RaiseCanExecuteChanges();
         }
 
-        public bool FileExists(string path)
+        public FileExistenceInfo FileExists(string path)
         {
             return FileManager.FileExists(path);
         }
 
-        public TransferResult Delete(FileSystemItem item)
+        public virtual TransferResult Delete(FileSystemItem item)
         {
-            try
+            if (item.Type == ItemType.File)
             {
-                if (item.Type == ItemType.File)
-                {
-                    FileManager.DeleteFile(item.Path);
-                }
-                else
-                {
-                    FileManager.DeleteFolder(item.Path);
-                }
-                return TransferResult.Ok;
+                FileManager.DeleteFile(item.Path);
             }
-            catch (Exception ex)
+            else
             {
-                throw WrapTransferRelatedExceptions(ex);
+                FileManager.DeleteFolder(item.Path);
             }
+            return TransferResult.Ok;
         }
 
-        public TransferResult CreateFolder(string path)
+        public virtual TransferResult CreateFolder(string path)
         {
-            try
-            {
-                if (FileManager.FolderExists(path)) return TransferResult.Skipped;
-                FileManager.CreateFolder(path);
-                return TransferResult.Ok;
-            }
-            catch (Exception ex)
-            {
-                throw WrapTransferRelatedExceptions(ex);
-            }
+            if (FileManager.FolderExists(path)) return TransferResult.Skipped;
+            FileManager.CreateFolder(path);
+            return TransferResult.Ok;
         }
 
         private bool IsDriveAccessible(FileSystemItemViewModel drive)
@@ -1200,12 +1177,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             
             ChangeDirectoryCommand.Execute(null);
         }
-
-        protected virtual Exception WrapTransferRelatedExceptions(Exception exception)
-        {
-            return exception;
-        }
-
 
         public override void RaiseCanExecuteChanges()
         {
@@ -1331,92 +1302,21 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             return result;
         }
 
-        private void AsyncErrorCallback(Exception ex)
+        protected virtual void AsyncErrorCallback(Exception ex)
         {
-            Console.WriteLine("[Change Directory]", ex.Message);
             _calculationIsRunning = false;
             IsBusy = false;
-            EventAggregator.GetEvent<ShowCorrespondingErrorEvent>().Publish(new ShowCorrespondingErrorEventArgs(WrapTransferRelatedExceptions(ex), false));
+            EventAggregator.GetEvent<ShowCorrespondingErrorEvent>().Publish(new ShowCorrespondingErrorEventArgs(ex, false));
         }
 
-        public TransferResult Export(FileSystemItem item, string savePath, CopyAction action)
+        public virtual Stream GetStream(string path, FileMode mode, FileAccess access, long startPosition)
         {
-            if (item.Type != ItemType.File) throw new NotSupportedException();
-            UIThread.Run(() => EventAggregator.GetEvent<TransferActionStartedEvent>().Publish(ExportActionDescription));
-            try
-            {
-                FileMode mode;
-                long remoteStartPosition = 0;
-                switch (action)
-                {
-                    case CopyAction.CreateNew:
-                        var file = new FileInfo(savePath);
-                        if (file.Exists) throw new TransferException(TransferErrorType.WriteAccessError, Resx.TargetAlreadyExists, item.Path, savePath, file.Length);
-                        mode = FileMode.CreateNew;
-                        break;
-                    case CopyAction.Overwrite:
-                        mode = FileMode.Create;
-                        break;
-                    case CopyAction.OverwriteOlder:
-                        var fileDate = File.GetLastWriteTime(savePath);
-                        if (fileDate > item.Date) return TransferResult.Skipped;
-                        mode = FileMode.Create;
-                        break;
-                    case CopyAction.Resume:
-                        mode = FileMode.Append;
-                        var fi = new FileInfo(savePath);
-                        remoteStartPosition = fi.Length;
-                        break;
-                    default:
-                        throw new ArgumentException("Invalid Copy action: " + action);
-                }
-                bool result;
-                using (var fs = new FileStream(savePath, mode))
-                {
-                    result = SaveToFileStream(item, fs, remoteStartPosition);
-                }
-                return result ? TransferResult.Ok : TransferResult.Aborted;
-            }
-            catch (Exception ex)
-            {
-                throw WrapTransferRelatedExceptions(ex);
-            }
+            return FileManager.GetStream(path, mode, access, startPosition);
         }
 
-        public TransferResult Import(FileSystemItem item, string savePath, CopyAction action)
+        public virtual bool CopyStream(FileSystemItem item, Stream stream, long startPosition = 0, long? byteLimit = null)
         {
-            if (item.Type != ItemType.File) throw new NotSupportedException();
-            UIThread.Run(() => EventAggregator.GetEvent<TransferActionStartedEvent>().Publish(ImportActionDescription));
-            try
-            {
-                bool result;
-                switch (action)
-                {
-                    case CopyAction.CreateNew:
-                        var exists = FileManager.FileExists(savePath);
-                        if (exists) throw new TransferException(TransferErrorType.WriteAccessError, Resx.TargetAlreadyExists, item.Path, savePath, exists.Size);
-                        result = CreateFile(savePath, item);
-                        break;
-                    case CopyAction.Overwrite:
-                        result = OverwriteFile(savePath, item);
-                        break;
-                    case CopyAction.OverwriteOlder:
-                        var fileDate = FileManager.GetFileModificationTime(savePath);
-                        if (fileDate > item.Date) return TransferResult.Skipped;
-                        result = OverwriteFile(savePath, item);
-                        break;
-                    case CopyAction.Resume:
-                        result = ResumeFile(savePath, item);
-                        break;
-                    default:
-                        throw new ArgumentException("Invalid Copy action: " + action);
-                }
-                return result ? TransferResult.Ok : TransferResult.Aborted;
-            }
-            catch (Exception ex)
-            {
-                throw WrapTransferRelatedExceptions(ex);
-            }
+            return FileManager.CopyTo(item, stream, startPosition, byteLimit);
         }
 
         private void OnTransferProgressChanged(TransferProgressChangedEventArgs args)

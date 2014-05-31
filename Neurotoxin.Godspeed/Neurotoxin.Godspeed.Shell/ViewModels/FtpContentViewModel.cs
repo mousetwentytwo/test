@@ -36,6 +36,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public Stack<string> Log { get { return FileManager.Log; } }
         public Dictionary<int, FsdScanPath> ScanFolders { get; private set; }
 
+        public bool IsConnected
+        {
+            get { return FileManager.IsConnected; }
+        }
+
         public bool IsKeepAliveEnabled
         {
             get { return FileManager.IsKeepAliveEnabled; }
@@ -45,24 +50,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public override bool IsReadOnly
         {
             get { return false; }
-        }
-        
-        protected override string ExportActionDescription
-        {
-            get { return Resx.Download; }
-        }
-
-        protected override string ImportActionDescription
-        {
-            get { return Resx.Upload; }
-        }
-
-        private string ConnectionLostMessage
-        {
-            get
-            {
-                return string.Format(Resx.ConnectionLostMessage, Connection.Name);
-            }
         }
 
         private bool IsContentScanTriggerAvailable
@@ -364,11 +351,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             FileManager.RestoreConnection();
         }
 
-        public override void Abort()
-        {
-            FileManager.Abort();
-        }
-
         public override void FinishTransferAsSource()
         {
             IsKeepAliveEnabled = false;
@@ -562,53 +544,73 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             return String.Format("{0}{1}", CurrentFolder.Path, path.Replace('\\', '/'));
         }
 
-        protected override bool SaveToFileStream(FileSystemItem item, FileStream fs, long remoteStartPosition)
+        protected override void AsyncErrorCallback(Exception ex)
         {
-            return FileManager.DownloadFile(item.Path, fs, remoteStartPosition, item.Size ?? 0);
+            base.AsyncErrorCallback(WrapFtpException(ex));
         }
 
-        protected override Exception WrapTransferRelatedExceptions(Exception exception)
+        public override TransferResult CreateFolder(string path)
         {
-            if (!FileManager.IsConnected)
+            try
             {
-                return new TransferException(TransferErrorType.LostConnection, ConnectionLostMessage, exception);
+                return base.CreateFolder(path);
             }
-            if (exception is IOException || exception is FtpException || exception is SocketException)
+            catch (Exception ex)
             {
-                return new TransferException(TransferErrorType.NotSpecified, exception.Message, exception);
+                throw WrapFtpException(ex);
             }
-            return base.WrapTransferRelatedExceptions(exception);
         }
 
-        protected override bool CreateFile(string targetPath, FileSystemItem source)
+        public override TransferResult Delete(FileSystemItem item)
         {
-            return FileManager.UploadFile(targetPath, source.Path);
+            try
+            {
+                return base.Delete(item);
+            }
+            catch (Exception ex)
+            {
+                throw WrapFtpException(ex);
+            }
         }
 
-        protected override bool OverwriteFile(string targetPath, FileSystemItem source)
+        public override Stream GetStream(string path, FileMode mode, FileAccess access, long startPosition)
         {
-            return FileManager.UploadFile(targetPath, source.Path);
+            try
+            {
+                return base.GetStream(path, mode, access, startPosition);
+            }
+            catch (Exception ex)
+            {
+                throw WrapFtpException(ex);
+            }
         }
 
-        protected override bool ResumeFile(string targetPath, FileSystemItem source)
+        public override bool CopyStream(FileSystemItem item, Stream stream, long startPosition = 0, long? byteLimit = null)
         {
-            return FileManager.UploadFile(targetPath, source.Path, true);
+            try
+            {
+                return base.CopyStream(item, stream, startPosition, byteLimit);
+            }
+            catch (Exception ex)
+            {
+                throw WrapFtpException(ex);
+            }
+        }
+
+        private Exception WrapFtpException(Exception exception)
+        {
+            if (FileManager.IsConnected) return exception;
+            return new TransferException(TransferErrorType.LostConnection, string.Format(Resx.ConnectionLostMessage, Connection.Name), exception)
+                       {
+                           Pane = this
+                       };
         }
 
         public TransferResult VerifyUpload(string savePath, string itemPath)
         {
             if (!FileManager.IsFSD) return TransferResult.Skipped;
 
-            bool match;
-            try
-            {
-                match = FileManager.VerifyUpload(savePath, itemPath);
-            }
-            catch (Exception ex)
-            {
-                throw WrapTransferRelatedExceptions(ex);
-            }
-            
+            var match = FileManager.VerifyUpload(savePath, itemPath);
             if (!match) throw new FtpHashVerificationException(Resx.FtpHashVerificationFailed);
             return TransferResult.Ok;
         }
@@ -621,77 +623,77 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         //    return tempFilePath;
         //}
 
-        public TransferResult RemoteDownload(FileSystemItem item, string savePath, CopyAction action)
-        {
-            if (item.Type != ItemType.File) throw new NotSupportedException();
-            UIThread.Run(() => EventAggregator.GetEvent<TransferActionStartedEvent>().Publish(ExportActionDescription));
-            long resumeStartPosition = 0;
-            try
-            {
-                switch (action)
-                {
-                    case CopyAction.CreateNew:
-                        if (File.Exists(savePath)) throw new TransferException(TransferErrorType.WriteAccessError, item.Path, savePath, Resx.TargetAlreadyExists);
-                        break;
-                    case CopyAction.Overwrite:
-                        File.Delete(savePath);
-                        break;
-                    case CopyAction.OverwriteOlder:
-                        var fileDate = File.GetLastWriteTime(savePath);
-                        if (fileDate > item.Date) return TransferResult.Skipped;
-                        File.Delete(savePath);
-                        break;
-                    case CopyAction.Resume:
-                        var fi = new FileInfo(savePath);
-                        resumeStartPosition = fi.Length;
-                        break;
-                }
+        //public TransferResult RemoteDownload(FileSystemItem item, string savePath, CopyAction action)
+        //{
+        //    if (item.Type != ItemType.File) throw new NotSupportedException();
+        //    UIThread.Run(() => EventAggregator.GetEvent<TransferActionStartedEvent>().Publish(ExportActionDescription));
+        //    long resumeStartPosition = 0;
+        //    try
+        //    {
+        //        switch (action)
+        //        {
+        //            case CopyAction.CreateNew:
+        //                if (File.Exists(savePath)) throw new TransferException(TransferErrorType.WriteAccessError, item.Path, savePath, Resx.TargetAlreadyExists);
+        //                break;
+        //            case CopyAction.Overwrite:
+        //                File.Delete(savePath);
+        //                break;
+        //            case CopyAction.OverwriteOlder:
+        //                var fileDate = File.GetLastWriteTime(savePath);
+        //                if (fileDate > item.Date) return TransferResult.Skipped;
+        //                File.Delete(savePath);
+        //                break;
+        //            case CopyAction.Resume:
+        //                var fi = new FileInfo(savePath);
+        //                resumeStartPosition = fi.Length;
+        //                break;
+        //        }
 
-                var name = RemoteChangeDirectory(item.Path);
-                Telnet.Download(name, savePath, item.Size ?? 0, resumeStartPosition, TelnetProgressChanged);
-                return TransferResult.Ok;
-            }
-            catch (Exception ex)
-            {
-                throw WrapTransferRelatedExceptions(ex);
-            }
-        }
+        //        var name = RemoteChangeDirectory(item.Path);
+        //        Telnet.Download(name, savePath, item.Size ?? 0, resumeStartPosition, TelnetProgressChanged);
+        //        return TransferResult.Ok;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw WrapTransferRelatedExceptions(ex);
+        //    }
+        //}
 
-        public TransferResult RemoteUpload(FileSystemItem item, string savePath, CopyAction action)
-        {
-            if (item.Type != ItemType.File) throw new NotSupportedException();
-            UIThread.Run(() => EventAggregator.GetEvent<TransferActionStartedEvent>().Publish(ImportActionDescription));
-            long resumeStartPosition = 0;
-            try {
-                switch (action)
-                {
-                    case CopyAction.CreateNew:
-                        var exists = FileManager.FileExists(savePath);
-                        if (exists) throw new TransferException(TransferErrorType.WriteAccessError, Resx.TargetAlreadyExists, item.Path, savePath, exists.Size);
-                        break;
-                    case CopyAction.Overwrite:
-                        FileManager.DeleteFile(savePath);
-                        break;
-                    case CopyAction.OverwriteOlder:
-                        var fileDate = FileManager.GetFileModificationTime(savePath);
-                        if (fileDate > item.Date) return TransferResult.Skipped;
-                        FileManager.DeleteFile(savePath);
-                        break;
-                    case CopyAction.Resume:
-                        var fi = FileManager.GetItemInfo(savePath, ItemType.File);
-                        resumeStartPosition = fi.Size ?? 0;
-                        break;
-                }
-                var name = RemoteChangeDirectory(savePath);
-                Telnet.Upload(item.Path, name, item.Size ?? 0, resumeStartPosition, TelnetProgressChanged);
-                VerifyUpload(savePath, item.Path);
-                return TransferResult.Ok;
-            }
-            catch (Exception ex)
-            {
-                throw WrapTransferRelatedExceptions(ex);
-            }
-        }
+        //public TransferResult RemoteUpload(FileSystemItem item, string savePath, CopyAction action)
+        //{
+        //    if (item.Type != ItemType.File) throw new NotSupportedException();
+        //    UIThread.Run(() => EventAggregator.GetEvent<TransferActionStartedEvent>().Publish(ImportActionDescription));
+        //    long resumeStartPosition = 0;
+        //    try {
+        //        switch (action)
+        //        {
+        //            case CopyAction.CreateNew:
+        //                var exists = FileManager.FileExists(savePath);
+        //                if (exists) throw new TransferException(TransferErrorType.WriteAccessError, Resx.TargetAlreadyExists, item.Path, savePath, exists.Size);
+        //                break;
+        //            case CopyAction.Overwrite:
+        //                FileManager.DeleteFile(savePath);
+        //                break;
+        //            case CopyAction.OverwriteOlder:
+        //                var fileDate = FileManager.GetFileModificationTime(savePath);
+        //                if (fileDate > item.Date) return TransferResult.Skipped;
+        //                FileManager.DeleteFile(savePath);
+        //                break;
+        //            case CopyAction.Resume:
+        //                var fi = FileManager.GetItemInfo(savePath, ItemType.File);
+        //                resumeStartPosition = fi.Size ?? 0;
+        //                break;
+        //        }
+        //        var name = RemoteChangeDirectory(savePath);
+        //        Telnet.Upload(item.Path, name, item.Size ?? 0, resumeStartPosition, TelnetProgressChanged);
+        //        VerifyUpload(savePath, item.Path);
+        //        return TransferResult.Ok;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw WrapTransferRelatedExceptions(ex);
+        //    }
+        //}
 
         private void TelnetProgressChanged(int p, long t, long total, long resumeStartPosition)
         {

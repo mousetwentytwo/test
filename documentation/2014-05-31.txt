@@ -1,0 +1,67 @@
+- resume eseten a sebessegmero megbaszodik
+- resume eseten hibatlan lesz-e a file a vegen?
+- lost connection utan tudna folytatni a copyt?
+- delete failnel nem marad meg a kijeloles
+- volt egy tokeletesen jo cache itemje egy profilrol, megis eldobta, mielott meg meggyozodhetett volna rola, hogy le tudja szedni az ftprol az ujat
+- verify checkbox beigazgatasa
+
+- a remote copyt visszatenni
+	- set keepalive on true
+- a copymode-ot megszuntetni
+
+
+
+
+							IIS	FSD3	FSD2	FSD1	XeX/DLi
+1. local -> ftp
+	a) normal					+	+		+	+
+	b) resume					
+	c) overwrite					+			+	+
+	d) abort					+	+		+	+
+	e) lost connection				+
+	f) local access denied				+
+	g) ftp access denied				+
+
+2. ftp -> local
+	a) normal					+
+	b) resume					
+	c) overwrite					+
+	d) abort					+
+	e) lost connection				
+	f) local access denied				+
+	g) ftp access denied				+
+
+3. zip -> ftp
+	a) normal					+
+	b) resume
+	c) overwrite
+	d) abort
+	e) lost connection
+	f) ftp access denied
+	g) zip corrupted
+
+4. stfs -> ftp			
+	a) normal					+
+	b) resume
+	c) overwrite
+	d) abort
+	e) lost connection
+	f) ftp access denied
+	g) stfs corrupted
+
+5. local
+	a) create normal				+
+	b) create exists				+
+	c) delete file					+
+	d) delete dir					+
+	e) delete access denied				+
+	f) change dir into access denied		+
+
+6. ftp
+	a) create normal				+
+	b) create exists				+
+	c) delete file					+
+	d) delete dir					+
+	e) delete access denied				+
+	f) change dir into access denied		N/P
+	g) lost connection				+

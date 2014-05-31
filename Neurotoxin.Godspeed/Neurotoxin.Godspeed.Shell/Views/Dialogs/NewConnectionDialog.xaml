@@ -159,8 +159,12 @@
                 </Binding>
             </TextBox.Text>
         </TextBox>
-        <CheckBox Grid.Column="1" Grid.Row="5" Margin="0,0,0,5" Content="{lex:LocText AnonymousLogin}" x:Name="AnonymousLogin" Checked="AnonymousLoginOnChange" Unchecked="AnonymousLoginOnChange" />
-        <CheckBox Grid.Column="1" Grid.Row="6" Grid.ColumnSpan="3" Margin="0,0,0,15" IsChecked="{Binding UsePassiveMode}" Content="{lex:LocText UsePassiveMode}" />
+        <CheckBox Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="5" Margin="0,0,0,5" x:Name="AnonymousLogin" Checked="AnonymousLoginOnChange" Unchecked="AnonymousLoginOnChange">
+            <TextBlock TextWrapping="Wrap" Text="{lex:LocText AnonymousLogin}" Margin="0,-2,0,0"/>
+        </CheckBox>
+        <CheckBox Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="6" Margin="0,0,0,15" IsChecked="{Binding UsePassiveMode}">
+            <TextBlock TextWrapping="Wrap" Text="{lex:LocText UsePassiveMode}" Margin="0,-2,0,0"/>
+        </CheckBox>
         <StackPanel Grid.ColumnSpan="4" Grid.Row="7" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,5,0">
             <Button Content="{lex:LocText Ok}" Width="75" Margin="0,0,5,0" Click="OkButtonClick" />
             <Button Content="{lex:LocText Cancel}" Width="75" Click="CancelButtonClick" />

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using Neurotoxin.Godspeed.Core.Models;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
@@ -17,17 +16,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public override bool IsReadOnly
         {
-            get { return false; }
-        }
-
-        protected override string ExportActionDescription
-        {
-            get { return Resx.Extract; }
-        }
-
-        protected override string ImportActionDescription
-        {
-            get { return Resx.Inject; }
+            get { return true; }
         }
 
         public override bool IsVerificationSupported
@@ -107,35 +96,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public override string GetTargetPath(string path)
         {
             return string.Format("{0}{1}", CurrentFolder.Path, path.Replace('\\', '/'));
-        }
-
-        protected override bool SaveToFileStream(FileSystemItem item, FileStream fs, long remoteStartPosition)
-        {
-            FileManager.ExtractFile(item.Path, fs, remoteStartPosition);
-            return true;
-        }
-
-        protected override bool CreateFile(string targetPath, FileSystemItem source)
-        {
-            FileManager.AddFile(targetPath, source.Path);
-            return true;
-        }
-
-        protected override bool OverwriteFile(string targetPath, FileSystemItem source)
-        {
-            FileManager.ReplaceFile(targetPath, source.Path);
-            return true;
-        }
-
-        protected override bool ResumeFile(string targetPath, FileSystemItem source)
-        {
-            FileManager.ReplaceFile(targetPath, source.Path);
-            return true;
-        }
-
-        public override void Abort()
-        {
-            throw new NotImplementedException();
         }
 
         public override void Dispose()

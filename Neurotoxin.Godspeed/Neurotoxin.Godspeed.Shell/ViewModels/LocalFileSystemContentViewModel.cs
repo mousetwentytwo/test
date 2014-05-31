@@ -29,16 +29,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             get { return false; }
         }
 
-        protected override string ExportActionDescription
-        {
-            get { return null; }
-        }
-
-        protected override string ImportActionDescription
-        {
-            get { return null; }
-        }
-
         public override bool IsVerificationSupported
         {
             get { return false; }
@@ -165,42 +155,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public override string GetTargetPath(string path)
         {
             return string.Format("{0}{1}", CurrentFolder.Path, path.Replace('/', '\\'));
-        }
-
-        protected override bool SaveToFileStream(FileSystemItem item, FileStream fs, long remoteStartPosition)
-        {
-            return FileManager.CopyFile(item.Path, fs, remoteStartPosition);
-        }
-
-        protected override Exception WrapTransferRelatedExceptions(Exception exception)
-        {
-            if (exception is IOException)
-                return new TransferException(TransferErrorType.NotSpecified, exception.Message, exception);
-
-            return base.WrapTransferRelatedExceptions(exception);
-        }
-
-        protected override bool CreateFile(string targetPath, FileSystemItem source)
-        {
-            //TODO: local2local
-            throw new NotImplementedException();
-        }
-
-        protected override bool OverwriteFile(string targetPath, FileSystemItem source)
-        {
-            //TODO: local2local
-            throw new NotImplementedException();
-        }
-
-        protected override bool ResumeFile(string targetPath, FileSystemItem source)
-        {
-            //TODO: local2local
-            throw new NotImplementedException();
-        }
-
-        public override void Abort()
-        {
-            FileManager.AbortCopy();
         }
 
         protected override string GetStfsPackagePath(CacheComplexKey cacheKey, CacheEntry<FileSystemItem> cacheEntry)

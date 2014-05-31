@@ -478,6 +478,11 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
             return output;
         }
 
+        public MemoryStream OpenEntryStream(string path, int? limit = null)
+        {
+            return new MemoryStream(ExtractFile(path, limit));
+        }
+
         public IEnumerable<KeyValuePair<int?, BlockStatus>> GetFileEntryBlockList(FileEntry entry)
         {
             var block = entry.StartingBlockNum;

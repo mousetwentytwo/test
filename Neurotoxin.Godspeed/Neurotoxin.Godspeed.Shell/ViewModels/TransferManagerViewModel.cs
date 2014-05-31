@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Shell;
 using Neurotoxin.Godspeed.Core.Exceptions;
-using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Core.Net;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Events;
@@ -44,6 +44,14 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public IFileListPaneViewModel SourcePane { get; private set; }
         public IFileListPaneViewModel TargetPane { get; private set; }
+
+        private FtpContentViewModel Ftp
+        {
+            get
+            {
+                return SourcePane as FtpContentViewModel ?? TargetPane as FtpContentViewModel;
+            }
+        }
 
         private const string USERACTION = "UserAction";
         private FileOperation _userAction;
@@ -184,7 +192,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public bool IsVerificationSupported
         {
-            get { return TargetPane.IsVerificationSupported; }
+            get { return TargetPane != null && TargetPane.IsVerificationSupported; }
         }
 
         private const string ISVERIFICATIONENABLED = "IsVerificationEnabled";
@@ -200,7 +208,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             _userSettings = userSettings;
             _statistics = statistics;
-            EventAggregator.GetEvent<TransferActionStartedEvent>().Subscribe(OnTransferActionStarted);
             EventAggregator.GetEvent<TransferProgressChangedEvent>().Subscribe(OnTransferProgressChanged);
             EventAggregator.GetEvent<ShowCorrespondingErrorEvent>().Subscribe(OnShowCorrespondingError);
         }
@@ -249,55 +256,95 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
                     var a = action ?? _rememberedCopyAction;
 
-                    switch (_copyMode)
+                    FileMode mode;
+                    FileExistenceInfo exists;
+                    long startPosition = 0;
+                    switch (a)
                     {
-                        case CopyMode.DirectExport:
-                            result = SourcePane.Export(item, targetPath, a);
+                        case CopyAction.CreateNew:
+                            exists = TargetPane.FileExists(targetPath);
+                            if (exists) throw new TransferException(TransferErrorType.WriteAccessError, Resx.TargetAlreadyExists)
+                                                  {
+                                                      SourceFile = item.Path, 
+                                                      TargetFile = targetPath, 
+                                                      TargetFileSize = exists.Size
+                                                  };
+                            mode = FileMode.CreateNew;
                             break;
-                        case CopyMode.DirectImport:
-                            result = TargetPane.Import(item, targetPath, a);
+                        case CopyAction.Overwrite:
+                            mode = FileMode.Create;
                             break;
-                        case CopyMode.Indirect:
-                            var tempFile = Path.Combine(App.DataDirectory, "temp", item.FullPath.Hash());
-                            var tempItem = item.Clone();
-                            tempItem.Path = tempFile;
-                            var export = SourcePane.Export(item, tempFile, CopyAction.Overwrite);
-                            var import = TransferResult.Skipped;
-                            if (export == TransferResult.Ok)
-                                import = TargetPane.Import(tempItem, targetPath, action ?? _rememberedCopyAction);
-                            File.Delete(tempFile);
-                            result = export != TransferResult.Ok ? export : import;
+                        case CopyAction.OverwriteOlder:
+                            var fileDate = File.GetLastWriteTime(targetPath);
+                            if (fileDate > item.Date) return new OperationResult(TransferResult.Skipped, targetPath);
+                            mode = FileMode.Create;
                             break;
-                        case CopyMode.RemoteExport:
-                            if (new Regex(@"[^\x20-\x7f]").IsMatch(targetPath))
-                            {
-                                //TODO: not sure this is the right idea
-                                _copyMode = CopyMode.DirectExport;
-                                CloseTelnetSession();
-                                EventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(new NotifyUserMessageEventArgs("RemoteCopySpecialCharsWarningMessage", MessageIcon.Info));
-                                result = SourcePane.Export(item, targetPath, a);
-                            } 
-                            else
-                            {
-                                result = ((FtpContentViewModel)SourcePane).RemoteDownload(item, targetPath, a);
-                            }
-                            break;
-                        case CopyMode.RemoteImport:
-                            if (new Regex(@"[^\x20-\x7f]").IsMatch(item.Path))
-                            {
-                                //TODO: not sure this is the right idea
-                                _copyMode = CopyMode.DirectImport;
-                                CloseTelnetSession();
-                                EventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(new NotifyUserMessageEventArgs("RemoteCopySpecialCharsWarningMessage", MessageIcon.Info));
-                                result = TargetPane.Import(item, targetPath, a);
-                            } else
-                            {
-                                result = ((FtpContentViewModel)TargetPane).RemoteUpload(item, targetPath, a);
-                            }
+                        case CopyAction.Resume:
+                            mode = FileMode.Append;
+                            exists = TargetPane.FileExists(targetPath);
+                            if (exists) startPosition = exists.Size;
                             break;
                         default:
-                            throw new NotSupportedException("Invalid Copy Mode: " + _copyMode);
+                            throw new ArgumentException("Invalid Copy action: " + action);
                     }
+
+                    //TODO: remote
+
+                    using (var targetStream = TargetPane.GetStream(targetPath, mode, FileAccess.Write, startPosition))
+                    {
+                        UIThread.Run(() => { TransferAction = GetCopyActionText(); });
+                        result = SourcePane.CopyStream(item, targetStream, startPosition) ? TransferResult.Ok : TransferResult.Aborted;
+                    }
+
+                    //switch (_copyMode)
+                    //{
+                    //    case CopyMode.DirectExport:
+                    //        result = SourcePane.Export(item, targetPath, a);
+                    //        break;
+                    //    case CopyMode.DirectImport:
+                    //        result = TargetPane.Import(item, targetPath, a);
+                    //        break;
+                    //    case CopyMode.Indirect:
+                    //        var tempFile = Path.Combine(App.DataDirectory, "temp", item.FullPath.Hash());
+                    //        var tempItem = item.Clone();
+                    //        tempItem.Path = tempFile;
+                    //        var export = SourcePane.Export(item, tempFile, CopyAction.Overwrite);
+                    //        var import = TransferResult.Skipped;
+                    //        if (export == TransferResult.Ok)
+                    //            import = TargetPane.Import(tempItem, targetPath, action ?? _rememberedCopyAction);
+                    //        File.Delete(tempFile);
+                    //        result = export != TransferResult.Ok ? export : import;
+                    //        break;
+                    //    case CopyMode.RemoteExport:
+                    //        if (new Regex(@"[^\x20-\x7f]").IsMatch(targetPath))
+                    //        {
+                    //            //TODO: not sure this is the right idea
+                    //            _copyMode = CopyMode.DirectExport;
+                    //            CloseTelnetSession();
+                    //            EventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(new NotifyUserMessageEventArgs("RemoteCopySpecialCharsWarningMessage", MessageIcon.Info));
+                    //            result = SourcePane.Export(item, targetPath, a);
+                    //        } 
+                    //        else
+                    //        {
+                    //            result = ((FtpContentViewModel)SourcePane).RemoteDownload(item, targetPath, a);
+                    //        }
+                    //        break;
+                    //    case CopyMode.RemoteImport:
+                    //        if (new Regex(@"[^\x20-\x7f]").IsMatch(item.Path))
+                    //        {
+                    //            //TODO: not sure this is the right idea
+                    //            _copyMode = CopyMode.DirectImport;
+                    //            CloseTelnetSession();
+                    //            EventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(new NotifyUserMessageEventArgs("RemoteCopySpecialCharsWarningMessage", MessageIcon.Info));
+                    //            result = TargetPane.Import(item, targetPath, a);
+                    //        } else
+                    //        {
+                    //            result = ((FtpContentViewModel)TargetPane).RemoteUpload(item, targetPath, a);
+                    //        }
+                    //        break;
+                    //    default:
+                    //        throw new NotSupportedException("Invalid Copy Mode: " + _copyMode);
+                    //}
                     break;
                 default:
                     throw new NotSupportedException();
@@ -313,8 +360,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private OperationResult ExecuteVerification(QueueItem item)
         {
             var ftp = TargetPane as FtpContentViewModel;
-            if (ftp == null) throw new NotSupportedException("Target pane does not support file hash verification"); //TODO: ResX
-            UIThread.Run(() => OnTransferActionStarted(Resx.Verifying));
+            if (ftp == null) throw new NotSupportedException("Target pane does not support file hash verification");
+            UIThread.Run(() => TransferAction = Resx.Verifying);
             var verificationResult = ftp.VerifyUpload((string)item.Payload, item.FileSystemItem.Path);
             return new OperationResult(verificationResult);
         }
@@ -325,7 +372,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             {
                 var queueitem = _queue.Peek();
                 var item = queueitem.FileSystemItem;
-                SourceFile = item.Path.Replace(SourcePane.CurrentFolder.Path, string.Empty);
+                SourceFile = string.IsNullOrEmpty(SourcePane.CurrentFolder.Path) ? item.Path : item.Path.Replace(SourcePane.CurrentFolder.Path, string.Empty);
                 WorkHandler.Run(() =>
                 {
                     switch (queueitem.Operation)
@@ -380,7 +427,10 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     }
                     break;
                 case TransferResult.Skipped:
+                    _queue.Dequeue();
+                    break;
                 case TransferResult.Aborted:
+                    if (queueItem.Operation == FileOperation.Copy) _targetChanged = true;
                     _queue.Dequeue();
                     break;
             }
@@ -411,6 +461,15 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             if (_isAborted) { FinishTransfer(); return; }
             if (IsPaused) return;
 
+
+            if (Ftp != null && !Ftp.IsConnected)
+            {
+                exception = new TransferException(TransferErrorType.LostConnection, string.Format(Resx.ConnectionLostMessage, Ftp.Connection.Name), exception)
+                                {
+                                    Pane = Ftp
+                                };
+            }
+
             var result = ShowCorrespondingErrorDialog(exception);
             switch (result.Behavior)
             {
@@ -432,9 +491,13 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
         }
 
-        private void OnTransferActionStarted(string action)
+        private string GetCopyActionText()
         {
-            UIThread.Run(() => { TransferAction = action ?? Resx.ResourceManager.GetString(UserAction.ToString()); });
+            if (TargetPane is FtpContentViewModel) return Resx.Upload;
+            if (SourcePane is FtpContentViewModel) return Resx.Download;
+            if (TargetPane is StfsPackageContentViewModel || TargetPane is CompressedFileContentViewModel) return Resx.Inject;
+            if (SourcePane is StfsPackageContentViewModel || SourcePane is CompressedFileContentViewModel) return Resx.Extract;
+            return Resx.ResourceManager.GetString(UserAction.ToString());
         }
 
         private void OnTransferProgressChanged(TransferProgressChangedEventArgs args)
@@ -484,7 +547,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             _queue = queue;
             _isAborted = false;
             UserAction = mode;
-            TransferAction = Resx.ResourceManager.GetString(mode.ToString());
+            TransferAction = mode == FileOperation.Copy ? GetCopyActionText() : Resx.ResourceManager.GetString(mode.ToString());
             _rememberedCopyAction = CopyAction.CreateNew;
             _currentFileBytesTransferred = 0;
             CurrentFileProgress = 0;
@@ -559,78 +622,74 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         internal TransferErrorDialogResult ShowCorrespondingErrorDialog(Exception exception, bool feedbackNeeded = true)
         {
-            _elapsedTimeMeter.Stop();
             var transferException = exception as TransferException;
+            var exceptionType = transferException != null ? transferException.Type : TransferErrorType.NotSpecified;
+
+            _elapsedTimeMeter.Stop();
+            
             var result = new TransferErrorDialogResult(ErrorResolutionBehavior.Cancel);
-            if (transferException != null)
+            switch (exceptionType)
             {
-                switch (transferException.Type)
-                {
-                    case TransferErrorType.NotSpecified:
+                case TransferErrorType.NotSpecified:
+                    {
+                        if (feedbackNeeded)
                         {
-                            if (feedbackNeeded)
+                            var r = WindowManager.ShowIoErrorDialog(exception);
+                            if (r != null)
                             {
-                                var r = WindowManager.ShowIoErrorDialog(exception);
-                                if (r != null)
-                                {
-                                    result = r;
-                                    if (TargetPane != null) result.Action = TargetPane.IsResumeSupported ? CopyAction.Resume : CopyAction.Overwrite;
-                                }
-                            } 
-                            else
-                            {
-                                WindowManager.ShowMessage(Resx.IOError, exception.Message);
+                                result = r;
+                                //if (transferException.TargetPane != null) result.Action = transferException.TargetPane.IsResumeSupported ? CopyAction.Resume : CopyAction.Overwrite;
                             }
+                        } 
+                        else
+                        {
+                            WindowManager.ShowMessage(Resx.IOError, exception.Message);
                         }
-                        break;
-                    case TransferErrorType.WriteAccessError:
+                    }
+                    break;
+                case TransferErrorType.WriteAccessError:
+                    {
+                        if (_skipAll != null)
                         {
-                            if (_skipAll != null)
-                            {
-                                result = _skipAll;
-                            }
-                            else
-                            {
-                                var sourceFile = _queue.Peek().FileSystemItem;
-                                var r = WindowManager.ShowWriteErrorDialog(sourceFile.Path, transferException.TargetFile, TargetPane.IsResumeSupported && sourceFile.Size > transferException.TargetFileSize, SourcePane, TargetPane);
-                                if (r != null) result = r;
-                            }
-                        }
-                        break;
-                    case TransferErrorType.LostConnection:
-                        var ftp = SourcePane as FtpContentViewModel ?? TargetPane as FtpContentViewModel;
-                        if (WindowManager.ShowReconnectionDialog(exception) == true)
-                        {
-                            try
-                            {
-                                ftp.RestoreConnection();
-                                ftp.Refresh();
-                            } 
-                            catch (Exception ex)
-                            {
-                                WindowManager.ShowMessage(Resx.ConnectionFailed, string.Format(Resx.CannotReestablishConnection, ex.Message));
-                                ftp.CloseCommand.Execute();
-                            }
+                            result = _skipAll;
                         }
                         else
                         {
+                            var sourceFile = _queue.Peek().FileSystemItem;
+                            var r = WindowManager.ShowWriteErrorDialog(sourceFile.Path, transferException.TargetFile, TargetPane.IsResumeSupported && sourceFile.Size > transferException.TargetFileSize, SourcePane, TargetPane);
+                            if (r != null) result = r;
+                        }
+                    }
+                    break;
+                case TransferErrorType.LostConnection:
+                    var ftp = (FtpContentViewModel)transferException.Pane;
+                    if (WindowManager.ShowReconnectionDialog(exception) == true)
+                    {
+                        try
+                        {
+                            ftp.RestoreConnection();
+                            ftp.Refresh();
+                        } 
+                        catch (Exception ex)
+                        {
+                            WindowManager.ShowMessage(Resx.ConnectionFailed, string.Format(Resx.CannotReestablishConnection, ex.Message));
                             ftp.CloseCommand.Execute();
                         }
-                        break;
-                    default:
-                        throw new NotSupportedException("Invalid transfer error type: " + transferException.Type);
-                }
-
-                //TODO: refactor scoping
-                if (result.Scope == CopyActionScope.All)
-                {
-                    if (result.Action.HasValue) _rememberedCopyAction = result.Action.Value;
-                    if (result.Behavior == ErrorResolutionBehavior.Skip) _skipAll = result;
-                }
+                    }
+                    else
+                    {
+                        ftp.CloseCommand.Execute();
+                    }
+                    break;
+                default:
+                    throw new NotSupportedException("Invalid transfer error type: " + exceptionType);
             }
-            else
+
+            //TODO: refactor scoping
+            if (result.Scope == CopyActionScope.All)
             {
-                WindowManager.ShowErrorMessage(exception);
+                if (result.Action.HasValue) _rememberedCopyAction = result.Action.Value;
+                if (result.Behavior == ErrorResolutionBehavior.Skip) _skipAll = result;
             }
             _elapsedTimeMeter.Start();
             return result;
@@ -686,7 +745,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
             if (_isPaused)
             {
-                UIThread.BeginRun(FinishTransfer);
+                UIThread.Run(FinishTransfer);
             }
         }
 
@@ -696,13 +755,15 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             _statistics.TimeSpentWithTransfer += _elapsedTimeMeter.Elapsed;
             if (_copyMode == CopyMode.RemoteExport || _copyMode == CopyMode.RemoteImport) CloseTelnetSession();
             SourcePane.FinishTransferAsSource();
-            TargetPane.FinishTransferAsTarget();
+            if (TargetPane != null) TargetPane.FinishTransferAsTarget();
             _speedMeter.Stop();
             _speedMeter.Reset();
             _elapsedTimeMeter.Stop();
             ProgressState = TaskbarItemProgressState.None;
             if (_sourceChanged) SourcePane.Refresh();
             if (_targetChanged) TargetPane.Refresh();
+            SourcePane = null;
+            TargetPane = null;
             EventAggregator.GetEvent<TransferFinishedEvent>().Publish(new TransferFinishedEventArgs(this));
         }
 

@@ -6,60 +6,38 @@ namespace Neurotoxin.Godspeed.Presentation.Infrastructure
 {
     public static class UIThread
     {
-        private static readonly Dispatcher Dispatcher = Application.Current.Dispatcher;
+        private static readonly Dispatcher Dispatcher = Application.Current != null ? Application.Current.Dispatcher : null;
 
-        public static bool IsUIThread
+        public static void BeginRun(Action work)
         {
-            get
-            {
-                return Dispatcher.CheckAccess();  
-            }
-        }
-
-        public static DispatcherOperation BeginRun(Action work)
-        {
-            return Dispatcher.BeginInvoke(work);
-        }
-
-        public static DispatcherOperation BeginRun(Action work, DispatcherPriority priority)
-        {
-            return Dispatcher.BeginInvoke(work,priority);
+            if (Dispatcher != null)
+                Dispatcher.BeginInvoke(work);
+            else
+                work();
         }
 
         public static void Run(Action work)
         {
-            if (!Dispatcher.CheckAccess())
-            {
+            if (Dispatcher != null && !Dispatcher.CheckAccess())
                 Dispatcher.BeginInvoke(work);
-            }
             else
-            {
                 work();
-            }
         }
 
         public static void Run<T>(Action<T> work, T p1)
         {
-            if (!Dispatcher.CheckAccess())
-            {
+            if (Dispatcher != null && !Dispatcher.CheckAccess())
                 Dispatcher.BeginInvoke(work, p1);
-            } 
             else
-            {
                 work(p1);
-            }
         }
 
         public static void RunSync(Action work)
         {
-            if (!Dispatcher.CheckAccess())
-            {
+            if (Dispatcher != null && !Dispatcher.CheckAccess())
                 Dispatcher.Invoke(work);
-            }
             else
-            {
                 work();
-            }
         }
     }
 }

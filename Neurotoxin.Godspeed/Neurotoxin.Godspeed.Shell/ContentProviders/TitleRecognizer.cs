@@ -26,7 +26,6 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         private readonly IUserSettings _userSettings;
         private readonly IEventAggregator _eventAggregator;
         private readonly IResourceManager _resourceManager;
-        private readonly IWorkHandler _workHandler;
         private readonly Dictionary<string, ProfileItemWrapper> _profileFileCache = new Dictionary<string, ProfileItemWrapper>();
 
         private static readonly List<RecognitionInformation> RecognitionKeywords = new List<RecognitionInformation>
@@ -45,14 +44,13 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 new RecognitionInformation("^TU[\\w\\.]+$|^[0-9A-F]{4,}$", Resx.UnknownDataFile, TitleType.DataFile, ItemType.File),
             };
 
-        public TitleRecognizer(IFileManager fileManager, CacheManager cacheManager, IUserSettings userSettings, IEventAggregator eventAggregator, IResourceManager resourceManager, IWorkHandler workHandler)
+        public TitleRecognizer(IFileManager fileManager, CacheManager cacheManager, IUserSettings userSettings, IEventAggregator eventAggregator, IResourceManager resourceManager)
         {
             _fileManager = fileManager;
             _cacheManager = cacheManager;
             _userSettings = userSettings;
             _eventAggregator = eventAggregator;
             _resourceManager = resourceManager;
-            _workHandler = workHandler;
         }
 
         public bool RecognizeType(FileSystemItem item)
@@ -152,16 +150,16 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             switch (item.TitleType)
             {
                 case TitleType.Profile:
-                    GetProfileData(item, cacheKey.Item);
+                    var tempFilePath = GetProfileData(item, cacheKey.Item);
                     var profileExpiration = GetExpirationFrom(_userSettings.ProfileExpiration);
                     if (_userSettings.ProfileInvalidation)
                     {
-                        cacheItem = _cacheManager.SaveEntry(cacheKey.Key, item, profileExpiration, cacheKey.Date, cacheKey.Size, _fileManager.TempFilePath);
+                        cacheItem = _cacheManager.SaveEntry(cacheKey.Key, item, profileExpiration, cacheKey.Date, cacheKey.Size, tempFilePath);
                     }
                     else
                     {
                         cacheItem = _cacheManager.SaveEntry(cacheKey.Key, item, profileExpiration);
-                        File.Delete(_fileManager.TempFilePath);
+                        File.Delete(tempFilePath);
                     }
                     _cacheManager.SaveEntry(item.Name, item);
                     item.IsCached = true;
@@ -192,7 +190,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                     {
                         try
                         {
-                            var header = _fileManager.ReadFileHeader(item.Path);
+                            var header = _fileManager.ReadFileContent(item.Path, StfsPackage.DefaultHeaderSizeVersion1);
                             var svod = ModelFactory.GetModel<SvodPackage>(header);
                             if (svod.IsValid)
                             {
@@ -304,25 +302,28 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             return key;
         }
 
-        private bool GetProfileData(FileSystemItem item, FileSystemItem cacheItem)
+        private string GetProfileData(FileSystemItem item, FileSystemItem cacheItem)
         {
             try
             {
-                var bytes = _fileManager.ReadFileContent(cacheItem.Path, true, cacheItem.Size ?? 0);
+                var bytes = _fileManager.ReadFileContent(cacheItem.Path);
+                var tempFilePath = Path.Combine(App.DataDirectory, Guid.NewGuid() + ".tmp");
+                File.WriteAllBytes(tempFilePath, bytes);
+
                 var stfs = ModelFactory.GetModel<StfsPackage>(bytes);
                 stfs.ExtractAccount();
                 item.Title = stfs.Account.GamerTag;
                 item.Thumbnail = stfs.ThumbnailImage;
                 item.ContentType = stfs.ContentType;
                 item.RecognitionState = RecognitionState.Recognized;
-                return true;
+                return tempFilePath;
             }
             catch (Exception ex)
             {
                 item.IsLocked = true;
                 //TODO: exception message in non-English environment
                 item.LockMessage = ex.Message == "Permission denied" ? Resx.ProfileIsInUseErrorMessage : ex.Message;
-                return false;
+                return null;
             }
         }
 
@@ -351,7 +352,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 var file = _fileManager.GetList(gamePath).FirstOrDefault(i => i.Type == ItemType.File);
                 if (file != null)
                 {
-                    var fileContent = _fileManager.ReadFileHeader(file.Path);
+                    var fileContent = _fileManager.ReadFileContent(file.Path, StfsPackage.DefaultHeaderSizeVersion1);
                     var svod = ModelFactory.GetModel<SvodPackage>(fileContent);
                     if (svod.IsValid)
                     {
@@ -402,7 +403,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         {
             try
             {
-                var fileContent = _fileManager.ReadFileContent(item.Path, false, item.Size ?? 0);
+                var fileContent = _fileManager.ReadFileContent(item.Path);
                 var gpd = ModelFactory.GetModel<GameFile>(fileContent);
                 gpd.Parse();
                 if (gpd.Strings.Count > 0) item.Title = gpd.Strings.First().Text;

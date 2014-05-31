@@ -247,7 +247,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             var connections = ActivePane as ConnectionsViewModel;
             if (connections != null)
             {
-                return connections.SelectedItem != null && !connections.IsBusy;
+                var validItem = connections.SelectedItem as FtpConnectionItemViewModel;
+                return validItem != null && !connections.IsBusy;
             }
             return SourcePane != null && SourcePane.HasValidSelection && !SourcePane.IsBusy && !SourcePane.IsReadOnly && !SourcePane.IsInEditMode;
         }
@@ -442,12 +443,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void OnRaiseCanExecuteChanges(RaiseCanExecuteChangesEventArgs e)
         {
-            if (e.Sender is IFileListPaneViewModel) RaiseCanExecuteChanges();
+            if (e.Sender is IPaneViewModel) RaiseCanExecuteChanges();
         }
 
         private void OnNotifyUserMessage(NotifyUserMessageEventArgs e)
         {
-            UIThread.Run(() => OnNotifyUserMessage(e));
+            UIThread.Run(() => NotifyUserMessage(e));
         }
 
         private void NotifyUserMessage(NotifyUserMessageEventArgs e)
@@ -471,8 +472,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             var title = Resx.ResourceManager.GetString(type.ToString());
             var message = Resx.ResourceManager.GetString(string.Format(isPlural ? "{0}ConfirmationPlural" : "{0}ConfirmationSingular", type));
             if (new ConfirmationDialog(title, message).ShowDialog() != true) return false;
-            //TODO: introduce separate method for the following
-            if (Ftp != null) Ftp.IsKeepAliveEnabled = true;
             return true;
         }
 

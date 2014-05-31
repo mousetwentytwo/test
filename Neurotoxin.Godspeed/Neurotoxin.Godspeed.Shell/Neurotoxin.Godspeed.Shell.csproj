@@ -141,6 +141,7 @@
     <Compile Include="Constants\TreeTraversalDirection.cs" />
     <Compile Include="ContentProviders\CacheManager.cs" />
     <Compile Include="ContentProviders\CompressedFileContent.cs" />
+    <Compile Include="ContentProviders\FileSystemContentBase.cs" />
     <Compile Include="ContentProviders\FtpContent.cs" />
     <Compile Include="ContentProviders\LocalFileSystemContent.cs" />
     <Compile Include="ContentProviders\UserSettings.cs" />
@@ -172,7 +173,6 @@
     <Compile Include="Events\ShellInitializedEvent.cs" />
     <Compile Include="Events\NotifyUserMessageEvent.cs" />
     <Compile Include="Events\UsbDeviceChangedEvent.cs" />
-    <Compile Include="Events\TransferActionStartedEvent.cs" />
     <Compile Include="Events\OpenNestedPaneEvent.cs" />
     <Compile Include="Events\FtpOperationFinishedEvent.cs" />
     <Compile Include="Events\TransferProgressChangedEvent.cs" />
@@ -184,6 +184,7 @@
     <Compile Include="Exceptions\TransferException.cs" />
     <Compile Include="Extensions\ResourcesExtension.cs" />
     <Compile Include="GlobalVariables.cs" />
+    <Compile Include="Helpers\FtpTraceListener.cs" />
     <Compile Include="Helpers\SanityChecker.cs" />
     <Compile Include="Helpers\Web.cs" />
     <Compile Include="Interfaces\IFileListPaneViewModel.cs" />
