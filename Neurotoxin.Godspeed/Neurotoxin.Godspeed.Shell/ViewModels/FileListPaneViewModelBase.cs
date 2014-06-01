@@ -34,10 +34,10 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
     {
         private readonly object _queueLock = new object();
         private Queue<FileSystemItem> _queue;
-        protected readonly ITitleRecognizer TitleRecognizer;
         protected readonly T FileManager;
         protected readonly IUserSettings UserSettings;
         protected readonly Dictionary<FileSystemItemViewModel, string> PathCache = new Dictionary<FileSystemItemViewModel, string>();
+        public readonly ITitleRecognizer TitleRecognizer;
 
         #region Properties
 
@@ -230,7 +230,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             IsBusy = true;
             ExecuteCancelCommand();
 
-            WorkHandler.Run(() => ChangeDirectoryInner(CurrentFolder.Path),
+            WorkHandler.Run(() => GetList(CurrentFolder.Path),
                 result =>
                 {
                     ChangeDirectoryCallback(result);
@@ -239,7 +239,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 AsyncErrorCallback);
         }
 
-        protected virtual IList<FileSystemItem> ChangeDirectoryInner(string selectedPath)
+        public virtual IList<FileSystemItem> GetList(string selectedPath)
         {
             var list = FileManager.GetList(selectedPath);
             list.ForEach(item => TitleRecognizer.RecognizeType(item));
@@ -454,7 +454,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             return CalculateSize(_calculationQueue.Peek().Path);
         }
 
-        private long CalculateSize(string path)
+        public long CalculateSize(string path)
         {
             if (_calculationIsAborted) return 0;
 
@@ -1293,7 +1293,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 if (direction == TreeTraversalDirection.Downward) result.Add(new QueueItem(item, action));
                 if (item.Type == ItemType.Directory) //TODO: Link?
                 {
-                    var sub = PopulateQueue(ChangeDirectoryInner(item.Path), direction, action);
+                    var sub = PopulateQueue(GetList(item.Path), direction, action);
                     item.Size = sub.Where(i => i.FileSystemItem.Type == ItemType.File).Sum(i => i.FileSystemItem.Size ?? 0);
                     result.AddRange(sub);
                 }

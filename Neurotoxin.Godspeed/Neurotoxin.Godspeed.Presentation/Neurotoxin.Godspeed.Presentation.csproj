@@ -62,6 +62,7 @@
     <Compile Include="Controls\ProgressIndicator.xaml.cs">
       <DependentUpon>ProgressIndicator.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ProportionalPanel.cs" />
     <Compile Include="Controls\RichTextBox.cs" />
     <Compile Include="Controls\Rollover.xaml.cs">
       <DependentUpon>Rollover.xaml</DependentUpon>
@@ -90,6 +91,7 @@
     <Compile Include="Events\ModuleCloseEvent.cs" />
     <Compile Include="Events\ModuleViewShownEvent.cs" />
     <Compile Include="Events\RequestWindowCloseEvent.cs" />
+    <Compile Include="Extensions\ColorExtensions.cs" />
     <Compile Include="Extensions\DataGridExtensions.cs" />
     <Compile Include="Extensions\FrameworkElementExtensions.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />

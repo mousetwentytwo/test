@@ -4,7 +4,6 @@ using Neurotoxin.Godspeed.Core.Constants;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Models;
 using Neurotoxin.Godspeed.Presentation.Extensions;
-using Neurotoxin.Godspeed.Presentation.Infrastructure;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
@@ -183,8 +182,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
         }
 
-        public string TempFilePath { get; set; }
-
         public bool IsCompressedFile
         {
             get
@@ -192,6 +189,14 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 var ext = System.IO.Path.GetExtension(Path).ToLower();
                 return (ext == ".zip" || ext == ".rar" || ext == ".tar" || ext == ".tar.gz" || ext == ".7z");
             }
+        }
+
+        private static string CONTENT = "Content";
+        private object _content;
+        public object Content
+        {
+            get { return _content; }
+            set { _content = value; NotifyPropertyChanged(CONTENT); }
         }
 
         public FileSystemItemViewModel(FileSystemItem model)

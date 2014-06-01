@@ -1,16 +1,25 @@
-- resume eseten a sebessegmero megbaszodik
+﻿- resume eseten a sebessegmero megbaszodik
 - resume eseten hibatlan lesz-e a file a vegen?
 - lost connection utan tudna folytatni a copyt?
 - delete failnel nem marad meg a kijeloles
 - volt egy tokeletesen jo cache itemje egy profilrol, megis eldobta, mielott meg meggyozodhetett volna rola, hogy le tudja szedni az ftprol az ujat
 - verify checkbox beigazgatasa
+- ftp log-ot vegyuk ki az error dialogbol
 
 - a remote copyt visszatenni
 	- set keepalive on true
 - a copymode-ot megszuntetni
 
+- verify download
+- az fsd db checkerben legyen szemétkereső (van fent valami olyan könyvtár a contentben, ami az fsd db-jében nincs benne) és cleanup is
+	- ErrorsInFreestyleDatabase: más title kéne
+	- TheFollowingGamesMightHaveLeftovers
+	- lenyitható panel? pontos listával, hogy miből mi van?
+- ne engedjünk az ftp-re speckó fileneves dolgokat felmásolni
+- ne engedjünk az ftp-re speckó neves könyvtárat létrehozni
 
 
+- speed graph
 
 							IIS	FSD3	FSD2	FSD1	XeX/DLi
 1. local -> ftp

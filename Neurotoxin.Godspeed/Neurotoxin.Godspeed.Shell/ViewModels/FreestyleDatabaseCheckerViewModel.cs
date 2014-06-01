@@ -12,6 +12,7 @@ using Neurotoxin.Godspeed.Shell.Models;
 using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 using Fizzler.Systems.HtmlAgilityPack;
 using Neurotoxin.Godspeed.Presentation.Extensions;
+using Microsoft.Practices.ObjectBuilder2;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
@@ -20,6 +21,14 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private int _itemsCount;
         private int _itemsChecked;
         private FtpContentViewModel _parent;
+
+        private const string MISSINGFOLDERS = "MissingFolders";
+        private ObservableCollection<FileSystemItemViewModel> _missingFolders;
+        public ObservableCollection<FileSystemItemViewModel> MissingFolders
+        {
+            get { return _missingFolders; }
+            set { _missingFolders = value; NotifyPropertyChanged(MISSINGFOLDERS); }
+        }
 
         private const string MISSINGENTRIES = "MissingEntries";
         private ObservableCollection<FileSystemItemViewModel> _missingEntries;
@@ -82,10 +91,24 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             IsBusy = true;
             ProgressMessage = Resx.GettingData + Strings.DotDotDot;
             IsIndetermine = true;
+            var missingFolders = new List<FileSystemItem>();
+            var missingEntries = new Dictionary<FileSystemItem, IList<FileSystemItem>>();
 
             WorkHandler.Run(() =>
             {
-                var missing = new List<FileSystemItem>();
+                
+                var gameFolders = new List<FileSystemItem>();
+                foreach (var drive in _parent.Drives)
+                {
+                    try
+                    {
+                        gameFolders.AddRange(_parent.GetList(drive.Path + "Content/0000000000000000"));
+                    }
+                    catch
+                    {
+                    }
+                }
+
                 var html = new HtmlDocument();
                 html.LoadHtml(_parent.HttpGetString("gettable.html?name=ContentItems", Encoding.UTF8));
                 var rows = html.DocumentNode.QuerySelectorAll("table.GameContentHeader > tr").Skip(2);
@@ -96,6 +119,14 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     var cells = row.SelectNodes("td")
                                    .Select((c, i) => new { key = (FsdContentItemProperty)i, value = c.InnerText.Trim() })
                                    .ToDictionary(k => k.key, k => k.value);
+
+                    var titleIdInt = Int32.Parse(cells[FsdContentItemProperty.TitleId]);
+                    if (titleIdInt != 0)
+                    {
+                        var titleId = titleIdInt.ToString("X");
+                        gameFolders.RemoveAll(g => g.Name.Equals(titleId, StringComparison.InvariantCultureIgnoreCase));
+                    }
+
                     var contentId = Int32.Parse(cells[FsdContentItemProperty.Id]);
                     var title = cells[FsdContentItemProperty.Name];
                     UIThread.Run(() =>
@@ -110,7 +141,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     var path = string.Format("/{0}{1}", f.Drive, cells[FsdContentItemProperty.Path].Replace("\\", "/"));
                     if (!_parent.FileExists(path))
                     {
-                        missing.Add(new FileSystemItem
+                        missingFolders.Add(new FileSystemItem
                         {
                             Title = title,
                             Path = path,
@@ -119,13 +150,33 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     }
                     _itemsChecked++;
                 }
-                return missing;
+
+                UIThread.Run(() => ProgressMessage = Resx.PleaseWait + Strings.DotDotDot); //TODO: 'just a little bit longer' text
+
+                foreach (var item in gameFolders)
+                {
+                    _parent.TitleRecognizer.RecognizeType(item);
+                    if (item.TitleType != TitleType.Game) continue;
+                    if (!_parent.TitleRecognizer.MergeWithCachedEntry(item)) _parent.TitleRecognizer.RecognizeTitle(item);
+                    var content = _parent.GetList(item.Path);
+                    content.ForEach(c =>
+                                        {
+                                            _parent.TitleRecognizer.RecognizeType(c);
+                                            c.Size = _parent.CalculateSize(c.Path);
+                                        });
+
+                    item.Size = content.Sum(c => c.Size);
+                    missingEntries.Add(item, content);
+                }
+
+                return true;
             },
             result =>
             {
                 IsBusy = false;
                 ProgressMessage = string.Empty;
-                MissingEntries = result.Select(m => new FileSystemItemViewModel(m)).ToObservableCollection();
+                MissingFolders = missingFolders.Select(m => new FileSystemItemViewModel(m)).ToObservableCollection();
+                MissingEntries = missingEntries.Select(m => new FileSystemItemViewModel(m.Key) { Content = m.Value }).ToObservableCollection();
                 NotifyFinished();
             },
             error =>

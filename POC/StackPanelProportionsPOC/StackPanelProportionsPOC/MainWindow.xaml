@@ -1,0 +1,15 @@
+﻿<Window x:Class="StackPanelProportionsPOC.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:s="clr-namespace:StackPanelProportionsPOC" Title="MainWindow" Height="350" Width="525">
+    <Grid>
+
+        <s:ProportionalPanel x:Name="pp">
+            <s:ProportionalPanel.ItemTemplate>
+                <DataTemplate>
+                    <Rectangle Fill="Red" Stroke="Beige" StrokeThickness="2"/>
+                </DataTemplate>
+            </s:ProportionalPanel.ItemTemplate>
+        </s:ProportionalPanel>
+    </Grid>
+</Window>

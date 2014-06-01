@@ -4,70 +4,100 @@
                        xmlns:e="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                        xmlns:primitives="clr-namespace:Neurotoxin.Godspeed.Shell.Primitives" 
                        xmlns:lex="http://wpflocalizeextension.codeplex.com"
+                       xmlns:c="clr-namespace:Neurotoxin.Godspeed.Presentation.Controls;assembly=Neurotoxin.Godspeed.Presentation"
                        lex:ResxLocalizationProvider.DefaultAssembly="Neurotoxin.Godspeed.Shell"
                        lex:ResxLocalizationProvider.DefaultDictionary="Resources"
                        Width="720" Title="{lex:LocText ErrorsInFreestyleDatabase}">
     <primitives:DialogBase.Resources>
+        <Style TargetType="DataGrid" x:Key="Grid">
+            <Setter Property="AutoGenerateColumns" Value="False"/> 
+            <Setter Property="IsTextSearchEnabled" Value="False"/> 
+            <Setter Property="Background" Value="White"/> 
+            <Setter Property="SelectionMode" Value="Single"/> 
+            <Setter Property="GridLinesVisibility" Value="None"/>
+            <Setter Property="CanUserAddRows" Value="False"/> 
+            <Setter Property="CanUserReorderColumns" Value="False"/>
+            <Setter Property="CanUserDeleteRows" Value="False"/> 
+            <Setter Property="CanUserResizeRows" Value="False"/>
+            <Setter Property="CanUserResizeColumns" Value="True"/> 
+            <Setter Property="CanUserSortColumns" Value="False"/> 
+            <Setter Property="SelectionUnit" Value="FullRow"/> 
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="ClipboardCopyMode" Value="None"/> 
+            <Setter Property="BorderBrush" Value="{StaticResource NormalBorderBrush}"/>
+        </Style>
+        <DataTemplate x:Key="NameColumnTemplate">
+            <Grid Background="Transparent">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="{Binding Thumbnail}" Width="16" Height="16" Margin="2,0,3,0" />
+                    <TextBlock FontWeight="Bold" Text="{Binding Title}"/>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
     </primitives:DialogBase.Resources>
-    <Grid x:Name="LayoutRoot">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="300" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+    <AdornerDecorator>
+        <Grid x:Name="LayoutRoot">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="240" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="240" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
-        <TextBlock Text="{lex:Loc TheFollowingGamesAreMissing}" HorizontalAlignment="Left" Margin="0,0,0,10" TextWrapping="Wrap" />
+            <TextBlock Grid.Row="0" Text="{lex:Loc TheFollowingGamesAreMissing}" HorizontalAlignment="Left" Margin="0,0,0,10" TextWrapping="Wrap" />
 
-        <DataGrid Grid.Row="1"
-                  ItemsSource="{Binding MissingEntries}" 
-                  AutoGenerateColumns="False" 
-                  IsTextSearchEnabled="False" 
-                  Background="White" 
-                  SelectionMode="Single" 
-                  GridLinesVisibility="None"
-                  CanUserAddRows="False" 
-                  CanUserReorderColumns="False"
-                  CanUserDeleteRows="False" 
-                  CanUserResizeRows="False"
-                  CanUserResizeColumns="True" 
-                  CanUserSortColumns="False" 
-                  SelectionUnit="FullRow" 
-                  Focusable="False"
-                  ClipboardCopyMode="None" 
-                  BorderBrush="{StaticResource NormalBorderBrush}">
-            <!--<DataGrid.Resources>
-                <Style TargetType="{x:Type TextBlock}" x:Key="CellText">
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                            <Setter Property="Foreground" Value="Red" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </DataGrid.Resources>-->
-            <DataGrid.Columns>
-                <DataGridTemplateColumn Header="{lex:LocText Neurotoxin.Godspeed.Shell:Resources:Name}" Width="Auto" IsReadOnly="True">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Grid Background="Transparent">
-                                <StackPanel Orientation="Horizontal">
-                                    <Image Source="{Binding Thumbnail}" Width="16" Height="16" Margin="2,0,3,0" />
-                                    <TextBlock FontWeight="Bold" Text="{Binding Title}"/>
-                                </StackPanel>
-                            </Grid>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTextColumn Header="{lex:LocText Neurotoxin.Godspeed.Shell:Resources:Path}" Width="*" IsReadOnly="True" Binding="{Binding Path}"/>
-            </DataGrid.Columns>
-        </DataGrid>
+            <DataGrid Grid.Row="1" ItemsSource="{Binding MissingFolders}" Style="{StaticResource Grid}">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="{lex:LocText Neurotoxin.Godspeed.Shell:Resources:Name}" Width="Auto" IsReadOnly="True" CellTemplate="{StaticResource NameColumnTemplate}"/>
+                    <DataGridTextColumn Header="{lex:LocText Neurotoxin.Godspeed.Shell:Resources:Path}" Width="*" IsReadOnly="True" Binding="{Binding Path}"/>
+                </DataGrid.Columns>
+            </DataGrid>
 
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
-            <Button Width="75" Content="{lex:LocText Ok}" Margin="5" Click="OkButtonClick" />
-        </StackPanel>
+            <GridSplitter Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" ShowsPreview="True" Width="3" Background="{StaticResource ControlBackgroundBrush}" />
 
-        <e:Interaction.Triggers>
-        </e:Interaction.Triggers>
-        <Grid.InputBindings>
-        </Grid.InputBindings>
-    </Grid>
+            <TextBlock Grid.Row="3" Text="{lex:Loc TheFollowingGamesMightHaveLeftovers}" HorizontalAlignment="Left" Margin="0,10,0,10" TextWrapping="Wrap" />
+
+            <DataGrid Grid.Row="4" ItemsSource="{Binding MissingEntries}" Style="{StaticResource Grid}" RowDetailsVisibilityMode="Visible">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="{lex:LocText Neurotoxin.Godspeed.Shell:Resources:Name}" Width="Auto" IsReadOnly="True" CellTemplate="{StaticResource NameColumnTemplate}"/>
+                    <DataGridTextColumn Header="{lex:LocText Neurotoxin.Godspeed.Shell:Resources:Path}" Width="*" IsReadOnly="True" Binding="{Binding Path}"/>
+                    <DataGridTextColumn Header="{lex:LocText Neurotoxin.Godspeed.Shell:Resources:Size}" Width="80" IsReadOnly="True" Binding="{Binding Size, Converter={StaticResource SizeConverter}}">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Right" />
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                </DataGrid.Columns>
+                <DataGrid.RowDetailsTemplate>
+                    <DataTemplate>
+                        <c:ProportionalPanel ItemsSource="{Binding Content}" ValueMemberPath="Size">
+                            <c:ProportionalPanel.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="{Binding ContentType, Converter={StaticResource ContentTypeConverter}}" Padding="2">
+                                        <TextBlock Text="{Binding Title}"/>
+                                    </Border>
+                                    <!--<StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Title}"/>
+                                        <TextBlock Text="{Binding Size, Converter={StaticResource SizeConverter}}"/>
+                                    </StackPanel>-->
+                                </DataTemplate>
+                            </c:ProportionalPanel.ItemTemplate>
+                        </c:ProportionalPanel>
+                    </DataTemplate>
+                </DataGrid.RowDetailsTemplate>
+            </DataGrid>
+
+            <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+                <Button Width="75" Content="{lex:LocText Ok}" Margin="5" Click="OkButtonClick" />
+            </StackPanel>
+
+            <e:Interaction.Triggers>
+            </e:Interaction.Triggers>
+            <Grid.InputBindings>
+            </Grid.InputBindings>
+        </Grid>
+    </AdornerDecorator>
 </primitives:DialogBase>
