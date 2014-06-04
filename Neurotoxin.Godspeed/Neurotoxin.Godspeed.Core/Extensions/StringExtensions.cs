@@ -20,10 +20,20 @@ namespace Neurotoxin.Godspeed.Core.Extensions
             return r.Replace(path, "$1").Substring(1);
         }
 
+        public static string SubstringBefore(this string haystack, char needle)
+        {
+            return SubstringBefore(haystack, new string(needle, 1));
+        }
+
         public static string SubstringBefore(this string haystack, string needle)
         {
             var i = haystack.IndexOf(needle, StringComparison.InvariantCultureIgnoreCase);
             return i > -1 ? haystack.Substring(0, i) : null;
+        }
+
+        public static string SubstringAfter(this string haystack, char needle)
+        {
+            return SubstringAfter(haystack, new string(needle, 1));
         }
 
         public static string SubstringAfter(this string haystack, string needle)

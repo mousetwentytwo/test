@@ -61,6 +61,7 @@
   <ItemGroup>
     <Compile Include="Dummies\ConsoleWriter.cs" />
     <Compile Include="Dummies\Range.cs" />
+    <Compile Include="Dummies\TreeItemStream.cs" />
     <Compile Include="Extensions\ListExtensions.cs" />
     <Compile Include="FakingTests.cs" />
     <Compile Include="Dummies\DummyContent.cs" />

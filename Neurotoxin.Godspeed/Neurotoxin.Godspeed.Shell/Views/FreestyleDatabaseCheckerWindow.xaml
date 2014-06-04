@@ -77,12 +77,8 @@
                             <c:ProportionalPanel.ItemTemplate>
                                 <DataTemplate>
                                     <Border Background="{Binding ContentType, Converter={StaticResource ContentTypeConverter}}" Padding="2">
-                                        <TextBlock Text="{Binding Title}"/>
+                                        <TextBlock Text="{Binding Title}" ToolTip="{Binding Title}"/>
                                     </Border>
-                                    <!--<StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="{Binding Title}"/>
-                                        <TextBlock Text="{Binding Size, Converter={StaticResource SizeConverter}}"/>
-                                    </StackPanel>-->
                                 </DataTemplate>
                             </c:ProportionalPanel.ItemTemplate>
                         </c:ProportionalPanel>

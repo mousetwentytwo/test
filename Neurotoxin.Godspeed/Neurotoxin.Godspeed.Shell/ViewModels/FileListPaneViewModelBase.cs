@@ -223,6 +223,18 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             ChangeDirectory();
         }
 
+        public void ChangeDirectory(string path)
+        {
+            var drive = Drives.First(d => d.Name == path.SubstringBefore(FileManager.Slash));
+            Drive = drive;
+            
+            var model = FileManager.GetItemInfo(path);
+            if (model == null) return;
+            if (path == drive.Path) model.Type = ItemType.Drive;
+            CurrentFolder = new FileSystemItemViewModel(model);
+            ChangeDirectoryCommand.Execute(null);
+        }
+
         protected virtual void ChangeDirectory(string message = null, Action callback = null)
         {
             if (string.IsNullOrEmpty(message)) message = Resx.ChangingDirectory;
@@ -531,7 +543,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             if (content == null) return;
 
-            var list = content.OrderByDescending(p => p.Type).ThenByProperty(Settings.SortByField, Settings.SortDirection).ToList();
+            var x = content.OrderByDescending(p => p.Type);
+            if (Settings != null) x = x.ThenByProperty(Settings.SortByField, Settings.SortDirection);
+            var list = x.ToList();
             var up = list.FirstOrDefault(item => item.IsUpDirectory);
             if (up != null)
             {
@@ -1316,7 +1330,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public virtual bool CopyStream(FileSystemItem item, Stream stream, long startPosition = 0, long? byteLimit = null)
         {
-            return FileManager.CopyTo(item, stream, startPosition, byteLimit);
+            return FileManager.CopyStream(item, stream, startPosition, byteLimit);
         }
 
         private void OnTransferProgressChanged(TransferProgressChangedEventArgs args)

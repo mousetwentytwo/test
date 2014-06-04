@@ -7,7 +7,9 @@
         <s:ProportionalPanel x:Name="pp">
             <s:ProportionalPanel.ItemTemplate>
                 <DataTemplate>
-                    <Rectangle Fill="Red" Stroke="Beige" StrokeThickness="2"/>
+                    <Border Background="Red" BorderBrush="Beige" BorderThickness="2">
+                        <TextBlock Text="Lorem ipsum"/>
+                    </Border>
                 </DataTemplate>
             </s:ProportionalPanel.ItemTemplate>
         </s:ProportionalPanel>

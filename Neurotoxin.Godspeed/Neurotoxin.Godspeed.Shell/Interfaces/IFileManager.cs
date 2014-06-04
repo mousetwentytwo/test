@@ -34,7 +34,7 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
         FileSystemItem Rename(string path, string newName);
 
         Stream GetStream(string path, FileMode mode, FileAccess access, long startPosition);
-        bool CopyTo(FileSystemItem item, Stream stream, long startPosition = 0, long? byteLimit = null);
+        bool CopyStream(FileSystemItem item, Stream stream, long startPosition = 0, long? byteLimit = null);
         void Abort();
     }
 }

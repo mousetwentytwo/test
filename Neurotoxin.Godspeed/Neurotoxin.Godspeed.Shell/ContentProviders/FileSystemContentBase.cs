@@ -67,18 +67,18 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         public virtual byte[] ReadFileContent(string path, long byteLimit)
         {
             var ms = new MemoryStream();
-            CopyTo(path, ms, 0, byteLimit > 0 ? byteLimit : (long)FileExists(path));
+            CopyStream(path, ms, 0, byteLimit > 0 ? byteLimit : (long)FileExists(path));
             var result = ms.ToArray();
             ms.Close();
             return result;
         }
 
-        public bool CopyTo(FileSystemItem item, Stream stream, long startPosition = 0, long? byteLimit = null)
+        public bool CopyStream(FileSystemItem item, Stream stream, long startPosition = 0, long? byteLimit = null)
         {
-            return CopyTo(item.Path, stream, startPosition, byteLimit ?? item.Size ?? FileExists(item.Path));
+            return CopyStream(item.Path, stream, startPosition, byteLimit ?? item.Size ?? FileExists(item.Path));
         }
 
-        protected virtual bool CopyTo(string path, Stream stream, long startPosition, long byteLimit)
+        protected virtual bool CopyStream(string path, Stream stream, long startPosition, long byteLimit)
         {
             var copyStarted = false;
             long transferred = 0;

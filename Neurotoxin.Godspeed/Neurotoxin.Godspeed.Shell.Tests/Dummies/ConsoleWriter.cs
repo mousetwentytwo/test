@@ -12,6 +12,8 @@ namespace Neurotoxin.Godspeed.Shell.Tests.Dummies
 {
     public class ConsoleWriter : IWindowManager
     {
+        public Func<TransferErrorDialogResult> WriteErrorDialogResult { get; set; }
+
         public void ShowErrorMessage(Exception exception)
         {
             Console.WriteLine("[Error] {0}{1}{2}", exception.Message, Environment.NewLine, exception.StackTrace);
@@ -25,8 +27,8 @@ namespace Neurotoxin.Godspeed.Shell.Tests.Dummies
 
         public TransferErrorDialogResult ShowWriteErrorDialog(string sourcePath, string targetPath, bool isResumeSupported, IFileListPaneViewModel sourcePane, IFileListPaneViewModel targetPane)
         {
-            Console.WriteLine("[Error] File already exists. (S: {0}, T: {0})", sourcePath, targetPath);
-            return new TransferErrorDialogResult(ErrorResolutionBehavior.Cancel);
+            Console.WriteLine("[Error] File already exists. (S: {0}, T: {1})", sourcePath, targetPath);
+            return WriteErrorDialogResult != null ? WriteErrorDialogResult.Invoke() : new TransferErrorDialogResult(ErrorResolutionBehavior.Cancel);
         }
 
         public bool? ShowReconnectionDialog(Exception exception)

@@ -84,8 +84,7 @@ namespace Neurotoxin.Godspeed.Shell.Tests.Dummies
         public override FileExistenceInfo FileExists(string path)
         {
             var fake = _tree.Find(path);
-            if (fake != null && fake.Type == ItemType.File)
-                return fake.Size;
+            if (fake != null && fake.Type == ItemType.File) return fake.Size;
             return false;
         }
 
@@ -140,9 +139,9 @@ namespace Neurotoxin.Godspeed.Shell.Tests.Dummies
                 {
                     throw new Exception();
                 }
-            } 
+            }
 
-            var ms = new MemoryStream(0xFFFF);
+            var ms = new TreeItemStream(fake);
             ms.Seek(startPosition, SeekOrigin.Begin);
             return ms;
         }
