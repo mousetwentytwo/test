@@ -236,6 +236,8 @@ namespace Neurotoxin.Godspeed.Shell.Tests
             {
                 Assert.AreEqual(content[i], bBytes[i], "The files content doesn't much at position: " + i);
             }
+
+            Directory.Delete(tmpPath, true);
         }
 
         private bool IsCopy(FileSystemItem a, FileSystemItem b)

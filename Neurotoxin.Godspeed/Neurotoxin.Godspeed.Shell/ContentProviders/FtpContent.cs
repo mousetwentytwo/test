@@ -90,6 +90,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             FtpTrace.AddListener(_traceListener);
 
             _connection = connection;
+            _ftpClient.Connected += OnConnected;
             _ftpClient.Connect();
 
             lock (Log)
@@ -105,24 +106,25 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 }
             }
 
-            if (connection.UsePassiveMode &&
-                (ServerType == FtpServerType.XeXMenu || ServerType == FtpServerType.DashLaunch))
-            {
+            if (connection.UsePassiveMode && (ServerType == FtpServerType.XeXMenu || ServerType == FtpServerType.DashLaunch))
                 throw new FtpException(string.Format(Resx.PassiveModeNotSupported, ServerType));
-            }
 
+            var r = FtpClient.Execute("APPE");
+            return !r.Message.Contains("command not recognized");
+        }
+
+        private void OnConnected(object sender, EventArgs e)
+        {
             var r = FtpClient.Execute("SIZE");
             if (r.Message.Contains("command not recognized") || r.Message.Contains("command not implemented"))
             {
                 _ftpClient.Capabilities &= ~FtpCapability.SIZE;
             }
-
-            r = FtpClient.Execute("APPE");
-            return !r.Message.Contains("command not recognized");
         }
 
         internal void Disconnect()
         {
+            FtpClient.Connected -= OnConnected;
             FtpTrace.RemoveListener(_traceListener);
             _keepAliveTimer.Elapsed -= KeepAliveTimerOnElapsed;
             FtpClient.Dispose();

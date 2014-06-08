@@ -523,14 +523,14 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     if (args.Percentage == 100)
                     {
                         _speedMeter.Stop();
-                        _statistics.BytesTransferred += args.TotalBytesTransferred - args.ResumeStartPosition;
+                        _statistics.BytesTransferred += args.TotalBytesTransferred;
                     } 
                     else if (!_speedMeter.IsRunning)
                     {
                         _speedMeter.Restart();
                     }
                     var ms = _speedMeter.Elapsed.TotalMilliseconds;
-                    if (ms > 100) Speed = (int)Math.Floor((args.TotalBytesTransferred - args.ResumeStartPosition)/ms*1000/1024);
+                    if (ms > 100) Speed = (int)Math.Floor((args.TotalBytesTransferred)/ms*1000/1024);
                     CurrentFileProgress = args.Percentage > 0 ? args.Percentage : 0;
                     _currentFileBytesTransferred += args.Transferred;
                     BytesTransferred += args.Transferred;

@@ -746,6 +746,8 @@ namespace Neurotoxin.Godspeed.Core.Net {
             return GetAsyncDelegate<AsyncExecute>(ar).EndInvoke(ar);
         }
 
+        public event EventHandler Connected;
+
         /// <summary>
         /// Connect to the server. Throws ObjectDisposedException if this object has been disposed.
         /// </summary>
@@ -835,10 +837,17 @@ namespace Neurotoxin.Godspeed.Core.Net {
                 }
 
                 FtpTrace.WriteLine("Text encoding: " + m_textEncoding.ToString());
+                OnConnected();
             }
             finally {
                 m_lock.ReleaseMutex();
             }
+        }
+
+        private void OnConnected()
+        {
+            var handler = Connected;
+            if (handler != null) handler.Invoke(this, new EventArgs());
         }
 
         /// <summary>

@@ -5,6 +5,8 @@
                        xmlns:dialogs="clr-namespace:Neurotoxin.Godspeed.Shell.Views.Dialogs"
                        xmlns:primitives="clr-namespace:Neurotoxin.Godspeed.Shell.Primitives" 
                        xmlns:lex="http://wpflocalizeextension.codeplex.com"
+                       xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+                       xmlns:c="clr-namespace:Neurotoxin.Godspeed.Presentation.Controls;assembly=Neurotoxin.Godspeed.Presentation"
                        lex:LocalizeDictionary.DesignCulture="en-US"
                        lex:ResxLocalizationProvider.DefaultAssembly="Neurotoxin.Godspeed.Shell"
                        lex:ResxLocalizationProvider.DefaultDictionary="Resources"
@@ -93,11 +95,20 @@
                 </TextBlock.Text>
             </TextBlock>
         </DockPanel>
-        
-        <CheckBox Grid.Row="5" Visibility="{Binding IsVerificationSupported, Converter={StaticResource BoolToVis}}"
-                  IsChecked="{Binding IsVerificationEnabled}" Content="{lex:Loc VerifyFileHashAfterFtpUpload}"/>
 
-        <StackPanel Grid.Row="6" HorizontalAlignment="Right" Orientation="Horizontal">
+        <StackPanel Grid.Row="5" HorizontalAlignment="Left" Orientation="Horizontal">
+            <ToggleButton IsEnabled="{Binding IsVerificationSupported}" Margin="0,0,5,0" IsChecked="{Binding IsVerificationEnabled}" ToolTip="{lex:Loc VerifyFileHashAfterFtpUpload}">
+                <c:GreyableImage Source="/Resources/search.png" Margin="2"/>
+            </ToggleButton>
+            <ToggleButton Margin="0,0,5,0" IsChecked="{Binding IsPcShutdownEnabled}" ToolTip="{lex:Loc ShutdownPc}">
+                <c:GreyableImage Source="/Resources/search.png" Margin="2"/>
+            </ToggleButton>
+            <ToggleButton IsEnabled="{Binding IsFtpShutdownSupported}" Margin="0,0,5,0" IsChecked="{Binding IsFtpShutdownEnabled}" ToolTip="{lex:Loc ShutdownFtp}">
+                <c:GreyableImage Source="/Resources/search.png" Margin="2"/>
+            </ToggleButton>
+        </StackPanel>
+
+        <StackPanel Grid.Row="5" HorizontalAlignment="Right" Orientation="Horizontal" VerticalAlignment="Bottom">
             <Button Width="75" Content="{lex:LocText Pause}" Command="{Binding PauseCommand}" Margin="0,0,5,0" 
                     Visibility="{Binding Path=IsPaused, Converter={StaticResource BoolToVis}, ConverterParameter=True}" 
                     IsEnabled="{Binding Path=TargetPane.IsResumeSupported}" />

@@ -67,7 +67,13 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         public virtual byte[] ReadFileContent(string path, long byteLimit)
         {
             var ms = new MemoryStream();
-            CopyStream(path, ms, 0, byteLimit > 0 ? byteLimit : (long)FileExists(path));
+            if (byteLimit <= 0)
+            {
+                var exists = FileExists(path);
+                if (!exists) throw new IOException("File not exists: " + path);
+                byteLimit = exists.Size;
+            }
+            CopyStream(path, ms, 0, byteLimit);
             var result = ms.ToArray();
             ms.Close();
             return result;
