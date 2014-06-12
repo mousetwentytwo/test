@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Models;
 using Neurotoxin.Godspeed.Shell.ViewModels;
 using Neurotoxin.Godspeed.Shell.Views.Dialogs;
@@ -10,7 +11,7 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
     {
         void ShowErrorMessage(Exception exception);
         TransferErrorDialogResult ShowIoErrorDialog(Exception exception);
-        TransferErrorDialogResult ShowWriteErrorDialog(string sourcePath, string targetPath, bool isResumeSupported, IFileListPaneViewModel sourcePane, IFileListPaneViewModel targetPane);
+        TransferErrorDialogResult ShowWriteErrorDialog(string sourcePath, string targetPath, CopyAction disableFlags, Action preAction);
         bool? ShowReconnectionDialog(Exception exception);
         void ShowMessage(string title, string message, NotificationMessageFlags flags = NotificationMessageFlags.None);
         void CloseMessage();

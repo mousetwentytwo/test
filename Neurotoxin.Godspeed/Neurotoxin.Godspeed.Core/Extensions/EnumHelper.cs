@@ -78,5 +78,12 @@ namespace Neurotoxin.Godspeed.Core.Extensions
 
             return (T)Enum.ToObject(typeof(T), currentValue);
         }
+
+        public static T AllEnabled<T>()
+        {
+            var type = typeof (T);
+            var value = Enum.GetValues(type).Cast<int>().Aggregate(0, (current, field) => current | field);
+            return (T)Enum.ToObject(type, value);
+        }
     }
 }

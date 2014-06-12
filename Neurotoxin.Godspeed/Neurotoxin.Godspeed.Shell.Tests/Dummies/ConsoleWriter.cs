@@ -25,7 +25,7 @@ namespace Neurotoxin.Godspeed.Shell.Tests.Dummies
             return new TransferErrorDialogResult(ErrorResolutionBehavior.Cancel);
         }
 
-        public TransferErrorDialogResult ShowWriteErrorDialog(string sourcePath, string targetPath, bool isResumeSupported, IFileListPaneViewModel sourcePane, IFileListPaneViewModel targetPane)
+        public TransferErrorDialogResult ShowWriteErrorDialog(string sourcePath, string targetPath, CopyAction disableflags, Action preAction)
         {
             Console.WriteLine("[Error] File already exists. (S: {0}, T: {1})", sourcePath, targetPath);
             return WriteErrorDialogResult != null ? WriteErrorDialogResult.Invoke() : new TransferErrorDialogResult(ErrorResolutionBehavior.Cancel);

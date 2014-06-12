@@ -8,6 +8,7 @@ using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
 using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
+using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
@@ -49,11 +50,10 @@ namespace Neurotoxin.Godspeed.Shell.Controllers
             return dialog.ShowDialog() == true ? dialog.Result : null;
         }
 
-        public TransferErrorDialogResult ShowWriteErrorDialog(string sourcePath, string targetPath, bool isResumeSupported, IFileListPaneViewModel sourcePane, IFileListPaneViewModel targetPane)
+        public TransferErrorDialogResult ShowWriteErrorDialog(string sourcePath, string targetPath, CopyAction disableFlags, Action preAction)
         {
-            var dialog = new WriteErrorDialog(_eventAggregator, sourcePath, targetPath, isResumeSupported);
-            sourcePane.GetItemViewModel(sourcePath);
-            targetPane.GetItemViewModel(targetPath);
+            var dialog = new WriteErrorDialog(_eventAggregator, sourcePath, targetPath, disableFlags);
+            if (preAction != null) preAction.Invoke();
             return dialog.ShowDialog() == true ? dialog.Result : null;
         }
 

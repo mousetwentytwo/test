@@ -295,6 +295,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     switch (a)
                     {
                         case CopyAction.CreateNew:
+                            //TODO: check what happens if targetPath contains spec.char
                             exists = TargetPane.FileExists(targetPath);
                             if (exists) throw new TransferException(TransferErrorType.WriteAccessError, Resx.TargetAlreadyExists)
                                                   {
@@ -695,6 +696,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     }
                     break;
                 case TransferErrorType.WriteAccessError:
+                case TransferErrorType.NotSupporterCharactersInPath:
                     {
                         if (_skipAll != null)
                         {
@@ -703,7 +705,16 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         else
                         {
                             var sourceFile = _queue.Peek().FileSystemItem;
-                            var r = WindowManager.ShowWriteErrorDialog(sourceFile.Path, transferException.TargetFile, TargetPane.IsResumeSupported && sourceFile.Size > transferException.TargetFileSize, SourcePane, TargetPane);
+                            var flags = CopyAction.Rename;
+                            if (TargetPane.IsResumeSupported && sourceFile.Size > transferException.TargetFileSize) flags |= CopyAction.Resume;
+                            if (exceptionType == TransferErrorType.WriteAccessError) flags = flags | CopyAction.Overwrite | CopyAction.OverwriteOlder;
+                            var sourcePath = sourceFile.Path;
+                            var targetPath = transferException.TargetFile;
+                            var r = WindowManager.ShowWriteErrorDialog(sourcePath, targetPath, flags, () =>
+                                                                                                          {
+                                                                                                              SourcePane.GetItemViewModel(sourcePath);
+                                                                                                              TargetPane.GetItemViewModel(targetPath);
+                                                                                                          });
                             if (r != null) result = r;
                         }
                     }

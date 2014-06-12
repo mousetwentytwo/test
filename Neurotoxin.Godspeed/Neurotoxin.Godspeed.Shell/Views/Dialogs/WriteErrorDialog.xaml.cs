@@ -17,16 +17,40 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
         private readonly IEventAggregator _eventAggregator;
         public TransferErrorDialogResult Result { get; private set; }
 
-        public WriteErrorDialog(IEventAggregator eventAggregator, string sourceFile, string targetFile, bool isResumeSupported)
+        public WriteErrorDialog(IEventAggregator eventAggregator, string sourceFile, string targetFile, CopyAction disableFlags)
         {
             _eventAggregator = eventAggregator;
             _sourceFile = sourceFile;
             _targetFile = targetFile;
             Owner = Application.Current.MainWindow;
             InitializeComponent();
-            Resume.IsEnabled = isResumeSupported;
-            ResumeAll.IsEnabled = isResumeSupported;
+            if (string.IsNullOrEmpty(sourceFile)) SourceFileBox.Visibility = Visibility.Collapsed;
+            if (string.IsNullOrEmpty(targetFile)) TargetFileBox.Visibility = Visibility.Collapsed;
+            DisableButtons(disableFlags);
             _eventAggregator.GetEvent<ViewModelGeneratedEvent>().Subscribe(ViewModelGenerated);
+        }
+
+        private void DisableButtons(CopyAction disableFlags)
+        {
+            if (disableFlags.HasFlag(CopyAction.Overwrite))
+            {
+                Overwrite.IsEnabled = false;
+                OverwriteAll.IsEnabled = false;
+                OverwriteAllOlder.IsEnabled = false;
+            }
+            if (disableFlags.HasFlag(CopyAction.OverwriteOlder))
+            {
+                OverwriteAllOlder.IsEnabled = false;
+            }
+            if (disableFlags.HasFlag(CopyAction.Resume))
+            {
+                Resume.IsEnabled = false;
+                ResumeAll.IsEnabled = false;
+            }
+            if (disableFlags.HasFlag(CopyAction.Rename))
+            {
+                Rename.IsEnabled = false;
+            }
         }
 
         private void ViewModelGenerated(ViewModelGeneratedEventArgs args)

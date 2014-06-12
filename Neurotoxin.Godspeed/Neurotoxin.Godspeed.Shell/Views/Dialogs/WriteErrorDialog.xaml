@@ -20,12 +20,10 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <GroupBox Header="{lex:LocText TargetFileHeader, Suffix={x:Static constants:Strings.Colon}}"
-                  Grid.Row="0" Margin="5,5,5,10">
+            <GroupBox x:Name="TargetFileBox" Header="{lex:LocText TargetFileHeader, Suffix={x:Static constants:Strings.Colon}}" Grid.Row="0" Margin="5,5,5,10">
                 <views:FileDetailsBox x:Name="TargetFile" />
             </GroupBox>
-            <GroupBox Header="{lex:LocText SourceFileHeader, Suffix={x:Static constants:Strings.Colon}}"
-                  Grid.Row="1" Margin="5,0,5,5">
+            <GroupBox x:Name="SourceFileBox" Header="{lex:LocText SourceFileHeader, Suffix={x:Static constants:Strings.Colon}}" Grid.Row="1" Margin="5,0,5,5">
                 <views:FileDetailsBox x:Name="SourceFile" />
             </GroupBox>
         </Grid>

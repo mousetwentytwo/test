@@ -556,6 +556,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             try
             {
+                CheckPathForSpecialChars(path); 
                 return base.CreateFolder(path);
             }
             catch (Exception ex)
@@ -580,6 +581,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             try
             {
+                CheckPathForSpecialChars(path);
                 return base.GetStream(path, mode, access, startPosition);
             }
             catch (Exception ex)
@@ -598,6 +600,13 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             {
                 throw WrapFtpException(ex);
             }
+        }
+
+        private void CheckPathForSpecialChars(string path)
+        {
+            //TODO: error message might be not ok
+            if (new Regex(@"[^\x20-\x7f]").IsMatch(path))
+                throw new TransferException(TransferErrorType.NotSupporterCharactersInPath, Resx.SpecialCharactersNotSupported);
         }
 
         private Exception WrapFtpException(Exception exception)

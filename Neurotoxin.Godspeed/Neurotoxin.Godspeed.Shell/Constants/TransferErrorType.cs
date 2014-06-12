@@ -4,6 +4,7 @@
     {
         NotSpecified,
         WriteAccessError,
+        NotSupporterCharactersInPath,
         LostConnection
     }
 }
