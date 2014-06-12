@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Management;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
 using Neurotoxin.Godspeed.Presentation.Extensions;
@@ -13,25 +13,24 @@ using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
 using Neurotoxin.Godspeed.Shell.Properties;
 using Neurotoxin.Godspeed.Shell.ViewModels;
+using Neurotoxin.Godspeed.Shell.Views;
 using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 
-namespace Neurotoxin.Godspeed.Shell.Views
+namespace Neurotoxin.Godspeed.Shell.Controllers
 {
     public class WindowManager : IWindowManager
     {
         private readonly IUnityContainer _container;
         private readonly IEventAggregator _eventAggregator;
-        private readonly IWorkHandler _workHandler;
         private NotificationMessage _notificationMessage;
         private bool _isAbortionInProgress;
         private TransferProgressDialog _transferProgressDialog;
         private ProgressDialog _progressDialog;
 
-        public WindowManager(IEventAggregator eventAggregator, IWorkHandler workHandler)
+        public WindowManager(IEventAggregator eventAggregator)
         {
             _container = UnityInstance.Container;
             _eventAggregator = eventAggregator;
-            _workHandler = workHandler;
 
             eventAggregator.GetEvent<TransferStartedEvent>().Subscribe(OnTransferStarted);
             eventAggregator.GetEvent<TransferFinishedEvent>().Subscribe(OnTransferFinished);
@@ -133,9 +132,12 @@ namespace Neurotoxin.Godspeed.Shell.Views
 
         private void OnTransferFinished(TransferFinishedEventArgs e)
         {
-            if (_transferProgressDialog == null) return;
-            _transferProgressDialog.Closing -= TransferProgressDialogOnClosing;
-            _transferProgressDialog.Close();
+            if (_transferProgressDialog != null)
+            {
+                _transferProgressDialog.Closing -= TransferProgressDialogOnClosing;
+                _transferProgressDialog.Close();
+            }
+            if (e.Shutdown) Shutdown();
         }
 
         private void OnCacheMigration(CacheMigrationEventArgs e)
@@ -187,9 +189,27 @@ namespace Neurotoxin.Godspeed.Shell.Views
                 w.PreviewKeyDown += PreventAllKeyboardActions;
         }
 
-        private void PreventAllKeyboardActions(object sender, KeyEventArgs e)
+        private static void PreventAllKeyboardActions(object sender, KeyEventArgs e)
         {
             e.Handled = true;
+        }
+
+        private static void Shutdown()
+        {
+            var mcWin32 = new ManagementClass("Win32_OperatingSystem");
+            mcWin32.Get();
+
+            // You can't shutdown without security privileges
+            mcWin32.Scope.Options.EnablePrivileges = true;
+            var mboShutdownParams = mcWin32.GetMethodParameters("Win32Shutdown");
+
+            // Flag 1 means we want to shut down the system. Use "2" to reboot.
+            mboShutdownParams["Flags"] = "1";
+            mboShutdownParams["Reserved"] = "0";
+            foreach (ManagementObject manObj in mcWin32.GetInstances())
+            {
+                manObj.InvokeMethod("Win32Shutdown", mboShutdownParams, null);
+            }
         }
     }
 }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.Sockets;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -19,7 +18,6 @@ using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
 using Neurotoxin.Godspeed.Shell.Exceptions;
 using Neurotoxin.Godspeed.Shell.Extensions;
 using Neurotoxin.Godspeed.Shell.Models;
-using Neurotoxin.Godspeed.Shell.Views;
 using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 using Fizzler.Systems.HtmlAgilityPack;
@@ -61,7 +59,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
         }
 
-        public override bool IsVerificationSupported
+        public override bool IsFSD
         {
             get { return FileManager.IsFSD; }
         }
@@ -349,6 +347,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public void RestoreConnection()
         {
             FileManager.RestoreConnection();
+        }
+
+        public void Shutdown()
+        {
+            FileManager.Shutdown();
         }
 
         public override void FinishTransferAsSource()

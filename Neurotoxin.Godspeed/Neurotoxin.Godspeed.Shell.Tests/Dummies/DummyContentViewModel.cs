@@ -19,7 +19,7 @@ namespace Neurotoxin.Godspeed.Shell.Tests.Dummies
             get { return false; }
         }
 
-        public override bool IsVerificationSupported
+        public override bool IsFSD
         {
             get { return false; }
         }

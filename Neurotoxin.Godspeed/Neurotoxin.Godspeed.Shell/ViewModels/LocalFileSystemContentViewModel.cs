@@ -29,7 +29,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             get { return false; }
         }
 
-        public override bool IsVerificationSupported
+        public override bool IsFSD
         {
             get { return false; }
         }

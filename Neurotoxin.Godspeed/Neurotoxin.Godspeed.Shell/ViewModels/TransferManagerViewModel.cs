@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Shell;
 using Neurotoxin.Godspeed.Core.Exceptions;
+using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Core.Net;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Events;
@@ -36,6 +37,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private bool _isContinued;
         private bool _sourceChanged;
         private bool _targetChanged;
+        private Shutdown _shutdown;
 
         private readonly IStatisticsViewModel _statistics;
         private readonly IUserSettings _userSettings;
@@ -192,7 +194,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public bool IsVerificationSupported
         {
-            get { return TargetPane != null && TargetPane.IsVerificationSupported; }
+            get { return Ftp != null && Ftp.IsFSD; }
+        }
+
+        public bool IsShutdownSupported
+        {
+            get { return Ftp != null && Ftp.IsFSD; }
         }
 
         private const string ISVERIFICATIONENABLED = "IsVerificationEnabled";
@@ -200,6 +207,27 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             get { return _userSettings.VerifyFileHashAfterFtpUpload; }
             set { _userSettings.VerifyFileHashAfterFtpUpload = value; NotifyPropertyChanged(ISVERIFICATIONENABLED); }
+        }
+
+        private const string ISSHUTDOWNPCENABLED = "IsShutdownPcEnabled";
+        public bool IsShutdownPcEnabled
+        {
+            get { return _shutdown == Shutdown.PC; }
+            set { EnumHelper.SetFlag(_shutdown, Shutdown.PC, value); NotifyPropertyChanged(ISSHUTDOWNPCENABLED); }
+        }
+
+        private const string ISSHUTDOWNXBOXENABLED = "IsShutdownXboxEnabled";
+        public bool IsShutdownXboxEnabled
+        {
+            get { return _shutdown == Shutdown.Xbox; }
+            set { EnumHelper.SetFlag(_shutdown, Shutdown.Xbox, value); NotifyPropertyChanged(ISSHUTDOWNXBOXENABLED); }
+        }
+
+        private const string ISCOMPLETESHUTDOWNENABLED = "IsCompleteShutdownEnabled";
+        public bool IsCompleteShutdownEnabled
+        {
+            get { return _shutdown == Shutdown.Both; }
+            set { EnumHelper.SetFlag(_shutdown, Shutdown.Both, value); NotifyPropertyChanged(ISCOMPLETESHUTDOWNENABLED); }
         }
 
         #endregion
@@ -760,11 +788,22 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             _speedMeter.Reset();
             _elapsedTimeMeter.Stop();
             ProgressState = TaskbarItemProgressState.None;
+
+            var args = new TransferFinishedEventArgs(this);
+
+            if (_shutdown.HasFlag(Shutdown.Xbox))
+            {
+                if (Ftp == SourcePane) _sourceChanged = false;
+                if (Ftp == TargetPane) _targetChanged = false;
+                Ftp.Shutdown();
+            }
+            if (_shutdown.HasFlag(Shutdown.PC)) args.Shutdown = true;
+
             if (_sourceChanged) SourcePane.Refresh();
             if (_targetChanged) TargetPane.Refresh();
             SourcePane = null;
             TargetPane = null;
-            EventAggregator.GetEvent<TransferFinishedEvent>().Publish(new TransferFinishedEventArgs(this));
+            EventAggregator.GetEvent<TransferFinishedEvent>().Publish(args);
         }
 
         private void RenameExistingFile(TransferException exception, CopyAction? action, Action<CopyAction?, string> rename, Action<Exception> chooseDifferentOption)

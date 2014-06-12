@@ -130,6 +130,13 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             FtpClient.Dispose();
         }
 
+        internal void Shutdown()
+        {
+            if (!IsFSD) return; //TODO: throw exception?
+            FtpClient.Execute("SHUTDOWN");
+            Disconnect();
+        }
+
         public override IList<FileSystemItem> GetDrives()
         {
             List<FileSystemItem> result;

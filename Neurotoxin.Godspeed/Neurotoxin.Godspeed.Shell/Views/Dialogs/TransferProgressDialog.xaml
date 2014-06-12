@@ -7,6 +7,8 @@
                        xmlns:lex="http://wpflocalizeextension.codeplex.com"
                        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
                        xmlns:c="clr-namespace:Neurotoxin.Godspeed.Presentation.Controls;assembly=Neurotoxin.Godspeed.Presentation"
+                       xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                       xmlns:b="clr-namespace:Neurotoxin.Godspeed.Shell.Views.Behaviors"
                        lex:LocalizeDictionary.DesignCulture="en-US"
                        lex:ResxLocalizationProvider.DefaultAssembly="Neurotoxin.Godspeed.Shell"
                        lex:ResxLocalizationProvider.DefaultDictionary="Resources"
@@ -109,6 +111,20 @@
         </StackPanel>
 
         <StackPanel Grid.Row="5" HorizontalAlignment="Right" Orientation="Horizontal" VerticalAlignment="Bottom">
+            <xctk:DropDownButton Width="75" Content="{lex:Loc Options}" Margin="0,0,5,0">
+                <xctk:DropDownButton.DropDownContent>
+                    <StackPanel>
+                        <MenuItem Header="{lex:Loc VerifyFileHashAfterFtpUpload}" IsCheckable="True" IsChecked="{Binding IsVerificationEnabled}" IsEnabled="{Binding IsVerificationSupported}"/>
+                        <Separator/>
+                        <MenuItem Header="{lex:Loc ShutdownPc}" IsCheckable="True" IsChecked="{Binding IsShutdownPcEnabled}"/>
+                        <MenuItem Header="{lex:Loc ShutdownXbox}" IsCheckable="True" IsChecked="{Binding IsShutdownXboxEnabled}" IsEnabled="{Binding IsShutdownSupported}"/>
+                        <MenuItem Header="{lex:Loc CompleteShutdown}" IsCheckable="True" IsChecked="{Binding IsCompleteShutdownEnabled}" IsEnabled="{Binding IsShutdownSupported}"/>
+                        <i:Interaction.Behaviors>
+                            <b:MenuItemButtonGroupBehavior/>
+                        </i:Interaction.Behaviors>
+                    </StackPanel>
+                </xctk:DropDownButton.DropDownContent>
+            </xctk:DropDownButton>
             <Button Width="75" Content="{lex:LocText Pause}" Command="{Binding PauseCommand}" Margin="0,0,5,0" 
                     Visibility="{Binding Path=IsPaused, Converter={StaticResource BoolToVis}, ConverterParameter=True}" 
                     IsEnabled="{Binding Path=TargetPane.IsResumeSupported}" />

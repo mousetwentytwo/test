@@ -165,7 +165,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public abstract bool IsReadOnly { get; }
 
-        public abstract bool IsVerificationSupported { get; }
+        public abstract bool IsFSD { get; }
         public abstract bool IsVerificationEnabled { get; }
 
         #endregion

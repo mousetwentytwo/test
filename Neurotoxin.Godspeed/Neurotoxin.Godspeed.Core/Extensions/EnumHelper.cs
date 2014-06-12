@@ -65,5 +65,18 @@ namespace Neurotoxin.Godspeed.Core.Extensions
             var returnText = new Regex("[^a-zA-Z0-9]+").Replace(text, "");
             return returnText;
         }
+
+        public static T SetFlag<T>(T @enum, T flag, bool value) where T : struct, IConvertible
+        {
+            var currentValue = Convert.ToInt32(@enum);
+            var flagValue = Convert.ToInt32(flag);
+
+            if (value)
+                currentValue |= flagValue;
+            else
+                currentValue &= ~flagValue;
+
+            return (T)Enum.ToObject(typeof(T), currentValue);
+        }
     }
 }
