@@ -609,11 +609,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                        };
         }
 
-        public TransferResult VerifyUpload(string savePath, string itemPath)
+        public TransferResult Verify(string remotePath, string localPath)
         {
             if (!FileManager.IsFSD) return TransferResult.Skipped;
 
-            var match = FileManager.VerifyUpload(savePath, itemPath);
+            var match = FileManager.Verify(remotePath, localPath);
             if (!match) throw new FtpHashVerificationException(Resx.FtpHashVerificationFailed);
             return TransferResult.Ok;
         }

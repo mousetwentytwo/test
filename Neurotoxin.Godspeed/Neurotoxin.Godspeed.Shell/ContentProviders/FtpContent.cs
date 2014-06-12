@@ -379,7 +379,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             Connect(_connection);
         }
 
-        public bool VerifyUpload(string remotePath, string localPath)
+        public bool Verify(string remotePath, string localPath)
         {
             if (FileExists(remotePath) != new FileInfo(localPath).Length) return false;
 

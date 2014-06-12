@@ -114,11 +114,11 @@
             <xctk:DropDownButton Width="75" Content="{lex:Loc Options}" Margin="0,0,5,0">
                 <xctk:DropDownButton.DropDownContent>
                     <StackPanel>
-                        <MenuItem Header="{lex:Loc VerifyFileHashAfterFtpUpload}" IsCheckable="True" IsChecked="{Binding IsVerificationEnabled}" IsEnabled="{Binding IsVerificationSupported}"/>
+                        <MenuItem Header="{lex:Loc VerifyFileHash}" IsCheckable="True" IsChecked="{Binding IsVerificationEnabled}" IsEnabled="{Binding IsVerificationSupported}"/>
                         <Separator/>
                         <MenuItem Header="{lex:Loc ShutdownPc}" IsCheckable="True" IsChecked="{Binding IsShutdownPcEnabled}"/>
-                        <MenuItem Header="{lex:Loc ShutdownXbox}" IsCheckable="True" IsChecked="{Binding IsShutdownXboxEnabled}" IsEnabled="{Binding IsShutdownSupported}"/>
-                        <MenuItem Header="{lex:Loc CompleteShutdown}" IsCheckable="True" IsChecked="{Binding IsCompleteShutdownEnabled}" IsEnabled="{Binding IsShutdownSupported}"/>
+                        <MenuItem Header="{Binding XboxName, StringFormat={lex:Loc ShutdownXbox}}" IsCheckable="True" IsChecked="{Binding IsShutdownXboxEnabled}" IsEnabled="{Binding IsShutdownSupported}"/>
+                        <MenuItem Header="{Binding XboxName, StringFormat={lex:Loc CompleteShutdown}}" IsCheckable="True" IsChecked="{Binding IsCompleteShutdownEnabled}" IsEnabled="{Binding IsShutdownSupported}"/>
                         <i:Interaction.Behaviors>
                             <b:MenuItemButtonGroupBehavior/>
                         </i:Interaction.Behaviors>

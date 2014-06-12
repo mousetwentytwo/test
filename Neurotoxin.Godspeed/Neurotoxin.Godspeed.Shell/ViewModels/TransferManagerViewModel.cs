@@ -55,6 +55,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
         }
 
+        public string XboxName
+        {
+            get { return Ftp != null ? Ftp.Connection.Name : "Xbox"; }
+        }
+
         private const string USERACTION = "UserAction";
         private FileOperation _userAction;
         public FileOperation UserAction
@@ -387,10 +392,24 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private OperationResult ExecuteVerification(QueueItem item)
         {
-            var ftp = TargetPane as FtpContentViewModel;
-            if (ftp == null) throw new NotSupportedException("Target pane does not support file hash verification");
             UIThread.Run(() => TransferAction = Resx.Verifying);
-            var verificationResult = ftp.VerifyUpload((string)item.Payload, item.FileSystemItem.Path);
+            string remotePath;
+            string localPath;
+            if (Ftp == TargetPane)
+            {
+                remotePath = (string) item.Payload;
+                localPath = item.FileSystemItem.Path;
+            } 
+            else if (Ftp == SourcePane)
+            {
+                localPath = (string)item.Payload;
+                remotePath = item.FileSystemItem.Path;
+            }
+            else
+            {
+                throw new ApplicationException();
+            }
+            var verificationResult = Ftp.Verify(remotePath, localPath);
             return new OperationResult(verificationResult);
         }
 
@@ -428,7 +447,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             {
                 case TransferResult.Ok:
                     if (queueItem.Operation == FileOperation.Copy) _targetChanged = true;
-                    if (queueItem.Operation == FileOperation.Copy && TargetPane.IsVerificationEnabled && queueItem.FileSystemItem.Type == ItemType.File)
+                    if (queueItem.Operation == FileOperation.Copy && IsVerificationSupported && IsVerificationEnabled && queueItem.FileSystemItem.Type == ItemType.File)
                     {
                         queueItem.Operation = FileOperation.Verify;
                         queueItem.Payload = result.TargetPath;

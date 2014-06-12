@@ -30,8 +30,9 @@
 * ADDED: Better support of reparse points
 * ADDED: Completely rewritten copy mechanism
 * ADDED: FSD/F3 Content Scan Trigger
-* ADDED: File hash verification after FTP upload
+* ADDED: File hash verification after upload/download
 * ADDED: Launch games via HTTP
 * ADDED: Launch .xex fila via FTP
 * ADDED: FSD Database Checker
+* ADDED: Shutdown PC and/or Xbox after transfer completed
 * ADDED: Hungarian language

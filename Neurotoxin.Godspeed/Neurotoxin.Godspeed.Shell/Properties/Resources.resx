@@ -983,8 +983,20 @@
   <data name="DisableOptionAll" xml:space="preserve">
     <value>For all connection</value>
   </data>
+  <data name="VerifyFileHash" xml:space="preserve">
+    <value>Verify file hash</value>
+  </data>
   <data name="VerifyFileHashAfterFtpUpload" xml:space="preserve">
-    <value>Verify file hash after FTP upload</value>
+    <value>Verify file hash after upload/download</value>
+  </data>
+  <data name="ShutdownPc" xml:space="preserve">
+    <value>Shutdown PC when done</value>
+  </data>
+  <data name="ShutdownXbox" xml:space="preserve">
+    <value>Shutdown {0} when done</value>
+  </data>
+  <data name="CompleteShutdown" xml:space="preserve">
+    <value>Shutdown PC+{0} when done</value>
   </data>
   <data name="FtpHashVerificationFailed" xml:space="preserve">
     <value>File hash verification failed. No space left on device?</value>
