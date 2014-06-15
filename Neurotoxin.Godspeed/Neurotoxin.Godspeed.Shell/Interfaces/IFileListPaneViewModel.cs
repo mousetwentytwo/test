@@ -16,7 +16,7 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
         IEnumerable<FileSystemItemViewModel> SelectedItems { get; }
         FileSystemItemViewModel CurrentFolder { get; }
         FileSystemItemViewModel CurrentRow { get; set; }
-        bool IsResumeSupported { get; }
+        ResumeCapability ResumeCapability { get; }
         bool HasValidSelection { get; }
         bool IsReadOnly { get; }
         bool IsInEditMode { get; }

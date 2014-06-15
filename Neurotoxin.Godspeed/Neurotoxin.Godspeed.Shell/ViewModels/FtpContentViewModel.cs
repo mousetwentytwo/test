@@ -162,6 +162,16 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #endregion
 
+        #region ShowFtpLogCommand
+
+        public DelegateCommand ShowFtpLogCommand { get; private set; }
+
+        public void ExecuteShowFtpLogCommand()
+        {
+            EventAggregator.GetEvent<ShowFtpTraceWindowEvent>().Publish(new ShowFtpTraceWindowEventArgs(FileManager.TraceListener, Connection.Name));
+        }
+
+        #endregion
 
         public FtpContentViewModel()
         {
@@ -169,6 +179,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             CheckFreestyleDatabaseCommand = new DelegateCommand(ExecuteCheckFreestyleDatabaseCommand, CanExecuteCheckFreestyleDatabaseCommand);
             LaunchGameCommand = new DelegateCommand(ExecuteLaunchGameCommand, CanExecuteLaunchGameCommand);
             LaunchXexCommand = new DelegateCommand(ExecuteLaunchXexCommand, CanExecuteLaunchXexCommand);
+            ShowFtpLogCommand = new DelegateCommand(ExecuteShowFtpLogCommand);
         }
 
         public override void LoadDataAsync(LoadCommand cmd, LoadDataAsyncParameters cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase, Exception> error = null)
@@ -186,7 +197,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         result =>
                             {
                                 IsLoaded = true;
-                                IsResumeSupported = result;
+                                ResumeCapability = result;
                                 try
                                 {
                                     ConnectCallback();
@@ -228,7 +239,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
         }
 
-        private bool Connect()
+        private ResumeCapability Connect()
         {
             return FileManager.Connect(Connection.Model);
         }
@@ -627,100 +638,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             return TransferResult.Ok;
         }
 
-        //protected override string OpenCompressedFile(FileSystemItem item)
-        //{
-        //    var tempFilePath = string.Format(@"{0}\{1}", AppDomain.CurrentDomain.GetData("DataDirectory"), Guid.NewGuid());
-        //    var fs = new FileStream(tempFilePath, FileMode.Create);
-        //    FileManager.DownloadFile(item.Path, fs, 0, item.Size ?? 0);
-        //    return tempFilePath;
-        //}
-
-        //public TransferResult RemoteDownload(FileSystemItem item, string savePath, CopyAction action)
-        //{
-        //    if (item.Type != ItemType.File) throw new NotSupportedException();
-        //    UIThread.Run(() => EventAggregator.GetEvent<TransferActionStartedEvent>().Publish(ExportActionDescription));
-        //    long resumeStartPosition = 0;
-        //    try
-        //    {
-        //        switch (action)
-        //        {
-        //            case CopyAction.CreateNew:
-        //                if (File.Exists(savePath)) throw new TransferException(TransferErrorType.WriteAccessError, item.Path, savePath, Resx.TargetAlreadyExists);
-        //                break;
-        //            case CopyAction.Overwrite:
-        //                File.Delete(savePath);
-        //                break;
-        //            case CopyAction.OverwriteOlder:
-        //                var fileDate = File.GetLastWriteTime(savePath);
-        //                if (fileDate > item.Date) return TransferResult.Skipped;
-        //                File.Delete(savePath);
-        //                break;
-        //            case CopyAction.Resume:
-        //                var fi = new FileInfo(savePath);
-        //                resumeStartPosition = fi.Length;
-        //                break;
-        //        }
-
-        //        var name = RemoteChangeDirectory(item.Path);
-        //        Telnet.Download(name, savePath, item.Size ?? 0, resumeStartPosition, TelnetProgressChanged);
-        //        return TransferResult.Ok;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw WrapTransferRelatedExceptions(ex);
-        //    }
-        //}
-
-        //public TransferResult RemoteUpload(FileSystemItem item, string savePath, CopyAction action)
-        //{
-        //    if (item.Type != ItemType.File) throw new NotSupportedException();
-        //    UIThread.Run(() => EventAggregator.GetEvent<TransferActionStartedEvent>().Publish(ImportActionDescription));
-        //    long resumeStartPosition = 0;
-        //    try {
-        //        switch (action)
-        //        {
-        //            case CopyAction.CreateNew:
-        //                var exists = FileManager.FileExists(savePath);
-        //                if (exists) throw new TransferException(TransferErrorType.WriteAccessError, Resx.TargetAlreadyExists, item.Path, savePath, exists.Size);
-        //                break;
-        //            case CopyAction.Overwrite:
-        //                FileManager.DeleteFile(savePath);
-        //                break;
-        //            case CopyAction.OverwriteOlder:
-        //                var fileDate = FileManager.GetFileModificationTime(savePath);
-        //                if (fileDate > item.Date) return TransferResult.Skipped;
-        //                FileManager.DeleteFile(savePath);
-        //                break;
-        //            case CopyAction.Resume:
-        //                var fi = FileManager.GetItemInfo(savePath, ItemType.File);
-        //                resumeStartPosition = fi.Size ?? 0;
-        //                break;
-        //        }
-        //        var name = RemoteChangeDirectory(savePath);
-        //        Telnet.Upload(item.Path, name, item.Size ?? 0, resumeStartPosition, TelnetProgressChanged);
-        //        VerifyUpload(savePath, item.Path);
-        //        return TransferResult.Ok;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw WrapTransferRelatedExceptions(ex);
-        //    }
-        //}
-
-        private void TelnetProgressChanged(int p, long t, long total, long resumeStartPosition)
-        {
-            var args = new TransferProgressChangedEventArgs(p, t, total, resumeStartPosition);
-            EventAggregator.GetEvent<TransferProgressChangedEvent>().Publish(args);
-        }
-
-        private string RemoteChangeDirectory(string path)
-        {
-            if (path.EndsWith("/")) path = path.Substring(0, path.Length - 1);
-            var dir = path.Substring(0, path.LastIndexOf('/') + 1);
-            Telnet.ChangeFtpDirectory(dir);
-            return path.Replace(dir, string.Empty);
-        }
-
         public override void RaiseCanExecuteChanges()
         {
             base.RaiseCanExecuteChanges();
@@ -729,6 +646,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public override void Dispose()
         {
+            EventAggregator.GetEvent<CloseFtpTraceWindowEvent>().Publish(new CloseFtpTraceWindowEventArgs(FileManager.TraceListener));
             FileManager.Disconnect();
             _doContentScanOn.ForEach(TriggerContentScan);
             if (CurrentFolder != null) Connection.Model.DefaultPath = CurrentFolder.Path;

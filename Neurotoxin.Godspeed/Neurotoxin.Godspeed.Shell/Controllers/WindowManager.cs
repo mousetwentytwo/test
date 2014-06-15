@@ -10,6 +10,7 @@ using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Events;
+using Neurotoxin.Godspeed.Shell.Helpers;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
 using Neurotoxin.Godspeed.Shell.Properties;
@@ -27,6 +28,7 @@ namespace Neurotoxin.Godspeed.Shell.Controllers
         private bool _isAbortionInProgress;
         private TransferProgressDialog _transferProgressDialog;
         private ProgressDialog _progressDialog;
+        private Dictionary<FtpTraceListener, FtpTraceWindow> _traceWindows = new Dictionary<FtpTraceListener, FtpTraceWindow>(); 
 
         public WindowManager(IEventAggregator eventAggregator)
         {
@@ -37,11 +39,19 @@ namespace Neurotoxin.Godspeed.Shell.Controllers
             eventAggregator.GetEvent<TransferFinishedEvent>().Subscribe(OnTransferFinished);
             eventAggregator.GetEvent<CacheMigrationEvent>().Subscribe(OnCacheMigration);
             eventAggregator.GetEvent<FreestyleDatabaseCheckEvent>().Subscribe(OnFreestyleDatabaseCheck);
+            eventAggregator.GetEvent<ShowFtpTraceWindowEvent>().Subscribe(OnShowFtpTraceWindow);
+            eventAggregator.GetEvent<CloseFtpTraceWindowEvent>().Subscribe(OnCloseFtpTraceWindow);
         }
 
         public void ShowErrorMessage(Exception exception)
         {
-            ErrorMessage.Show(exception);
+            UIThread.Run(() => ShowErrorMessageInner(exception));
+        }
+
+        private static void ShowErrorMessageInner(Exception exception)
+        {
+            var errorDialog = new ErrorMessage(exception);
+            errorDialog.ShowDialog();
         }
 
         public TransferErrorDialogResult ShowIoErrorDialog(Exception exception)
@@ -113,7 +123,7 @@ namespace Neurotoxin.Godspeed.Shell.Controllers
             e.Cancel = true;
             if (_isAbortionInProgress) return;
             var vm = ((TransferProgressDialog) sender).ViewModel;
-            if (!vm.TargetPane.IsResumeSupported)
+            if (!vm.IsResumeSupported)
             {
                 var d = new ConfirmationDialog(Resources.Warning, Resources.ResumeIsNotAvailableConfirmation);
                 if (d.ShowDialog() != true) return;
@@ -177,6 +187,30 @@ namespace Neurotoxin.Godspeed.Shell.Controllers
             var window = _container.Resolve<FreestyleDatabaseCheckerWindow, FreestyleDatabaseCheckerViewModel>(vm);
             window.ShowDialog();
             _progressDialog = null;
+        }
+
+        private void OnShowFtpTraceWindow(ShowFtpTraceWindowEventArgs e)
+        {
+            FtpTraceWindow window;
+            if (_traceWindows.ContainsKey(e.TraceListener))
+            {
+                window = _traceWindows[e.TraceListener];
+                window.Activate();
+                return;
+            }
+
+            var viewModel = new FtpTraceViewModel(e.TraceListener, e.ConnectionName);
+            window = new FtpTraceWindow(viewModel);
+            _traceWindows.Add(e.TraceListener, window);
+            window.Show();
+        }
+
+        private void OnCloseFtpTraceWindow(CloseFtpTraceWindowEventArgs e)
+        {
+            if (!_traceWindows.ContainsKey(e.TraceListener)) return;
+            var window = _traceWindows[e.TraceListener];
+            window.Close();
+            _traceWindows.Remove(e.TraceListener);
         }
 
         private void MainWindowHitTestVisible(bool value)

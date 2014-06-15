@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Windows.Input;
-using Microsoft.Practices.Unity;
 using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
 using Neurotoxin.Godspeed.Shell.Models;
-using Neurotoxin.Godspeed.Shell.Views;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
@@ -83,24 +81,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             Dispose();
             return null;
-        }
-    }
-
-    public abstract class CommonViewModelBase : ViewModelBase
-    {
-        protected readonly IWindowManager WindowManager;
-        protected readonly IResourceManager ResourceManager;
-
-        protected CommonViewModelBase()
-        {
-            WindowManager = Container.Resolve<IWindowManager>();
-            ResourceManager = Container.Resolve<IResourceManager>();
-        }
-
-        public override void RaiseCanExecuteChanges()
-        {
-            base.RaiseCanExecuteChanges();
-            EventAggregator.GetEvent<RaiseCanExecuteChangesEvent>().Publish(new RaiseCanExecuteChangesEventArgs(this));
         }
     }
 }

@@ -12,7 +12,6 @@ using System.Windows.Threading;
 using Microsoft.Practices.Unity;
 using Neurotoxin.Godspeed.Core.Caching;
 using Neurotoxin.Godspeed.Core.Extensions;
-using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Reporting;
 using Neurotoxin.Godspeed.Shell.ViewModels;
@@ -87,7 +86,7 @@ namespace Neurotoxin.Godspeed.Shell
             var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             var company = asm.GetAttribute<AssemblyCompanyAttribute>().Company;
             var product = asm.GetAttribute<AssemblyProductAttribute>().Product;
-            var version = asm.GetAttribute<AssemblyFileVersionAttribute>().Version;
+            const string version = "1.0"; // asm.GetAttribute<AssemblyFileVersionAttribute>().Version;
             DataDirectory = string.Format(@"{0}\{1}\{2}\{3}", appData, company, product, version);
             if (!Directory.Exists(DataDirectory)) Directory.CreateDirectory(DataDirectory);
             AppDomain.CurrentDomain.SetData("DataDirectory", DataDirectory);
@@ -111,7 +110,7 @@ namespace Neurotoxin.Godspeed.Shell
         private void HandleException(Exception ex)
         {
             ex = ex is TargetInvocationException ? ex.InnerException : ex;
-            ErrorMessage.Show(ex);
+            new ErrorMessage(ex).ShowDialog();
             Shutdown(ex.GetType().Name.GetHashCode());
         }
 

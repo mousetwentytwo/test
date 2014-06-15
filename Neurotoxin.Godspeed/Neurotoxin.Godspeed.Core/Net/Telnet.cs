@@ -119,18 +119,23 @@ namespace Neurotoxin.Godspeed.Core.Net
         {
             _totalSize = size;
             _totalTransferred = 0;
-            var target = targetPath.Replace(_networkDrive, string.Empty).Replace(@"\", "/").Replace(" ", @"\ ");
+            var target = SanitizePath(targetPath);
             progressChanged.Invoke(-1, resumeStartPosition, resumeStartPosition, resumeStartPosition);
             Send(string.Format("get -c {0} -o {1}{2}", ftpFileName, _rootPath, target), s => NotifyProgressChange(s, resumeStartPosition, progressChanged));
         }
 
-        public static void Upload(string sourcePath, string ftpFileName, long size, long resumeStartPosition, Action<int, long, long, long> progressChanged)
+        public static void Upload(string ftpFileName, string sourcePath, long size, long resumeStartPosition, Action<int, long, long, long> progressChanged)
         {
             _totalSize = size;
             _totalTransferred = 0;
-            var source = sourcePath.Replace(_networkDrive, string.Empty).Replace(@"\", "/").Replace(" ", @"\ ").Replace("&", @"\&");
+            var source = SanitizePath(sourcePath);
             progressChanged.Invoke(-1, resumeStartPosition, resumeStartPosition, resumeStartPosition);
             Send(string.Format("put -c {0}{1} -o {2}", _rootPath, source, ftpFileName), s => NotifyProgressChange(s, resumeStartPosition, progressChanged));
+        }
+
+        private static string SanitizePath(string path)
+        {
+            return path.Replace(_networkDrive, string.Empty).Replace(@"\", "/").Replace(" ", @"\ ").Replace("&", @"\&");
         }
 
         private static void NotifyProgressChange(string s, long resumeStartPosition, Action<int, long, long, long> progressChanged)

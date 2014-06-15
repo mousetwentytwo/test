@@ -24,8 +24,6 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
         DelegateCommand MoveCommand { get; }
         DelegateCommand NewFolderCommand { get; }
         DelegateCommand DeleteCommand { get; }
-        DelegateCommand PauseCommand { get; }
-        DelegateCommand ContinueCommand { get; }
         DelegateCommand<UserMessageCommandParameter> OpenUserMessageCommand { get; }
         DelegateCommand<UserMessageViewModel> RemoveUserMessageCommand { get; }
 

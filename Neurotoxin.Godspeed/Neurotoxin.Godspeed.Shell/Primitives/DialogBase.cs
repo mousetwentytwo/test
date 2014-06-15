@@ -1,6 +1,5 @@
 ﻿using System.Windows;
 using System.Windows.Input;
-using Neurotoxin.Godspeed.Shell.ContentProviders;
 
 namespace Neurotoxin.Godspeed.Shell.Primitives
 {

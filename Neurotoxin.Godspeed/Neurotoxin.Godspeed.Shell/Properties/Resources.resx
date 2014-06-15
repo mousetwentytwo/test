@@ -1049,4 +1049,10 @@
   <data name="Verifying" xml:space="preserve">
     <value>Verifying</value>
   </data>
+  <data name="FtpTraceWindowTitle" xml:space="preserve">
+    <value>FTP Log of {0}</value>
+  </data>
+  <data name="ShowFtpLog" xml:space="preserve">
+    <value>Show FTP Log</value>
+  </data>
 </root>

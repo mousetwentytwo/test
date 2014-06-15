@@ -39,7 +39,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public CompressedFileContentViewModel()
         {
             CloseCommand = new DelegateCommand(ExecuteCloseCommand);
-            IsResumeSupported = true;
         }
 
         public override void LoadDataAsync(LoadCommand cmd, LoadDataAsyncParameters cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase, Exception> error = null)

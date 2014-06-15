@@ -270,28 +270,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #endregion
 
-        #region PauseCommand
-
-        public DelegateCommand PauseCommand { get; private set; }
-
-        private void ExecutePauseCommand()
-        {
-            _transferManager.Pause();
-        }
-
-        #endregion
-
-        #region ContinueCommand
-
-        public DelegateCommand ContinueCommand { get; private set; }
-
-        private void ExecuteContinueCommand()
-        {
-            _transferManager.Continue();
-        }
-
-        #endregion
-
         #region OpenUserMessageCommand
 
         public DelegateCommand<UserMessageCommandParameter> OpenUserMessageCommand { get; private set; }
@@ -352,8 +330,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             MoveCommand = new DelegateCommand(ExecuteMoveCommand, CanExecuteMoveCommand);
             NewFolderCommand = new DelegateCommand(ExecuteNewFolderCommand, CanExecuteNewFolderCommand);
             DeleteCommand = new DelegateCommand(ExecuteDeleteCommand, CanExecuteDeleteCommand);
-            PauseCommand = new DelegateCommand(ExecutePauseCommand);
-            ContinueCommand = new DelegateCommand(ExecuteContinueCommand);
             OpenUserMessageCommand = new DelegateCommand<UserMessageCommandParameter>(ExecuteOpenUserMessageCommand);
             RemoveUserMessageCommand = new DelegateCommand<UserMessageViewModel>(ExecuteRemoveUserMessageCommand);
 

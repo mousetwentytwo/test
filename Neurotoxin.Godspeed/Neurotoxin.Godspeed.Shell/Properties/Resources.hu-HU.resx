@@ -947,4 +947,10 @@
   <data name="VerifyFileHashAfterFtpUpload" xml:space="preserve">
     <value>Ellenőrzés feltöltés után</value>
   </data>
+  <data name="FtpTraceWindowTitle" xml:space="preserve">
+    <value>{0} FTP logja</value>
+  </data>
+  <data name="ShowFtpLog" xml:space="preserve">
+    <value>FTP naplófájl megjelenítése</value>
+  </data>
 </root>

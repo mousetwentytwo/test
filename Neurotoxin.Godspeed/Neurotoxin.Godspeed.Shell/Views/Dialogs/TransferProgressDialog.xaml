@@ -19,7 +19,7 @@
                 <ThumbButtonInfoCollection>
                     <ThumbButtonInfo Description="Pause" Command="{Binding PauseCommand}" ImageSource="/Resources/pause.png"
                          Visibility="{Binding Path=IsPaused, Converter={StaticResource BoolToVis}, ConverterParameter=True}"
-                         IsEnabled="{Binding Path=TargetPane.IsResumeSupported}" />
+                         IsEnabled="{Binding Path=IsResumeSupported}" />
                     <ThumbButtonInfo Description="Continue" Command="{Binding ContinueCommand}" ImageSource="/Resources/play.png"
                          Visibility="{Binding Path=IsPaused, Converter={StaticResource BoolToVis}}" />
                 </ThumbButtonInfoCollection>
@@ -98,27 +98,15 @@
             </TextBlock>
         </DockPanel>
 
-        <StackPanel Grid.Row="5" HorizontalAlignment="Left" Orientation="Horizontal">
-            <ToggleButton IsEnabled="{Binding IsVerificationSupported}" Margin="0,0,5,0" IsChecked="{Binding IsVerificationEnabled}" ToolTip="{lex:Loc VerifyFileHashAfterFtpUpload}">
-                <c:GreyableImage Source="/Resources/search.png" Margin="2"/>
-            </ToggleButton>
-            <ToggleButton Margin="0,0,5,0" IsChecked="{Binding IsPcShutdownEnabled}" ToolTip="{lex:Loc ShutdownPc}">
-                <c:GreyableImage Source="/Resources/search.png" Margin="2"/>
-            </ToggleButton>
-            <ToggleButton IsEnabled="{Binding IsFtpShutdownSupported}" Margin="0,0,5,0" IsChecked="{Binding IsFtpShutdownEnabled}" ToolTip="{lex:Loc ShutdownFtp}">
-                <c:GreyableImage Source="/Resources/search.png" Margin="2"/>
-            </ToggleButton>
-        </StackPanel>
-
-        <StackPanel Grid.Row="5" HorizontalAlignment="Right" Orientation="Horizontal" VerticalAlignment="Bottom">
-            <xctk:DropDownButton Width="75" Content="{lex:Loc Options}" Margin="0,0,5,0">
+        <StackPanel Grid.Row="5" HorizontalAlignment="Right" Orientation="Horizontal">
+            <xctk:DropDownButton Width="75" Content="{lex:Loc OptionsMenu}" Margin="0,0,5,0" Visibility="{Binding UserAction, Converter={StaticResource FileOperationConverter}}">
                 <xctk:DropDownButton.DropDownContent>
                     <StackPanel>
-                        <MenuItem Header="{lex:Loc VerifyFileHash}" IsCheckable="True" IsChecked="{Binding IsVerificationEnabled}" IsEnabled="{Binding IsVerificationSupported}"/>
+                        <MenuItem Header="{lex:Loc Neurotoxin.Godspeed.Shell:Resources:VerifyFileHash}" IsCheckable="True" IsChecked="{Binding IsVerificationEnabled}" IsEnabled="{Binding IsVerificationSupported}"/>
                         <Separator/>
-                        <MenuItem Header="{lex:Loc ShutdownPc}" IsCheckable="True" IsChecked="{Binding IsShutdownPcEnabled}"/>
-                        <MenuItem Header="{Binding XboxName, StringFormat={lex:Loc ShutdownXbox}}" IsCheckable="True" IsChecked="{Binding IsShutdownXboxEnabled}" IsEnabled="{Binding IsShutdownSupported}"/>
-                        <MenuItem Header="{Binding XboxName, StringFormat={lex:Loc CompleteShutdown}}" IsCheckable="True" IsChecked="{Binding IsCompleteShutdownEnabled}" IsEnabled="{Binding IsShutdownSupported}"/>
+                        <MenuItem Header="{lex:Loc Neurotoxin.Godspeed.Shell:Resources:ShutdownPc}" IsCheckable="True" IsChecked="{Binding IsShutdownPcEnabled}"/>
+                        <MenuItem Header="{Binding Path=ShutdownXbox}" IsCheckable="True" IsChecked="{Binding IsShutdownXboxEnabled}" IsEnabled="{Binding IsShutdownSupported}"/>
+                        <MenuItem Header="{Binding Path=CompleteShutdown}" IsCheckable="True" IsChecked="{Binding IsCompleteShutdownEnabled}" IsEnabled="{Binding IsShutdownSupported}"/>
                         <i:Interaction.Behaviors>
                             <b:MenuItemButtonGroupBehavior/>
                         </i:Interaction.Behaviors>
@@ -127,7 +115,7 @@
             </xctk:DropDownButton>
             <Button Width="75" Content="{lex:LocText Pause}" Command="{Binding PauseCommand}" Margin="0,0,5,0" 
                     Visibility="{Binding Path=IsPaused, Converter={StaticResource BoolToVis}, ConverterParameter=True}" 
-                    IsEnabled="{Binding Path=TargetPane.IsResumeSupported}" />
+                    IsEnabled="{Binding Path=IsResumeSupported}" />
             <Button Width="75" Content="{lex:LocText Continue}" Command="{Binding ContinueCommand}" Margin="0,0,5,0" 
                     Visibility="{Binding Path=IsPaused, Converter={StaticResource BoolToVis}}" />
             <Button Width="75" Content="{lex:LocText}" Click="CancelButtonClick" x:Name="Abort" />

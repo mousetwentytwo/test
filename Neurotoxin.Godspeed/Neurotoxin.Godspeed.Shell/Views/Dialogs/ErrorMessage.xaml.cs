@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using Neurotoxin.Godspeed.Core.Caching;
-using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Exceptions;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Reporting;
@@ -16,22 +15,8 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
     public partial class ErrorMessage
     {
         private readonly string _details;
-        private readonly string _ftpLog;
 
-        public static void Show(Exception exception)
-        {
-            //TODO: non UI calls
-            //if (!UIThread.IsUIThread)
-            //{
-            //    UIThread.Run(() => Show(exception));
-            //    return;
-            //}
-
-            var instance = new ErrorMessage(exception);
-            instance.ShowDialog();
-        }
-
-        private ErrorMessage(Exception exception)
+        public ErrorMessage(Exception exception)
         {
             if (Application.Current.MainWindow.IsVisible) Owner = Application.Current.MainWindow;
             InitializeComponent();
@@ -50,8 +35,6 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
             _details = sb.ToString();
             Details.Content = _details;
 
-            _ftpLog = GetFtpLog();
-            FtpLog.Content = _ftpLog;
             Loaded += OnLoaded;
         }
 
@@ -73,7 +56,7 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
                         FrameworkVersion = App.GetFrameworkVersion(),
                         OperatingSystemVersion = Environment.OSVersion.VersionString,
                         Details = _details,
-                        FtpLog = _ftpLog
+                        FtpLog = GetFtpLog()
                     }
                 };
             var iw = 0;

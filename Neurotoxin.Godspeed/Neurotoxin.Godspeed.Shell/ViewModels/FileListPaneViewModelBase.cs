@@ -150,13 +150,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
         }
 
-        private const string ISRESUMESUPPORTED = "IsResumeSupported";
-        private bool _isResumeSupported;
-        public bool IsResumeSupported
-        {
-            get { return _isResumeSupported; }
-            protected set { _isResumeSupported = value; NotifyPropertyChanged(ISRESUMESUPPORTED); }
-        }
+        public ResumeCapability ResumeCapability { get; protected set; }
 
         public bool HasValidSelection
         {
@@ -1091,6 +1085,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             SelectDriveByInitialLetterCommand = new DelegateCommand<EventInformation<KeyEventArgs>>(ExecuteSelectDriveByInitialLetterCommand);
 
             Items = new ObservableCollection<FileSystemItemViewModel>();
+            ResumeCapability = ResumeCapability.Both;
 
             EventAggregator.GetEvent<TransferProgressChangedEvent>().Subscribe(OnTransferProgressChanged);
         }

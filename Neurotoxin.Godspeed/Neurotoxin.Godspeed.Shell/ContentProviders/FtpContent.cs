@@ -24,7 +24,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         private FtpConnection _connection;
         private bool _isIdle = true;
         private readonly Timer _keepAliveTimer = new Timer(30000);
-        private readonly FtpTraceListener _traceListener;
+        public readonly FtpTraceListener TraceListener;
 
         public bool IsKeepAliveEnabled
         {
@@ -60,14 +60,14 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public Stack<string> Log
         {
-            get { return _traceListener.Log; }
-        } 
+            get { return TraceListener.Log; }
+        }
 
         public FtpContent() : base('/')
         {
             _keepAliveTimer.AutoReset = true;
             _keepAliveTimer.Elapsed += KeepAliveTimerOnElapsed;
-            _traceListener = new FtpTraceListener();
+            TraceListener = new FtpTraceListener();
         }
 
         private void KeepAliveTimerOnElapsed(object sender, ElapsedEventArgs e)
@@ -75,7 +75,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             if (_isIdle) FtpClient.Execute("NOOP");
         }
 
-        internal bool Connect(FtpConnection connection)
+        internal ResumeCapability Connect(FtpConnection connection)
         {
             _ftpClient = new FtpClient
                 {
@@ -87,7 +87,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                         ? new NetworkCredential(connection.Username, connection.Password)
                         : new NetworkCredential("anonymous", "no@email.com")
                 };
-            FtpTrace.AddListener(_traceListener);
+            FtpTrace.AddListener(TraceListener);
 
             _connection = connection;
             _ftpClient.Connected += OnConnected;
@@ -109,8 +109,13 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             if (connection.UsePassiveMode && (ServerType == FtpServerType.XeXMenu || ServerType == FtpServerType.DashLaunch))
                 throw new FtpException(string.Format(Resx.PassiveModeNotSupported, ServerType));
 
+            var resume = ResumeCapability.None;
             var r = FtpClient.Execute("APPE");
-            return !r.Message.Contains("command not recognized");
+            if (!r.Message.Contains("command not recognized")) resume |= ResumeCapability.Append;
+
+            r = FtpClient.Execute("REST");
+            if (!r.Message.Contains("command not recognized")) resume |= ResumeCapability.Restart;
+            return resume;
         }
 
         private void OnConnected(object sender, EventArgs e)
@@ -125,7 +130,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         internal void Disconnect()
         {
             FtpClient.Connected -= OnConnected;
-            FtpTrace.RemoveListener(_traceListener);
+            FtpTrace.RemoveListener(TraceListener);
             _keepAliveTimer.Elapsed -= KeepAliveTimerOnElapsed;
             FtpClient.Dispose();
         }

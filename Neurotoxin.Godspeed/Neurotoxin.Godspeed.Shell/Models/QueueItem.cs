@@ -6,6 +6,7 @@ namespace Neurotoxin.Godspeed.Shell.Models
     {
         public FileSystemItem FileSystemItem { get; private set; }
         public FileOperation Operation { get; set; }
+        public CopyAction? CopyAction { get; set; }
         public object Payload { get; set; }
 
         public QueueItem(FileSystemItem fileSystemItem, FileOperation fileOperation, object payload = null)

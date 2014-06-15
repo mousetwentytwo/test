@@ -7,7 +7,7 @@ using System.Windows.Interactivity;
 
 namespace Neurotoxin.Godspeed.Shell.Views.Behaviors
 {
-    public class MenuItemButtonGroupBehavior : Behavior<MenuItem>
+    public class MenuItemButtonGroupBehavior : Behavior<StackPanel>
     {
         protected override void OnAttached()
         {
@@ -27,9 +27,9 @@ namespace Neurotoxin.Godspeed.Shell.Views.Behaviors
                 .ForEach(item => item.Click -= OnClick);
         }
 
-        private static IEnumerable<MenuItem> GetCheckableSubMenuItems(ItemsControl menuItem)
+        private static IEnumerable<MenuItem> GetCheckableSubMenuItems(Panel menuItem)
         {
-            var itemCollection = menuItem.Items;
+            var itemCollection = menuItem.Children;
             return itemCollection.OfType<MenuItem>().Where(menuItemCandidate => menuItemCandidate.IsCheckable);
         }
 

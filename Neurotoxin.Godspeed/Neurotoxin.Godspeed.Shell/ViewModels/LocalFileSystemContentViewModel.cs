@@ -41,7 +41,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public LocalFileSystemContentViewModel()
         {
-            IsResumeSupported = true;
             EventAggregator.GetEvent<UsbDeviceChangedEvent>().Subscribe(OnUsbDeviceChanged);
         }
 

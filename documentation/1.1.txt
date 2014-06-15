@@ -35,4 +35,5 @@
 * ADDED: Launch .xex fila via FTP
 * ADDED: FSD Database Checker
 * ADDED: Shutdown PC and/or Xbox after transfer completed
+* ADDED: FTP Log Viewer
 * ADDED: Hungarian language
