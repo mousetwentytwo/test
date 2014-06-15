@@ -13,9 +13,9 @@ namespace Neurotoxin.Godspeed.Presentation.Extensions
 {
     public static class StfsPackageExtensions
     {
-        public static ObservableCollection<TreeItem> BuildTreeFromFileListing(this StfsPackage package)
+        public static ObservableCollection<TreeItemViewModel> BuildTreeFromFileListing(this StfsPackage package)
         {
-            return new ObservableCollection<TreeItem> {BuildTree(package.FileStructure)};
+            return new ObservableCollection<TreeItemViewModel> {BuildTree(package.FileStructure)};
         }
 
         public static BitmapImage GetThumbnailImage(this StfsPackage package)
@@ -28,12 +28,12 @@ namespace Neurotoxin.Godspeed.Presentation.Extensions
             return GetBitmapFromByteArray(package.TitleThumbnailImage);
         }
 
-        private static TreeItem BuildTree(FileEntry parent)
+        private static TreeItemViewModel BuildTree(FileEntry parent)
         {
-            var treeItem = new TreeItem
+            var treeItem = new TreeItemViewModel
                                {
                                    Name = parent.Name, 
-                                   Children = new ObservableCollection<TreeItem>(),
+                                   Children = new ObservableCollection<TreeItemViewModel>(),
                                    IsDirectory = parent.IsDirectory
                                };
             foreach (var folder in parent.Folders)
@@ -42,7 +42,7 @@ namespace Neurotoxin.Godspeed.Presentation.Extensions
             }
             foreach (var file in parent.Files)
             {
-                treeItem.Children.Add(new TreeItem { Name = file.Name });
+                treeItem.Children.Add(new TreeItemViewModel { Name = file.Name });
             }
             return treeItem;
         }

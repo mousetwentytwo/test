@@ -43,6 +43,7 @@
                     <co:EnumConverter x:Key="EnumConverter"/>
                     <co:BoolToVisibilityConverter x:Key="BoolToVis"/>
                     <co:NotNullOrEmptyConverter x:Key="NotNullOrEmptyConverter"/>
+                    <co:StringFormatter x:Key="StringFormatter"/>
                     <converters:SizeConverter x:Key="SizeConverter"/>
                     <converters:TitleConverter x:Key="TitleConverter"/>
                     <converters:NameConverter x:Key="NameConverter"/>

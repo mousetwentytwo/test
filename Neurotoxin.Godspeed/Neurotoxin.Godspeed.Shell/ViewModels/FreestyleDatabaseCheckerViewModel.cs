@@ -4,7 +4,9 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using HtmlAgilityPack;
+using Neurotoxin.Godspeed.Core.Models;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
+using Neurotoxin.Godspeed.Presentation.ViewModels;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Interfaces;
@@ -16,18 +18,48 @@ using Microsoft.Practices.ObjectBuilder2;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
-    public class FreestyleDatabaseCheckerViewModel : ViewModelBase, IProgressViewModel
+    public class FreestyleDatabaseCheckerViewModel : CommonViewModelBase, IProgressViewModel, ITreeSelectionViewModel
     {
         private int _itemsCount;
         private int _itemsChecked;
         private FtpContentViewModel _parent;
+
+        private const string HASMISSINGFOLDERS = "HasMissingFolders";
+        public bool HasMissingFolders
+        {
+            get { return MissingFolders.Any(); }
+        }
+
+        private const string MISSINGFOLDERSCOUNT = "MissingFoldersCount";
+        public int MissingFoldersCount
+        {
+            get { return MissingFolders.Count; }
+        }
 
         private const string MISSINGFOLDERS = "MissingFolders";
         private ObservableCollection<FileSystemItemViewModel> _missingFolders;
         public ObservableCollection<FileSystemItemViewModel> MissingFolders
         {
             get { return _missingFolders; }
-            set { _missingFolders = value; NotifyPropertyChanged(MISSINGFOLDERS); }
+            set
+            {
+                _missingFolders = value;
+                NotifyPropertyChanged(MISSINGFOLDERS);
+                NotifyPropertyChanged(HASMISSINGFOLDERS);
+                NotifyPropertyChanged(MISSINGFOLDERSCOUNT);
+            }
+        }
+
+        private const string HASMISSINGENTRIES = "HasMissingEntries";
+        public bool HasMissingEntries
+        {
+            get { return MissingEntries.Any(); }
+        }
+
+        private const string MISSINGENTRIESCOUNT = "MissingEntriesCount";
+        public int MissingEntriesCount
+        {
+            get { return MissingEntries.Count; }
         }
 
         private const string MISSINGENTRIES = "MissingEntries";
@@ -35,11 +67,25 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public ObservableCollection<FileSystemItemViewModel> MissingEntries
         {
             get { return _missingEntries; }
-            set { _missingEntries = value; NotifyPropertyChanged(MISSINGENTRIES); }
+            set
+            {
+                _missingEntries = value;
+                NotifyPropertyChanged(MISSINGENTRIES);
+                NotifyPropertyChanged(HASMISSINGENTRIES);
+                NotifyPropertyChanged(MISSINGENTRIESCOUNT);
+            }
+        }
+
+        private const string SELECTIONTREE = "SelectionTree";
+        private ObservableCollection<TreeItemViewModel> _selectionTree;
+        public ObservableCollection<TreeItemViewModel> SelectionTree
+        {
+            get { return _selectionTree; }
+            set { _selectionTree = value; NotifyPropertyChanged(SELECTIONTREE); }
         }
 
         private const string PROGRESSDIALOGTITLE = "ProgressDialogTitle";
-        private readonly string _progressDialogTitle = Resx.CheckFreestyleDatabase + " ({0}%)";
+        private readonly string _progressDialogTitle = Resx.FreestyleDatabaseCheck + " ({0}%)";
         public string ProgressDialogTitle
         {
             get { return string.Format(_progressDialogTitle, ProgressValue); }
@@ -81,9 +127,71 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             if (handler != null) handler.Invoke(this);
         }
 
+        public event EventHandler Close;
+
+        private void NotifyClose()
+        {
+            var handler = Close;
+            if (handler != null) handler.Invoke(this, new EventArgs());
+        }
+
+        #region CloseCommand
+
+        public DelegateCommand CloseCommand { get; private set; }
+
+        public void ExecuteCloseCommand()
+        {
+            NotifyClose();
+        }
+
+        #endregion
+
+        #region CleanUpCommand
+
+        public DelegateCommand CleanUpCommand { get; private set; }
+
+        private void ExecuteCleanUpCommand()
+        {
+            var tree = new Tree<FileSystemItem>();
+            foreach (var entry in MissingEntries.SelectMany(entry => (IList<FileSystemItem>)entry.Content))
+            {
+                tree.Insert(entry.Path, entry, name => new FileSystemItem
+                                                           {
+                                                               Name = name,
+                                                               Type = ItemType.Directory
+                                                           });
+            }
+            SelectionTree = new ObservableCollection<TreeItemViewModel>();
+            WrapTreeIntoViewModel(tree, SelectionTree);
+            if (WindowManager.ShowTreeSelectorDialog(this))
+            {
+                //TODO
+            }
+        }
+
+        private static void WrapTreeIntoViewModel(TreeItem<FileSystemItem> tree, ObservableCollection<TreeItemViewModel> treeViewModel)
+        {
+            foreach (var treeItem in tree.Children.Values)
+            {
+                var vm = new TreeItemViewModel
+                             {
+                                 Name = treeItem.Name,
+                                 IsSelected = true,
+                                 IsDirectory = treeItem.Content.Type == ItemType.Directory,
+                                 Children = new ObservableCollection<TreeItemViewModel>()
+                             };
+                treeViewModel.Add(vm);
+                WrapTreeIntoViewModel(treeItem, vm.Children);
+            }
+        }
+
+        #endregion
+
         public FreestyleDatabaseCheckerViewModel(FtpContentViewModel parent)
         {
             _parent = parent;
+            CloseCommand = new DelegateCommand(ExecuteCloseCommand);
+            CleanUpCommand = new DelegateCommand(ExecuteCleanUpCommand);
         }
 
         public void Check()

@@ -1,110 +1,227 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Neurotoxin.Godspeed.Core.Extensions;
 
 namespace Neurotoxin.Godspeed.Core.Models
 {
-    public class Tree<T> where T : class
+    public class Tree<T> : TreeItem<T> where T : class, INamed
     {
-        private class TreeItem<T>
+        public Tree() : base(string.Empty, GetDefaultContent(), null, null)
         {
-            public T Content { get; set; }
-            public List<TreeItem<T>> Children { get; private set; }
+        }
 
-            public TreeItem(T content)
+        public Tree(string name, T content) : base(name, content, null, null)
+        {
+            Root = this;
+        }
+    }
+
+    public class TreeItem<T> : IList<T> where T : class, INamed
+    {
+        public TreeItem<T> Root { get; protected set; }
+        public TreeItem<T> Parent { get; protected set; }
+        public string Name { get; protected set; }
+        public T Content { get; set; }
+        public Dictionary<string, TreeItem<T>> Children { get; private set; }
+
+        protected TreeItem(string name, T content, TreeItem<T> parent, TreeItem<T> root)
+        {
+            Name = name;
+            Content = content;
+            Parent = parent;
+            Root = root;
+            Children = new Dictionary<string, TreeItem<T>>();
+        }
+
+        public void Add(T content)
+        {
+            AddItem(content);
+        }
+
+        private TreeItem<T> AddItem(T content)
+        {
+            var treeItem = new TreeItem<T>(content.Name, content, this, Root);
+            Children.Add(content.Name, treeItem);
+            return treeItem;
+        }
+
+        public IEnumerable<TreeItem<T>> AddRange(IEnumerable<T> contents)
+        {
+            if (contents == null) throw new ArgumentException();
+            var result = new List<TreeItem<T>>();
+            foreach (var content in contents)
             {
-                Content = content;
-                Children = new List<TreeItem<T>>();
+                result.Add(AddItem(content));
+            }
+            return result;
+        }
+
+        public void CopyTo(T[] array, int arrayIndex)
+        {
+            foreach (var child in Children.Values)
+            {
+                array[arrayIndex++] = child.Content;
             }
         }
 
-        private readonly Dictionary<string, TreeItem<T>> _items;
-
-        public IEnumerable<string> Keys
+        public bool Remove(string key)
         {
-            get { return _items.Keys.ToArray(); }
+            return Children.Remove(key);
         }
 
-        public Tree()
+        bool ICollection<T>.Remove(T item)
         {
-            _items = new Dictionary<string, TreeItem<T>> {{string.Empty, new TreeItem<T>(null)}};
+            var treeItem = Children.FirstOrDefault(c => c.Value.Content.Equals(item));
+            if (treeItem.Key == null) return false;
+            Children.Remove(treeItem.Key);
+            return true;
         }
 
-        public void AddItem(string path, T content)
+        public int Count
         {
-            AddItem(path, content, null);
+            get { return Children.Count; }
         }
 
-        private void AddItem(string path, T content, TreeItem<T> newChild)
+        public bool IsReadOnly { get; set; }
+
+        public void Clear()
         {
-            TreeItem<T> item;
-            var newItem = false;
-            if (!_items.ContainsKey(path))
+            Children.Clear();
+        }
+
+        public bool Contains(string key)
+        {
+            return Children.ContainsKey(key);
+        }
+
+        public bool Contains(T item)
+        {
+            return Children.Any(c => c.Value.Content.Equals(item));
+        }
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            return Children.Values.Select(c => c.Content).GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        public int IndexOf(T item)
+        {
+            return Children.Values.Select((c, i) => c.Content.Equals(item) ? i : -1).Max();
+        }
+
+        public void Insert(int index, T item)
+        {
+            throw new NotSupportedException();
+        }
+
+        public void RemoveAt(int index)
+        {
+            Children.Remove(IndexToKey(index));
+        }
+
+        private string IndexToKey(int index)
+        {
+            if (index < 0 || index > Children.Keys.Count) throw new ArgumentOutOfRangeException();
+            var enumerator = Children.Keys.GetEnumerator();
+            var i = -1;
+            string key;
+            do
             {
-                item = new TreeItem<T>(content);
-                _items.Add(path, item);
-                newItem = true;
+                enumerator.MoveNext();
+                key = enumerator.Current;
+                i++;
             }
-            else
+            while (i < index);
+            return key;
+        }
+
+        public T this[int index]
+        {
+            get { return Children[IndexToKey(index)].Content; }
+            set { Children[IndexToKey(index)].Content = value; }
+        }
+
+        public T this[string key]
+        {
+            get { return Children[key].Content; }
+            set { Children[key].Content = value; }
+        }
+
+        public T Find(string path)
+        {
+            var node = GetNode(path);
+            return node != null ? node.Content : null;
+        }
+
+        public IList<T> GetChildren(string path)
+        {
+            var node = GetNode(path);
+            return node != null ? node.Children.Select(c => c.Value.Content).ToList() : null;
+        }
+
+        public void Insert(string path, T content = null, Func<string, T> factory = null)
+        {
+            path = path.Replace('\\', '/');
+            if (path.StartsWith("//") && this != Root)
             {
-                item = _items[path];
+                Root.Insert(path, content, factory);
+                return;
             }
-
-            if (newChild != null) item.Children.Add(newChild);
-
-            if (path == string.Empty) return;
-
-            var parent = path.GetParentPath();
-            AddItem(parent, null, newItem ? item: null);
-        }
-
-        public bool ItemHasContent(string path)
-        {
-            return GetItem(path) != null;
-        }
-
-        public T GetItem(string path)
-        {
-            T content;
-            if (!TryGetItem(path, out content)) throw new ArgumentException("Unregistered path: " + path);
-            return content;
-        }
-
-        public bool TryGetItem(string path, out T content)
-        {
-            if (_items.ContainsKey(path))
+            var parts = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+            var node = this;
+            for (var i = 0; i < parts.Length; i++)
             {
-                content = _items[path].Content;
-                return true;
-            }
-            content = null;
-            return false;
-        }
-
-        public void UpdateItem(string path, T content, bool createIfNotExists = false)
-        {
-            if (!_items.ContainsKey(path))
-            {
-                if (createIfNotExists)
+                var part = parts[i];
+                if (node.Contains(part))
                 {
-                    AddItem(path, content);
+                    node = node.Children[part];
                 }
                 else
                 {
-                    throw new ArgumentException("Unregistered path: " + path);    
+                    if (i == parts.Length - 1) //  || content != null
+                    {
+                        node = node.AddItem(content);
+                    }
+                    else
+                    {
+                        var placeHolder = factory != null ? factory.Invoke(part) : GetDefaultContent();
+                        placeHolder.Name = part;
+                        node = node.AddItem(placeHolder);
+                    }
                 }
             }
-            _items[path].Content = content;
         }
 
-        public List<T> GetChildren(string path)
+        private TreeItem<T> GetNode(string path)
         {
-            if (!_items.ContainsKey(path)) throw new ArgumentException("Unregistered path: " + path);
-            return _items[path].Children.Select(c => c.Content).ToList();
-        }
-   
-    }
+            path = path.Replace('\\', '/');
+            if (path.StartsWith("//") && this != Root) return Root.GetNode(path);
+            var parts = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
+            var node = this;
+            foreach (var part in parts)
+            {
+                if (!node.Contains(part)) return null;
+                node = node.Children[part];
+            }
+            return node;
+        }
+
+        protected static T GetDefaultContent()
+        {
+            var type = typeof(T);
+            var defaultConstructor = type.GetConstructor(new Type[0]);
+            if (defaultConstructor == null) throw new TypeInitializationException(type.FullName, null);
+            var instance = (T)defaultConstructor.Invoke(new object[0]);
+            instance.Name = string.Empty;
+            return instance;
+        }
+
+    }
 }

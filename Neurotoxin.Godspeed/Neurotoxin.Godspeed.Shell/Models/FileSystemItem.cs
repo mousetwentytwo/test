@@ -8,12 +8,7 @@ namespace Neurotoxin.Godspeed.Shell.Models
 {
     public class FileSystemItem : INamed
     {
-        public string Title
-        {
-            get { return _title; }
-            set { _title = value; }
-        }
-
+        public string Title { get; set; }
         public byte[] Thumbnail { get; set; }
         public ItemType Type { get; set; }
         public TitleType TitleType { get; set; }
@@ -22,17 +17,20 @@ namespace Neurotoxin.Godspeed.Shell.Models
 
         [IgnoreDataMember]
         public string Name { get; set; }
-
-        public string Path;
-        public string FullPath;
-        public long? Size;
-        public DateTime Date;
-
-        public bool IsCached;
-        public bool IsLocked;
-        public string LockMessage;
-
-        private string _title;
+        [IgnoreDataMember]
+        public string Path { get; set; }
+        [IgnoreDataMember]
+        public string FullPath { get; set; }
+        [IgnoreDataMember]
+        public long? Size { get; set; }
+        [IgnoreDataMember]
+        public DateTime Date { get; set; }
+        [IgnoreDataMember]
+        public bool IsCached { get; set; }
+        [IgnoreDataMember]
+        public bool IsLocked { get; set; }
+        [IgnoreDataMember]
+        public string LockMessage { get; set; }
 
         public FileSystemItem Clone()
         {

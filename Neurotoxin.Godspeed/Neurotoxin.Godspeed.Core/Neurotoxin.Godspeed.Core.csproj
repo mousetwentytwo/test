@@ -153,7 +153,7 @@
     <Compile Include="Io\Stfs\Package.cs" />
     <Compile Include="Io\Stfs\Data\StfsVolumeDescriptor.cs" />
     <Compile Include="Models\OffsetTable.cs" />
-    <Compile Include="Models\Tree2.cs" />
+    <Compile Include="Models\Tree.cs" />
     <Compile Include="Net\Cryptography\GetChecksum.cs" />
     <Compile Include="Net\Cryptography\MD5.cs" />
     <Compile Include="Net\Cryptography\XCRC.cs" />

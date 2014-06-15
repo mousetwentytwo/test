@@ -110,7 +110,7 @@ namespace Neurotoxin.Godspeed.Presentation.Controls
                 var valueField = type.GetField(ValueMemberPath);
                 var value = valueProperty != null ? valueProperty.GetValue(item, null) : valueField != null ? valueField.GetValue(item) : 1;
 
-                var column = new ColumnDefinition {Width = new GridLength(Convert.ToInt32(value), GridUnitType.Star)};
+                var column = new ColumnDefinition {Width = new GridLength(Convert.ToInt64(value), GridUnitType.Star)};
                 ColumnDefinitions.Add(column);
 
                 var bar = new ContentPresenter {ContentTemplate = ItemTemplate, Content = item};

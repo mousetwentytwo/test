@@ -1022,9 +1022,6 @@
   <data name="LaunchGame" xml:space="preserve">
     <value>Launch game</value>
   </data>
-  <data name="CheckFreestyleDatabase" xml:space="preserve">
-    <value>FSD Database check for errors</value>
-  </data>
   <data name="LaunchXex" xml:space="preserve">
     <value>Launch application</value>
   </data>
@@ -1054,5 +1051,20 @@
   </data>
   <data name="ShowFtpLog" xml:space="preserve">
     <value>Show FTP Log</value>
+  </data>
+  <data name="NoErrorsInFreestyleDatabase" xml:space="preserve">
+    <value>No errors found in your FSD database</value>
+  </data>
+  <data name="FreestyleDatabaseCheck" xml:space="preserve">
+    <value>FSD Database check</value>
+  </data>
+  <data name="TheFollowingGamesMightHaveLeftovers" xml:space="preserve">
+    <value>The following items to not belong to any FSD database entries. Please check to ensure that these are not leftovers from formerly deleted games.</value>
+  </data>
+  <data name="MissingGames" xml:space="preserve">
+    <value>Missing games</value>
+  </data>
+  <data name="PossibleLeftovers" xml:space="preserve">
+    <value>Possible leftovers</value>
   </data>
 </root>

@@ -78,6 +78,7 @@
     <Compile Include="Converters\NotNullOrEmptyConverter.cs" />
     <Compile Include="Converters\NowPrefixConverter.cs" />
     <Compile Include="Converters\ScrollBarVisibilityConverter.cs" />
+    <Compile Include="Converters\StringFormatter.cs" />
     <Compile Include="Converters\ViewIconConverter.cs" />
     <Compile Include="Events\ActivateModuleContextEvent.cs" />
     <Compile Include="Events\DisposedEvent.cs" />
@@ -153,7 +154,7 @@
     <Compile Include="Validation\IsRequired.cs" />
     <Compile Include="ViewModels\Achievement.cs" />
     <Compile Include="ViewModels\Game.cs" />
-    <Compile Include="ViewModels\TreeView.cs" />
+    <Compile Include="ViewModels\TreeItemViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Controls\ProgressIndicator.xaml">

@@ -2337,8 +2337,9 @@ namespace Neurotoxin.Godspeed.Core.Net {
                     if (!DirectoryExists(dirname))
                         return -1;
 
+                    var name = path.GetFtpFileName();
                     foreach (FtpListItem item in GetListing(dirname))
-                        if (item.Type == FtpFileSystemObjectType.File && item.Name == path.GetFtpFileName())
+                        if (item.Type == FtpFileSystemObjectType.File && item.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase))
                             return item.Size;
                 }
             }

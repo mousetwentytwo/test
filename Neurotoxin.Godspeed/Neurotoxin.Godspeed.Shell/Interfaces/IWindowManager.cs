@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Models;
 using Neurotoxin.Godspeed.Shell.ViewModels;
@@ -17,5 +18,6 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
         void CloseMessage();
 
         string ShowTextInputDialog(string title, string message, string defaultValue, IList<InputDialogOptionViewModel> options = null);
+        bool ShowTreeSelectorDialog(ITreeSelectionViewModel viewModel);
     }
 }

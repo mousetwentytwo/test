@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
@@ -53,5 +54,11 @@ namespace Neurotoxin.Godspeed.Shell.Tests.Dummies
             if (options != null) return options.Random().Value.ToString();
             return C.Random<string>();
         }
+
+        public bool ShowTreeSelectorDialog(ITreeSelectionViewModel viewModel)
+        {
+            return true;
+        }
+
     }
 }

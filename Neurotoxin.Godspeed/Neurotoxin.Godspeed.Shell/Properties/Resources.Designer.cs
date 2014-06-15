@@ -306,15 +306,6 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to FSD Database check for errors.
-        /// </summary>
-        internal static string CheckFreestyleDatabase {
-            get {
-                return ResourceManager.GetString("CheckFreestyleDatabase", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Checking.
         /// </summary>
         internal static string Checking {
@@ -846,6 +837,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to FSD Database check.
+        /// </summary>
+        internal static string FreestyleDatabaseCheck {
+            get {
+                return ResourceManager.GetString("FreestyleDatabaseCheck", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to FSD/F3 Content Scan Trigger.
         /// </summary>
         internal static string FsdContentScanTrigger {
@@ -1341,6 +1341,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Missing games.
+        /// </summary>
+        internal static string MissingGames {
+            get {
+                return ResourceManager.GetString("MissingGames", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Move.
         /// </summary>
         internal static string Move {
@@ -1508,6 +1517,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         internal static string No {
             get {
                 return ResourceManager.GetString("No", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No errors found in your FSD database.
+        /// </summary>
+        internal static string NoErrorsInFreestyleDatabase {
+            get {
+                return ResourceManager.GetString("NoErrorsInFreestyleDatabase", resourceCulture);
             }
         }
         
@@ -1760,6 +1778,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         internal static string Port {
             get {
                 return ResourceManager.GetString("Port", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Possible leftovers.
+        /// </summary>
+        internal static string PossibleLeftovers {
+            get {
+                return ResourceManager.GetString("PossibleLeftovers", resourceCulture);
             }
         }
         
@@ -2291,6 +2318,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         internal static string TheFollowingGamesAreMissing {
             get {
                 return ResourceManager.GetString("TheFollowingGamesAreMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The following items to not belong to any FSD database entries. Please check to ensure that these are not leftovers from formerly deleted games..
+        /// </summary>
+        internal static string TheFollowingGamesMightHaveLeftovers {
+            get {
+                return ResourceManager.GetString("TheFollowingGamesMightHaveLeftovers", resourceCulture);
             }
         }
         

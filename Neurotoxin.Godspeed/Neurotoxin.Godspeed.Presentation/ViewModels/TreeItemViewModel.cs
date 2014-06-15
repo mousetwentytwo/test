@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 
 namespace Neurotoxin.Godspeed.Presentation.ViewModels
 {
-    public class TreeItem : ViewModelBase
+    public class TreeItemViewModel : ViewModelBase
     {
         private const string NAME = "Name";
         private string _name;
@@ -18,8 +15,8 @@ namespace Neurotoxin.Godspeed.Presentation.ViewModels
         }
 
         private const string CHILDREN = "Children";
-        private ObservableCollection<TreeItem> _children;
-        public ObservableCollection<TreeItem> Children
+        private ObservableCollection<TreeItemViewModel> _children;
+        public ObservableCollection<TreeItemViewModel> Children
         {
             get { return _children; }
             set { _children = value; NotifyPropertyChanged(CHILDREN); }
@@ -31,6 +28,14 @@ namespace Neurotoxin.Godspeed.Presentation.ViewModels
         {
             get { return _isDirectory; }
             set { _isDirectory = value; NotifyPropertyChanged(ISDIRECTORY); }
+        }
+
+        private const string ISSELECTED = "IsSelected";
+        private bool _isSelected;
+        public bool IsSelected
+        {
+            get { return _isSelected; }
+            set { _isSelected = value; NotifyPropertyChanged(ISSELECTED); }
         }
     }
 }

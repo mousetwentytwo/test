@@ -102,7 +102,7 @@
                 <MenuItem Header="{lex:LocText CommandsMenu}">
                     <MenuItem Header="{lex:LocText CalculateOccupiedSpace}" InputGestureText="Ctrl+L"
                               Command="{Binding ActivePane.CalculateSizeCommand}" CommandParameter="{StaticResource True}" />
-                    <MenuItem Header="{lex:LocText CheckFreestyleDatabase}" Command="{Binding ActivePane.CheckFreestyleDatabaseCommand}" />
+                    <MenuItem Header="{lex:LocText FreestyleDatabaseCheck}" Command="{Binding ActivePane.CheckFreestyleDatabaseCommand}" />
                     <MenuItem Header="{lex:LocText ShowFtpLog}" Command="{Binding ActivePane.ShowFtpLogCommand}" />
                 </MenuItem>
                 <MenuItem Header="{lex:LocText OptionsMenu}">

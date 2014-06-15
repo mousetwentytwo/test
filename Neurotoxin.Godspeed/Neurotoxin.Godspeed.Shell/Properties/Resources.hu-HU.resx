@@ -917,9 +917,6 @@
   <data name="LaunchGame" xml:space="preserve">
     <value>Játék elindítása</value>
   </data>
-  <data name="CheckFreestyleDatabase" xml:space="preserve">
-    <value>Az FSD adatbázisának ellenőrzése</value>
-  </data>
   <data name="LaunchXex" xml:space="preserve">
     <value>Alkalmazás elindítása</value>
   </data>
@@ -952,5 +949,20 @@
   </data>
   <data name="ShowFtpLog" xml:space="preserve">
     <value>FTP naplófájl megjelenítése</value>
+  </data>
+  <data name="NoErrorsInFreestyleDatabase" xml:space="preserve">
+    <value>Nincs hiba az FSD adatbázisában</value>
+  </data>
+  <data name="FreestyleDatabaseCheck" xml:space="preserve">
+    <value>Az FSD adatbázisának ellenőrzése</value>
+  </data>
+  <data name="TheFollowingGamesMightHaveLeftovers" xml:space="preserve">
+    <value>Az alábbi tartalmak nem tartoznak egyik FSD adatbázis-bejegyzéshez sem. Ellenőrizd, hogy jogosan foglalják-e a helyet vagy csak korábbi játékeltávolítások során maradtak-e ott.</value>
+  </data>
+  <data name="MissingGames" xml:space="preserve">
+    <value>Hiányzó játékok</value>
+  </data>
+  <data name="PossibleLeftovers" xml:space="preserve">
+    <value>Lehetséges szemetek</value>
   </data>
 </root>

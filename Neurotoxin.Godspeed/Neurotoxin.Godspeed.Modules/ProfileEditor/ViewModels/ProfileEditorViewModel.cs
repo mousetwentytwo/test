@@ -93,16 +93,16 @@ namespace Neurotoxin.Godspeed.Modules.ProfileEditor.ViewModels
         }
 
         private const string TREE = "Tree";
-        private ObservableCollection<TreeItem> _tree;
-        public ObservableCollection<TreeItem> Tree
+        private ObservableCollection<TreeItemViewModel> _tree;
+        public ObservableCollection<TreeItemViewModel> Tree
         {
             get { return _tree; }
             set { _tree = value; NotifyPropertyChanged(TREE); }
         }
 
         private const string SELECTEDFILE = "SelectedFile";
-        private TreeItem _selectedFile;
-        public TreeItem SelectedFile
+        private TreeItemViewModel _selectedFile;
+        public TreeItemViewModel SelectedFile
         {
             get { return _selectedFile; }
             set { _selectedFile = value; NotifyPropertyChanged(SELECTEDFILE); }

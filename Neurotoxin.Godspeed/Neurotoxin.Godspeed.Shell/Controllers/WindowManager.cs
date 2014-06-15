@@ -17,6 +17,7 @@ using Neurotoxin.Godspeed.Shell.Properties;
 using Neurotoxin.Godspeed.Shell.ViewModels;
 using Neurotoxin.Godspeed.Shell.Views;
 using Neurotoxin.Godspeed.Shell.Views.Dialogs;
+using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 
 namespace Neurotoxin.Godspeed.Shell.Controllers
 {
@@ -28,7 +29,8 @@ namespace Neurotoxin.Godspeed.Shell.Controllers
         private bool _isAbortionInProgress;
         private TransferProgressDialog _transferProgressDialog;
         private ProgressDialog _progressDialog;
-        private Dictionary<FtpTraceListener, FtpTraceWindow> _traceWindows = new Dictionary<FtpTraceListener, FtpTraceWindow>(); 
+        private FreestyleDatabaseCheckerWindow _freestyleDatabaseCheckerWindow;
+        private readonly Dictionary<FtpTraceListener, FtpTraceWindow> _traceWindows = new Dictionary<FtpTraceListener, FtpTraceWindow>();
 
         public WindowManager(IEventAggregator eventAggregator)
         {
@@ -104,6 +106,12 @@ namespace Neurotoxin.Godspeed.Shell.Controllers
             return InputDialog.ShowText(title, message, defaultValue, options);
         }
 
+        public bool ShowTreeSelectorDialog(ITreeSelectionViewModel viewModel)
+        {
+            var dialog = new TreeSelectionDialog(viewModel) { Owner = _freestyleDatabaseCheckerWindow };
+            return dialog.ShowDialog() == true;
+        }
+
         private void OnTransferStarted(TransferStartedEventArgs e)
         {
             if (_transferProgressDialog == null)
@@ -170,6 +178,11 @@ namespace Neurotoxin.Godspeed.Shell.Controllers
 
         private void OnFreestyleDatabaseCheck(FreestyleDatabaseCheckEventArgs e)
         {
+            if (_freestyleDatabaseCheckerWindow != null)
+            {
+                _freestyleDatabaseCheckerWindow.Activate();
+                return;
+            }
             MainWindowHitTestVisible(false);
             var vm = _container.Resolve<FreestyleDatabaseCheckerViewModel>(new ParameterOverride("parent", e.FtpContentViewModel));
             _progressDialog = _container.Resolve<ProgressDialog, FreestyleDatabaseCheckerViewModel>(vm);
@@ -180,13 +193,28 @@ namespace Neurotoxin.Godspeed.Shell.Controllers
 
         private void OnFreestyleDatabaseCheckFinished(IProgressViewModel sender)
         {
-            sender.Finished -= OnFreestyleDatabaseCheckFinished;
+            var vm = (FreestyleDatabaseCheckerViewModel) sender;
+            vm.Finished -= OnFreestyleDatabaseCheckFinished;
+            vm.Close += OnFreestyleDatabaseCheckerWindowClose;
             MainWindowHitTestVisible(true);
             _progressDialog.Close();
-            var vm = (FreestyleDatabaseCheckerViewModel)_progressDialog.ViewModel;
-            var window = _container.Resolve<FreestyleDatabaseCheckerWindow, FreestyleDatabaseCheckerViewModel>(vm);
-            window.ShowDialog();
+            if (vm.HasMissingEntries || vm.HasMissingFolders)
+            {
+                _freestyleDatabaseCheckerWindow = _container.Resolve<FreestyleDatabaseCheckerWindow, FreestyleDatabaseCheckerViewModel>(vm);
+                _freestyleDatabaseCheckerWindow.Show();
+            } 
+            else
+            {
+                ShowMessage(Resx.ErrorsInFreestyleDatabase, Resx.NoErrorsInFreestyleDatabase);
+            }
             _progressDialog = null;
+        }
+
+        private void OnFreestyleDatabaseCheckerWindowClose(object sender, EventArgs e)
+        {
+            _freestyleDatabaseCheckerWindow.ViewModel.Close -= OnFreestyleDatabaseCheckerWindowClose;
+            _freestyleDatabaseCheckerWindow.Close();
+            _freestyleDatabaseCheckerWindow = null;
         }
 
         private void OnShowFtpTraceWindow(ShowFtpTraceWindowEventArgs e)
