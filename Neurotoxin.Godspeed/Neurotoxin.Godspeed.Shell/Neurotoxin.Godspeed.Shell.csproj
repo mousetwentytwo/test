@@ -281,8 +281,8 @@
     <Compile Include="Views\Controls\ProgressNotificationBar.xaml.cs">
       <DependentUpon>ProgressNotificationBar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Dialogs\TreeSelectorDialog.xaml.cs">
-      <DependentUpon>TreeSelectorDialog.xaml</DependentUpon>
+    <Compile Include="Views\Dialogs\TreeSelectionDialog.xaml.cs">
+      <DependentUpon>TreeSelectionDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\FtpTraceWindow.xaml.cs">
       <DependentUpon>FtpTraceWindow.xaml</DependentUpon>
@@ -406,7 +406,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Dialogs\TreeSelectorDialog.xaml">
+    <Page Include="Views\Dialogs\TreeSelectionDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
