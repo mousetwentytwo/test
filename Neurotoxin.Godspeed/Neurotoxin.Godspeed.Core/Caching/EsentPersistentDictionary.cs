@@ -1,7 +1,6 @@
-using System.IO;
 using Microsoft.Isam.Esent.Collections.Generic;
 using System;
-using ServiceStack.Text;
+using ServiceStack;
 using System.Linq;
 
 namespace Neurotoxin.Godspeed.Core.Caching
@@ -35,32 +34,6 @@ namespace Neurotoxin.Godspeed.Core.Caching
                     return new string[0];
                 }
             }
-	    }
-
-	    public static bool IsInstantiable
-	    {
-	        get
-	        {
-	            var path = Path.Combine(AppDomain.CurrentDomain.GetData("DataDirectory").ToString(), "PersistentDictionary.edb");
-	            if (!File.Exists(path)) return true;
-
-	            Stream stream = null;
-	            bool result;
-                try
-                {
-                    stream = new FileStream(path, FileMode.Open, FileAccess.Read);
-                    result = true;
-                }
-                catch
-                {
-                    result = false;
-                }
-                finally
-                {
-                    if (stream != null) stream.Dispose();
-                }
-	            return result;
-	        }
 	    }
 
 	    public T Get<T>(string key)
@@ -115,5 +88,12 @@ namespace Neurotoxin.Godspeed.Core.Caching
 	    {
 	        return Keys.Contains(key);
 	    }
+
+        public static void Release()
+        {
+            _instance._persistentDictionary.Dispose();
+            _instance = null;
+            GC.Collect();
+        }
 	}
 }

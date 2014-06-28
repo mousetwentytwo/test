@@ -10,15 +10,25 @@ namespace Neurotoxin.Godspeed.Shell.Primitives
 {
     public class BorderlessWindow : Window
     {
-        protected IUserSettings UserSettings { get; private set; }
+        protected IUserSettingsProvider UserSettings { get; set; }
 
-        protected BorderlessWindow()
+        public BorderlessWindow()
         {
-            UserSettings = UnityInstance.Container.Resolve<IUserSettings>();
+            Initialize();
+        }
+
+        protected virtual void Initialize()
+        {
             Icon = new BitmapImage(new Uri("pack://application:,,,/Neurotoxin.Godspeed.Shell;component/Resources/window.ico"));
             SnapsToDevicePixels = true;
             Background = (SolidColorBrush) Application.Current.Resources["ControlBackgroundBrush"];
-            if (!UserSettings.DisableCustomChrome) Style = (Style)Application.Current.Resources["Window"];
+            var useStyle = true;
+            if (App.ShellInitialized)
+            {
+                UserSettings = UnityInstance.Container.Resolve<IUserSettingsProvider>();
+                if (UserSettings.DisableCustomChrome) useStyle = false;
+            }
+            if (useStyle) Style = (Style)Application.Current.Resources["Window"];
         }
     }
 }

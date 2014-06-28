@@ -43,7 +43,7 @@ namespace Neurotoxin.Godspeed.Shell.Reporting
             {
                 if (body == null) return;
                 var dirName = string.Format(@"{0:yyyyMMddHHmmssffff}", DateTime.Now);
-                var dir = Path.Combine(App.DataDirectory, "post", dirName);
+                var dir = Path.Combine(App.PostDirectory, dirName);
                 Directory.CreateDirectory(dir);
                 var tempFile = Path.Combine(dir, target);
                 File.WriteAllBytes(tempFile, body);

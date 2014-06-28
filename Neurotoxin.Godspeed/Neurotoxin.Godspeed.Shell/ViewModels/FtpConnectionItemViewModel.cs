@@ -1,5 +1,6 @@
 ﻿using System.Windows.Media;
 using Neurotoxin.Godspeed.Shell.Constants;
+using Neurotoxin.Godspeed.Shell.Database.Models;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
 using Neurotoxin.Godspeed.Presentation.Extensions;

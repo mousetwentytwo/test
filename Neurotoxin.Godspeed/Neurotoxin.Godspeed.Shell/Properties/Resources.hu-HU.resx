@@ -457,7 +457,7 @@
     <value>Egyéb</value>
   </data>
   <data name="MigrationProgressDialogTitle" xml:space="preserve">
-    <value>Migráció folyamatban... ({0}%)</value>
+    <value>Migráció</value>
   </data>
   <data name="Messages" xml:space="preserve">
     <value>Üzenetek</value>

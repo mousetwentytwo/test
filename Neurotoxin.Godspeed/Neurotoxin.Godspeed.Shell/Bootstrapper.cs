@@ -7,16 +7,21 @@ using Microsoft.Practices.Unity;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Shell.Controllers;
+using Neurotoxin.Godspeed.Shell.Database;
+using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Helpers;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.ViewModels;
 using Neurotoxin.Godspeed.Shell.Views;
+using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 using WPFLocalizeExtension.Engine;
 
 namespace Neurotoxin.Godspeed.Shell
 {
     public class Bootstrapper : UnityBootstrapper
     {
+        private FileManagerWindow _shell;
+
         protected override void ConfigureContainer()
         {
             base.ConfigureContainer();
@@ -29,15 +34,17 @@ namespace Neurotoxin.Godspeed.Shell
             // Managers
             Container.RegisterType<IResourceManager, ResourceManager>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IWindowManager, WindowManager>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<NotificationService>(new ContainerControlledLifetimeManager());
 
             // Content providers
-            Container.RegisterType<IUserSettings, UserSettings>();
+            Container.RegisterType<IDbContext, OrmLiteDbContext>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<IUserSettingsProvider, UserSettingsProvider>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ITitleRecognizer, TitleRecognizer>();
             Container.RegisterType<FtpContent>();
             Container.RegisterType<LocalFileSystemContent>();
             Container.RegisterType<StfsPackageContent>();
             Container.RegisterType<CompressedFileContent>();
-            Container.RegisterType<CacheManager>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<ICacheManager, CacheManager>(new ContainerControlledLifetimeManager());
 
             // ViewModels
             Container.RegisterType<FileManagerViewModel>(new ContainerControlledLifetimeManager());
@@ -56,6 +63,7 @@ namespace Neurotoxin.Godspeed.Shell
             Container.RegisterType<SettingsWindow>();
             Container.RegisterType<StatisticsWindow>();
             Container.RegisterType<FreestyleDatabaseCheckerWindow>();
+            Container.RegisterType<ErrorMessage>();
 
             // Helpers
             Container.RegisterType<SanityChecker>(new ContainerControlledLifetimeManager());
@@ -71,20 +79,33 @@ namespace Neurotoxin.Godspeed.Shell
 
         protected override DependencyObject CreateShell()
         {
-            var userSettings = Container.Resolve<IUserSettings>();
-            LocalizeDictionary.Instance.Culture = userSettings.Language ?? CultureInfo.CurrentCulture;
-            Container.Resolve<SanityChecker>();
-            var shell = Container.Resolve<FileManagerWindow>();
-            var viewModel = (FileManagerViewModel)shell.DataContext;
-            viewModel.Initialize();
-            Application.Current.MainWindow = shell;
-            Application.Current.Dispatcher.BeginInvoke(new Action(shell.Show));
-            return shell;
+            _shell = Container.Resolve<FileManagerWindow>();
+            var windowManager = Container.Resolve<IWindowManager>();
+            var sanityChecker = Container.Resolve<SanityChecker>();
+            sanityChecker.CheckAsync(SanityCheckCallback);
+            return _shell;
         }
 
-        public T Resolve<T>()
+        private void SanityCheckCallback(NotifyUserMessageEventArgs message)
         {
-            return Container.Resolve<T>();
+            var notificationService = Container.Resolve<NotificationService>();
+            if (message != null) notificationService.QueueMessage(message);
+            InitializeShell();
+        }
+
+        private void InitializeShell()
+        {
+            App.ShellInitialized = true;
+            var viewModel = Container.Resolve<FileManagerViewModel>();
+            var userSettings = Container.Resolve<IUserSettingsProvider>();
+            LocalizeDictionary.Instance.Culture = userSettings.Language ?? CultureInfo.CurrentCulture;
+            _shell.Initialize(viewModel);
+            Application.Current.Dispatcher.BeginInvoke(new Action(_shell.Show));
+        }
+
+        public T Resolve<T>(params ResolverOverride[] overrides)
+        {
+            return Container.Resolve<T>(overrides);
         }
     }
 }

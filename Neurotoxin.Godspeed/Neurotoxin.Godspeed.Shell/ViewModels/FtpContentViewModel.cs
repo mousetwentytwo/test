@@ -54,7 +54,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             get
             {
-                return UserSettings.FsdContentScanTrigger != FsdContentScanTrigger.Disabled &&
+                return UserSettingsProvider.FsdContentScanTrigger != FsdContentScanTrigger.Disabled &&
                        Connection != null && !Connection.IsHttpAccessDisabled && FileManager.IsFSD;
             }
         }
@@ -66,7 +66,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public override bool IsVerificationEnabled
         {
-            get { return UserSettings.VerifyFileHashAfterFtpUpload && FileManager.IsFSD; }
+            get { return UserSettingsProvider.VerifyFileHashAfterFtpUpload && FileManager.IsFSD; }
         }
 
         #region Command overrides
@@ -221,9 +221,10 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     WorkHandler.Run(
                         () =>
                             {
-                                File.WriteAllBytes(payload.TempFilePath, payload.Content);
-                                FileManager.RestoreConnection();
-                                FileManager.UploadFile(payload.FilePath, payload.TempFilePath);
+                                //TODO: upload binary
+                                //File.WriteAllBytes(payload.TempFilePath, payload.Content);
+                                //FileManager.RestoreConnection();
+                                //FileManager.UploadFile(payload.FilePath, payload.TempFilePath);
                                 return true;
                             },
                         result =>
@@ -295,7 +296,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                             switch (answer)
                             {
                                 case DisableOption.All:
-                                    UserSettings.FsdContentScanTrigger = FsdContentScanTrigger.Disabled;
+                                    UserSettingsProvider.FsdContentScanTrigger = FsdContentScanTrigger.Disabled;
                                     break;
                                 case DisableOption.Single:
                                     Connection.IsHttpAccessDisabled = true;
@@ -332,7 +333,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         switch (answer)
                         {
                             case DisableOption.All:
-                                UserSettings.FsdContentScanTrigger = FsdContentScanTrigger.Disabled;
+                                UserSettingsProvider.FsdContentScanTrigger = FsdContentScanTrigger.Disabled;
                                 break;
                             case DisableOption.Single:
                                 Connection.IsHttpAccessDisabled = true;
@@ -379,7 +380,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             var scanFolder = GetCorrespondingScanFolder(CurrentFolder.Path);
             if (scanFolder == null) return;
 
-            switch (UserSettings.FsdContentScanTrigger)
+            switch (UserSettingsProvider.FsdContentScanTrigger)
             {
                 case FsdContentScanTrigger.AfterUpload:
                     TriggerContentScan(scanFolder.PathId);

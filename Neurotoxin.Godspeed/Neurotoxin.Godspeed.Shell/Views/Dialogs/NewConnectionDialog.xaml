@@ -73,6 +73,8 @@
             </Setter>
         </Style>
         <i:DataResource x:Key="OriginalName" BindingTarget="{Binding Name}"/>
+        <i:DataResource x:Key="ItemState" BindingTarget="{Binding ItemState}"/>
+        <i:DataResource x:Key="ConnectionNames" BindingTarget="{Binding RelativeSource={RelativeSource AncestorType={x:Type dialogs:NewConnectionDialog}}, Path=ConnectionNames}"/>
     </primitives:DialogBase.Resources>
     <Grid x:Name="LayoutRoot" Margin="2">
         <Grid.ColumnDefinitions>
@@ -97,8 +99,11 @@
                 <Binding Path="Name" UpdateSourceTrigger="LostFocus">
                     <Binding.ValidationRules>
                         <validation:IsRequired ValidatesOnTargetUpdated="True" ErrorMessage="{lex:LocText EmptyFieldErrorMessage}" />
-                        <shellValidations:IsNonExistentConnection ValidatesOnTargetUpdated="True" ErrorMessage="{lex:LocText Neurotoxin.Godspeed.Shell:Resources:ConnectionNameExistsErrorMessage}" 
-                                                                  OriginalValue="{i:DataResourceBinding DataResource={StaticResource OriginalName}}"/>
+                        <shellValidations:IsNonExistentConnection ValidatesOnTargetUpdated="True" 
+                                                                  ErrorMessage="{lex:LocText Neurotoxin.Godspeed.Shell:Resources:ConnectionNameExistsErrorMessage}" 
+                                                                  OriginalValue="{i:DataResourceBinding DataResource={StaticResource OriginalName}}"
+                                                                  ItemState="{i:DataResourceBinding DataResource={StaticResource ItemState}}"
+                                                                  ConnectionNames="{i:DataResourceBinding DataResource={StaticResource ConnectionNames}}"/>
                     </Binding.ValidationRules>
                 </Binding>
             </TextBox.Text>

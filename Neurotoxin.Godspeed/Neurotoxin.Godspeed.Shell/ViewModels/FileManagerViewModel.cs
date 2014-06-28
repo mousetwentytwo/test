@@ -27,7 +27,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
     public class FileManagerViewModel : CommonViewModelBase, IFileManagerViewModel
     {
         private readonly TransferManagerViewModel _transferManager;
-        private readonly IUserSettings _userSettings;
+        private readonly IUserSettingsProvider _userSettings;
 
         #region Main window properties
 
@@ -306,8 +306,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void ExecuteRemoveUserMessageCommand(UserMessageViewModel message)
         {
-            if (message.Flags.HasFlag(MessageFlags.Ignorable) && 
-                new ConfirmationDialog(Resx.RemoveUserMessage, Resx.RemoveUserMessageConfirmation).ShowDialog() == true)
+            if (message.Flags.HasFlag(MessageFlags.Ignorable) && new ConfirmationDialog(Resx.RemoveUserMessage, Resx.RemoveUserMessageConfirmation).ShowDialog() == true)
             {
                 _userSettings.IgnoreMessage(message.Message);
             }
@@ -317,7 +316,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #endregion
 
-        public FileManagerViewModel(TransferManagerViewModel transferManager, IUserSettings userSettings)
+        public FileManagerViewModel(TransferManagerViewModel transferManager, IUserSettingsProvider userSettings)
         {
             _transferManager = transferManager;
             _userSettings = userSettings;

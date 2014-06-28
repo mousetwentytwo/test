@@ -38,7 +38,7 @@ namespace Neurotoxin.Godspeed.Shell.Tests
             Container.RegisterType<IEventAggregator, EventAggregator>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IWindowManager, ConsoleWriter>(new ContainerControlledLifetimeManager());
             Container.RegisterInstance(A.Fake<IStatisticsViewModel>());
-            Container.RegisterInstance(A.Fake<IUserSettings>());
+            Container.RegisterInstance(A.Fake<IUserSettingsProvider>());
             Container.RegisterInstance(A.Fake<ITitleRecognizer>());
             Container.RegisterInstance(A.Fake<IResourceManager>());
             Container.RegisterType<TransferManagerViewModel>();

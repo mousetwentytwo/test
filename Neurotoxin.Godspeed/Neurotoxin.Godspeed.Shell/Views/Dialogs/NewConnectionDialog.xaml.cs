@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
@@ -12,13 +13,13 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
     {
         public FtpConnectionItemViewModel ViewModel
         {
-            get { return this.DataContext as FtpConnectionItemViewModel; }
-            private set { this.DataContext = value; }
+            get { return DataContext as FtpConnectionItemViewModel; }
+            private set { DataContext = value; }
         }
 
         public ConnectionImage[] ConnectionImages { get; private set; }
 
-        public NewConnectionDialog(FtpConnectionItemViewModel viewModel)
+        public NewConnectionDialog(List<string> connectionNames, FtpConnectionItemViewModel viewModel)
         {
             Owner = Application.Current.MainWindow;
             ConnectionImages = Enum.GetValues(typeof(ConnectionImage)).Cast<ConnectionImage>().ToArray();

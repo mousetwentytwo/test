@@ -1314,7 +1314,7 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Migrating... ({0}%).
+        ///   Looks up a localized string similar to Migration.
         /// </summary>
         internal static string MigrationProgressDialogTitle {
             get {

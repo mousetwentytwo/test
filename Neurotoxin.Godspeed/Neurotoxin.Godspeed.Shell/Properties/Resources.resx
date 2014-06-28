@@ -642,7 +642,7 @@
     <value>{0:#,0} of {1:#,0} bytes free</value>
   </data>
   <data name="MigrationProgressDialogTitle" xml:space="preserve">
-    <value>Migrating... ({0}%)</value>
+    <value>Migration</value>
   </data>
   <data name="Move" xml:space="preserve">
     <value>Move</value>

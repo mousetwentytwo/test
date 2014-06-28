@@ -3,25 +3,27 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
 using Microsoft.Practices.Unity;
-using Neurotoxin.Godspeed.Core.Caching;
 using Neurotoxin.Godspeed.Shell.Constants;
+using Neurotoxin.Godspeed.Shell.Database.Models;
 using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Exceptions;
+using Neurotoxin.Godspeed.Shell.Extensions;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
 using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
 using System.Linq;
+using ServiceStack.OrmLite;
 using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
+using Microsoft.Practices.Composite;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
     public class ConnectionsViewModel : PaneViewModelBase
     {
         private IStoredConnectionViewModel _previouslyFocusedItem;
-        public const string CacheStoreKeyPrefix = "FtpConnection_";
-        private readonly EsentPersistentDictionary _cacheStore = EsentPersistentDictionary.Instance;
+        private readonly IDbContext _dbContext;
 
         #region Properties
 
@@ -90,8 +92,10 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #endregion
 
-        public ConnectionsViewModel()
+        public ConnectionsViewModel(IDbContext dbContext)
         {
+            _dbContext = dbContext;
+
             ConnectCommand = new DelegateCommand<object>(ExecuteConnectCommand, CanExecuteConnectCommand);
             Items = new ObservableCollection<IStoredConnectionViewModel>();
 
@@ -104,11 +108,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             switch (cmd)
             {
                 case LoadCommand.Load:
-                    foreach (var ftpconn in _cacheStore.Keys.Where(key => key.StartsWith(CacheStoreKeyPrefix))
-                                                            .Select(key => _cacheStore.Get<FtpConnection>(key))
-                                                            .OrderBy(i => i.Name))
+                    using (var db = _dbContext.Open())
                     {
-                        Items.Add(new FtpConnectionItemViewModel(ftpconn));
+                        Items.AddRange(db.Get<FtpConnection>().Select(c => new FtpConnectionItemViewModel(c)));    
                     }
                     var add = new NewConnectionPlaceholderViewModel();
                     Items.Add(add);
@@ -143,17 +145,14 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public void Edit()
         {
-            bool edit;
             FtpConnectionItemViewModel newItem;
             var ftpconn = SelectedItem as FtpConnectionItemViewModel;
             if (ftpconn != null)
             {
-                edit = true;
                 newItem = ftpconn.Clone();
             } 
             else if (SelectedItem is NewConnectionPlaceholderViewModel)
             {
-                edit = false;
                 newItem = new FtpConnectionItemViewModel(new FtpConnection
                     {
                         Port = 21,
@@ -167,18 +166,16 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 throw new NotSupportedException();
             }
 
-            var dialog = new NewConnectionDialog(newItem);
+            var dialog = new NewConnectionDialog(Items.OfType<FtpConnectionItemViewModel>().Select(item => item.Name).ToList(), newItem);
             if (dialog.ShowDialog() != true) return;
 
-            if (edit)
-            {
-                Items.Remove(SelectedItem);
-                _cacheStore.Remove(string.Format("{0}{1}", CacheStoreKeyPrefix, ftpconn.Name));
-            }
             var i = 0;
             while (i < Items.Count - 1 && String.Compare(newItem.Name, Items[i].Name, StringComparison.InvariantCultureIgnoreCase) == 1) i++;
             Items.Insert(i, newItem);
-            _cacheStore.Put(string.Format("{0}{1}", CacheStoreKeyPrefix, newItem.Name), newItem.Model);
+            using(var db = _dbContext.Open())
+            {
+                db.Save(newItem.Model);    
+            }
             SelectedItem = newItem;
         }
 
@@ -187,7 +184,10 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             var ftpconn = SelectedItem as FtpConnectionItemViewModel;
             if (ftpconn == null) return;
             Items.Remove(SelectedItem);
-            _cacheStore.Remove(string.Format("{0}{1}", CacheStoreKeyPrefix, ftpconn.Name));
+            using (var db = _dbContext.Open())
+            {
+                db.Delete(ftpconn.Model);    
+            }
         }
 
         private FtpContentViewModel FtpConnect(IStoredConnectionViewModel connection)
@@ -223,7 +223,10 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void Save(FtpConnectionItemViewModel connection)
         {
             if (connection == null) return;
-            _cacheStore.Update(string.Format("{0}{1}", CacheStoreKeyPrefix, connection.Name), connection.Model);
+            using(var db = _dbContext.Open())
+            {
+                db.Save(connection.Model);    
+            }
         }
 
         public override object Close(object data)

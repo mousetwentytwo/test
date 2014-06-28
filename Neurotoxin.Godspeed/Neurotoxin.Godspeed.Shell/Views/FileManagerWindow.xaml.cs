@@ -35,7 +35,7 @@ namespace Neurotoxin.Godspeed.Shell.Views
             get { return (FileManagerViewModel) DataContext; }
         }
 
-        public FileManagerWindow(FileManagerViewModel viewModel, IEventAggregator eventAggregator)
+        public FileManagerWindow(IEventAggregator eventAggregator)
         {
             _eventAggregator = eventAggregator;
             var assembly = Assembly.GetAssembly(typeof(FileManagerWindow));
@@ -44,7 +44,6 @@ namespace Neurotoxin.Godspeed.Shell.Views
             Title = String.Format("GODspeed v{0}", version);
 
             InitializeComponent();
-            DataContext = viewModel;
             CommandBindings.Add(new CommandBinding(FileManagerCommands.OpenDriveDropdownCommand, ExecuteOpenDriveDropdownCommand));
             CommandBindings.Add(new CommandBinding(FileManagerCommands.SettingsCommand, ExecuteSettingsCommand));
             CommandBindings.Add(new CommandBinding(FileManagerCommands.StatisticsCommand, ExecuteStatisticsCommand));
@@ -55,6 +54,18 @@ namespace Neurotoxin.Godspeed.Shell.Views
 
             LayoutRoot.PreviewKeyDown += LayoutRootOnPreviewKeyDown;
             Closing += OnClosing;
+        }
+
+        protected override void Initialize()
+        {
+            //NOTE: intentionally blank to prevent IUserSettingsProvider resolvation
+        }
+
+        public void Initialize(FileManagerViewModel viewModel)
+        {
+            DataContext = viewModel;
+            viewModel.Initialize();
+            base.Initialize();
         }
 
         private void OnClosing(object sender, CancelEventArgs args)

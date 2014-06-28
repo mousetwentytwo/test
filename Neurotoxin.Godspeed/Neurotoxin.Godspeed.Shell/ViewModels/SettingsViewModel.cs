@@ -5,9 +5,7 @@ using System.Linq;
 using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Constants;
-using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Shell.Interfaces;
-using Neurotoxin.Godspeed.Shell.Views;
 using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 using WPFLocalizeExtension.Engine;
 using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
@@ -16,8 +14,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
     public class SettingsViewModel : CommonViewModelBase, ISettingsViewModel
     {
-        private readonly IUserSettings _userSettings;
-        private readonly CacheManager _cacheManager;
+        private readonly IUserSettingsProvider _userSettingsProvider;
+        private readonly ICacheManager _cacheManager;
 
         #region Content recognition
 
@@ -166,7 +164,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             WindowManager.ShowMessage(Resx.ApplicationIsBusy, Resx.PleaseWait, NotificationMessageFlags.NonClosable);
             WorkHandler.Run(() =>
                                  {
-                                     _cacheManager.ClearCache();
+                                     _cacheManager.Clear();
                                      return true;
                                  }, 
                              r => WindowManager.CloseMessage());
@@ -174,9 +172,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #endregion
 
-        public SettingsViewModel(IUserSettings userSettings, CacheManager cacheManager)
+        public SettingsViewModel(IUserSettingsProvider userSettingsProvider, ICacheManager cacheManager)
         {
-            _userSettings = userSettings;
+            _userSettingsProvider = userSettingsProvider;
             _cacheManager = cacheManager;
             ClearCacheCommand = new DelegateCommand(ExecuteClearCacheCommand);
 
@@ -197,40 +195,40 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 }
             }).ToList();
 
-            UseJqe360 = _userSettings.UseJqe360;
-            ProfileExpiration = _userSettings.ProfileExpiration;
-            ProfileInvalidation = _userSettings.ProfileInvalidation;
-            RecognizedGameExpiration = _userSettings.RecognizedGameExpiration;
-            PartiallyRecognizedGameExpiration = _userSettings.PartiallyRecognizedGameExpiration;
-            UnrecognizedGameExpiration = _userSettings.UnrecognizedGameExpiration;
-            XboxLiveContentExpiration = _userSettings.XboxLiveContentExpiration;
-            XboxLiveContentInvalidation = _userSettings.XboxLiveContentInvalidation;
-            UnknownContentExpiration = _userSettings.UnknownContentExpiration;
-            UseVersionChecker = _userSettings.UseVersionChecker;
-            VerifyFileHashAfterFtpUpload = _userSettings.VerifyFileHashAfterFtpUpload;
-            FsdContentScanTrigger = _userSettings.FsdContentScanTrigger;
-            UseRemoteCopy = _userSettings.UseRemoteCopy;
-            Language = _userSettings.Language ?? LocalizeDictionary.Instance.Culture;
-            DisableCustomChrome = _userSettings.DisableCustomChrome;
+            UseJqe360 = _userSettingsProvider.UseJqe360;
+            ProfileExpiration = _userSettingsProvider.ProfileExpiration;
+            ProfileInvalidation = _userSettingsProvider.ProfileInvalidation;
+            RecognizedGameExpiration = _userSettingsProvider.RecognizedGameExpiration;
+            PartiallyRecognizedGameExpiration = _userSettingsProvider.PartiallyRecognizedGameExpiration;
+            UnrecognizedGameExpiration = _userSettingsProvider.UnrecognizedGameExpiration;
+            XboxLiveContentExpiration = _userSettingsProvider.XboxLiveContentExpiration;
+            XboxLiveContentInvalidation = _userSettingsProvider.XboxLiveContentInvalidation;
+            UnknownContentExpiration = _userSettingsProvider.UnknownContentExpiration;
+            UseVersionChecker = _userSettingsProvider.UseVersionChecker;
+            VerifyFileHashAfterFtpUpload = _userSettingsProvider.VerifyFileHashAfterFtpUpload;
+            FsdContentScanTrigger = _userSettingsProvider.FsdContentScanTrigger;
+            UseRemoteCopy = _userSettingsProvider.UseRemoteCopy;
+            Language = _userSettingsProvider.Language ?? LocalizeDictionary.Instance.Culture;
+            DisableCustomChrome = _userSettingsProvider.DisableCustomChrome;
         }
 
         public void SaveChanges()
         {
-            _userSettings.UseJqe360 = UseJqe360;
-            _userSettings.ProfileExpiration = ProfileExpiration;
-            _userSettings.ProfileInvalidation = ProfileInvalidation;
-            _userSettings.RecognizedGameExpiration = RecognizedGameExpiration;
-            _userSettings.PartiallyRecognizedGameExpiration = PartiallyRecognizedGameExpiration;
-            _userSettings.UnrecognizedGameExpiration = UnrecognizedGameExpiration;
-            _userSettings.XboxLiveContentExpiration = XboxLiveContentExpiration;
-            _userSettings.XboxLiveContentInvalidation = XboxLiveContentInvalidation;
-            _userSettings.UnknownContentExpiration = UnknownContentExpiration;
-            _userSettings.UseVersionChecker = UseVersionChecker;
-            _userSettings.VerifyFileHashAfterFtpUpload = VerifyFileHashAfterFtpUpload;
-            _userSettings.FsdContentScanTrigger = FsdContentScanTrigger;
-            _userSettings.UseRemoteCopy = UseRemoteCopy;
-            _userSettings.Language = Language;
-            _userSettings.DisableCustomChrome = DisableCustomChrome;
+            _userSettingsProvider.UseJqe360 = UseJqe360;
+            _userSettingsProvider.ProfileExpiration = ProfileExpiration;
+            _userSettingsProvider.ProfileInvalidation = ProfileInvalidation;
+            _userSettingsProvider.RecognizedGameExpiration = RecognizedGameExpiration;
+            _userSettingsProvider.PartiallyRecognizedGameExpiration = PartiallyRecognizedGameExpiration;
+            _userSettingsProvider.UnrecognizedGameExpiration = UnrecognizedGameExpiration;
+            _userSettingsProvider.XboxLiveContentExpiration = XboxLiveContentExpiration;
+            _userSettingsProvider.XboxLiveContentInvalidation = XboxLiveContentInvalidation;
+            _userSettingsProvider.UnknownContentExpiration = UnknownContentExpiration;
+            _userSettingsProvider.UseVersionChecker = UseVersionChecker;
+            _userSettingsProvider.VerifyFileHashAfterFtpUpload = VerifyFileHashAfterFtpUpload;
+            _userSettingsProvider.FsdContentScanTrigger = FsdContentScanTrigger;
+            _userSettingsProvider.UseRemoteCopy = UseRemoteCopy;
+            _userSettingsProvider.Language = Language;
+            _userSettingsProvider.DisableCustomChrome = DisableCustomChrome;
         }
     }
 }

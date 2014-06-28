@@ -1,3 +1,4 @@
+using Neurotoxin.Godspeed.Shell.Database.Models;
 using Neurotoxin.Godspeed.Shell.Models;
 
 namespace Neurotoxin.Godspeed.Shell.Interfaces
@@ -6,11 +7,9 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
     {
         bool MergeWithCachedEntry(FileSystemItem item);
         bool RecognizeType(FileSystemItem item);
-        CacheEntry<FileSystemItem> RecognizeTitle(FileSystemItem item);
-        void UpdateCache(FileSystemItem item);
+        CacheItem RecognizeTitle(FileSystemItem item);
+        bool UpdateTitle(FileSystemItem item);
         void ThrowCache(FileSystemItem item);
-        CacheEntry<FileSystemItem> GetCacheEntry(FileSystemItem item);
-        CacheEntry<FileSystemItem> GetCacheEntry(FileSystemItem item, out CacheComplexKey cacheKey);
-        CacheEntry<FileSystemItem> GetCacheEntry(string key);
+        byte[] GetBinaryContent(FileSystemItem item);
     }
 }

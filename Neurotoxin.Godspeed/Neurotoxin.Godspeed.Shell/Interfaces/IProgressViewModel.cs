@@ -11,6 +11,6 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
         double ProgressValueDouble { get; }
         bool IsIndetermine { get; }
 
-        event WorkFinishedEventHandler Finished;
+        //event WorkFinishedEventHandler Finished;
     }
 }

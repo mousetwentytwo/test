@@ -9,13 +9,13 @@ namespace Neurotoxin.Godspeed.Shell.Events
 
     public class CachePopulatedEventArgs
     {
-        public Dictionary<string, CacheEntry<FileSystemItem>> InMemoryCacheItems { get; private set; }
-        public EsentPersistentDictionary CacheStore { get; private set; }
+        //public Dictionary<string, CacheEntry<FileSystemItem>> InMemoryCacheItems { get; private set; }
+        //public EsentPersistentDictionary CacheStore { get; private set; }
 
-        public CachePopulatedEventArgs(Dictionary<string, CacheEntry<FileSystemItem>> inMemoryCacheItems, EsentPersistentDictionary cacheStore)
-        {
-            InMemoryCacheItems = inMemoryCacheItems;
-            CacheStore = cacheStore;
-        }
+        //public CachePopulatedEventArgs(Dictionary<string, CacheEntry<FileSystemItem>> inMemoryCacheItems, EsentPersistentDictionary cacheStore)
+        //{
+        //    InMemoryCacheItems = inMemoryCacheItems;
+        //    CacheStore = cacheStore;
+        //}
     }
 }

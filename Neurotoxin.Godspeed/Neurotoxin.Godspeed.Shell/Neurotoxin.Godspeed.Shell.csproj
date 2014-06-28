@@ -32,7 +32,7 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -83,13 +83,35 @@
       <HintPath>..\packages\Microsoft.Windows.Shell\Microsoft.Windows.Shell.dll</HintPath>
     </Reference>
     <Reference Include="PresentationFramework.Aero" />
+    <Reference Include="ServiceStack.Common, Version=4.0.22.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ServiceStack.Common.4.0.22\lib\net40\ServiceStack.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Interfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=e06fbc6124f57c43, processorArchitecture=MSIL">
+      <HintPath>..\packages\ServiceStack.Interfaces.4.0.22\lib\net40\ServiceStack.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.OrmLite, Version=4.0.22.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ServiceStack.OrmLite.4.0.22\lib\net40\ServiceStack.OrmLite.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.OrmLite.Sqlite.Windows">
+      <HintPath>..\packages\ServiceStack.OrmLite.Sqlite.Windows.4.0.22\lib\net40\ServiceStack.OrmLite.Sqlite.Windows.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Text, Version=4.0.22.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ServiceStack.Text.4.0.22\lib\net40\ServiceStack.Text.dll</HintPath>
+    </Reference>
     <Reference Include="SharpCompress">
       <HintPath>..\packages\sharpcompress.0.10.1.3\lib\net40\SharpCompress.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.SQLite, Version=1.0.92.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\System.Data.SQLite.Core.1.0.92.0\lib\net40\System.Data.SQLite.dll</HintPath>
+    </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\System.Windows.Interactivity\System.Windows.Interactivity.dll</HintPath>
@@ -118,6 +140,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="Constants\ItemState.cs" />
     <Compile Include="Constants\ConnectionImage.cs" />
     <Compile Include="Constants\ConnectionType.cs" />
     <Compile Include="Constants\CopyAction.cs" />
@@ -146,11 +169,18 @@
     <Compile Include="Constants\FileOperation.cs" />
     <Compile Include="Constants\TreeTraversalDirection.cs" />
     <Compile Include="ContentProviders\CacheManager.cs" />
+    <Compile Include="Controllers\NotificationService.cs" />
+    <Compile Include="Database\OrmLiteDbConnection.cs" />
+    <Compile Include="Database\OrmLiteLogFactory.cs" />
+    <Compile Include="Database\OrmLiteLogger.cs" />
+    <Compile Include="Database\SqliteOrmLiteDialectProviderEx.cs" />
+    <Compile Include="Events\MigrationFinishedEvent.cs" />
+    <Compile Include="Interfaces\IDbContext.cs" />
     <Compile Include="ContentProviders\CompressedFileContent.cs" />
     <Compile Include="ContentProviders\FileSystemContentBase.cs" />
     <Compile Include="ContentProviders\FtpContent.cs" />
     <Compile Include="ContentProviders\LocalFileSystemContent.cs" />
-    <Compile Include="ContentProviders\UserSettings.cs" />
+    <Compile Include="ContentProviders\UserSettingsProvider.cs" />
     <Compile Include="ContentProviders\StfsPackageContent.cs" />
     <Compile Include="ContentProviders\TitleRecognizer.cs" />
     <Compile Include="Controllers\ResourceManager.cs" />
@@ -164,6 +194,7 @@
     <Compile Include="Converters\SizeConverter.cs" />
     <Compile Include="Converters\TitleConverter.cs" />
     <Compile Include="Converters\TransferTypeConverter.cs" />
+    <Compile Include="Database\OrmLiteDbContext.cs" />
     <Compile Include="Events\ActivePaneChangedEvent.cs" />
     <Compile Include="Events\CloseNestedPaneEvent.cs" />
     <Compile Include="Constants\MessageCommand.cs" />
@@ -178,7 +209,7 @@
     <Compile Include="Events\ShowCorrespondingErrorEvent.cs" />
     <Compile Include="Events\FreestyleDatabaseCheckEvent.cs" />
     <Compile Include="Events\WorkFinishedEventHandler.cs" />
-    <Compile Include="Events\CacheMigrationEvent.cs" />
+    <Compile Include="Events\MigrationStartedEvent.cs" />
     <Compile Include="Events\ShellInitializedEvent.cs" />
     <Compile Include="Events\NotifyUserMessageEvent.cs" />
     <Compile Include="Events\UsbDeviceChangedEvent.cs" />
@@ -191,11 +222,14 @@
     <Compile Include="Events\ViewModelGeneratedEvent.cs" />
     <Compile Include="Exceptions\SomethingWentWrongException.cs" />
     <Compile Include="Exceptions\TransferException.cs" />
+    <Compile Include="Extensions\DbConnectionExtensions.cs" />
     <Compile Include="Extensions\ResourcesExtension.cs" />
     <Compile Include="GlobalVariables.cs" />
     <Compile Include="Helpers\FtpTraceListener.cs" />
+    <Compile Include="Database\QueryBuilder.cs" />
     <Compile Include="Helpers\SanityChecker.cs" />
     <Compile Include="Helpers\Web.cs" />
+    <Compile Include="Interfaces\ICacheManager.cs" />
     <Compile Include="Interfaces\IFileListPaneViewModel.cs" />
     <Compile Include="Interfaces\IFileManager.cs" />
     <Compile Include="Interfaces\IFileManagerViewModel.cs" />
@@ -205,17 +239,23 @@
     <Compile Include="Interfaces\ITitleRecognizer.cs" />
     <Compile Include="Interfaces\ITreeSelectionViewModel.cs" />
     <Compile Include="Interfaces\IUserMessageViewModel.cs" />
-    <Compile Include="Interfaces\IUserSettings.cs" />
+    <Compile Include="Interfaces\IUserSettingsProvider.cs" />
     <Compile Include="Interfaces\IWindowManager.cs" />
+    <Compile Include="Database\Attributes\IgnoreOnReadAttribute.cs" />
     <Compile Include="Models\CacheComplexKey.cs" />
+    <Compile Include="Database\Models\CacheItem.cs" />
     <Compile Include="Models\CopyResult.cs" />
     <Compile Include="Models\FileExistenceInfo.cs" />
     <Compile Include="Models\FileListPaneSettings.cs" />
     <Compile Include="Models\FsdScanPath.cs" />
+    <Compile Include="Database\Models\IgnoredMessage.cs" />
     <Compile Include="Models\LoadDataAsyncParameters.cs" />
     <Compile Include="Models\LoginDialogResult.cs" />
+    <Compile Include="Database\Models\ModelBase.cs" />
     <Compile Include="Models\ProfileItemWrapper.cs" />
+    <Compile Include="Database\Models\Statistics.cs" />
     <Compile Include="Models\UserMessageCommandParameter.cs" />
+    <Compile Include="Database\Models\UserSettings.cs" />
     <Compile Include="Primitives\BorderlessWindow.cs" />
     <Compile Include="Primitives\CaptionButtons.xaml.cs">
       <DependentUpon>CaptionButtons.xaml</DependentUpon>
@@ -232,7 +272,6 @@
     <Compile Include="Reporting\FormDataBase.cs" />
     <Compile Include="Interfaces\IFormData.cs" />
     <Compile Include="Reporting\WindowScreenshotReport.cs" />
-    <Compile Include="ViewModels\CacheMigrationViewModel.cs" />
     <Compile Include="ViewModels\CommonViewModelBase.cs" />
     <Compile Include="ViewModels\CompressedFileContentViewModel.cs" />
     <Compile Include="Constants\FileBlockHealthStatus.cs" />
@@ -258,7 +297,7 @@
     <Compile Include="Interfaces\ITransferErrorDialog.cs" />
     <Compile Include="Models\CacheEntry.cs" />
     <Compile Include="Models\FileSystemItem.cs" />
-    <Compile Include="Models\FtpConnection.cs" />
+    <Compile Include="Database\Models\FtpConnection.cs" />
     <Compile Include="Models\QueueItem.cs" />
     <Compile Include="Models\RecognitionInformation.cs" />
     <Compile Include="Models\TransferErrorDialogResult.cs" />
@@ -686,6 +725,14 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\control_play.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="x64\SQLite.Interop.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="x86\SQLite.Interop.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

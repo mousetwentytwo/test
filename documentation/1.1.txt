@@ -29,6 +29,7 @@
 * ADDED: XeXMenu and DashLaunch FTP cannot be accessed in PASV anymore
 * ADDED: Better support of reparse points
 * ADDED: Completely rewritten copy mechanism
+* ADDED: Completely rewritten caching mechanism
 * ADDED: FSD/F3 Content Scan Trigger
 * ADDED: File hash verification after upload/download
 * ADDED: Launch games via HTTP

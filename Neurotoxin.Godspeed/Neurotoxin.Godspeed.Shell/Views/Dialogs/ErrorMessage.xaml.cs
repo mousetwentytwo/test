@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
-using Neurotoxin.Godspeed.Core.Caching;
+using Microsoft.Practices.Unity;
+using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Exceptions;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Reporting;
@@ -46,12 +47,13 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
 
         private void ReportButtonClick(object sender, RoutedEventArgs e)
         {
+            var userSettings = UnityInstance.Container.Resolve<IUserSettingsProvider>();
             var formData = new List<IFormData>
                 {
                     new ErrorReport
                     {
                         Name = "log",
-                        ClientId = EsentPersistentDictionary.Instance.Get<string>("ClientID"),
+                        ClientId = userSettings.ClientId.ToString(),
                         ApplicationVersion = App.GetApplicationVersion(),
                         FrameworkVersion = App.GetFrameworkVersion(),
                         OperatingSystemVersion = Environment.OSVersion.VersionString,

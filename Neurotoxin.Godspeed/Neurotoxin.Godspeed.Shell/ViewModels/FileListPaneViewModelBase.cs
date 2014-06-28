@@ -35,7 +35,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private readonly object _queueLock = new object();
         private Queue<FileSystemItem> _queue;
         protected readonly T FileManager;
-        protected readonly IUserSettings UserSettings;
+        protected readonly IUserSettingsProvider UserSettingsProvider;
         protected readonly Dictionary<FileSystemItemViewModel, string> PathCache = new Dictionary<FileSystemItemViewModel, string>();
         public readonly ITitleRecognizer TitleRecognizer;
 
@@ -313,33 +313,13 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             WorkHandler.Run(() => OpenStfsPackage(CurrentRow.Model), b => OpenStfsPackageCallback(b, mode), AsyncErrorCallback);
         }
 
-        protected virtual string GetStfsPackagePath(CacheComplexKey cacheKey, CacheEntry<FileSystemItem> cacheEntry)
-        {
-            if (cacheEntry.TempFilePath == null)
-            {
-                throw new ApplicationException(string.Format("Temp file for entry {0} not found.", cacheKey.Item.Path));
-            }
-            return cacheEntry.TempFilePath;
-        }
-
         private BinaryContent OpenStfsPackage(FileSystemItem item)
         {
             if (item.IsLocked) throw new ApplicationException(item.LockMessage);
 
             var contentType = item.ContentType;
-            CacheComplexKey cacheKey;
-            var cacheEntry = TitleRecognizer.GetCacheEntry(item, out cacheKey);
-            if (cacheEntry == null)
-            {
-                cacheEntry = TitleRecognizer.RecognizeTitle(item);
-                if (cacheEntry == null)
-                {
-                    throw new ApplicationException(string.Format("Item cannot be recognized anymore: {0}", cacheKey.Item.Path));
-                }
-            }
-
-            var path = GetStfsPackagePath(cacheKey, cacheEntry);
-            return new BinaryContent(item.Path, path, File.ReadAllBytes(path), contentType);
+            var content = TitleRecognizer.GetBinaryContent(item);
+            return new BinaryContent(item.Path, content, contentType);
         }
 
         private void OpenStfsPackageCallback(BinaryContent content, OpenStfsPackageMode mode)
@@ -740,31 +720,25 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private int RecognizeFromProfile()
         {
-            var cacheEntry = TitleRecognizer.GetCacheEntry(CurrentRow.Model);
-            if (cacheEntry == null)
-            {
-                cacheEntry = TitleRecognizer.RecognizeTitle(CurrentRow.Model);
-                if (cacheEntry == null || string.IsNullOrEmpty(cacheEntry.TempFilePath)) return -1;
-            }
+            var content = TitleRecognizer.GetBinaryContent(CurrentRow.Model);
+            if (content == null) return -1;
 
             var i = 0;
-            var stfs = ModelFactory.GetModel<StfsPackage>(cacheEntry.TempFilePath);
+            var stfs = ModelFactory.GetModel<StfsPackage>(content);
             stfs.ExtractContent();
             stfs.ProfileInfo.TitlesPlayed.ForEach(g =>
                                                       {
                                                           var game = stfs.Games.Values.FirstOrDefault(gg => gg.TitleId == g.TitleCode);
                                                           if (game == null) return;
-                                                          var gameCacheEntry = TitleRecognizer.GetCacheEntry(g.TitleCode);
-                                                          if (gameCacheEntry != null && gameCacheEntry.Expiration == null) return;
-                                                          var item = new FileSystemItem
-                                                                         {
-                                                                             Name = g.TitleCode,
-                                                                             Title = g.TitleName,
-                                                                             Type = ItemType.Directory,
-                                                                             TitleType = TitleType.Game,
-                                                                             Thumbnail = game.Thumbnail
-                                                                         };
-                                                          TitleRecognizer.UpdateCache(item);
+                                                          TitleRecognizer.UpdateTitle(new FileSystemItem
+                                                                                          {
+                                                                                              Name = g.TitleCode,
+                                                                                              Title = g.TitleName,
+                                                                                              Type = ItemType.Directory,
+                                                                                              TitleType = TitleType.Game,
+                                                                                              Thumbnail = game.Thumbnail,
+                                                                                              RecognitionState = RecognitionState.Recognized
+                                                                                          });
                                                           i++;
                                                       });
             return i;
@@ -908,7 +882,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     if (CurrentRow.Title != newValue)
                     {
                         CurrentRow.Title = newValue;
-                        TitleRecognizer.UpdateCache(CurrentRow.Model);
+                        TitleRecognizer.UpdateTitle(CurrentRow.Model);
                     }
                     break;
                 case FileSystemItemViewModel.NAME:
@@ -1058,7 +1032,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         protected FileListPaneViewModelBase()
         {
             FileManager = Container.Resolve<T>();
-            UserSettings = Container.Resolve<IUserSettings>();
+            UserSettingsProvider = Container.Resolve<IUserSettingsProvider>();
             TitleRecognizer = Container.Resolve<ITitleRecognizer>(new ParameterOverride("fileManager", FileManager));
 
             ChangeDirectoryCommand = new DelegateCommand<object>(ExecuteChangeDirectoryCommand, CanExecuteChangeDirectoryCommand);

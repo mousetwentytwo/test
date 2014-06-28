@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows;
-using Neurotoxin.Godspeed.Core.Caching;
 using Neurotoxin.Godspeed.Core.Extensions;
-using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Reporting;
 
@@ -33,7 +31,7 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
             {
                 HttpForm.Post("clients.php", new List<IFormData>
                     {
-                        new RawPostData("client_id", EsentPersistentDictionary.Instance.Get<string>("ClientID")),
+                        new RawPostData("client_id", UserSettings.ClientId),
                         new RawPostData("date", DateTime.Now.ToUnixTimestamp()),
                         new RawPostData("participates", p ? "yes" : "no"),
                     });

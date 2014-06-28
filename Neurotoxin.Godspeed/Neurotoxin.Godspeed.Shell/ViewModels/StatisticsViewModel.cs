@@ -1,19 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
-using Neurotoxin.Godspeed.Core.Caching;
 using Neurotoxin.Godspeed.Core.Constants;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Constants;
-using Neurotoxin.Godspeed.Shell.ContentProviders;
+using Neurotoxin.Godspeed.Shell.Database.Models;
+using Neurotoxin.Godspeed.Shell.Extensions;
 using Neurotoxin.Godspeed.Shell.Interfaces;
+using Neurotoxin.Godspeed.Shell.Models;
+using ServiceStack.OrmLite;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
     public class StatisticsViewModel : ViewModelBase, IStatisticsViewModel
     {
-        private readonly CacheManager _cacheManager;
-        private readonly EsentPersistentDictionary _cacheStore = EsentPersistentDictionary.Instance;
+        private readonly ICacheManager _cacheManager;
+        private readonly IDbContext _dbContext;
+        private Statistics _statistics;
 
         public DateTime UsageStart { get; private set; }
         public Dictionary<string, int> CommandUsage { get; private set; }
@@ -21,25 +25,25 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private const string GAMESRECOGNIZEDFULLY = "GamesRecognizedFully";
         public int GamesRecognizedFully
         {
-            get { return _cacheManager.EntryCount(c => c.TitleType == TitleType.Game && c.RecognitionState == RecognitionState.Recognized); }
+            get { return _cacheManager.EntryCount(c => c.TitleType == (int)TitleType.Game && c.RecognitionState == (int)RecognitionState.Recognized); }
         }
 
         private const string GAMESRECOGNIZEDPARTIALLY = "GamesRecognizedPartially";
         public int GamesRecognizedPartially
         {
-            get { return _cacheManager.EntryCount(c => c.TitleType == TitleType.Game && c.RecognitionState == RecognitionState.PartiallyRecognized); }
+            get { return _cacheManager.EntryCount(c => c.TitleType == (int)TitleType.Game && c.RecognitionState == (int)RecognitionState.PartiallyRecognized); }
         }
 
         private const string SVODPACKAGESRECOGNIZED = "SvodPackagesRecognized";
         public int SvodPackagesRecognized
         {
-            get { return _cacheManager.EntryCount(c => c.TitleType == TitleType.Unknown && c.ContentType != ContentType.Unknown); }
+            get { return _cacheManager.EntryCount(c => c.TitleType == (int)TitleType.Unknown && c.ContentType != (int)ContentType.Unknown); }
         }
 
         private const string STFSPACKAGESRECOGNIZED = "StfsPackagesRecognized";
         public int StfsPackagesRecognized
         {
-            get { return _cacheManager.EntryCount(c => c.TitleType == TitleType.Profile); }
+            get { return _cacheManager.EntryCount(c => c.TitleType == (int)TitleType.Profile); }
         }
 
         private const string FILESTRANSFERRED = "FilesTransferred";
@@ -50,13 +54,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             set { _filesTransferred = value; NotifyPropertyChanged(FILESTRANSFERRED); }
         }
 
-        private const string STAT_TOTALFILESTRANSFERRED = "Stat_TotalFilesTransferred";
         private const string TOTALFILESTRANSFERRED = "TotalFilesTransferred";
-        private int _totalFilesTransferred;
         public int TotalFilesTransferred
         {
-            get { return _totalFilesTransferred + FilesTransferred; }
-            set { _totalFilesTransferred = value; NotifyPropertyChanged(TOTALFILESTRANSFERRED); }
+            get { return _statistics.TotalFilesTransferred + FilesTransferred; }
+            set { _statistics.TotalFilesTransferred = value; NotifyPropertyChanged(TOTALFILESTRANSFERRED); }
         }
 
         private const string BYTESTRANSFERRED = "BytesTransferred";
@@ -67,13 +69,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             set { _bytesTransferred = value; NotifyPropertyChanged(BYTESTRANSFERRED); }
         }
 
-        private const string STAT_TOTALBYTESTRANSFERRED = "Stat_TotalBytesTransferred";
         private const string TOTALBYTESTRANSFERRED = "TotalBytesTransferred";
-        private long _totalBytesTransferred;
         public long TotalBytesTransferred
         {
-            get { return _totalBytesTransferred + BytesTransferred; }
-            set { _totalBytesTransferred = value; NotifyPropertyChanged(TOTALBYTESTRANSFERRED); }
+            get { return _statistics.TotalBytesTransferred + BytesTransferred; }
+            set { _statistics.TotalBytesTransferred = value; NotifyPropertyChanged(TOTALBYTESTRANSFERRED); }
         }
 
         private const string TIMESPENTWITHTRANSFER = "TimeSpentWithTransfer";
@@ -84,13 +84,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             set { _timeSpentWithTransfer = value; NotifyPropertyChanged(TIMESPENTWITHTRANSFER); }
         }
 
-        private const string STAT_TOTALTIMESPENTWITHTRANSFER = "Stat_TotalTimeSpentWithTransfer";
         private const string TOTALTIMESPENTWITHTRANSFER = "TotalTimeSpentWithTransfer";
-        private TimeSpan _totalTimeSpentWithTransfer;
         public TimeSpan TotalTimeSpentWithTransfer
         {
-            get { return _totalTimeSpentWithTransfer + TimeSpentWithTransfer; }
-            set { _totalTimeSpentWithTransfer = value; NotifyPropertyChanged(TOTALTIMESPENTWITHTRANSFER); }
+            get { return _statistics.TotalTimeSpentWithTransfer + TimeSpentWithTransfer; }
+            set { _statistics.TotalTimeSpentWithTransfer = value; NotifyPropertyChanged(TOTALTIMESPENTWITHTRANSFER); }
         }
 
         private const string USAGETIME = "UsageTime";
@@ -99,57 +97,47 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             get { return DateTime.Now.Subtract(UsageStart); }
         }
 
-        private const string STAT_TOTALUSAGETIME = "Stat_TotalUsageTime";
         private const string TOTALUSAGETIME = "TotalUsageTime";
-        private TimeSpan _totalUsageTime;
         public TimeSpan TotalUsageTime
         {
-            get { return _totalUsageTime + UsageTime; }
-            set { _totalUsageTime = value; NotifyPropertyChanged(TOTALUSAGETIME); }
+            get { return _statistics.TotalUsageTime + UsageTime; }
+            set { _statistics.TotalUsageTime = value; NotifyPropertyChanged(TOTALUSAGETIME); }
         }
 
-        private const string STAT_APPLICATIONSTARTED = "Stat_ApplicationStarted";
         private const string APPLICATIONSTARTED = "ApplicationStarted";
-        private int _applicationStarted;
         public int ApplicationStarted
         {
-            get { return _applicationStarted; }
-            set { _applicationStarted = value; NotifyPropertyChanged(APPLICATIONSTARTED); }
+            get { return _statistics.ApplicationStarted; }
+            set { _statistics.ApplicationStarted = value; NotifyPropertyChanged(APPLICATIONSTARTED); }
         }
 
-        private const string STAT_APPLICATIONCRASHED = "Stat_ApplicationCrashed";
         private const string APPLICATIONCRASHED = "ApplicationCrashed";
-        private int _applicationCrashed;
         public int ApplicationCrashed
         {
-            get { return _applicationCrashed; }
-            set { _applicationCrashed = value; NotifyPropertyChanged(APPLICATIONCRASHED); }
+            get { return _statistics.ApplicationCrashed; }
+            set { _statistics.ApplicationCrashed = value; NotifyPropertyChanged(APPLICATIONCRASHED); }
         }
 
-        public StatisticsViewModel(CacheManager cacheManager)
+        public StatisticsViewModel(ICacheManager cacheManager, IDbContext dbContext)
         {
             UsageStart = DateTime.Now;
             CommandUsage = new Dictionary<string, int>();
 
             _cacheManager = cacheManager;
-            _totalFilesTransferred = _cacheStore.TryGet<int>(STAT_TOTALFILESTRANSFERRED);
-            _totalBytesTransferred = _cacheStore.TryGet<long>(STAT_TOTALBYTESTRANSFERRED);
-            _totalTimeSpentWithTransfer = _cacheStore.TryGet<TimeSpan>(STAT_TOTALTIMESPENTWITHTRANSFER);
-            _totalUsageTime = _cacheStore.TryGet<TimeSpan>(STAT_TOTALUSAGETIME);
-            _applicationStarted = _cacheStore.TryGet<int>(STAT_APPLICATIONSTARTED) + 1;
-            _applicationCrashed = _cacheStore.TryGet<int>(STAT_APPLICATIONCRASHED);
-
+            _dbContext = dbContext;
+            using(var db = _dbContext.Open())
+            {
+                _statistics = db.Get<Statistics>().First();
+            }
             DelegateCommand.BeforeAction = CountCommandUsage;
         }
 
         public void PersistData()
         {
-            _cacheStore.Update(STAT_TOTALFILESTRANSFERRED, TotalFilesTransferred);
-            _cacheStore.Update(STAT_TOTALBYTESTRANSFERRED, TotalBytesTransferred);
-            _cacheStore.Update(STAT_TOTALTIMESPENTWITHTRANSFER, TotalTimeSpentWithTransfer);
-            _cacheStore.Update(STAT_TOTALUSAGETIME, TotalUsageTime);
-            _cacheStore.Update(STAT_APPLICATIONSTARTED, ApplicationStarted);
-            _cacheStore.Update(STAT_APPLICATIONCRASHED, ApplicationCrashed);
+            using (var db = _dbContext.Open())
+            {
+                db.Save(_statistics);    
+            }
         }
 
         private void CountCommandUsage(MethodInfo commandAction)

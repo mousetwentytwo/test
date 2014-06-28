@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections;
+using System.Data;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Net;
+using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
 using System.Windows;
-using Microsoft.Practices.Composite.Events;
+using Neurotoxin.Godspeed.Shell.Database.Models;
+using ServiceStack.OrmLite;
 using Neurotoxin.Godspeed.Core.Caching;
 using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
@@ -18,100 +17,94 @@ using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
 using Neurotoxin.Godspeed.Shell.Reporting;
-using Neurotoxin.Godspeed.Shell.Views.Dialogs;
-using System.Linq;
 using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 
 namespace Neurotoxin.Godspeed.Shell.Helpers
 {
-    public class SanityChecker
+    public class SanityChecker : ViewModelBase, IProgressViewModel
     {
-        private const string PARTICIPATIONMESSAGEKEY = "ParticipationMessage";
-        private const string FACEBOOKMESSAGEKEY = "FacebookMessage";
-        private const string CODEPLEXMESSAGEKEY = "CodeplexMessage";
-        private const string NEWVERSIONAVAILABLEMESSAGEKEY = "NewVersionAvailableMessage";
         private const string NEWERDOTNETVERSIONREQUIREDMESSAGEKEY = "NewerDotNetVersionRequiredMessage";
 
-        private readonly Timer _participationTimer;
-        private readonly Timer _facebookTimer;
-        private readonly Timer _codeplexTimer;
-
-        private readonly IUserSettings _userSettings;
-        private readonly IEventAggregator _eventAggregator;
+        private readonly IDbContext _dbContext;
         private readonly IResourceManager _resourceManager;
-        private readonly IWorkHandler _workHandler;
+        private string _esentDir;
 
-        public SanityChecker(IStatisticsViewModel statistics, IUserSettings userSettings, IEventAggregator eventAggregator, IResourceManager resourceManager, IWorkHandler workHandler)
+        #region IProgressViewModel members
+
+        public string ProgressDialogTitle
         {
-            _userSettings = userSettings;
-            _eventAggregator = eventAggregator;
+            get { return Resx.MigrationProgressDialogTitle; }
+        }
+
+        public string ProgressMessage
+        {
+            get { return Resx.MigrationProgressMessage; }
+        }
+
+        private const string ITEMSCOUNT = "ItemsCount";
+        private int _itemsCount;
+        public int ItemsCount
+        {
+            get { return _itemsCount; }
+            set { _itemsCount = value; NotifyPropertyChanged(ITEMSCOUNT); }
+        }
+
+        private const string ITEMSMIGRATED = "ItemsMigrated";
+        private int _itemsMigrated;
+        public int ItemsMigrated
+        {
+            get { return _itemsMigrated; }
+            set 
+            { 
+                _itemsMigrated = value;
+                NotifyPropertyChanged(ITEMSMIGRATED);
+                NotifyPropertyChanged(PROGRESSVALUE);
+                NotifyPropertyChanged(PROGRESSVALUEDOUBLE);
+            }
+        }
+
+        private const string PROGRESSVALUE = "ProgressValue";
+        public int ProgressValue
+        {
+            get { return ItemsCount == 0 ? 0 : ItemsMigrated * 100 / ItemsCount; }
+        }
+
+        private const string PROGRESSVALUEDOUBLE = "ProgressValueDouble";
+        public double ProgressValueDouble
+        {
+            get { return (double)ProgressValue / 100; }
+        }
+
+        private const string ISINDETERMINE = "IsIndetermine";
+        private bool _isIndetermine;
+        public bool IsIndetermine
+        {
+            get { return _isIndetermine; }
+            set { _isIndetermine = value; NotifyPropertyChanged(ISINDETERMINE); }
+        }
+
+        #endregion
+
+        public SanityChecker(IDbContext dbContext, IResourceManager resourceManager)
+        {
+            _dbContext = dbContext;
             _resourceManager = resourceManager;
-            _workHandler = workHandler;
-            eventAggregator.GetEvent<CachePopulatedEvent>().Subscribe(OnCachePopulated);
-            eventAggregator.GetEvent<ShellInitializedEvent>().Subscribe(OnShellInitialized);
-
-            if (!_userSettings.DisableUserStatisticsParticipation.HasValue)
-            {
-                _participationTimer = new Timer(ParticipationMessage, null, 60000, -1);
-            }
-            if (!_userSettings.IsMessageIgnored(FACEBOOKMESSAGEKEY))
-            {
-                _facebookTimer = new Timer(FacebookMessage, null, 600000, -1);
-            }
-            if (!_userSettings.IsMessageIgnored(CODEPLEXMESSAGEKEY) && statistics.ApplicationStarted > 9 && statistics.TotalUsageTime > new TimeSpan(0, 2, 0, 0))
-            {
-                _codeplexTimer = new Timer(CodeplexMessage, null, 60000, -1);
-            }
         }
 
-        private void OnCachePopulated(CachePopulatedEventArgs e)
+        public void CheckAsync(Action<NotifyUserMessageEventArgs> callback)
         {
-            const int requiredCacheVersion = 3;
-            var actualCacheVersion = e.CacheStore.TryGet("CacheVersion", 1);
-            if (actualCacheVersion == requiredCacheVersion) return;
-
-            Action setCacheVersion = () => e.CacheStore.Update("CacheVersion", requiredCacheVersion);
-
-            var cacheKeys = e.CacheStore.Keys.Where(k => k.StartsWith(Strings.UserMessageCacheItemPrefix)).ToList();
-            if (cacheKeys.Any())
-            {
-                var resx = Resx.ResourceManager.GetResourceSet(CultureInfo.InvariantCulture, true, false);
-                foreach (DictionaryEntry entry in resx)
-                {
-                    var resxKey = (string)entry.Key;
-                    if (!resxKey.EndsWith("Message")) continue;
-                    var resxValue = (string)entry.Value;
-                    var cacheKey = cacheKeys.FirstOrDefault(k => k == Strings.UserMessageCacheItemPrefix + resxValue.Hash());
-                    if (cacheKey == null) continue;
-                    e.CacheStore.Remove(cacheKey);
-                    e.CacheStore.Set(Strings.UserMessageCacheItemPrefix + resxKey.Hash(), true);
-                }
-            }
-
-            if (actualCacheVersion == 1 && e.InMemoryCacheItems.Count != 0)
-            {
-                var payload = _resourceManager.GetContentByteArray("/Resources/xbox_logo.png");
-                var args = new CacheMigrationEventArgs(MigrateCacheItemVersion1ToVersion2,
-                    setCacheVersion,
-                    e.InMemoryCacheItems,
-                    e.CacheStore,
-                    payload);
-                _eventAggregator.GetEvent<CacheMigrationEvent>().Publish(args);
-            }
-            else
-            {
-                setCacheVersion();
-            }
+            WorkHandler.Run(Check, callback);
         }
 
-        private void OnShellInitialized(ShellInitializedEventArgs e)
+        private NotifyUserMessageEventArgs Check()
         {
-            CheckFrameworkVersion();
+            CheckDataDirectory();
+            if (!CheckDatabase()) MigrateEsentToDatabase();
             RetryFailedUserReports();
-            if (_userSettings.UseVersionChecker) CheckForNewerVersion();
+            return CheckFrameworkVersion();
         }
 
-        private void CheckFrameworkVersion()
+        public NotifyUserMessageEventArgs CheckFrameworkVersion()
         {
             var applicationAssembly = Assembly.GetAssembly(typeof(Application));
             var fvi = FileVersionInfo.GetVersionInfo(applicationAssembly.Location);
@@ -120,53 +113,14 @@ namespace Neurotoxin.Godspeed.Shell.Helpers
 
             var versionOk = actualVersion >= requiredVersion;
             GlobalVariables.DataGridSupportsRenaming = versionOk;
-            if (versionOk) return;
+            if (versionOk) return null;
 
-            var args = new NotifyUserMessageEventArgs(NEWERDOTNETVERSIONREQUIREDMESSAGEKEY, MessageIcon.Warning, MessageCommand.OpenUrl, "http://www.microsoft.com/en-us/download/details.aspx?id=40779");
-            _eventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(args);
+            return new NotifyUserMessageEventArgs(NEWERDOTNETVERSIONREQUIREDMESSAGEKEY, MessageIcon.Warning, MessageCommand.OpenUrl, "http://www.microsoft.com/en-us/download/details.aspx?id=40779");
         }
 
-        private void CheckForNewerVersion()
+        public void RetryFailedUserReports()
         {
-            var asm = Assembly.GetExecutingAssembly();
-            var title = asm.GetAttribute<AssemblyTitleAttribute>().Title;
-            const string url = "https://godspeed.codeplex.com/";
-            _workHandler.Run(() =>
-            {
-                try
-                {
-                    var request = WebRequest.Create(url);
-                    var response = request.GetResponse();
-                    var titlePattern = new Regex(@"\<span class=""rating_header""\>current.*?\<td\>(.*?)\</td\>", RegexOptions.IgnoreCase | RegexOptions.Singleline);
-                    var datePattern = new Regex(@"\<span class=""rating_header""\>date.*?\<td\>.*?LocalTimeTicks=""(.*?)""", RegexOptions.IgnoreCase | RegexOptions.Singleline);
-                    string html;
-                    using (var stream = response.GetResponseStream())
-                    {
-                        var sr = new StreamReader(stream, Encoding.UTF8);
-                        html = sr.ReadToEnd();
-                        sr.Close();
-                    }
-                    var latestTitle = titlePattern.Match(html).Groups[1].Value.Trim();
-                    var latestDate = new DateTime(1970, 1, 1);
-                    latestDate = latestDate.AddSeconds(long.Parse(datePattern.Match(html).Groups[1].Value)).ToLocalTime();
-                    return new Tuple<string, DateTime>(latestTitle, latestDate);
-                }
-                catch
-                {
-                    return new Tuple<string, DateTime>(string.Empty, DateTime.MinValue);
-                }
-            },
-            info =>
-            {
-                if (string.Compare(title, info.Item1, StringComparison.InvariantCultureIgnoreCase) != -1) return;
-                var args = new NotifyUserMessageEventArgs(NEWVERSIONAVAILABLEMESSAGEKEY, MessageIcon.Info, MessageCommand.OpenUrl, "http://godspeed.codeplex.com", MessageFlags.None, info.Item1, info.Item2);
-                _eventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(args);
-            });
-        }
-
-        private static void RetryFailedUserReports()
-        {
-            var queue = Directory.GetDirectories(Path.Combine(App.DataDirectory, "post"));
+            var queue = Directory.GetDirectories(App.PostDirectory);
             foreach (var item in queue.OrderBy(f => f))
             {
                 var file = Directory.GetFiles(item).First();
@@ -175,41 +129,286 @@ namespace Neurotoxin.Godspeed.Shell.Helpers
             }
         }
 
-        private static void MigrateCacheItemVersion1ToVersion2(string key, CacheEntry<FileSystemItem> value, EsentPersistentDictionary cacheStore, object payload)
+        public void CheckDataDirectory()
         {
-            if (value.Content == null)
+            var asm = Assembly.GetExecutingAssembly();
+            var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            var company = asm.GetAttribute<AssemblyCompanyAttribute>().Company;
+            var product = asm.GetAttribute<AssemblyProductAttribute>().Product;
+            var version = asm.GetAttribute<AssemblyFileVersionAttribute>().Version;
+
+            App.DataDirectory = string.Format(@"{0}\{1}\{2}\{3}", appData, company, product, version);
+            if (!Directory.Exists(App.DataDirectory)) Directory.CreateDirectory(App.DataDirectory);
+
+            App.PostDirectory = Path.Combine(App.DataDirectory, "post");
+            if (!Directory.Exists(App.PostDirectory)) Directory.CreateDirectory(App.PostDirectory);
+
+            //for backward compatibility
+            _esentDir = string.Format(@"{0}\{1}\{2}\1.0", appData, company, product);
+            AppDomain.CurrentDomain.SetData("DataDirectory", _esentDir);
+        }
+
+        public bool CheckDatabase()
+        {
+            using(var db = _dbContext.Open())
             {
-                cacheStore.Remove(key);
-                return;
+                db.CreateTableIfNotExists<CacheItem>();
+                db.CreateTableIfNotExists<FtpConnection>();
+                db.CreateTableIfNotExists<IgnoredMessage>();
+                db.CreateTableIfNotExists<Statistics>();
+                db.CreateTableIfNotExists<UserSettings>();
+                return db.Count<UserSettings>() == 1;
             }
-            if (value.Content.TitleType != TitleType.Game || value.Content.RecognitionState != RecognitionState.NotRecognized) return;
-
-            value.Content.RecognitionState = value.Content.Thumbnail.EqualsWith((byte[]) payload)
-                                                 ? RecognitionState.PartiallyRecognized
-                                                 : RecognitionState.Recognized;
-            cacheStore.Update(key, value);
         }
 
-        private void ParticipationMessage(object state)
+        public void MigrateEsentToDatabase()
         {
-            _participationTimer.Dispose();
-            var args = new NotifyUserMessageEventArgs(PARTICIPATIONMESSAGEKEY, MessageIcon.Info, MessageCommand.OpenDialog, typeof(UserStatisticsParticipationDialog));
-            _eventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(args);
+            var statistics = new Statistics();
+            var userSettings = new UserSettings();
+            var sw = new Stopwatch();
+            sw.Start();
+            using (var db = _dbContext.Open(true))
+            {
+                if (EsentExists())
+                {
+                    UIThread.Run(() => EventAggregator.GetEvent<MigrationStartedEvent>().Publish(new MigrationStartedEventArgs(this)));
+                    UpgradeEsentToLatestVersion();
+                    var cacheStore = EsentPersistentDictionary.Instance;
+                    var keys = cacheStore.Keys;
+                    SetItemsCount(keys.Length);
+                    foreach (var key in keys)
+                    {
+                        var prefix = key.SubstringBefore("_");
+                        switch (prefix)
+                        {
+                            case "CacheEntry":
+                                MigrateCacheItem(cacheStore, db, key);
+                                break;
+                            case "FtpConnection":
+                                MigrateFtpConnection(cacheStore, db, key);
+                                break;
+                            case "Stat":
+                                MigrateStatistics(cacheStore, key, statistics);
+                                break;
+                            case "WarningMessage":
+                                MigrateIgnoredMessages(db, key);
+                                break;
+                            default:
+                                MigrateUserSettings(cacheStore, key, userSettings);
+                                break;
+                        }
+                        IncrementItemsMigrated();
+                    }
+                    DeleteEsent();
+                    UIThread.Run(() => EventAggregator.GetEvent<MigrationFinishedEvent>().Publish(new MigrationFinishedEventArgs(this)));
+                }
+                db.Insert(statistics);
+                db.Insert(userSettings);
+            }
+            sw.Stop();
+            Debug.WriteLine("[MIGRATION] Database created in {0}", sw.Elapsed);
+
+            foreach (var postData in Directory.GetFiles(Path.Combine(_esentDir, "post")))
+            {
+                File.Move(postData, Path.Combine(App.PostDirectory, Path.GetFileName(postData)));
+            }
         }
 
-        private void FacebookMessage(object state)
+        private void MigrateCacheItem(EsentPersistentDictionary cacheStore, IDbConnection db, string key)
         {
-            _facebookTimer.Dispose();
-            var args = new NotifyUserMessageEventArgs(FACEBOOKMESSAGEKEY, MessageIcon.Info, MessageCommand.OpenUrl, "http://www.facebook.com/godspeedftp", MessageFlags.Ignorable | MessageFlags.IgnoreAfterOpen);
-            _eventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(args);
+            var v = cacheStore.Get<CacheEntry<FileSystemItem>>(key);
+            var c = new CacheItem
+            {
+                Id = key.SubstringAfter("_"),
+                Date = v.Date,
+                Expiration = v.Expiration,
+                Size = v.Size,
+                Title = v.Content.Title,
+                Type = (int)v.Content.Type,
+                TitleType = (int)v.Content.TitleType,
+                ContentType = (int)v.Content.ContentType,
+                Thumbnail = v.Content.Thumbnail,
+                Content = string.IsNullOrEmpty(v.TempFilePath) ? null : File.ReadAllBytes(v.TempFilePath),
+                RecognitionState = (int)v.Content.RecognitionState
+            };
+            db.Insert(c);
         }
 
-        private void CodeplexMessage(object state)
+        private void MigrateFtpConnection(EsentPersistentDictionary cacheStore, IDbConnection db, string key)
         {
-            _codeplexTimer.Dispose();
-            var args = new NotifyUserMessageEventArgs(CODEPLEXMESSAGEKEY, MessageIcon.Info, MessageCommand.OpenUrl, "http://godspeed.codeplex.com", MessageFlags.Ignorable | MessageFlags.IgnoreAfterOpen);
-            _eventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(args);
+            var v = cacheStore.Get<FtpConnection>(key);
+            db.Insert(v);
         }
 
+        private void MigrateStatistics(EsentPersistentDictionary cacheStore, string key, Statistics statistics)
+        {
+            var entryKey = key.SubstringAfter("_");
+            switch (entryKey)
+            {
+                case "TotalFilesTransferred":
+                    statistics.TotalFilesTransferred = cacheStore.Get<int>(key);
+                    break;
+                case "TotalBytesTransferred":
+                    statistics.TotalBytesTransferred = cacheStore.Get<long>(key);
+                    break;
+                case "TotalTimeSpentWithTransfer":
+                    statistics.TotalTimeSpentWithTransfer = cacheStore.Get<TimeSpan>(key);
+                    break;
+                case "TotalUsageTime":
+                    statistics.TotalUsageTime = cacheStore.Get<TimeSpan>(key);
+                    break;
+                case "ApplicationStarted":
+                    statistics.ApplicationStarted = cacheStore.Get<int>(key);
+                    break;
+                case "ApplicationCrashed":
+                    statistics.ApplicationCrashed = cacheStore.Get<int>(key);
+                    break;
+            }
+        }
+
+        private void MigrateIgnoredMessages(IDbConnection db, string key)
+        {
+            db.Insert(new IgnoredMessage(key.SubstringAfter("_")));
+        }
+
+        private void MigrateUserSettings(EsentPersistentDictionary cacheStore, string key, UserSettings userSettings)
+        {
+            switch (key)
+            {
+                case "DisableCustomChrome":
+                    userSettings.DisableCustomChrome = cacheStore.Get<bool>(key);
+                    break;
+                case "UseVersionChecker":
+                    userSettings.UseVersionChecker = cacheStore.Get<bool>(key);
+                    break;
+                case "UseRemoteCopy":
+                    userSettings.UseRemoteCopy = cacheStore.Get<bool>(key);
+                    break;
+                case "UseJqe360":
+                    userSettings.UseJqe360 = cacheStore.Get<bool>(key);
+                    break;
+                case "ProfileInvalidation":
+                    userSettings.ProfileInvalidation = cacheStore.Get<bool>(key);
+                    break;
+                case "ProfileExpiration":
+                    userSettings.ProfileExpiration = cacheStore.Get<int>(key);
+                    break;
+                case "RecognizedGameExpiration":
+                    userSettings.RecognizedGameExpiration = cacheStore.Get<int>(key);
+                    break;
+                case "PartiallyRecognizedGameExpiration":
+                    userSettings.PartiallyRecognizedGameExpiration = cacheStore.Get<int>(key);
+                    break;
+                case "UnrecognizedGameExpiration":
+                    userSettings.UnrecognizedGameExpiration = cacheStore.Get<int>(key);
+                    break;
+                case "XboxLiveContentExpiration":
+                    userSettings.XboxLiveContentExpiration = cacheStore.Get<int>(key);
+                    break;
+                case "XboxLiveContentInvalidation":
+                    userSettings.XboxLiveContentInvalidation = cacheStore.Get<bool>(key);
+                    break;
+                case "UnknownContentExpiration":
+                    userSettings.UnknownContentExpiration = cacheStore.Get<int>(key);
+                    break;
+                case "LeftPaneType":
+                    userSettings.LeftPaneType = cacheStore.Get<string>(key);
+                    break;
+                case "RightPaneType":
+                    userSettings.RightPaneType = cacheStore.Get<string>(key);
+                    break;
+                case "LeftPaneFileListPaneSettings":
+                    var l = cacheStore.Get<FileListPaneSettings>(key);
+                    userSettings.LeftPaneDirectory = l.Directory;
+                    userSettings.LeftPaneSortByField = l.SortByField;
+                    userSettings.LeftPaneSortDirection = (int)l.SortDirection;
+                    break;
+                case "RightPaneFileListPaneSettings":
+                    var r = cacheStore.Get<FileListPaneSettings>(key);
+                    userSettings.RightPaneDirectory = r.Directory;
+                    userSettings.RightPaneSortByField = r.SortByField;
+                    userSettings.RightPaneSortDirection = (int)r.SortDirection;
+                    break;
+                case "DisableUserStatisticsParticipation":
+                    userSettings.DisableUserStatisticsParticipation = cacheStore.Get<bool?>(key);
+                    break;
+            }
+
+        }
+        private bool EsentExists()
+        {
+            return File.Exists(Path.Combine(_esentDir, "PersistentDictionary.edb"));
+        }
+
+        private void DeleteEsent()
+        {
+            EsentPersistentDictionary.Release();
+            //Directory.Delete(_esentDir, true);
+        }
+
+        private void UpgradeEsentToLatestVersion()
+        {
+            const int requiredCacheVersion = 3;
+            var cacheStore = EsentPersistentDictionary.Instance;
+            var actualCacheVersion = cacheStore.TryGet("CacheVersion", 1);
+            if (actualCacheVersion == requiredCacheVersion) return;
+
+            var cacheKeys = cacheStore.Keys.Where(k => k.StartsWith(Strings.UserMessageCacheItemPrefix)).ToList();
+            if (cacheKeys.Any())
+            {
+                var resx = Resx.ResourceManager.GetResourceSet(CultureInfo.InvariantCulture, true, false).Cast<DictionaryEntry>().ToArray();
+                SetItemsCount(resx.Length);
+                foreach (var entry in resx)
+                {
+                    var resxKey = (string)entry.Key;
+                    if (!resxKey.EndsWith("Message")) continue;
+                    var resxValue = (string)entry.Value;
+                    var cacheKey = cacheKeys.FirstOrDefault(k => k == Strings.UserMessageCacheItemPrefix + resxValue.Hash());
+                    if (cacheKey == null) continue;
+                    cacheStore.Remove(cacheKey);
+                    cacheStore.Set(Strings.UserMessageCacheItemPrefix + resxKey.Hash(), true);
+                    IncrementItemsMigrated();
+                }
+            }
+
+            if (actualCacheVersion != 1) return;
+
+            var keys = cacheStore.Keys;
+            var cacheEntries = keys.Where(k => k.StartsWith("CacheEntry_")).ToArray();
+            var payload = _resourceManager.GetContentByteArray("/Resources/xbox_logo.png");
+            SetItemsCount(cacheEntries.Length);
+            foreach (var hashKey in cacheEntries)
+            {
+                var entry = cacheStore.Get<CacheEntry<FileSystemItem>>(hashKey);
+                if (entry.Content != null && !string.IsNullOrEmpty(entry.Content.Title))
+                {
+                    if (entry.Content.TitleType != TitleType.Game || entry.Content.RecognitionState != RecognitionState.NotRecognized) continue;
+
+                    entry.Content.RecognitionState = entry.Content.Thumbnail.EqualsWith((byte[])payload)
+                                                         ? RecognitionState.PartiallyRecognized
+                                                         : RecognitionState.Recognized;
+                    cacheStore.Update(hashKey, entry);
+                }
+                else
+                {
+                    cacheStore.Remove(hashKey);
+                }
+                IncrementItemsMigrated();
+            }
+        }
+
+        private void SetItemsCount(int value)
+        {
+            UIThread.Run(() =>
+                             {
+                                 ItemsCount = value;
+                                 ItemsMigrated = 0;
+                             });
+        }
+
+        private void IncrementItemsMigrated()
+        {
+            UIThread.Run(() => ItemsMigrated++);
+        }
     }
 }

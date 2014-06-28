@@ -10,7 +10,6 @@ using System.Text;
 using System.Windows;
 using System.Windows.Threading;
 using Microsoft.Practices.Unity;
-using Neurotoxin.Godspeed.Core.Caching;
 using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Reporting;
@@ -25,7 +24,9 @@ namespace Neurotoxin.Godspeed.Shell
     {
         private Bootstrapper _bootstrapper;
 
-        public static string DataDirectory { get; private set; }
+        public static string DataDirectory { get; set; }
+        public static string PostDirectory { get; set; }
+        public static bool ShellInitialized { get; set; }
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -34,13 +35,10 @@ namespace Neurotoxin.Godspeed.Shell
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            SetDataDirectory();
-            //TODO: what if two instances run for the first time and both pass this check and throw access exception later?
-            if (EsentPersistentDictionary.IsInstantiable)
+            //TODO: check impact on SQLite if two instances run
+            if (true)
             {
                 Dispatcher.CurrentDispatcher.UnhandledException += UnhandledThreadingException;
-                EsentPersistentDictionary.Instance.Set("ClientID", Guid.NewGuid().ToString());
-
                 ShutdownMode = ShutdownMode.OnMainWindowClose;
 
 #if (DEBUG)
@@ -80,22 +78,6 @@ namespace Neurotoxin.Godspeed.Shell
             }
         }
 
-        private static void SetDataDirectory()
-        {
-            var asm = Assembly.GetExecutingAssembly();
-            var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            var company = asm.GetAttribute<AssemblyCompanyAttribute>().Company;
-            var product = asm.GetAttribute<AssemblyProductAttribute>().Product;
-            const string version = "1.0"; // asm.GetAttribute<AssemblyFileVersionAttribute>().Version;
-            DataDirectory = string.Format(@"{0}\{1}\{2}\{3}", appData, company, product, version);
-            if (!Directory.Exists(DataDirectory)) Directory.CreateDirectory(DataDirectory);
-            AppDomain.CurrentDomain.SetData("DataDirectory", DataDirectory);
-            var tempDir = Path.Combine(DataDirectory, "temp");
-            if (!Directory.Exists(tempDir)) Directory.CreateDirectory(tempDir);
-            var postDir = Path.Combine(DataDirectory, "post");
-            if (!Directory.Exists(postDir)) Directory.CreateDirectory(postDir);
-        }
-
         private void AppDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             HandleException(e.ExceptionObject as Exception);
@@ -110,7 +92,8 @@ namespace Neurotoxin.Godspeed.Shell
         private void HandleException(Exception ex)
         {
             ex = ex is TargetInvocationException ? ex.InnerException : ex;
-            new ErrorMessage(ex).ShowDialog();
+            var dialog = _bootstrapper.Resolve<ErrorMessage>(new ParameterOverride("exception", ex));
+            dialog.ShowDialog();
             Shutdown(ex.GetType().Name.GetHashCode());
         }
 
@@ -122,10 +105,10 @@ namespace Neurotoxin.Godspeed.Shell
                 if (!fileManager.IsDisposed) fileManager.Dispose();
                 var statistics = _bootstrapper.Resolve<StatisticsViewModel>();
                 if (e.ApplicationExitCode != 0) statistics.ApplicationCrashed++;
-
                 statistics.PersistData();
 
-                var userSettings = _bootstrapper.Container.Resolve<IUserSettings>();
+                var userSettings = _bootstrapper.Container.Resolve<IUserSettingsProvider>();
+                userSettings.PersistData();
 
                 //TODO: Better detection
                 if (!Debugger.IsAttached && userSettings.DisableUserStatisticsParticipation != false)
@@ -139,7 +122,7 @@ namespace Neurotoxin.Godspeed.Shell
                     var utcOffset = TimeZone.CurrentTimeZone.GetUtcOffset(statistics.UsageStart);
                     HttpForm.Post("stats.php", new List<IFormData>
                         {
-                            new RawPostData("client_id", EsentPersistentDictionary.Instance.Get<string>("ClientID")),
+                            new RawPostData("client_id", userSettings.ClientId),
                             new RawPostData("version", GetApplicationVersion()),
                             new RawPostData("wpf", GetFrameworkVersion()),
                             new RawPostData("os", Environment.OSVersion.VersionString),

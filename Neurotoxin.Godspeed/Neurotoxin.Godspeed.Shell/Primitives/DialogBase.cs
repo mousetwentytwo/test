@@ -13,11 +13,12 @@ namespace Neurotoxin.Godspeed.Shell.Primitives
             set { SetValue(CloseButtonVisibilityProperty, value); }
         }
 
-        protected DialogBase()
+        protected override void Initialize()
         {
+            base.Initialize();
             ResizeMode = ResizeMode.NoResize;
             SizeToContent = SizeToContent.Height;
-            if (!UserSettings.DisableCustomChrome) Style = (Style)Application.Current.Resources["Dialog"];
+            if (!App.ShellInitialized || !UserSettings.DisableCustomChrome) Style = (Style)Application.Current.Resources["Dialog"];
             PreviewKeyDown += OnPreviewKeyDown;
             WindowStartupLocation = WindowStartupLocation.CenterOwner;
         }

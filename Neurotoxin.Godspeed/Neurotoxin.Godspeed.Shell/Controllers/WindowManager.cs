@@ -39,7 +39,8 @@ namespace Neurotoxin.Godspeed.Shell.Controllers
 
             eventAggregator.GetEvent<TransferStartedEvent>().Subscribe(OnTransferStarted);
             eventAggregator.GetEvent<TransferFinishedEvent>().Subscribe(OnTransferFinished);
-            eventAggregator.GetEvent<CacheMigrationEvent>().Subscribe(OnCacheMigration);
+            eventAggregator.GetEvent<MigrationStartedEvent>().Subscribe(OnMigrationStarted);
+            eventAggregator.GetEvent<MigrationFinishedEvent>().Subscribe(OnMigrationFinished);
             eventAggregator.GetEvent<FreestyleDatabaseCheckEvent>().Subscribe(OnFreestyleDatabaseCheck);
             eventAggregator.GetEvent<ShowFtpTraceWindowEvent>().Subscribe(OnShowFtpTraceWindow);
             eventAggregator.GetEvent<CloseFtpTraceWindowEvent>().Subscribe(OnCloseFtpTraceWindow);
@@ -50,7 +51,7 @@ namespace Neurotoxin.Godspeed.Shell.Controllers
             UIThread.Run(() => ShowErrorMessageInner(exception));
         }
 
-        private static void ShowErrorMessageInner(Exception exception)
+        private void ShowErrorMessageInner(Exception exception)
         {
             var errorDialog = new ErrorMessage(exception);
             errorDialog.ShowDialog();
@@ -77,8 +78,6 @@ namespace Neurotoxin.Godspeed.Shell.Controllers
 
         public void ShowMessage(string title, string message, NotificationMessageFlags flags = NotificationMessageFlags.None)
         {
-            var userSettings = _container.Resolve<IUserSettings>();
-            if (userSettings.IsMessageIgnored(message)) return;
             UIThread.Run(() => ShowMessageInner(title, message, flags));
         }
 
@@ -158,20 +157,14 @@ namespace Neurotoxin.Godspeed.Shell.Controllers
             if (e.Shutdown) Shutdown();
         }
 
-        private void OnCacheMigration(CacheMigrationEventArgs e)
+        private void OnMigrationStarted(MigrationStartedEventArgs e)
         {
-            MainWindowHitTestVisible(false);
-            _progressDialog = _container.Resolve<ProgressDialog, CacheMigrationViewModel>();
-            var vm = (CacheMigrationViewModel)_progressDialog.ViewModel;
-            vm.Finished += OnMigrationFinished;
-            vm.Initialize(e);
+            _progressDialog = _container.Resolve<ProgressDialog>(new ParameterOverride("viewModel", e.ViewModel));
             _progressDialog.Show();
         }
 
-        private void OnMigrationFinished(IProgressViewModel sender)
+        private void OnMigrationFinished(MigrationFinishedEventArgs e)
         {
-            sender.Finished -= OnMigrationFinished;
-            MainWindowHitTestVisible(true);
             _progressDialog.Close();
             _progressDialog = null;
         }

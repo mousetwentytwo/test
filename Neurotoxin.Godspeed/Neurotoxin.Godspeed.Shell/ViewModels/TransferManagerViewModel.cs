@@ -39,7 +39,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private Shutdown _shutdown;
 
         private readonly IStatisticsViewModel _statistics;
-        private readonly IUserSettings _userSettings;
+        private readonly IUserSettingsProvider _userSettingsProvider;
 
         #region Properties
 
@@ -231,8 +231,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private const string ISVERIFICATIONENABLED = "IsVerificationEnabled";
         public bool IsVerificationEnabled
         {
-            get { return _userSettings.VerifyFileHashAfterFtpUpload; }
-            set { _userSettings.VerifyFileHashAfterFtpUpload = value; NotifyPropertyChanged(ISVERIFICATIONENABLED); }
+            get { return _userSettingsProvider.VerifyFileHashAfterFtpUpload; }
+            set { _userSettingsProvider.VerifyFileHashAfterFtpUpload = value; NotifyPropertyChanged(ISVERIFICATIONENABLED); }
         }
 
         private const string ISSHUTDOWNPCENABLED = "IsShutdownPcEnabled";
@@ -286,9 +286,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #endregion
 
-        public TransferManagerViewModel(IUserSettings userSettings, IStatisticsViewModel statistics)
+        public TransferManagerViewModel(IUserSettingsProvider userSettingsProvider, IStatisticsViewModel statistics)
         {
-            _userSettings = userSettings;
+            _userSettingsProvider = userSettingsProvider;
             _statistics = statistics;
             PauseCommand = new DelegateCommand(ExecutePauseCommand);
             ContinueCommand = new DelegateCommand(ExecuteContinueCommand);
@@ -640,7 +640,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
                         var ftpPane = Pane<FtpContentViewModel>();
                         var localPane = Pane<LocalFileSystemContentViewModel>();
-                        if (ftpPane != null && localPane != null && localPane.IsNetworkDrive && _userSettings.UseRemoteCopy)
+                        if (ftpPane != null && localPane != null && localPane.IsNetworkDrive && _userSettingsProvider.UseRemoteCopy)
                         {
                             try
                             {
@@ -660,7 +660,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         {
                             var dialog = new RemoteCopyErrorDialog(ex);
                             if (dialog.ShowDialog() == false) return;
-                            if (dialog.TurnOffRemoteCopy) _userSettings.UseRemoteCopy = false;
+                            if (dialog.TurnOffRemoteCopy) _userSettingsProvider.UseRemoteCopy = false;
                         }
                         _remoteCopy = remoteCopy;
                         ProgressState = TaskbarItemProgressState.Normal;

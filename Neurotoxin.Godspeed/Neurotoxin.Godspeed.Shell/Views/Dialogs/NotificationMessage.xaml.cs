@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Windows;
-using Microsoft.Practices.Unity;
-using Neurotoxin.Godspeed.Presentation.Infrastructure;
-using Neurotoxin.Godspeed.Shell.Interfaces;
 
 namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
 {
@@ -15,8 +12,6 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
 
     public partial class NotificationMessage
     {
-        private readonly NotificationMessageFlags _flags;
-
         public NotificationMessage(string title, string message, NotificationMessageFlags flags)
         {
             if (Application.Current.MainWindow.IsVisible) Owner = Application.Current.MainWindow;
@@ -24,7 +19,6 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
             InitializeComponent();
             Message.Text = message;
             Title = title;
-            _flags = flags;
             if (flags.HasFlag(NotificationMessageFlags.NonClosable))
             {
                 CloseButtonVisibility = Visibility.Collapsed;

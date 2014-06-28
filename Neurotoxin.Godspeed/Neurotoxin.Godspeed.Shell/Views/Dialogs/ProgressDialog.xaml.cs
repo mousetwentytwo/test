@@ -8,13 +8,13 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
     {
         public IProgressViewModel ViewModel
         {
-            get { return this.DataContext as IProgressViewModel; }
-            set { this.DataContext = value; }
+            get { return DataContext as IProgressViewModel; }
+            set { DataContext = value; }
         }
 
         public ProgressDialog(IProgressViewModel viewModel)
         {
-            Owner = Application.Current.MainWindow;
+            if (Application.Current.MainWindow.Visibility == Visibility.Visible) Owner = Application.Current.MainWindow;
             CloseButtonVisibility = Visibility.Collapsed;
             InitializeComponent();
             ViewModel = viewModel;

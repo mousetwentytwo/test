@@ -12,6 +12,7 @@ using Neurotoxin.Godspeed.Core.Net;
 using Neurotoxin.Godspeed.Core.Net.Cryptography;
 using Neurotoxin.Godspeed.Core.Security;
 using Neurotoxin.Godspeed.Shell.Constants;
+using Neurotoxin.Godspeed.Shell.Database.Models;
 using Neurotoxin.Godspeed.Shell.Helpers;
 using Neurotoxin.Godspeed.Shell.Models;
 using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;

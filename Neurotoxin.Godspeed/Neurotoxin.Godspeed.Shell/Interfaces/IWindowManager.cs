@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Models;
 using Neurotoxin.Godspeed.Shell.ViewModels;

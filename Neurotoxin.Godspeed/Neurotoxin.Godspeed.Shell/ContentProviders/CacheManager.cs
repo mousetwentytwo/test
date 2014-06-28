@@ -1,164 +1,212 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Threading;
 using Microsoft.Practices.Composite.Events;
-using Neurotoxin.Godspeed.Core.Caching;
 using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
-using Neurotoxin.Godspeed.Shell.Events;
+using Neurotoxin.Godspeed.Shell.Constants;
+using Neurotoxin.Godspeed.Shell.Database.Models;
+using Neurotoxin.Godspeed.Shell.Extensions;
+using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
+using ServiceStack.OrmLite;
 using System.Linq;
-using Microsoft.Practices.ObjectBuilder2;
 
 namespace Neurotoxin.Godspeed.Shell.ContentProviders
 {
-    public class CacheManager
+    /*TODO: 
+     * test async save     
+     * check concurrency handling. two instances, two threads
+    */
+
+    public class CacheManager : ICacheManager
     {
-        private bool _cachePopupated;
-        private const string KeyPrefix = "CacheEntry_";
+        private bool _isCachePopulated;
+        private bool _isPersisting;
         private readonly IEventAggregator _eventAggregator;
         private readonly IWorkHandler _workHandler;
-        private readonly EsentPersistentDictionary _cacheStore = EsentPersistentDictionary.Instance;
-        private readonly Dictionary<string, CacheEntry<FileSystemItem>> _inMemoryCache = new Dictionary<string,CacheEntry<FileSystemItem>>();
+        private readonly IDbContext _dbContext;
+        private readonly Dictionary<string, CacheItem> _inMemoryCache = new Dictionary<string, CacheItem>();
+        private readonly Timer _timer;
 
-        public CacheManager(IEventAggregator eventAggregator, IWorkHandler workHandler)
+        public CacheManager(IEventAggregator eventAggregator, IWorkHandler workHandler, IDbContext dbContext)
         {
             _eventAggregator = eventAggregator;
             _workHandler = workHandler;
-
-            //Read cache to memory to fasten access
-            _workHandler.Run(() =>
-                {
-                    var sw = new Stopwatch();
-                    sw.Start();
-                    var keys = _cacheStore.Keys;
-                    Debug.WriteLine("[DEBUG] {0} keys in cache", keys.Length);
-                    keys.Where(k => k.StartsWith(KeyPrefix)).ForEach(k => Get(k));
-                    sw.Stop();
-                    _cachePopupated = true;
-                    Debug.WriteLine("Cache fetched [{0}]", sw.Elapsed);
-                    return _inMemoryCache;
-                },
-                b => _eventAggregator.GetEvent<CachePopulatedEvent>().Publish(new CachePopulatedEventArgs(b, _cacheStore)));
+            _dbContext = dbContext;
+            _workHandler.Run(PopulateItems, c => _isCachePopulated = true);
+            _timer = new Timer(PersistCacheData, null, Timeout.Infinite, Timeout.Infinite);
         }
 
-        private CacheEntry<FileSystemItem> Get(string hashKey)
+        private int PopulateItems()
         {
-            lock (_inMemoryCache)
+            var sw = new Stopwatch();
+            sw.Start();
+            using (var db = _dbContext.Open())
             {
-                if (!_inMemoryCache.ContainsKey(hashKey))
-                {
-                    var entry = _cacheStore.Get<CacheEntry<FileSystemItem>>(hashKey);
-                    if (entry.Content == null || string.IsNullOrEmpty(entry.Content.Title))
-                    {
-                        _cacheStore.Remove(hashKey);
-                        _inMemoryCache.Remove(hashKey);
-                        Debug.WriteLine("[!] Invalid Cache Entry Removed: " + hashKey);
-                    }
-                    _inMemoryCache.Add(hashKey, entry);
-                }
-                return _inMemoryCache[hashKey];
+                db.Get<CacheItem>().ForEach(ci =>
+                                                {
+                                                    _inMemoryCache.Add(ci.Id, ci);
+                                                    ci.Persisted();
+                                                });
             }
+            sw.Stop();
+            Debug.WriteLine("[CACHE] Populated in {0}. Item count: {1}", sw.Elapsed, _inMemoryCache.Count);
+            return _inMemoryCache.Count;
+        } 
+
+        private void PersistCacheData(object state)
+        {
+            if (_isPersisting)
+            {
+                ResetTimer();
+                return;
+            }
+
+            _isPersisting = true;
+            var dirties = _inMemoryCache.Values.Where(item => item.ItemState != ItemState.Persisted).ToList();
+            if (!dirties.Any()) return;
+            using (var db = _dbContext.Open(true))
+            {
+                for (int i = 0; i < dirties.Count; i++)
+                {
+                    var item = dirties[i];
+                    switch (item.ItemState)
+                    {
+                        case ItemState.New:
+                            db.Insert(item);
+                            break;
+                        case ItemState.Dirty:
+                            db.UpdateOnly(item, item.DirtyFields.ToList());
+                            break;
+                        case ItemState.Deleted:
+                            db.Delete(item);
+                            break;
+                    }
+                    Debug.WriteLine("[{0}] {1}", i, db.GetLastSql());
+                }
+            }
+            dirties.ForEach(item => item.Persisted());
+            _isPersisting = false;
         }
 
-        public CacheEntry<FileSystemItem> GetEntry(CacheComplexKey key)
+        public CacheItem Get(CacheComplexKey key)
         {
-            return GetEntry(key.Key, key.Size, key.Date);
+            return Get(key.Key, key.Size, key.Date);
         }
 
-        public CacheEntry<FileSystemItem> GetEntry(string key, long? size = null, DateTime? date = null)
+        public CacheItem Get(string key)
         {
-            var hashKey = HashKey(key);
-            if (!_cacheStore.ContainsKey(hashKey)) return null;
+            return Get(key, null, null);
+        }
 
-            var item = Get(hashKey);
+        public CacheItem Get(string key, long? size, DateTime? date)
+        {
+            var hashKey = key.Hash();
+            if (!_inMemoryCache.ContainsKey(hashKey)) return null;
+
+            var item = _inMemoryCache[hashKey];
 
             if ((item.Expiration.HasValue && item.Expiration < DateTime.Now) ||
                 (size.HasValue && item.Size.HasValue && item.Size.Value < size) ||
                 (date.HasValue && item.Date.HasValue && (date.Value - item.Date.Value).TotalSeconds > 1))
             {
-                ClearCache(key);
+                Remove(key);
                 return null;
             }
 
             return item;
         }
 
-        public CacheEntry<FileSystemItem> SaveEntry(string key, FileSystemItem content, DateTime? expiration = null, DateTime? date = null, long? size = null, string tmpPath = null)
+        public CacheItem Set(string key, FileSystemItem fileSystemItem)
         {
-            if (content == null)
+            return Set(key, fileSystemItem, null, null, null, null);
+        }
+
+        public CacheItem Set(string key, FileSystemItem fileSystemItem, DateTime? expiration)
+        {
+            return Set(key, fileSystemItem, expiration, null, null, null);
+        }
+
+        public CacheItem Set(string key, FileSystemItem fileSystemItem, DateTime? expiration, DateTime? date, long? size)
+        {
+            return Set(key, fileSystemItem, expiration, date, size, null);
+        }
+
+        public CacheItem Set(string key, FileSystemItem fileSystemItem, DateTime? expiration, DateTime? date, long? size, byte[] content)
+        {
+            var hashKey = key.Hash();
+            var entry = new CacheItem
             {
-                Debugger.Break();
-            }
-            var entry = new CacheEntry<FileSystemItem>
-                {
-                    Expiration = expiration,
-                    Date = date,
-                    Size = size,
-                    Content = content,
-                    TempFilePath = tmpPath
-                };
-            var hashKey = HashKey(key);
+                Id = hashKey,
+                Expiration = expiration,
+                Date = date,
+                Size = size,
+                Title = fileSystemItem.Title,
+                Type = (int)fileSystemItem.Type,
+                TitleType = (int)fileSystemItem.TitleType,
+                ContentType = (int)fileSystemItem.ContentType,
+                RecognitionState = (int)fileSystemItem.RecognitionState,
+                Thumbnail = fileSystemItem.Thumbnail,
+                Content = content
+            };
             _inMemoryCache.Remove(hashKey);
             _inMemoryCache.Add(hashKey, entry);
-            _cacheStore.Update(hashKey, entry);
+            ResetTimer();
             return entry;
         }
 
-        public void UpdateEntry(string key, FileSystemItem content)
+        public void Clear()
         {
-            if (content == null)
+            _inMemoryCache.Clear();
+            using (var db = _dbContext.Open())
             {
-                Debugger.Break();
-            }
-            var hashKey = HashKey(key);
-            if (!_cacheStore.ContainsKey(hashKey)) 
-            {
-                SaveEntry(key, content);
-                return;
-            }
-            var item = Get(hashKey);
-            item.Content = content;
-            item.Expiration = null;
-            _inMemoryCache.Remove(hashKey);
-            _inMemoryCache.Add(hashKey, item);
-            _cacheStore.Update(hashKey, item);
-        }
-
-        public void ClearCache()
-        {
-            foreach (var key in _cacheStore.Keys.Where(key => key.StartsWith(KeyPrefix)))
-            {
-                RemoveCacheEntry(key);
+                db.DeleteAll<CacheItem>();    
             }
         }
 
-        public void ClearCache(string key)
+        public void Remove(string key)
         {
-            RemoveCacheEntry(HashKey(key));
+            if (!_inMemoryCache.ContainsKey(key)) return;
+            _inMemoryCache[key].MarkDeleted();
+            ResetTimer();
         }
 
-        public int EntryCount(Func<FileSystemItem, bool> predicate)
+        public byte[] GetBinaryContent(string key)
         {
-            while (!_cachePopupated) Thread.Sleep(100);
-            return _inMemoryCache.Count(kvp => predicate(kvp.Value.Content));
+            using (var db = _dbContext.Open())
+            {
+                var item = db.ReadField<CacheItem>(key.Hash(), "Content");
+                return item.Content;
+            }
         }
 
-        private void RemoveCacheEntry(string hashKey)
+        public void UpdateTitle(string key, FileSystemItem item)
         {
-            if (!_cacheStore.ContainsKey(hashKey)) return;
-            var item = Get(hashKey);
-            if (!string.IsNullOrEmpty(item.TempFilePath)) File.Delete(item.TempFilePath);
-            _cacheStore.Remove(hashKey);
-            _inMemoryCache.Remove(hashKey);
+            var cacheItem = _inMemoryCache[key.Hash()];
+            cacheItem.Title = item.Title;
+            cacheItem.Thumbnail = item.Thumbnail;
+            ResetTimer();
         }
 
-        private static string HashKey(string s)
+        public int EntryCount(Func<CacheItem, bool> predicate)
         {
-            return KeyPrefix + s.Hash();
+            while (!_isCachePopulated) Thread.Sleep(100);
+            return _inMemoryCache.Count(kvp => predicate(kvp.Value));
         }
 
+        public bool ContainsKey(string key)
+        {
+            return _inMemoryCache.ContainsKey(key.Hash());
+        }
+
+        private void ResetTimer()
+        {
+            lock (_timer)
+            {
+                _timer.Change(2000, Timeout.Infinite);
+            }
+        }
     }
 }

@@ -1,7 +1,7 @@
-﻿using System.Globalization;
+﻿using System.Collections.Generic;
+using System.Globalization;
 using System.Windows.Controls;
-using Neurotoxin.Godspeed.Core.Caching;
-using Neurotoxin.Godspeed.Shell.ViewModels;
+using Neurotoxin.Godspeed.Shell.Constants;
 
 namespace Neurotoxin.Godspeed.Shell.Views.Validations
 {
@@ -15,10 +15,14 @@ namespace Neurotoxin.Godspeed.Shell.Views.Validations
         }
 
         public string OriginalValue { get; set; }
+        public ItemState ItemState { get; set; }
+        public List<string> ConnectionNames { get; set; }
 
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
-            return new ValidationResult((string)value == OriginalValue || !EsentPersistentDictionary.Instance.ContainsKey(ConnectionsViewModel.CacheStoreKeyPrefix + value), ErrorMessage);
+            var v = value as string;
+            var result = ItemState == ItemState.New || v == OriginalValue || !ConnectionNames.Contains(v);
+            return new ValidationResult(result, ErrorMessage);
         }
     }
 }
