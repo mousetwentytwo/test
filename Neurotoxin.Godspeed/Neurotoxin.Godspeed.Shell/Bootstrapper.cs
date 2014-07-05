@@ -8,9 +8,9 @@ using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Shell.Controllers;
 using Neurotoxin.Godspeed.Shell.Database;
-using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Helpers;
 using Neurotoxin.Godspeed.Shell.Interfaces;
+using Neurotoxin.Godspeed.Shell.Models;
 using Neurotoxin.Godspeed.Shell.ViewModels;
 using Neurotoxin.Godspeed.Shell.Views;
 using Neurotoxin.Godspeed.Shell.Views.Dialogs;
@@ -66,7 +66,7 @@ namespace Neurotoxin.Godspeed.Shell
             Container.RegisterType<ErrorMessage>();
 
             // Helpers
-            Container.RegisterType<SanityChecker>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<SanityCheckerViewModel>(new ContainerControlledLifetimeManager());
         }
 
         protected override IModuleCatalog GetModuleCatalog()
@@ -81,15 +81,15 @@ namespace Neurotoxin.Godspeed.Shell
         {
             _shell = Container.Resolve<FileManagerWindow>();
             var windowManager = Container.Resolve<IWindowManager>();
-            var sanityChecker = Container.Resolve<SanityChecker>();
+            var sanityChecker = Container.Resolve<SanityCheckerViewModel>();
             sanityChecker.CheckAsync(SanityCheckCallback);
             return _shell;
         }
 
-        private void SanityCheckCallback(NotifyUserMessageEventArgs message)
+        private void SanityCheckCallback(SanityCheckResult result)
         {
             var notificationService = Container.Resolve<NotificationService>();
-            if (message != null) notificationService.QueueMessage(message);
+            if (result.UserMessages != null) notificationService.QueueMessages(result.UserMessages);
             InitializeShell();
         }
 

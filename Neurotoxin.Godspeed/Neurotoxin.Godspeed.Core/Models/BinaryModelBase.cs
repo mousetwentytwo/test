@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using Neurotoxin.Godspeed.Core.Attributes;
 using Neurotoxin.Godspeed.Core.Constants;
 using Neurotoxin.Godspeed.Core.Extensions;
 using System.Linq;
-using Neurotoxin.Godspeed.Core.Io.Stfs;
 
 namespace Neurotoxin.Godspeed.Core.Models
 {
@@ -16,7 +14,7 @@ namespace Neurotoxin.Godspeed.Core.Models
     {
         public static readonly Type BaseType = typeof (BinaryModelBase);
 
-        protected readonly OffsetTable _offsetTable;
+        private readonly OffsetTable _offsetTable;
         private bool _cacheEnabled;
 
         public BinMap BinMap { get; set; }

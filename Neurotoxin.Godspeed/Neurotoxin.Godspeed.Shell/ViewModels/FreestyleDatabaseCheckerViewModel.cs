@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using HtmlAgilityPack;
+using Microsoft.Practices.ObjectBuilder2;
 using Neurotoxin.Godspeed.Core.Models;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Presentation.ViewModels;
@@ -14,7 +15,7 @@ using Neurotoxin.Godspeed.Shell.Models;
 using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 using Fizzler.Systems.HtmlAgilityPack;
 using Neurotoxin.Godspeed.Presentation.Extensions;
-using Microsoft.Practices.ObjectBuilder2;
+using Neurotoxin.Godspeed.Shell.Extensions;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
@@ -22,7 +23,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
     {
         private int _itemsCount;
         private int _itemsChecked;
-        private FtpContentViewModel _parent;
+
+        private readonly FtpContentViewModel _parent;
+        public IViewModel Parent
+        {
+            get { return _parent; }
+        }
 
         private const string HASMISSINGFOLDERS = "HasMissingFolders";
         public bool HasMissingFolders
@@ -119,29 +125,13 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             private set { _isIndetermine = value; NotifyPropertyChanged(ISINDETERMINE); }
         }
 
-        public event WorkFinishedEventHandler Finished;
-
-        private void NotifyFinished()
-        {
-            var handler = Finished;
-            if (handler != null) handler.Invoke(this);
-        }
-
-        public event EventHandler Close;
-
-        private void NotifyClose()
-        {
-            var handler = Close;
-            if (handler != null) handler.Invoke(this, new EventArgs());
-        }
-
         #region CloseCommand
 
         public DelegateCommand CloseCommand { get; private set; }
 
         public void ExecuteCloseCommand()
         {
-            NotifyClose();
+            WindowManager.CloseWindowOf<FreestyleDatabaseCheckerViewModel>();
         }
 
         #endregion
@@ -201,6 +191,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             IsIndetermine = true;
             var missingFolders = new List<FileSystemItem>();
             var missingEntries = new Dictionary<FileSystemItem, IList<FileSystemItem>>();
+            this.NotifyProgressStarted();
 
             WorkHandler.Run(() =>
             {
@@ -285,14 +276,15 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 ProgressMessage = string.Empty;
                 MissingFolders = missingFolders.Select(m => new FileSystemItemViewModel(m)).ToObservableCollection();
                 MissingEntries = missingEntries.Select(m => new FileSystemItemViewModel(m.Key) { Content = m.Value }).ToObservableCollection();
-                NotifyFinished();
+                this.NotifyProgressFinished();
+                EventAggregator.GetEvent<FreestyleDatabaseCheckedEvent>().Publish(new FreestyleDatabaseCheckedEventArgs(this));
             },
             error =>
             {
                 IsBusy = false;
                 ProgressMessage = string.Empty;
-                NotifyFinished(); //TODO: different event or overload
-                //TODO
+                this.NotifyProgressFinished();
+                //TODO: popup error message
             });
         }
 

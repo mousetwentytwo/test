@@ -35,8 +35,15 @@ namespace Neurotoxin.Godspeed.Shell
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            //TODO: check impact on SQLite if two instances run
-            if (true)
+            var currentProcess = Process.GetCurrentProcess();
+            var otherProcess = Process.GetProcessesByName(currentProcess.ProcessName).FirstOrDefault(process => process.Id != currentProcess.Id);
+            if (otherProcess != null)
+            {
+                //TODO: what if there are three or more processes and the First grabs a wrong one?
+                SetForegroundWindow(otherProcess.MainWindowHandle);
+                Shutdown();
+            } 
+            else
             {
                 Dispatcher.CurrentDispatcher.UnhandledException += UnhandledThreadingException;
                 ShutdownMode = ShutdownMode.OnMainWindowClose;
@@ -46,16 +53,6 @@ namespace Neurotoxin.Godspeed.Shell
 #else
                 RunInReleaseMode();
 #endif
-            }
-            else
-            {
-                var current = Process.GetCurrentProcess();
-                foreach (var process in Process.GetProcessesByName(current.ProcessName).Where(process => process.Id != current.Id))
-                {
-                    SetForegroundWindow(process.MainWindowHandle);
-                    break;
-                }
-                Shutdown();
             }
         }
 

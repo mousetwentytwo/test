@@ -1,5 +1,5 @@
-﻿using Neurotoxin.Godspeed.Presentation.Infrastructure;
-using Neurotoxin.Godspeed.Shell.Events;
+﻿
+using Neurotoxin.Godspeed.Presentation.Infrastructure;
 
 namespace Neurotoxin.Godspeed.Shell.Interfaces
 {
@@ -10,7 +10,5 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
         int ProgressValue { get; }
         double ProgressValueDouble { get; }
         bool IsIndetermine { get; }
-
-        //event WorkFinishedEventHandler Finished;
     }
 }

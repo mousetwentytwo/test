@@ -131,5 +131,13 @@ namespace Neurotoxin.Godspeed.Shell.Controllers
         {
             _messageQueue.Enqueue(message);
         }
+
+        public void QueueMessages(IEnumerable<NotifyUserMessageEventArgs> messages)
+        {
+            foreach (var message in messages)
+            {
+                QueueMessage(message);
+            }
+        }
     }
 }

@@ -18,6 +18,7 @@ using Neurotoxin.Godspeed.Shell.ViewModels;
 using Neurotoxin.Godspeed.Shell.Views;
 using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
+using System.Linq;
 
 namespace Neurotoxin.Godspeed.Shell.Controllers
 {
@@ -29,7 +30,7 @@ namespace Neurotoxin.Godspeed.Shell.Controllers
         private bool _isAbortionInProgress;
         private TransferProgressDialog _transferProgressDialog;
         private ProgressDialog _progressDialog;
-        private FreestyleDatabaseCheckerWindow _freestyleDatabaseCheckerWindow;
+        private readonly Dictionary<Type, Window> _windows = new Dictionary<Type, Window>(); 
         private readonly Dictionary<FtpTraceListener, FtpTraceWindow> _traceWindows = new Dictionary<FtpTraceListener, FtpTraceWindow>();
 
         public WindowManager(IEventAggregator eventAggregator)
@@ -41,7 +42,7 @@ namespace Neurotoxin.Godspeed.Shell.Controllers
             eventAggregator.GetEvent<TransferFinishedEvent>().Subscribe(OnTransferFinished);
             eventAggregator.GetEvent<MigrationStartedEvent>().Subscribe(OnMigrationStarted);
             eventAggregator.GetEvent<MigrationFinishedEvent>().Subscribe(OnMigrationFinished);
-            eventAggregator.GetEvent<FreestyleDatabaseCheckEvent>().Subscribe(OnFreestyleDatabaseCheck);
+            eventAggregator.GetEvent<FreestyleDatabaseCheckedEvent>().Subscribe(OnFreestyleDatabaseChecked);
             eventAggregator.GetEvent<ShowFtpTraceWindowEvent>().Subscribe(OnShowFtpTraceWindow);
             eventAggregator.GetEvent<CloseFtpTraceWindowEvent>().Subscribe(OnCloseFtpTraceWindow);
         }
@@ -107,8 +108,35 @@ namespace Neurotoxin.Godspeed.Shell.Controllers
 
         public bool ShowTreeSelectorDialog(ITreeSelectionViewModel viewModel)
         {
-            var dialog = new TreeSelectionDialog(viewModel) { Owner = _freestyleDatabaseCheckerWindow };
+            Window owner = null;
+            if (viewModel.Parent != null)
+            {
+                var parentType = viewModel.Parent.GetType();
+                if (_windows.ContainsKey(parentType)) owner = _windows[parentType];
+            }
+            var dialog = new TreeSelectionDialog(viewModel) { Owner = owner };
             return dialog.ShowDialog() == true;
+        }
+
+        public bool Confirm(string title, string message)
+        {
+            return new ConfirmationDialog(title, message).ShowDialog() != true;
+        }
+
+        public bool ActivateWindowOf<TViewModel>()
+        {
+            var type = typeof (TViewModel);
+            if (!_windows.ContainsKey(type)) return false;
+            _windows[type].Activate();
+            return true;
+        }
+
+        public bool CloseWindowOf<TViewModel>()
+        {
+            var type = typeof(TViewModel);
+            if (!_windows.ContainsKey(type)) return false;
+            _windows[type].Close();
+            return true;
         }
 
         private void OnTransferStarted(TransferStartedEventArgs e)
@@ -159,6 +187,7 @@ namespace Neurotoxin.Godspeed.Shell.Controllers
 
         private void OnMigrationStarted(MigrationStartedEventArgs e)
         {
+            MainWindowHitTestVisible(false);
             _progressDialog = _container.Resolve<ProgressDialog>(new ParameterOverride("viewModel", e.ViewModel));
             _progressDialog.Show();
         }
@@ -167,47 +196,36 @@ namespace Neurotoxin.Godspeed.Shell.Controllers
         {
             _progressDialog.Close();
             _progressDialog = null;
-        }
-
-        private void OnFreestyleDatabaseCheck(FreestyleDatabaseCheckEventArgs e)
-        {
-            if (_freestyleDatabaseCheckerWindow != null)
-            {
-                _freestyleDatabaseCheckerWindow.Activate();
-                return;
-            }
-            MainWindowHitTestVisible(false);
-            var vm = _container.Resolve<FreestyleDatabaseCheckerViewModel>(new ParameterOverride("parent", e.FtpContentViewModel));
-            _progressDialog = _container.Resolve<ProgressDialog, FreestyleDatabaseCheckerViewModel>(vm);
-            vm.Finished += OnFreestyleDatabaseCheckFinished;
-            vm.Check();
-            _progressDialog.Show();
-        }
-
-        private void OnFreestyleDatabaseCheckFinished(IProgressViewModel sender)
-        {
-            var vm = (FreestyleDatabaseCheckerViewModel) sender;
-            vm.Finished -= OnFreestyleDatabaseCheckFinished;
-            vm.Close += OnFreestyleDatabaseCheckerWindowClose;
             MainWindowHitTestVisible(true);
-            _progressDialog.Close();
+        }
+
+        private void OnFreestyleDatabaseChecked(FreestyleDatabaseCheckedEventArgs e)
+        {
+            var vm = e.ViewModel;
             if (vm.HasMissingEntries || vm.HasMissingFolders)
             {
-                _freestyleDatabaseCheckerWindow = _container.Resolve<FreestyleDatabaseCheckerWindow, FreestyleDatabaseCheckerViewModel>(vm);
-                _freestyleDatabaseCheckerWindow.Show();
-            } 
+                ShowModelessWindow<FreestyleDatabaseCheckerWindow, FreestyleDatabaseCheckerViewModel>(vm);
+            }
             else
             {
                 ShowMessage(Resx.ErrorsInFreestyleDatabase, Resx.NoErrorsInFreestyleDatabase);
             }
-            _progressDialog = null;
         }
 
-        private void OnFreestyleDatabaseCheckerWindowClose(object sender, EventArgs e)
+        private void ShowModelessWindow<TWindow, TViewModel>(TViewModel vm) where TWindow : Window, IView where TViewModel : class, IViewModel
         {
-            _freestyleDatabaseCheckerWindow.ViewModel.Close -= OnFreestyleDatabaseCheckerWindowClose;
-            _freestyleDatabaseCheckerWindow.Close();
-            _freestyleDatabaseCheckerWindow = null;
+            var w = _container.Resolve<TWindow, TViewModel>(vm);
+            _windows.Add(typeof(FreestyleDatabaseCheckerViewModel), w);
+            w.Closed += OnModelessWindowClosed;
+            w.Show();
+            
+        }
+
+        private void OnModelessWindowClosed(object sender, EventArgs e)
+        {
+            var w = _windows.FirstOrDefault(kvp => kvp.Value.Equals(sender));
+            w.Value.Closed -= OnModelessWindowClosed;
+            _windows.Remove(w.Key);
         }
 
         private void OnShowFtpTraceWindow(ShowFtpTraceWindowEventArgs e)

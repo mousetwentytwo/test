@@ -175,6 +175,7 @@
     <Compile Include="Database\OrmLiteLogger.cs" />
     <Compile Include="Database\SqliteOrmLiteDialectProviderEx.cs" />
     <Compile Include="Events\MigrationFinishedEvent.cs" />
+    <Compile Include="Extensions\ProgressViewModelExtensions.cs" />
     <Compile Include="Interfaces\IDbContext.cs" />
     <Compile Include="ContentProviders\CompressedFileContent.cs" />
     <Compile Include="ContentProviders\FileSystemContentBase.cs" />
@@ -207,8 +208,7 @@
     <Compile Include="Events\LogChangedEventHandler.cs" />
     <Compile Include="Events\RaiseCanExecuteChangesEvent.cs" />
     <Compile Include="Events\ShowCorrespondingErrorEvent.cs" />
-    <Compile Include="Events\FreestyleDatabaseCheckEvent.cs" />
-    <Compile Include="Events\WorkFinishedEventHandler.cs" />
+    <Compile Include="Events\FreestyleDatabaseCheckedEvent.cs" />
     <Compile Include="Events\MigrationStartedEvent.cs" />
     <Compile Include="Events\ShellInitializedEvent.cs" />
     <Compile Include="Events\NotifyUserMessageEvent.cs" />
@@ -224,10 +224,10 @@
     <Compile Include="Exceptions\TransferException.cs" />
     <Compile Include="Extensions\DbConnectionExtensions.cs" />
     <Compile Include="Extensions\ResourcesExtension.cs" />
-    <Compile Include="GlobalVariables.cs" />
     <Compile Include="Helpers\FtpTraceListener.cs" />
     <Compile Include="Database\QueryBuilder.cs" />
-    <Compile Include="Helpers\SanityChecker.cs" />
+    <Compile Include="ViewModels\RecognizeFromProfileViewModel.cs" />
+    <Compile Include="ViewModels\SanityCheckerViewModel.cs" />
     <Compile Include="Helpers\Web.cs" />
     <Compile Include="Interfaces\ICacheManager.cs" />
     <Compile Include="Interfaces\IFileListPaneViewModel.cs" />
@@ -254,6 +254,7 @@
     <Compile Include="Database\Models\ModelBase.cs" />
     <Compile Include="Models\ProfileItemWrapper.cs" />
     <Compile Include="Database\Models\Statistics.cs" />
+    <Compile Include="Models\SanityCheckResult.cs" />
     <Compile Include="Models\UserMessageCommandParameter.cs" />
     <Compile Include="Database\Models\UserSettings.cs" />
     <Compile Include="Primitives\BorderlessWindow.cs" />

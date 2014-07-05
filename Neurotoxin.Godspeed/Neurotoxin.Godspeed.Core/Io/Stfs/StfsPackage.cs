@@ -14,7 +14,7 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
 {
     public abstract class StfsPackage : Package<StfsVolumeDescriptor>
     {
-        public static int DefaultHeaderSizeVersion1 = 0x971A;
+        public const int DefaultHeaderSizeVersion1 = 0x971A;
 
         public FileEntry FileStructure { get; private set; }
         public List<FileEntry> FlatFileList { get; private set; }
@@ -44,25 +44,22 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
                 throw new NotSupportedException("STFS package too big to handle!");
             TopLevel = VolumeDescriptor.AllocatedBlockCount >= 0xAA ? 1 : 0;
 
-            LogHelper.LogDuration("Collect hash entries", () =>
-                                                              {
-                                                                  UnallocatedHashEntries = new List<int>();
-                                                                  TopTable = GetLevelNHashTable(0, TopLevel);
-                                                                  if (TopLevel == 1)
-                                                                  {
-                                                                      TopTable.Tables = new List<HashTable>();
-                                                                      for (var i = 0; i < TopTable.EntryCount; i++)
-                                                                      {
-                                                                          var table = GetLevelNHashTable(i, 0);
-                                                                          TopTable.Entries[i].RealBlock = table.Block;
-                                                                          TopTable.Tables.Add(table);
-                                                                      }
-                                                                  }
-                                                              });
-            LogHelper.NotifyStatusBarText("Hash entries collected");
-
-            LogHelper.LogDuration("Collect file entries", () => FileStructure = ReadFileListing());
-            LogHelper.NotifyStatusBarText("File entries collected");
+            NotifyActionDuration("Collect hash entries", () =>
+                                                       {
+                                                           UnallocatedHashEntries = new List<int>();
+                                                           TopTable = GetLevelNHashTable(0, TopLevel);
+                                                           if (TopLevel == 1)
+                                                           {
+                                                               TopTable.Tables = new List<HashTable>();
+                                                               for (var i = 0; i < TopTable.EntryCount; i++)
+                                                               {
+                                                                   var table = GetLevelNHashTable(i, 0);
+                                                                   TopTable.Entries[i].RealBlock = table.Block;
+                                                                   TopTable.Tables.Add(table);
+                                                               }
+                                                           }
+                                                       });
+            NotifyActionDuration("Collect file entries", () => FileStructure = ReadFileListing());
         }
 
         public void SwitchToBackupTables()
@@ -337,42 +334,37 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
 
         private void ExtractProfile()
         {
-            LogHelper.LogDuration("Extract Profile", () =>
+            NotifyActionDuration("Extract Profile", () =>
             {
                 ProfileEntry = GetFileEntry(TitleId.ToHex() + ".gpd");
                 ProfileInfo = ModelFactory.GetModel<DashboardFile>(ExtractFile(ProfileEntry));
                 ProfileInfo.Parse();
             });
-
-            LogHelper.NotifyStatusBarText("Profile extracted");
         }
 
         public void ExtractAccount()
         {
-            LogHelper.LogDuration("Extract Account", () =>
+            NotifyActionDuration("Extract Account", () =>
             {
                 var account = ExtractFile("Account");
                 Account = Account.Decrypt(new MemoryStream(account), ConsoleType.Retail);
             });
-            LogHelper.NotifyStatusBarText("Account extracted");
         }
 
-        protected virtual void ExtractGames()
+        public virtual void ExtractGames()
         {
-            LogHelper.LogDuration("Extract Game files", () =>
+            NotifyActionDuration("Extract Game files", () =>
             {
+                if (ProfileInfo == null) ExtractProfile();
                 var games = FileStructure.Files.Where(f => Path.GetExtension(f.Name) == ".gpd"
                                                         && ProfileInfo.TitlesPlayed.Any(t => t.TitleCode == Path.GetFileNameWithoutExtension(f.Name)));
                 var count = games.Count();
-                LogHelper.NotifyStatusBarMax(count);
-                LogHelper.NotifyStatusBarText(count + " title found");
+                NotifyContentCountDetermined(count);
                 var i = 0;
                 Games = new Dictionary<FileEntry, GameFile>();
-                foreach (var gpd in games)
+                foreach (var game in games.Select(gpd => GetGameFile(gpd)))
                 {
-                    GetGameFile(gpd);
-                    LogHelper.NotifyStatusBarChange(++i);
-                    LogHelper.NotifyStatusBarText(string.Format("{0}/{1} {2} extracted", i, count, gpd.Name));
+                    NotifyContentParsed(game);
                 }
             });
         }
@@ -615,8 +607,7 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
             if (!IsModified) SwitchTables();
 
             var count = otherProfile.ProfileInfo.TitlesPlayed.Count;
-            LogHelper.NotifyStatusBarMax(count);
-            LogHelper.NotifyStatusBarText(count + " title needs to be merged");
+            NotifyContentCountDetermined(count);
 
             var otherPec = otherProfile.ExtractPec();
             var pecFileEntry = GetFileEntry("PEC");
@@ -701,11 +692,11 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
                     }
                 }
                 watch.Stop();
-                LogHelper.NotifyStatusBarChange(++i);
-                LogHelper.NotifyStatusBarText(string.Format("{0}/{1} {2} merged", i, count, title.TitleName));
+                //LogHelper.NotifyStatusBarChange(++i);
+                //LogHelper.NotifyStatusBarText(string.Format("{0}/{1} {2} merged", i, count, title.TitleName));
             }
 
-            LogHelper.NotifyStatusBarText("Rebuilding profile...");
+            //LogHelper.NotifyStatusBarText("Rebuilding profile...");
             foreach (var title in ProfileInfo.TitlesPlayed)
             {
                 var name = title.TitleCode + ".gpd";

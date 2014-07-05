@@ -6,6 +6,7 @@ using Neurotoxin.Godspeed.Core.Attributes;
 using Neurotoxin.Godspeed.Core.Constants;
 using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Core.Io.Stfs.Data;
+using Neurotoxin.Godspeed.Core.Io.Stfs.Events;
 using Neurotoxin.Godspeed.Core.Models;
 using System.Linq;
 using ContentType = Neurotoxin.Godspeed.Core.Constants.ContentType;
@@ -157,11 +158,39 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
 
         #endregion
 
+        #region Events
+
+        public event EventHandler<DurationEventArgs> ActionDuration;
+        public event EventHandler<ContentCountEventArgs> ContentCountDetermined;
+        public event EventHandler<ContentParsedEventArgs> ContentParsed;
+
+        protected void NotifyActionDuration(string description, Action action)
+        {
+            var before = DateTime.Now;
+            action.Invoke();
+            var handler = ActionDuration;
+            if (handler != null) handler.Invoke(this, new DurationEventArgs(description, DateTime.Now - before));
+        }
+
+        protected void NotifyContentCountDetermined(int count)
+        {
+            var handler = ContentCountDetermined;
+            if (handler != null) handler.Invoke(this, new ContentCountEventArgs(count));
+        }
+
+        protected void NotifyContentParsed(object content)
+        {
+            var handler = ContentParsed;
+            if (handler != null) handler.Invoke(this, new ContentParsedEventArgs(content));
+        }
+
+        #endregion
+
         #region Initialization
 
         public Package(OffsetTable offsetTable, BinaryContainer binary, int startOffset) : base(offsetTable, binary, startOffset)
         {
-            LogHelper.LogDuration("STFS package parse", Parse);
+            NotifyActionDuration("STFS package parse", Parse);
         }
 
         protected abstract void Parse();

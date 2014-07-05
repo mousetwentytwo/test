@@ -18,5 +18,8 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
 
         string ShowTextInputDialog(string title, string message, string defaultValue, IList<InputDialogOptionViewModel> options = null);
         bool ShowTreeSelectorDialog(ITreeSelectionViewModel viewModel);
+        bool Confirm(string title, string message);
+        bool ActivateWindowOf<TViewModel>();
+        bool CloseWindowOf<TViewModel>();
     }
 }

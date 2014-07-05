@@ -68,5 +68,19 @@ namespace Neurotoxin.Godspeed.Shell.Tests.Dummies
         {
         }
 
+        public bool Confirm(string title, string message)
+        {
+            return true;
+        }
+
+        public bool ActivateWindowOf<TViewModel>()
+        {
+            return false;
+        }
+
+        public bool CloseWindowOf<TViewModel>()
+        {
+            return true;
+        }
     }
 }

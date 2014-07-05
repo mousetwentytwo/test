@@ -715,33 +715,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             IsBusy = true;
             ProgressMessage = Resx.ScanningProfile + Strings.DotDotDot;
-            WorkHandler.Run(RecognizeFromProfile, RecognizeFromProfileCallback, AsyncErrorCallback);
-        }
-
-        private int RecognizeFromProfile()
-        {
-            var content = TitleRecognizer.GetBinaryContent(CurrentRow.Model);
-            if (content == null) return -1;
-
-            var i = 0;
-            var stfs = ModelFactory.GetModel<StfsPackage>(content);
-            stfs.ExtractContent();
-            stfs.ProfileInfo.TitlesPlayed.ForEach(g =>
-                                                      {
-                                                          var game = stfs.Games.Values.FirstOrDefault(gg => gg.TitleId == g.TitleCode);
-                                                          if (game == null) return;
-                                                          TitleRecognizer.UpdateTitle(new FileSystemItem
-                                                                                          {
-                                                                                              Name = g.TitleCode,
-                                                                                              Title = g.TitleName,
-                                                                                              Type = ItemType.Directory,
-                                                                                              TitleType = TitleType.Game,
-                                                                                              Thumbnail = game.Thumbnail,
-                                                                                              RecognitionState = RecognitionState.Recognized
-                                                                                          });
-                                                          i++;
-                                                      });
-            return i;
+            var vm = Container.Resolve<RecognizeFromProfileViewModel>(new ParameterOverride("titleRecognizer", TitleRecognizer));
+            vm.Recognize(CurrentRow.Model, RecognizeFromProfileCallback, AsyncErrorCallback);
         }
 
         private void RecognizeFromProfileCallback(int count)
@@ -820,7 +795,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private bool CanExecuteRenameTitleCommand(object cmdParam)
         {
-            return GlobalVariables.DataGridSupportsRenaming == true && CurrentRow != null && !CurrentRow.IsUpDirectory && CurrentRow.IsCached;
+            return SanityCheckerViewModel.DataGridSupportsRenaming == true && CurrentRow != null && !CurrentRow.IsUpDirectory && CurrentRow.IsCached;
         }
 
         private void ExecuteRenameTitleCommand(object cmdParam)
@@ -832,7 +807,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private bool CanExecuteRenameFileSystemItemCommand(object cmdParam)
         {
-            return GlobalVariables.DataGridSupportsRenaming == true && CurrentRow != null && !CurrentRow.IsUpDirectory && !IsReadOnly;
+            return SanityCheckerViewModel.DataGridSupportsRenaming == true && CurrentRow != null && !CurrentRow.IsUpDirectory && !IsReadOnly;
         }
 
         private void ExecuteRenameFileSystemItemCommand(object cmdParam)

@@ -306,7 +306,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void ExecuteRemoveUserMessageCommand(UserMessageViewModel message)
         {
-            if (message.Flags.HasFlag(MessageFlags.Ignorable) && new ConfirmationDialog(Resx.RemoveUserMessage, Resx.RemoveUserMessageConfirmation).ShowDialog() == true)
+            if (message.Flags.HasFlag(MessageFlags.Ignorable) && WindowManager.Confirm(Resx.RemoveUserMessage, Resx.RemoveUserMessageConfirmation))
             {
                 _userSettings.IgnoreMessage(message.Message);
             }
@@ -446,8 +446,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             var title = Resx.ResourceManager.GetString(type.ToString());
             var message = Resx.ResourceManager.GetString(string.Format(isPlural ? "{0}ConfirmationPlural" : "{0}ConfirmationSingular", type));
-            if (new ConfirmationDialog(title, message).ShowDialog() != true) return false;
-            return true;
+            return WindowManager.Confirm(title, message);
         }
 
         public override void Dispose()

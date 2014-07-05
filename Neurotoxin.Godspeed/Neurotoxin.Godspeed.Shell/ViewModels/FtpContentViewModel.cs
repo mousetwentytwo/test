@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
 using Microsoft.Practices.ObjectBuilder2;
+using Microsoft.Practices.Unity;
 using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Core.Models;
 using Neurotoxin.Godspeed.Core.Net;
@@ -95,7 +96,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public void ExecuteCheckFreestyleDatabaseCommand()
         {
-            EventAggregator.GetEvent<FreestyleDatabaseCheckEvent>().Publish(new FreestyleDatabaseCheckEventArgs(this));
+            if (WindowManager.ActivateWindowOf<FreestyleDatabaseCheckerViewModel>()) return;
+            var vm = Container.Resolve<FreestyleDatabaseCheckerViewModel>(new ParameterOverride("parent", this));
+            vm.Check();
         }
 
         #endregion

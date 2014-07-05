@@ -8,8 +8,9 @@ namespace Neurotoxin.Godspeed.Presentation.Infrastructure
     public abstract class ViewModelBase : IViewModel
     {
         protected readonly IUnityContainer Container;
-        protected readonly IEventAggregator EventAggregator;
-        protected readonly IWorkHandler WorkHandler;
+
+        public IEventAggregator EventAggregator { get; private set; }
+        public IWorkHandler WorkHandler { get; private set; }
 
         public bool IsDisposed { get; private set; }
 

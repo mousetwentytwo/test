@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Neurotoxin.Godspeed.Core;
 using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Core.Io.Gpd;
 using Neurotoxin.Godspeed.Core.Io.Stfs;
@@ -329,40 +328,36 @@ namespace Neurotoxin.Godspeed.Modules.ProfileEditor.ViewModels
             IsInProgress = true;
             LoadingQueueLength = 1;
             LoadingProgress = 0;
-            LogHelper.StatusBarChange += LogHelperStatusBarChange;
-            LogHelper.StatusBarMax += LogHelperStatusBarMax;
-            LogHelper.StatusBarText += LogHelperStatusBarText;
+            //LogHelper.StatusBarChange += LogHelperStatusBarChange;
+            //LogHelper.StatusBarMax += LogHelperStatusBarMax;
+            //LogHelper.StatusBarText += LogHelperStatusBarText;
         }
 
-        private void LogHelperStatusBarChange(object sender, ValueChangedEventArgs e)
-        {
-            UIThread.BeginRun(() => LoadingProgress = e.NewValue);
-        }
+        //private void LogHelperStatusBarChange(object sender, ValueChangedEventArgs e)
+        //{
+        //    UIThread.BeginRun(() => LoadingProgress = e.NewValue);
+        //}
 
-        private void LogHelperStatusBarMax(object sender, ValueChangedEventArgs e)
-        {
-            UIThread.BeginRun(() =>
-                                  {
-                                      LoadingQueueLength = e.NewValue;
-                                      LoadingProgress = 0;
-                                  });
-        }
+        //private void LogHelperStatusBarMax(object sender, ValueChangedEventArgs e)
+        //{
+        //    UIThread.BeginRun(() =>
+        //                          {
+        //                              LoadingQueueLength = e.NewValue;
+        //                              LoadingProgress = 0;
+        //                          });
+        //}
 
-        private void LogHelperStatusBarText(object sender, TextChangedEventArgs e)
-        {
-            UIThread.BeginRun(() => LoadingInfo = e.Text);
-        }
+        //private void LogHelperStatusBarText(object sender, TextChangedEventArgs e)
+        //{
+        //    UIThread.BeginRun(() => LoadingInfo = e.Text);
+        //}
 
         private StfsPackage LoadFile()
         {
             var file = File.ReadAllBytes(_path);
             StfsPackage profile = null;
-            LogHelper.LogDuration("STFS package open", () =>
-                                                           {
-                                                               LogHelper.NotifyStatusBarText("Opening STFS package");
-                                                               profile = ModelFactory.GetModel<StfsPackage>(file);
-                                                               LogHelper.LogDuration("STFS package content extraction", profile.ExtractContent);
-                                                           });
+            profile = ModelFactory.GetModel<StfsPackage>(file);
+            profile.ExtractContent();
             return profile;
         }
 
@@ -371,9 +366,9 @@ namespace Neurotoxin.Godspeed.Modules.ProfileEditor.ViewModels
             _profile = profile;
             Initialize();
             IsInProgress = false;
-            LogHelper.StatusBarChange -= LogHelperStatusBarChange;
-            LogHelper.StatusBarMax -= LogHelperStatusBarMax;
-            LogHelper.StatusBarText -= LogHelperStatusBarText;
+            //LogHelper.StatusBarChange -= LogHelperStatusBarChange;
+            //LogHelper.StatusBarMax -= LogHelperStatusBarMax;
+            //LogHelper.StatusBarText -= LogHelperStatusBarText;
             LoadingInfo = "Done.";
         }
 
@@ -381,15 +376,10 @@ namespace Neurotoxin.Godspeed.Modules.ProfileEditor.ViewModels
         private StfsPackage Merge()
         {
             var file = File.ReadAllBytes(_otherPath);
-            StfsPackage profile = null;
-            LogHelper.LogDuration("STFS package open", () =>
-            {
-                LogHelper.NotifyStatusBarText("Opening STFS package");
-                profile = ModelFactory.GetModel<StfsPackage>(file);
-                LogHelper.LogDuration("STFS package content extraction", profile.ExtractContent);
-            });
-            LogHelper.LogDuration("Merge", () => _profile.MergeWith(profile));
-            return profile;
+            var other = ModelFactory.GetModel<StfsPackage>(file);
+            other.ExtractContent();
+            _profile.MergeWith(other);
+            return other;
 
             //---
 

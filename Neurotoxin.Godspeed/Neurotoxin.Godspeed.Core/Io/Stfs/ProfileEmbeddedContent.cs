@@ -49,7 +49,7 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
             ResignPackage(kv, 0x23C, 0xDC4, 0x23C);
         }
 
-        protected override void ExtractGames()
+        public override void ExtractGames()
         {
             Games = new Dictionary<FileEntry, GameFile>();
             foreach (var gpd in FileStructure.Files)

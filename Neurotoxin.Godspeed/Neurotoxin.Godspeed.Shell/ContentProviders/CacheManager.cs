@@ -15,11 +15,6 @@ using System.Linq;
 
 namespace Neurotoxin.Godspeed.Shell.ContentProviders
 {
-    /*TODO: 
-     * test async save     
-     * check concurrency handling. two instances, two threads
-    */
-
     public class CacheManager : ICacheManager
     {
         private bool _isCachePopulated;
@@ -75,7 +70,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                     switch (item.ItemState)
                     {
                         case ItemState.New:
-                            db.Insert(item);
+                            db.Save(item);
                             break;
                         case ItemState.Dirty:
                             db.UpdateOnly(item, item.DirtyFields.ToList());

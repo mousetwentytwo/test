@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Globalization;
@@ -8,6 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using Neurotoxin.Godspeed.Shell.Database.Models;
+using Neurotoxin.Godspeed.Shell.Properties;
 using ServiceStack.OrmLite;
 using Neurotoxin.Godspeed.Core.Caching;
 using Neurotoxin.Godspeed.Core.Extensions;
@@ -17,28 +19,32 @@ using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
 using Neurotoxin.Godspeed.Shell.Reporting;
-using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
+using Neurotoxin.Godspeed.Shell.Extensions;
 
-namespace Neurotoxin.Godspeed.Shell.Helpers
+namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
-    public class SanityChecker : ViewModelBase, IProgressViewModel
+    public class SanityCheckerViewModel : ViewModelBase, IProgressViewModel
     {
+        //TODO: move this somewhere else
+        public static bool? DataGridSupportsRenaming { get; set; }
+
         private const string NEWERDOTNETVERSIONREQUIREDMESSAGEKEY = "NewerDotNetVersionRequiredMessage";
 
         private readonly IDbContext _dbContext;
         private readonly IResourceManager _resourceManager;
+        private readonly IWindowManager _windowManager;
         private string _esentDir;
 
-        #region IProgressViewModel members
+        #region Properies
 
         public string ProgressDialogTitle
         {
-            get { return Resx.MigrationProgressDialogTitle; }
+            get { return Resources.MigrationProgressDialogTitle; }
         }
 
         public string ProgressMessage
         {
-            get { return Resx.MigrationProgressMessage; }
+            get { return Resources.MigrationProgressMessage; }
         }
 
         private const string ITEMSCOUNT = "ItemsCount";
@@ -85,26 +91,41 @@ namespace Neurotoxin.Godspeed.Shell.Helpers
 
         #endregion
 
-        public SanityChecker(IDbContext dbContext, IResourceManager resourceManager)
+        public SanityCheckerViewModel(IDbContext dbContext, IResourceManager resourceManager, IWindowManager windowManager)
         {
             _dbContext = dbContext;
             _resourceManager = resourceManager;
+            _windowManager = windowManager;
         }
 
-        public void CheckAsync(Action<NotifyUserMessageEventArgs> callback)
+        public void CheckAsync(Action<SanityCheckResult> callback)
         {
-            WorkHandler.Run(Check, callback);
+            WorkHandler.Run(CheckDatabase, b => CheckDatabaseCallback(b, callback));
         }
 
-        private NotifyUserMessageEventArgs Check()
+        private bool CheckDatabase()
         {
             CheckDataDirectory();
-            if (!CheckDatabase()) MigrateEsentToDatabase();
-            RetryFailedUserReports();
-            return CheckFrameworkVersion();
+            var exists = DatabaseExists();
+            if (!exists) MigrateEsentToDatabase();
+            return exists;
         }
 
-        public NotifyUserMessageEventArgs CheckFrameworkVersion()
+        private void CheckDatabaseCallback(bool databaseExisted, Action<SanityCheckResult> callback)
+        {
+            var result = new SanityCheckResult();
+            if (!databaseExisted)
+            {
+                result.DatabaseCreated = true;
+                if (_windowManager.Confirm("TODO", "TODO")) DeleteEsent();
+            }
+            WorkHandler.Run(RetryFailedUserReports);
+            var frameworkMessage = CheckFrameworkVersion();
+            if (frameworkMessage != null) result.UserMessages = new List<NotifyUserMessageEventArgs> { frameworkMessage };
+            callback.Invoke(result);
+        }
+
+        private static NotifyUserMessageEventArgs CheckFrameworkVersion()
         {
             var applicationAssembly = Assembly.GetAssembly(typeof(Application));
             var fvi = FileVersionInfo.GetVersionInfo(applicationAssembly.Location);
@@ -112,13 +133,11 @@ namespace Neurotoxin.Godspeed.Shell.Helpers
             var requiredVersion = new Version(4, 0, 30319, 18408);
 
             var versionOk = actualVersion >= requiredVersion;
-            GlobalVariables.DataGridSupportsRenaming = versionOk;
-            if (versionOk) return null;
-
-            return new NotifyUserMessageEventArgs(NEWERDOTNETVERSIONREQUIREDMESSAGEKEY, MessageIcon.Warning, MessageCommand.OpenUrl, "http://www.microsoft.com/en-us/download/details.aspx?id=40779");
+            DataGridSupportsRenaming = versionOk;
+            return versionOk ? null : new NotifyUserMessageEventArgs(NEWERDOTNETVERSIONREQUIREDMESSAGEKEY, MessageIcon.Warning, MessageCommand.OpenUrl, "http://www.microsoft.com/en-us/download/details.aspx?id=40779");
         }
 
-        public void RetryFailedUserReports()
+        private static void RetryFailedUserReports()
         {
             var queue = Directory.GetDirectories(App.PostDirectory);
             foreach (var item in queue.OrderBy(f => f))
@@ -129,7 +148,7 @@ namespace Neurotoxin.Godspeed.Shell.Helpers
             }
         }
 
-        public void CheckDataDirectory()
+        private void CheckDataDirectory()
         {
             var asm = Assembly.GetExecutingAssembly();
             var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
@@ -148,7 +167,7 @@ namespace Neurotoxin.Godspeed.Shell.Helpers
             AppDomain.CurrentDomain.SetData("DataDirectory", _esentDir);
         }
 
-        public bool CheckDatabase()
+        private bool DatabaseExists()
         {
             using(var db = _dbContext.Open())
             {
@@ -161,7 +180,7 @@ namespace Neurotoxin.Godspeed.Shell.Helpers
             }
         }
 
-        public void MigrateEsentToDatabase()
+        private void MigrateEsentToDatabase()
         {
             var statistics = new Statistics();
             var userSettings = new UserSettings();
@@ -171,7 +190,7 @@ namespace Neurotoxin.Godspeed.Shell.Helpers
             {
                 if (EsentExists())
                 {
-                    UIThread.Run(() => EventAggregator.GetEvent<MigrationStartedEvent>().Publish(new MigrationStartedEventArgs(this)));
+                    this.NotifyProgressStarted();
                     UpgradeEsentToLatestVersion();
                     var cacheStore = EsentPersistentDictionary.Instance;
                     var keys = cacheStore.Keys;
@@ -199,8 +218,7 @@ namespace Neurotoxin.Godspeed.Shell.Helpers
                         }
                         IncrementItemsMigrated();
                     }
-                    DeleteEsent();
-                    UIThread.Run(() => EventAggregator.GetEvent<MigrationFinishedEvent>().Publish(new MigrationFinishedEventArgs(this)));
+                    this.NotifyProgressFinished();
                 }
                 db.Insert(statistics);
                 db.Insert(userSettings);
@@ -266,12 +284,12 @@ namespace Neurotoxin.Godspeed.Shell.Helpers
             }
         }
 
-        private void MigrateIgnoredMessages(IDbConnection db, string key)
+        private static void MigrateIgnoredMessages(IDbConnection db, string key)
         {
             db.Insert(new IgnoredMessage(key.SubstringAfter("_")));
         }
 
-        private void MigrateUserSettings(EsentPersistentDictionary cacheStore, string key, UserSettings userSettings)
+        private static void MigrateUserSettings(EsentPersistentDictionary cacheStore, string key, UserSettings userSettings)
         {
             switch (key)
             {
@@ -340,7 +358,7 @@ namespace Neurotoxin.Godspeed.Shell.Helpers
             return File.Exists(Path.Combine(_esentDir, "PersistentDictionary.edb"));
         }
 
-        private void DeleteEsent()
+        private static void DeleteEsent()
         {
             EsentPersistentDictionary.Release();
             //Directory.Delete(_esentDir, true);
@@ -356,7 +374,7 @@ namespace Neurotoxin.Godspeed.Shell.Helpers
             var cacheKeys = cacheStore.Keys.Where(k => k.StartsWith(Strings.UserMessageCacheItemPrefix)).ToList();
             if (cacheKeys.Any())
             {
-                var resx = Resx.ResourceManager.GetResourceSet(CultureInfo.InvariantCulture, true, false).Cast<DictionaryEntry>().ToArray();
+                var resx = Resources.ResourceManager.GetResourceSet(CultureInfo.InvariantCulture, true, false).Cast<DictionaryEntry>().ToArray();
                 SetItemsCount(resx.Length);
                 foreach (var entry in resx)
                 {
@@ -384,7 +402,7 @@ namespace Neurotoxin.Godspeed.Shell.Helpers
                 {
                     if (entry.Content.TitleType != TitleType.Game || entry.Content.RecognitionState != RecognitionState.NotRecognized) continue;
 
-                    entry.Content.RecognitionState = entry.Content.Thumbnail.EqualsWith((byte[])payload)
+                    entry.Content.RecognitionState = entry.Content.Thumbnail.EqualsWith(payload)
                                                          ? RecognitionState.PartiallyRecognized
                                                          : RecognitionState.Recognized;
                     cacheStore.Update(hashKey, entry);

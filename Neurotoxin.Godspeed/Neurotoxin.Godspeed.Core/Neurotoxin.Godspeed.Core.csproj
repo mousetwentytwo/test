@@ -110,6 +110,9 @@
     <Compile Include="Io\Gpd\Entries\SettingList.cs" />
     <Compile Include="Io\Gpd\Entries\TitleEntry.cs" />
     <Compile Include="Io\ReparsePoint.cs" />
+    <Compile Include="Io\Stfs\Events\ContentCountEventArgs.cs" />
+    <Compile Include="Io\Stfs\Events\ContentParsedEventArgs.cs" />
+    <Compile Include="Io\Stfs\Events\DurationEventArgs.cs" />
     <Compile Include="Io\UsbNotification.cs" />
     <Compile Include="Models\BinMap.cs" />
     <Compile Include="Io\Stfs\Data\AvatarItemMediaInfo.cs" />
@@ -125,7 +128,6 @@
     <Compile Include="Io\Stfs\ProfileEmbeddedContent.cs" />
     <Compile Include="Io\Stfs\StfsPackage.cs" />
     <Compile Include="Io\Stfs\SvodPackage.cs" />
-    <Compile Include="LogHelper.cs" />
     <Compile Include="Models\BinaryContainer.cs" />
     <Compile Include="Models\BinaryContent.cs" />
     <Compile Include="Models\BinaryLocation.cs" />
