@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FtpDll", "FtpDll.vcxproj", "{761DB5B7-8665-4B57-8C76-1E4E3DC5BB55}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Xbox 360 = Debug|Xbox 360
+		Release_LTCG|Xbox 360 = Release_LTCG|Xbox 360
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{761DB5B7-8665-4B57-8C76-1E4E3DC5BB55}.Debug|Xbox 360.ActiveCfg = Debug|Xbox 360
+		{761DB5B7-8665-4B57-8C76-1E4E3DC5BB55}.Debug|Xbox 360.Build.0 = Debug|Xbox 360
+		{761DB5B7-8665-4B57-8C76-1E4E3DC5BB55}.Debug|Xbox 360.Deploy.0 = Debug|Xbox 360
+		{761DB5B7-8665-4B57-8C76-1E4E3DC5BB55}.Release_LTCG|Xbox 360.ActiveCfg = Release_LTCG|Xbox 360
+		{761DB5B7-8665-4B57-8C76-1E4E3DC5BB55}.Release_LTCG|Xbox 360.Build.0 = Release_LTCG|Xbox 360
+		{761DB5B7-8665-4B57-8C76-1E4E3DC5BB55}.Release_LTCG|Xbox 360.Deploy.0 = Release_LTCG|Xbox 360
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

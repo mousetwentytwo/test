@@ -18,6 +18,8 @@ namespace Neurotoxin.Godspeed.Shell.Constants
         [StringValue("220-PS3 FTP Server")]
         PlayStation3,
         [StringValue("220 Microsoft FTP Service")]
-        IIS
+        IIS,
+        [StringValue("220 FtpDll Ready")]
+        Aurora
     }
 }

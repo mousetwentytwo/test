@@ -1,0 +1,13 @@
+LIBRARY FtpDll
+EXPORTS
+	FtpPluginName	@1
+	FtpStart		@2
+	FtpStop			@3
+	FtpIsRunning	@4
+	FtpSetUsername	@5
+	FtpSetPassword	@6
+	FtpSetLogin		@7
+	FtpSetCore		@8
+	FtpAddDrive		@9
+	FtpSetLaunchGame @10
+	FtpSetPort		@11

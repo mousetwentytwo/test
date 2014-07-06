@@ -638,7 +638,7 @@ namespace Neurotoxin.Godspeed.Core.Net {
 
                     FtpTrace.WriteLine(buf);
 
-                    if ((m = Regex.Match(buf, "^(?<code>[0-9]{3}) (?<message>.*)$")).Success) {
+                    if ((m = Regex.Match(buf, "^(?<code>[0-9]{3})[ -](?<message>.*)$")).Success) {
                         reply.Code = m.Groups["code"].Value;
                         reply.Message = m.Groups["message"].Value;
                         break;
@@ -822,7 +822,7 @@ namespace Neurotoxin.Godspeed.Core.Net {
                 // so save some bandwidth and CPU
                 // time and skip executing this again.
                 if (!IsClone) {
-                    if ((reply = Execute("FEAT")).Success && reply.InfoMessages != null) {
+                    if ((reply = Feat()).Success && reply.InfoMessages != null) {
                         GetFeatures(reply);
                     }
                 }
@@ -848,6 +848,22 @@ namespace Neurotoxin.Godspeed.Core.Net {
         {
             var handler = Connected;
             if (handler != null) handler.Invoke(this, new EventArgs());
+        }
+
+        protected virtual FtpReply Feat()
+        {
+            var reply = Execute("FEAT");
+            while (!reply.Message.Trim().EndsWith("END"))
+            {
+                while (m_stream.SocketDataAvailable == 0)
+                {
+                    Thread.Sleep(10);
+                }
+                var nextReply = GetReply();
+                nextReply.InfoMessages = reply.InfoMessages += nextReply.InfoMessages;
+                reply = nextReply;
+            }
+            return reply;
         }
 
         /// <summary>

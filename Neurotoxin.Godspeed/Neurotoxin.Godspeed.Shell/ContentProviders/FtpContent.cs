@@ -121,10 +121,23 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         private void OnConnected(object sender, EventArgs e)
         {
-            var r = FtpClient.Execute("SIZE");
-            if (r.Message.Contains("command not recognized") || r.Message.Contains("command not implemented"))
+            switch (ServerType)
             {
-                _ftpClient.Capabilities &= ~FtpCapability.SIZE;
+                case FtpServerType.F3:
+                case FtpServerType.FSD:
+                case FtpServerType.MinFTPD:
+                case FtpServerType.XeXMenu:
+                case FtpServerType.DashLaunch:
+                case FtpServerType.Aurora:
+                    _ftpClient.Capabilities &= ~FtpCapability.SIZE;
+                    break;
+                default:
+                    var r = FtpClient.Execute("SIZE");
+                    if (r.Message.Contains("command not recognized") || r.Message.Contains("command not implemented"))
+                    {
+                        _ftpClient.Capabilities &= ~FtpCapability.SIZE;
+                    }
+                    break;
             }
         }
 
