@@ -81,7 +81,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             _ftpClient = new FtpClient
                 {
                     EnableThreadSafeDataConnections = false,
-                    DataConnectionType = connection.UsePassiveMode ? FtpDataConnectionType.PASV : FtpDataConnectionType.AutoActive,
+                    DataConnectionType = connection.UsePassiveMode ? FtpDataConnectionType.PASV : FtpDataConnectionType.PORT,
                     Host = connection.Address, 
                     Port = connection.Port,
                     Credentials = !string.IsNullOrEmpty(connection.Username)
@@ -107,8 +107,19 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 }
             }
 
-            if (connection.UsePassiveMode && (ServerType == FtpServerType.XeXMenu || ServerType == FtpServerType.DashLaunch))
-                throw new FtpException(string.Format(Resx.PassiveModeNotSupported, ServerType));
+            switch (ServerType)
+            {
+                case FtpServerType.Aurora:
+                    _ftpClient.DataConnectionType = FtpDataConnectionType.PASV;
+                    break;
+                case FtpServerType.XeXMenu:
+                case FtpServerType.DashLaunch:
+                    _ftpClient.DataConnectionType = FtpDataConnectionType.PORT;
+                    break;
+            }
+
+            //if (connection.UsePassiveMode && (ServerType == FtpServerType.XeXMenu || ServerType == FtpServerType.DashLaunch))
+            //    throw new FtpException(string.Format(Resx.PassiveModeNotSupported, ServerType));
 
             var resume = ResumeCapability.None;
             var r = FtpClient.Execute("APPE");
@@ -121,23 +132,11 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         private void OnConnected(object sender, EventArgs e)
         {
-            switch (ServerType)
+            if (!_ftpClient.Capabilities.HasFlag(FtpCapability.SIZE)) return;
+            var r = FtpClient.Execute("SIZE");
+            if (r.Message.Contains("command not recognized") || r.Message.Contains("command not implemented"))
             {
-                case FtpServerType.F3:
-                case FtpServerType.FSD:
-                case FtpServerType.MinFTPD:
-                case FtpServerType.XeXMenu:
-                case FtpServerType.DashLaunch:
-                case FtpServerType.Aurora:
-                    _ftpClient.Capabilities &= ~FtpCapability.SIZE;
-                    break;
-                default:
-                    var r = FtpClient.Execute("SIZE");
-                    if (r.Message.Contains("command not recognized") || r.Message.Contains("command not implemented"))
-                    {
-                        _ftpClient.Capabilities &= ~FtpCapability.SIZE;
-                    }
-                    break;
+                _ftpClient.Capabilities &= ~FtpCapability.SIZE;
             }
         }
 

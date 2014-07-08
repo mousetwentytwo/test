@@ -170,6 +170,7 @@
     <Compile Include="Constants\TreeTraversalDirection.cs" />
     <Compile Include="ContentProviders\CacheManager.cs" />
     <Compile Include="Controllers\NotificationService.cs" />
+    <Compile Include="Database\Attributes\OrderByAttribute.cs" />
     <Compile Include="Database\OrmLiteDbConnection.cs" />
     <Compile Include="Database\OrmLiteLogFactory.cs" />
     <Compile Include="Database\OrmLiteLogger.cs" />
@@ -226,6 +227,8 @@
     <Compile Include="Extensions\ResourcesExtension.cs" />
     <Compile Include="Helpers\FtpTraceListener.cs" />
     <Compile Include="Database\QueryBuilder.cs" />
+    <Compile Include="Models\UnityItem.cs" />
+    <Compile Include="Models\UnityResponse.cs" />
     <Compile Include="ViewModels\RecognizeFromProfileViewModel.cs" />
     <Compile Include="ViewModels\SanityCheckerViewModel.cs" />
     <Compile Include="Helpers\Web.cs" />

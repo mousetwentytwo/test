@@ -105,15 +105,15 @@ namespace Neurotoxin.Godspeed.Shell.Database.Models
             }
         }
 
-        private bool _useJqe360;
+        private bool _useUnity;
 
-        public bool UseJqe360
+        public bool UseUnity
         {
-            get { return _useJqe360; }
+            get { return _useUnity; }
             set
             {
-                _useJqe360 = value;
-                SetDirtyFlag("UseJqe360");
+                _useUnity = value;
+                SetDirtyFlag("UseUnity");
             }
         }
 
@@ -332,7 +332,7 @@ namespace Neurotoxin.Godspeed.Shell.Database.Models
             UseVersionChecker = true;
             FsdContentScanTrigger = (int) Constants.FsdContentScanTrigger.AfterUpload;
 
-            UseJqe360 = true;
+            UseUnity = true;
             ProfileInvalidation = true;
             PartiallyRecognizedGameExpiration = 7;
             UnrecognizedGameExpiration = 7;

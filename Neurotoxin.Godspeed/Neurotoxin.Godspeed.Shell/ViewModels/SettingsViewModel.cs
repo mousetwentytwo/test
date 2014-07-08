@@ -21,12 +21,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public List<int> ExpirationTimeSpans { get; set; }
 
-        private const string USEJQE360 = "UseJqe360";
-        private bool _useJqe360;
-        public bool UseJqe360
+        private const string USEUNITY = "UseUnity";
+        private bool _useUnity;
+        public bool UseUnity
         {
-            get { return _useJqe360; }
-            set { _useJqe360 = value; NotifyPropertyChanged(USEJQE360); }
+            get { return _useUnity; }
+            set { _useUnity = value; NotifyPropertyChanged(USEUNITY); }
         }
 
         private const string PROFILEEXPIRATION = "ProfileExpiration";
@@ -195,7 +195,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 }
             }).ToList();
 
-            UseJqe360 = _userSettingsProvider.UseJqe360;
+            UseUnity = _userSettingsProvider.UseUnity;
             ProfileExpiration = _userSettingsProvider.ProfileExpiration;
             ProfileInvalidation = _userSettingsProvider.ProfileInvalidation;
             RecognizedGameExpiration = _userSettingsProvider.RecognizedGameExpiration;
@@ -214,7 +214,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public void SaveChanges()
         {
-            _userSettingsProvider.UseJqe360 = UseJqe360;
+            _userSettingsProvider.UseUnity = UseUnity;
             _userSettingsProvider.ProfileExpiration = ProfileExpiration;
             _userSettingsProvider.ProfileInvalidation = ProfileInvalidation;
             _userSettingsProvider.RecognizedGameExpiration = RecognizedGameExpiration;

@@ -374,8 +374,8 @@
   <data name="ContentRecognition" xml:space="preserve">
     <value>Content recognition</value>
   </data>
-  <data name="UseJQE360" xml:space="preserve">
-    <value>Use jqe360.com for game recognition</value>
+  <data name="UseUnity" xml:space="preserve">
+    <value>Use xboxunity.net for game recognition</value>
   </data>
   <data name="CacheExpiration" xml:space="preserve">
     <value>Cache expiration</value>

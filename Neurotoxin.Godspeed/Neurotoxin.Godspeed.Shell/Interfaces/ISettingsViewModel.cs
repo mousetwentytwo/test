@@ -6,7 +6,7 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
 {
     public interface ISettingsViewModel
     {
-        bool UseJqe360 { get; set; }
+        bool UseUnity { get; set; }
         int ProfileExpiration { get; set; }
         bool ProfileInvalidation { get; set; }
         int RecognizedGameExpiration { get; set; }

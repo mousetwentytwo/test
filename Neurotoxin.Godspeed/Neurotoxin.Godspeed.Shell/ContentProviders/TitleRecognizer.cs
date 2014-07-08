@@ -17,6 +17,7 @@ using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
 using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
+using ServiceStack;
 
 namespace Neurotoxin.Godspeed.Shell.ContentProviders
 {
@@ -161,7 +162,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                     } 
                     else
                     {
-                        if (!GetGameData(item) && _userSettingsProvider.UseJqe360) GetGameDataFromJqe360(item);
+                        if (!GetGameData(item) && _userSettingsProvider.UseUnity) GetGameDataFromUnity(item);
                     }
                     cacheItem = SaveGameCache(cacheKey, item);
                     break;
@@ -385,33 +386,55 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             return infoFileFound;
         }
 
-        private bool GetGameDataFromJqe360(FileSystemItem item)
+        private bool GetGameDataFromUnity(FileSystemItem item)
         {
-            var request = WebRequest.Create(string.Format("http://covers.jqe360.com/main.php?search={0}", item.Name));
             string title = null;
+            byte[] thumbnail = null;
             var result = false;
             try
             {
+                var request = WebRequest.Create(string.Format("http://xboxunity.net/Resources/Lib/TitleList.php?search={0}", item.Name));
                 var response = request.GetResponse();
                 var stream = response.GetResponseStream();
                 if (stream != null)
                 {
                     var responseReader = new StreamReader(stream);
-                    var htmlText = responseReader.ReadToEnd();
-                    var regex = new Regex(string.Format("Title: .*?>(.*?)<.*?TitleID: {0}", item.Name), RegexOptions.IgnoreCase);
-                    title = regex.Match(htmlText).Groups[1].Value;
-                    result = !string.IsNullOrEmpty(title.Trim());
+                    var json = responseReader.ReadToEnd();
+                    var unityResponse = json.FromJson<UnityResponse>();
+                    var firstResult = unityResponse.Items.FirstOrDefault();
+                    title = firstResult != null ? firstResult.Name.Trim() : null;
+                    result = !string.IsNullOrEmpty(title);
+                    if (result)
+                    {
+                        request = WebRequest.Create(string.Format("http://xboxunity.net/Resources/Lib/Icon.php?tid={0}", item.Name));
+                        response = request.GetResponse();
+                        stream = response.GetResponseStream();
+                        if (stream != null && response.ContentType == "image/png")
+                        {
+                            var ms = new MemoryStream();
+                            stream.CopyTo(ms);
+                            thumbnail = ms.GetBuffer();
+                        }
+                    }
                 }
             }
             catch {}
 
             if (result)
             {
-                UIThread.Run(() => _eventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(new NotifyUserMessageEventArgs("PartialRecognitionMessage", MessageIcon.Warning)));
                 item.Title = title;
-                item.RecognitionState = RecognitionState.PartiallyRecognized;
+                if (thumbnail != null)
+                {
+                    item.Thumbnail = thumbnail;
+                    item.RecognitionState = RecognitionState.Recognized;
+                } 
+                else
+                {
+                    UIThread.Run(() => _eventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(new NotifyUserMessageEventArgs("PartialRecognitionMessage", MessageIcon.Warning)));
+                    item.Thumbnail = _resourceManager.GetContentByteArray("/Resources/xbox_logo.png");
+                    item.RecognitionState = RecognitionState.PartiallyRecognized;
+                }
             }
-            item.Thumbnail = _resourceManager.GetContentByteArray("/Resources/xbox_logo.png");
             return result;
         }
 

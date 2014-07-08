@@ -1,4 +1,7 @@
-﻿using Neurotoxin.Godspeed.Shell.Interfaces;
+﻿using System.ComponentModel;
+using Neurotoxin.Godspeed.Shell.Constants;
+using Neurotoxin.Godspeed.Shell.Database.Attributes;
+using Neurotoxin.Godspeed.Shell.Interfaces;
 using ServiceStack.DataAnnotations;
 
 namespace Neurotoxin.Godspeed.Shell.Database.Models
@@ -12,6 +15,7 @@ namespace Neurotoxin.Godspeed.Shell.Database.Models
 
         private string _name;
         [Index]
+        [OrderBy(ListSortDirection.Ascending)]
         [StringLength(255)]
         public string Name
         {
@@ -94,10 +98,11 @@ namespace Neurotoxin.Godspeed.Shell.Database.Models
             set { _httpPassword = value; SetDirtyFlag("HttpPassword"); }
         }
 
-        public FtpConnection Clone()
+        public FtpConnection Clone(ItemState? itemState = null)
         {
             return new FtpConnection
                        {
+                           Id = Id,
                            Name = Name,
                            ConnectionImage = ConnectionImage,
                            Address = Address,
@@ -108,7 +113,8 @@ namespace Neurotoxin.Godspeed.Shell.Database.Models
                            UsePassiveMode = UsePassiveMode,
                            IsHttpAccessDisabled = IsHttpAccessDisabled,
                            HttpUsername = HttpUsername,
-                           HttpPassword = HttpPassword
+                           HttpPassword = HttpPassword,
+                           ItemState = itemState ?? ItemState
                        };
         }
     }

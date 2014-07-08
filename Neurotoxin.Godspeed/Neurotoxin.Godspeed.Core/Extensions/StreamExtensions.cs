@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -8,9 +7,6 @@ using System.Text;
 using System.IO;
 using Neurotoxin.Godspeed.Core.Attributes;
 using Neurotoxin.Godspeed.Core.Constants;
-using Neurotoxin.Godspeed.Core.Io;
-using Neurotoxin.Godspeed.Core.Io.Gpd.Entries;
-using Neurotoxin.Godspeed.Core.Io.Stfs.Data;
 using Neurotoxin.Godspeed.Core.Models;
 
 namespace Neurotoxin.Godspeed.Core.Extensions
@@ -18,6 +14,18 @@ namespace Neurotoxin.Godspeed.Core.Extensions
     public static class StreamExtensions
     {
         private static readonly Type ModelInterface = typeof (IBinaryModel);
+
+        //public static byte[] ReadToEnd(this Stream fs)
+        //{
+        //    var result = new byte[fs.Length];
+        //    var pos = 0;
+        //    int size;
+        //    while ((size = fs.Read(result, pos, 0xFFFF)) > 0)
+        //    {
+        //        pos += size;
+        //    }
+        //    return result;
+        //}
 
         public static byte[] ReadBytes(this Stream fs, int length)
         {

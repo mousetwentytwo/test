@@ -2556,15 +2556,6 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Use jqe360.com for game recognition.
-        /// </summary>
-        internal static string UseJQE360 {
-            get {
-                return ResourceManager.GetString("UseJQE360", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Use Passive Mode (Please note that XeXMenu and DashLaunch doesn&apos;t support PASV!).
         /// </summary>
         internal static string UsePassiveMode {
@@ -2626,6 +2617,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         internal static string UserStatisticsParticipationContent {
             get {
                 return ResourceManager.GetString("UserStatisticsParticipationContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use xboxunity.net for game recognition.
+        /// </summary>
+        internal static string UseUnity {
+            get {
+                return ResourceManager.GetString("UseUnity", resourceCulture);
             }
         }
         

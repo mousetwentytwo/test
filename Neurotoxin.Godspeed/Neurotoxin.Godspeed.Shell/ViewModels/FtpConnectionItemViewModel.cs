@@ -108,7 +108,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public FtpConnectionItemViewModel Clone()
         {
-            return new FtpConnectionItemViewModel(Model.Clone());
+            return new FtpConnectionItemViewModel(Model.Clone(ItemState.Persisted));
         }
     }
 }

@@ -40,11 +40,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             sw.Start();
             using (var db = _dbContext.Open())
             {
-                db.Get<CacheItem>().ForEach(ci =>
-                                                {
-                                                    _inMemoryCache.Add(ci.Id, ci);
-                                                    ci.Persisted();
-                                                });
+                db.Get<CacheItem>(ci => _inMemoryCache.Add(ci.Id, ci));
             }
             sw.Stop();
             Debug.WriteLine("[CACHE] Populated in {0}. Item count: {1}", sw.Elapsed, _inMemoryCache.Count);
@@ -64,22 +60,10 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             if (!dirties.Any()) return;
             using (var db = _dbContext.Open(true))
             {
-                for (int i = 0; i < dirties.Count; i++)
+                foreach (var item in dirties)
                 {
-                    var item = dirties[i];
-                    switch (item.ItemState)
-                    {
-                        case ItemState.New:
-                            db.Save(item);
-                            break;
-                        case ItemState.Dirty:
-                            db.UpdateOnly(item, item.DirtyFields.ToList());
-                            break;
-                        case ItemState.Deleted:
-                            db.Delete(item);
-                            break;
-                    }
-                    Debug.WriteLine("[{0}] {1}", i, db.GetLastSql());
+                    db.Persist(item);
+                    //Debug.WriteLine("[{0}] {1}", i, db.GetLastSql());
                 }
             }
             dirties.ForEach(item => item.Persisted());
@@ -172,8 +156,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         {
             using (var db = _dbContext.Open())
             {
-                var item = db.ReadField<CacheItem>(key.Hash(), "Content");
-                return item.Content;
+                return db.ReadField<CacheItem, byte[]>(key.Hash(), "Content");
             }
         }
 

@@ -120,7 +120,7 @@ namespace Neurotoxin.Godspeed.Shell.Controllers
 
         public bool Confirm(string title, string message)
         {
-            return new ConfirmationDialog(title, message).ShowDialog() != true;
+            return new ConfirmationDialog(title, message).ShowDialog() == true;
         }
 
         public bool ActivateWindowOf<TViewModel>()

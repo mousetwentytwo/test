@@ -136,7 +136,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             using (var db = _dbContext.Open())
             {
-                db.Save(_statistics);    
+                db.Persist(_statistics);
             }
         }
 

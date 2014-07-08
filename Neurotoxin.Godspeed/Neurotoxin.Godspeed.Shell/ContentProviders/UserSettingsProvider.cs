@@ -61,10 +61,10 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             set { _userSettings.UseRemoteCopy = value; }
         }
 
-        public bool UseJqe360
+        public bool UseUnity
         {
-            get { return _userSettings.UseJqe360; }
-            set { _userSettings.UseJqe360 = value; }
+            get { return _userSettings.UseUnity; }
+            set { _userSettings.UseUnity = value; }
         }
 
         public int ProfileExpiration
@@ -168,7 +168,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         {
             using (var db = _dbContext.Open())
             {
-                db.Save(_userSettings);    
+                db.Persist(_userSettings);
             }
         }
 

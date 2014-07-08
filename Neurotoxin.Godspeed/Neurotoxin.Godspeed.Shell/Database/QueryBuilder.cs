@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using Neurotoxin.Godspeed.Core.Extensions;
@@ -9,26 +10,30 @@ namespace Neurotoxin.Godspeed.Shell.Database
 {
     public class QueryBuilder<T>
     {
+        private readonly string _primaryKey;
+        private readonly Type _primaryKeyType;
+        private readonly StringBuilder _stringBuilder = new StringBuilder();
+        private const string Comma = ",";
+        private const string Before = " \"";
+        private const string After = "\"";
+        private bool _isSelectSet;
+        private bool _isWhereSet;
+
         public Type TableType { get; private set; }
-        public string PrimaryKey { get; private set; }
-        public Type PrimaryKeyType { get; private set; }
 
         public QueryBuilder()
         {
             TableType = typeof (T);
             var pk = TableType.GetProperties().FirstOrDefault(pi => pi.HasAttribute<PrimaryKeyAttribute>());
             if (pk == null) return;
-            PrimaryKey = pk.Name;
-            PrimaryKeyType = pk.PropertyType;
+            _primaryKey = pk.Name;
+            _primaryKeyType = pk.PropertyType;
         }
 
-        public string Build(string key, params string[] fieldNames)
+        public QueryBuilder<T> Select(params string[] fieldNames)
         {
-            const string comma = ",";
-            const string before = " \"";
-            const string after = "\"";
-            var sb = new StringBuilder("SELECT");
-
+            _isSelectSet = true;
+            _stringBuilder.Append("SELECT");
             if (fieldNames.Length == 0)
             {
                 fieldNames = (from pi in TableType.GetProperties()
@@ -40,30 +45,52 @@ namespace Neurotoxin.Godspeed.Shell.Database
             var first = true;
             foreach (var fieldName in fieldNames)
             {
-                if (!first) sb.Append(comma);
-                sb.Append(before);
-                sb.Append(fieldName);
-                sb.Append(after);
+                if (!first) _stringBuilder.Append(Comma);
+                _stringBuilder.Append(Before);
+                _stringBuilder.Append(fieldName);
+                _stringBuilder.Append(After);
                 first = false;
             }
+            _stringBuilder.Append(" FROM \"");
+            _stringBuilder.Append(TableType.Name);
+            _stringBuilder.Append(After);
 
-            sb.Append(" FROM \"");
-            sb.Append(TableType.Name);
-            sb.Append(after);
+            return this;
+        }
 
-            if (!string.IsNullOrEmpty(key) && PrimaryKey != null)
+        public QueryBuilder<T> ById(object key)
+        {
+            EnsureWhere();
+            var isString = _primaryKeyType == typeof(string);
+            _stringBuilder.Append(Before);
+            _stringBuilder.Append(_primaryKey);
+            _stringBuilder.Append("\" = ");
+            if (isString) _stringBuilder.Append("'");
+            _stringBuilder.Append(key);
+            if (isString) _stringBuilder.Append("'");
+
+            return this;
+        } 
+
+        private void EnsureWhere()
+        {
+            if (_isWhereSet) return;
+            _stringBuilder.Append(" WHERE");
+            _isWhereSet = true;
+        }
+
+        public string Build()
+        {
+            if (!_isSelectSet) Select();
+            OrderByAttribute attribute = null;
+            var orderBy = TableType.GetProperties().FirstOrDefault(pi => (attribute = pi.GetAttribute<OrderByAttribute>()) != null);
+            if (orderBy != null)
             {
-                var isString = PrimaryKeyType == typeof (string);
-                sb.Append(" WHERE \"");
-                sb.Append(PrimaryKey);
-                sb.Append("\" = ");
-                if (isString) sb.Append("'");
-                sb.Append(key);
-                if (isString) sb.Append("'");
+                _stringBuilder.Append(" ORDER BY ");
+                _stringBuilder.Append(orderBy.Name);
+                if (attribute.Direction == ListSortDirection.Descending) _stringBuilder.Append(" DESC");
             }
-
-            return sb.ToString();
-            
+            return _stringBuilder.ToString();
         }
     }
 }

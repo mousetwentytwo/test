@@ -14,7 +14,7 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
         bool VerifyFileHashAfterFtpUpload { get; set; }
         FsdContentScanTrigger FsdContentScanTrigger { get; set; }
         bool UseRemoteCopy { get; set; }
-        bool UseJqe360 { get; set; }
+        bool UseUnity { get; set; }
         int ProfileExpiration { get; set; }
         bool ProfileInvalidation { get; set; }
         int RecognizedGameExpiration { get; set; }

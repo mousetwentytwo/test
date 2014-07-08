@@ -30,8 +30,7 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
-                    <CheckBox Grid.Row="0" Content="{lex:LocText UseJQE360}"
-                         IsChecked="{Binding UseJqe360}" Margin="0,0,0,10" x:Name="UseJqe360" />
+                    <CheckBox Grid.Row="0" Content="{lex:LocText UseUnity}" IsChecked="{Binding UseUnity}" Margin="0,0,0,10" x:Name="UseUnity" />
                     
                     <GroupBox Header="{lex:LocText CacheExpiration}"
                          Grid.Row="1">
@@ -65,7 +64,7 @@
                             <TextBlock Grid.Row="3" Text="{lex:LocText PartiallyRecognizedGame}" VerticalAlignment="Center" />
                             <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding ExpirationTimeSpans}"
                                  SelectedItem="{Binding PartiallyRecognizedGameExpiration}" VerticalAlignment="Center"
-                                 ItemTemplate="{StaticResource ExpirationTimeSpanTemplate}" IsEnabled="{Binding ElementName=UseJqe360, Path=IsChecked}" />
+                                 ItemTemplate="{StaticResource ExpirationTimeSpanTemplate}" IsEnabled="{Binding ElementName=UseUnity, Path=IsChecked}" />
 
                             <TextBlock Grid.Row="4" Text="{lex:LocText UnrecognizedGame}" VerticalAlignment="Center" />
                             <ComboBox Grid.Row="4" Grid.Column="1" ItemsSource="{Binding ExpirationTimeSpans}"

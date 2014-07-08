@@ -303,7 +303,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     userSettings.UseRemoteCopy = cacheStore.Get<bool>(key);
                     break;
                 case "UseJqe360":
-                    userSettings.UseJqe360 = cacheStore.Get<bool>(key);
+                    userSettings.UseUnity = cacheStore.Get<bool>(key);
                     break;
                 case "ProfileInvalidation":
                     userSettings.ProfileInvalidation = cacheStore.Get<bool>(key);

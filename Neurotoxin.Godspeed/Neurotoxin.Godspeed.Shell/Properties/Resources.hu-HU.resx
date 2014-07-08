@@ -651,8 +651,8 @@
   <data name="AddNewFolder" xml:space="preserve">
     <value>Új Mappa létrehozása</value>
   </data>
-  <data name="UseJQE360" xml:space="preserve">
-    <value>A jqe360.com használata a játékok felismeréséhez</value>
+  <data name="UseUnity" xml:space="preserve">
+    <value>A xboxunity.net használata a játékok felismeréséhez</value>
   </data>
   <data name="UsePassiveMode" xml:space="preserve">
     <value>Passzív mód (Figyelem, a XexMenu és a DashLaunch nem támogatja!)</value>

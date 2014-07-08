@@ -9,7 +9,7 @@ namespace Neurotoxin.Godspeed.Shell.Database.Models
     public abstract class ModelBase
     {
         [Ignore]
-        public ItemState ItemState { get; private set; }
+        public ItemState ItemState { get; set; }
         
         [Ignore]
         public HashSet<string> DirtyFields { get; private set; }
