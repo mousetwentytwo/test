@@ -16,8 +16,10 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
         void ShowMessage(string title, string message, NotificationMessageFlags flags = NotificationMessageFlags.None);
         void CloseMessage();
 
-        string ShowTextInputDialog(string title, string message, string defaultValue, IList<InputDialogOptionViewModel> options = null);
+        string ShowTextInputDialog(string title, string message, string defaultValue, IList<InputDialogOptionViewModel> options);
+        object ShowListInputDialog(string title, string message, object defaultValue, IList<InputDialogOptionViewModel> options);
         bool ShowTreeSelectorDialog(ITreeSelectionViewModel viewModel);
+        LoginDialogResult ShowLoginDialog(ILoginViewModel viewModel);
         bool Confirm(string title, string message);
         bool ActivateWindowOf<TViewModel>();
         bool CloseWindowOf<TViewModel>();

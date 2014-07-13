@@ -201,7 +201,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     DisplayName = TitleRecognizer.GetTitle(d)
                 }).ToList();
 
-            var name = InputDialog.ShowText(Resx.AddNewFolder, Resx.FolderName + Strings.Colon, string.Empty, suggestion);
+            var name = WindowManager.ShowTextInputDialog(Resx.AddNewFolder, Resx.FolderName + Strings.Colon, string.Empty, suggestion);
             if (name == null) return;
             if (name == string.Empty)
             {
@@ -240,9 +240,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #region DeleteCommand
 
-        public DelegateCommand DeleteCommand { get; private set; }
+        public DelegateCommand<IEnumerable<FileSystemItem>> DeleteCommand { get; private set; }
 
-        private bool CanExecuteDeleteCommand()
+        private bool CanExecuteDeleteCommand(IEnumerable<FileSystemItem> queue)
         {
             var connections = ActivePane as ConnectionsViewModel;
             if (connections != null)
@@ -253,7 +253,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             return SourcePane != null && SourcePane.HasValidSelection && !SourcePane.IsBusy && !SourcePane.IsReadOnly && !SourcePane.IsInEditMode;
         }
 
-        private void ExecuteDeleteCommand()
+        private void ExecuteDeleteCommand(IEnumerable<FileSystemItem> queue)
         {
             var connections = ActivePane as ConnectionsViewModel;
             if (!ConfirmCommand(FileOperation.Delete, connections == null && SourcePane.SelectedItems.Count() > 1)) return;
@@ -263,10 +263,14 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
             else
             {
-                _transferManager.Delete(SourcePane);
+                _transferManager.Delete(SourcePane, queue);
             }
         }
 
+        public void Delete(IEnumerable<FileSystemItem> queue)
+        {
+            DeleteCommand.Execute(queue);
+        }
 
         #endregion
 
@@ -328,7 +332,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             CopyCommand = new DelegateCommand(ExecuteCopyCommand, CanExecuteCopyCommand);
             MoveCommand = new DelegateCommand(ExecuteMoveCommand, CanExecuteMoveCommand);
             NewFolderCommand = new DelegateCommand(ExecuteNewFolderCommand, CanExecuteNewFolderCommand);
-            DeleteCommand = new DelegateCommand(ExecuteDeleteCommand, CanExecuteDeleteCommand);
+            DeleteCommand = new DelegateCommand<IEnumerable<FileSystemItem>>(ExecuteDeleteCommand, CanExecuteDeleteCommand);
             OpenUserMessageCommand = new DelegateCommand<UserMessageCommandParameter>(ExecuteOpenUserMessageCommand);
             RemoveUserMessageCommand = new DelegateCommand<UserMessageViewModel>(ExecuteRemoveUserMessageCommand);
 

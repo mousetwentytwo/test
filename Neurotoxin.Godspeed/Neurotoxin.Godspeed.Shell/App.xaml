@@ -44,6 +44,7 @@
                     <co:BoolToVisibilityConverter x:Key="BoolToVis"/>
                     <co:NotNullOrEmptyConverter x:Key="NotNullOrEmptyConverter"/>
                     <co:StringFormatter x:Key="StringFormatter"/>
+                    <co:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
                     <converters:SizeConverter x:Key="SizeConverter"/>
                     <converters:TitleConverter x:Key="TitleConverter"/>
                     <converters:NameConverter x:Key="NameConverter"/>
@@ -299,44 +300,39 @@
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
 
-                    <!-- SubmenuHeader -->
+                    <!-- FileSystemItemTitleTemplate -->
 
-                    <!--<ControlTemplate TargetType="MenuItem" x:Key="SubmenuHeaderTemplate">
-                        <Border Name="Border">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" SharedSizeGroup="Icon"/>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" SharedSizeGroup="Shortcut"/>
-                                    <ColumnDefinition Width="13"/>
-                                </Grid.ColumnDefinitions>
-                                <ContentPresenter Name="Icon" Margin="6,0,6,0" VerticalAlignment="Center" ContentSource="Icon"/>
-                                <ContentPresenter Name="HeaderHost" Grid.Column="1" ContentSource="Header" RecognizesAccessKey="True"/>
-                                <TextBlock x:Name="InputGestureText" Grid.Column="2" Text="{TemplateBinding InputGestureText}" Margin="5,2,2,2" DockPanel.Dock="Right"/>
-                                <Path Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center" Data="M 0 0 L 0 7 L 4 3.5 Z" Fill="{StaticResource MenuGlyphBrush}" />
-                                <Popup Name="Popup" Placement="Right" HorizontalOffset="-4" IsOpen="{TemplateBinding IsSubmenuOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Fade">
-                                    <Border Name="SubmenuBorder" SnapsToDevicePixels="True" Background="{StaticResource WindowBackgroundBrush}" BorderBrush="{StaticResource NormalBorderBrush}" BorderThickness="1">
-                                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
-                                    </Border>
-                                </Popup>
-                            </Grid>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="Icon" Value="{x:Null}">
-                                <Setter TargetName="Icon" Property="Visibility" Value="Collapsed"/>
-                            </Trigger>
-                            <Trigger Property="IsHighlighted" Value="true">
-                                <Setter TargetName="Border" Property="Background" Value="{StaticResource MenuHighlight2}"/>
-                            </Trigger>
-                            <Trigger SourceName="Popup" Property="Popup.AllowsTransparency" Value="True">
-                                <Setter TargetName="SubmenuBorder" Property="CornerRadius" Value="4"/>
-                                <Setter TargetName="SubmenuBorder" Property="Padding" Value="0,3,0,3"/>
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="false">
-                                <Setter Property="Foreground" Value="{StaticResource DisabledForegroundBrush}"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>-->
+                    <DataTemplate x:Key="FileSystemItemTitleTemplate">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="{Binding Thumbnail}" Width="16" Height="16" Margin="2,0,3,0" />
+                            <TextBlock FontWeight="Bold" x:Name="Primary">
+                                    <TextBlock.Text>
+                                        <MultiBinding Converter="{StaticResource TitleConverter}">
+                                            <Binding Path="Title" />
+                                            <Binding Path="Name" />
+                                            <Binding Path="Type" />
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                            </TextBlock>
+                            <Image Source="/Resources/fileaccesserror.png" Width="11" Height="16" Margin="0" 
+                                        Visibility="{Binding IsLocked, Converter={StaticResource BoolToVis}}"
+                                        ToolTip="{Binding LockMessage}" />
+                            <TextBlock Opacity="0.4" x:Name="Secondary">
+                                    <TextBlock.Text>
+                                        <MultiBinding Converter="{StaticResource NameConverter}">
+                                            <Binding Path="Title" />
+                                            <Binding Path="Name" />
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                            </TextBlock>
+                        </StackPanel>
+                        <DataTemplate.Triggers>
+                            <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                <Setter TargetName="Primary" Property="Foreground" Value="Red" />
+                                <Setter TargetName="Secondary" Property="Foreground" Value="Red" />
+                            </DataTrigger>
+                        </DataTemplate.Triggers>
+                    </DataTemplate>
 
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>

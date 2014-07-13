@@ -47,16 +47,26 @@ namespace Neurotoxin.Godspeed.Shell.Tests.Dummies
             Console.WriteLine("[Close Message]");
         }
 
-        public string ShowTextInputDialog(string title, string message, string defaultValue, IList<InputDialogOptionViewModel> options = null)
+        public string ShowTextInputDialog(string title, string message, string defaultValue, IList<InputDialogOptionViewModel> options)
         {
             Console.WriteLine("[Input] Title: {0} Message: {1}, Value: {2}", title, message, defaultValue);
             if (options != null) return options.Random().Value.ToString();
             return C.Random<string>();
         }
 
+        public object ShowListInputDialog(string title, string message, object defaultValue, IList<InputDialogOptionViewModel> options)
+        {
+            throw new NotImplementedException();
+        }
+
         public bool ShowTreeSelectorDialog(ITreeSelectionViewModel viewModel)
         {
             return true;
+        }
+
+        public LoginDialogResult ShowLoginDialog(ILoginViewModel viewModel)
+        {
+            throw new NotImplementedException();
         }
 
         public bool IsMessageIgnored(string message)

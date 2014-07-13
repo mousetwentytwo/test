@@ -655,7 +655,7 @@
     <value>A xboxunity.net használata a játékok felismeréséhez</value>
   </data>
   <data name="UsePassiveMode" xml:space="preserve">
-    <value>Passzív mód (Figyelem, a XexMenu és a DashLaunch nem támogatja!)</value>
+    <value>Passzív mód</value>
   </data>
   <data name="UseRemoteCopy" xml:space="preserve">
     <value>Távoli Másolás használata NAS és FTP között, ha lehetséges</value>
@@ -845,9 +845,6 @@
   <data name="ReparsePointCannotBeAccessed" xml:space="preserve">
     <value>A csatlakozási ponthoz nem lehet hozzáférni. Próbáld meg rendszergazdaként indítani a programot, vagy kapcsold ki a Felhasználói fiókok felügyeletét (UAC).</value>
   </data>
-  <data name="PassiveModeNotSupported" xml:space="preserve">
-    <value>A {0} nem támogatja a Passzív módot.</value>
-  </data>
   <data name="CannotCreateFolderWithNoName" xml:space="preserve">
     <value>Név nélküli mappát nem lehet létrehozni!</value>
   </data>
@@ -964,5 +961,11 @@
   </data>
   <data name="PossibleLeftovers" xml:space="preserve">
     <value>Lehetséges szemetek</value>
+  </data>
+  <data name="UseDefault" xml:space="preserve">
+    <value>Alapértelmezett jelszó használata</value>
+  </data>
+  <data name="Default" xml:space="preserve">
+    <value>Alapértelmezett</value>
   </data>
 </root>

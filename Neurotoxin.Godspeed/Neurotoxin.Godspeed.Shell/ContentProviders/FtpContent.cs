@@ -84,29 +84,72 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                     DataConnectionType = connection.UsePassiveMode ? FtpDataConnectionType.PASV : FtpDataConnectionType.PORT,
                     Host = connection.Address, 
                     Port = connection.Port,
-                    Credentials = !string.IsNullOrEmpty(connection.Username)
-                        ? new NetworkCredential(connection.Username, connection.Password)
-                        : new NetworkCredential("anonymous", "no@email.com")
+                    //Credentials = !string.IsNullOrEmpty(connection.Username)
+                    //    ? new NetworkCredential(connection.Username, connection.Password)
+                    //    : new NetworkCredential("anonymous", "no@email.com")
                 };
             FtpTrace.AddListener(TraceListener);
 
             _connection = connection;
+            _ftpClient.BeforeAuthentication += OnBeforeAuthentication;
             _ftpClient.Connected += OnConnected;
             _ftpClient.Connect();
 
-            lock (Log)
+            //lock (Log)
+            //{
+            //    foreach (var log in Log.Where(e => e.StartsWith("220")))
+            //    {
+            //        FtpServerType type;
+            //        if (EnumHelper.TryGetField(log.Trim(), out type))
+            //        {
+            //            ServerType = type;
+            //            break;
+            //        }
+            //    }
+            //}
+
+            var resume = ResumeCapability.None;
+            var r = FtpClient.Execute("APPE");
+            if (!r.Message.Contains("command not recognized")) resume |= ResumeCapability.Append;
+
+            r = FtpClient.Execute("REST");
+            if (!r.Message.Contains("command not recognized")) resume |= ResumeCapability.Restart;
+            return resume;
+        }
+
+        private void OnBeforeAuthentication(object sender, EventArgs eventArgs)
+        {
+            var ftp = (FtpClient) sender;
+
+            FtpServerType type;
+            EnumHelper.TryGetField(_ftpClient.ServerName.Trim(), out type);
+            ServerType = type;
+
+            if (string.IsNullOrEmpty(_connection.Username))
             {
-                foreach (var log in Log.Where(e => e.StartsWith("220")))
+                switch (type)
                 {
-                    FtpServerType type;
-                    if (EnumHelper.TryGetField(log.Trim(), out type))
-                    {
-                        ServerType = type;
+                    case FtpServerType.Aurora:
+                        ftp.Credentials = new NetworkCredential("xboxftp", "xboxftp");
                         break;
-                    }
+                    case FtpServerType.MinFTPD:
+                    case FtpServerType.FSD:
+                    case FtpServerType.F3:
+                    case FtpServerType.XeXMenu:
+                    case FtpServerType.DashLaunch:
+                        ftp.Credentials = new NetworkCredential("xbox", "xbox");
+                        break;
+                    default:
+                        ftp.Credentials = new NetworkCredential("anonymous", "no@email.com");
+                        break;
                 }
             }
+            else
+            {
+                ftp.Credentials = new NetworkCredential(_connection.Username, _connection.Password);    
+            }
 
+            //override user settings in case of these server types
             switch (ServerType)
             {
                 case FtpServerType.Aurora:
@@ -117,17 +160,6 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                     _ftpClient.DataConnectionType = FtpDataConnectionType.PORT;
                     break;
             }
-
-            //if (connection.UsePassiveMode && (ServerType == FtpServerType.XeXMenu || ServerType == FtpServerType.DashLaunch))
-            //    throw new FtpException(string.Format(Resx.PassiveModeNotSupported, ServerType));
-
-            var resume = ResumeCapability.None;
-            var r = FtpClient.Execute("APPE");
-            if (!r.Message.Contains("command not recognized")) resume |= ResumeCapability.Append;
-
-            r = FtpClient.Execute("REST");
-            if (!r.Message.Contains("command not recognized")) resume |= ResumeCapability.Restart;
-            return resume;
         }
 
         private void OnConnected(object sender, EventArgs e)
@@ -371,6 +403,19 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 default:
                     throw new NotSupportedException("Invalid FileAccess: " + access);
             }
+        }
+
+        protected override bool HandleCopyStreamExceptions(Exception ex, bool isAborted)
+        {
+            if (ex is FtpException && isAborted)
+            {
+                switch (ServerType)
+                {
+                    case FtpServerType.Aurora:
+                        return ex.Message == "Connection interrupted";
+                }
+            }
+            return false;
         }
 
         protected override void AbortStream(Stream stream)

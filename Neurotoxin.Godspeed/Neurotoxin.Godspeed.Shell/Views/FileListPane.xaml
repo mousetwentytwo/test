@@ -160,47 +160,9 @@
                   Focusable="False"
                   ClipboardCopyMode="None" 
                   BorderBrush="{StaticResource NormalBorderBrush}">
-            <DataGrid.Resources>
-                <Style TargetType="{x:Type TextBlock}" x:Key="CellText">
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                            <Setter Property="Foreground" Value="Red" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </DataGrid.Resources>
             <DataGrid.Columns>
-                <DataGridTemplateColumn Header="{lex:LocText Neurotoxin.Godspeed.Shell:Resources:Name}" SortMemberPath="ComputedName" Width="*" IsReadOnly="True" CellEditingTemplateSelector="{StaticResource CellEditingTemplateSelector}">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Grid Background="Transparent">
-                                <StackPanel Orientation="Horizontal">
-                                    <Image Source="{Binding Thumbnail}" Width="16" Height="16" Margin="2,0,3,0" />
-                                    <TextBlock FontWeight="Bold" Style="{StaticResource CellText}">
-                                        <TextBlock.Text>
-                                            <MultiBinding Converter="{StaticResource TitleConverter}">
-                                                <Binding Path="Title" />
-                                                <Binding Path="Name" />
-                                                <Binding Path="Type" />
-                                            </MultiBinding>
-                                        </TextBlock.Text>
-                                    </TextBlock>
-                                    <Image Source="/Resources/fileaccesserror.png" Width="11" Height="16" Margin="0" 
-                                           Visibility="{Binding IsLocked, Converter={StaticResource BoolToVis}}"
-                                           ToolTip="{Binding LockMessage}" />
-                                    <TextBlock Opacity="0.4" Style="{StaticResource CellText}">
-                                        <TextBlock.Text>
-                                            <MultiBinding Converter="{StaticResource NameConverter}">
-                                                <Binding Path="Title" />
-                                                <Binding Path="Name" />
-                                            </MultiBinding>
-                                        </TextBlock.Text>
-                                    </TextBlock>
-                                </StackPanel>
-                            </Grid>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="{lex:LocText Neurotoxin.Godspeed.Shell:Resources:Name}" SortMemberPath="ComputedName" Width="*" IsReadOnly="True" 
+                                        CellEditingTemplateSelector="{StaticResource CellEditingTemplateSelector}" CellTemplate="{StaticResource FileSystemItemTitleTemplate}"/>
                 <DataGridTextColumn Header="{lex:LocText Neurotoxin.Godspeed.Shell:Resources:Size}" SortMemberPath="ComputedSize" Width="80" IsReadOnly="True">
                     <DataGridTextColumn.Binding>
                         <MultiBinding Converter="{StaticResource SizeConverter}">

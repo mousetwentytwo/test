@@ -448,6 +448,8 @@ namespace Neurotoxin.Godspeed.Core.Net {
             }
         }
 
+        public string ServerName { get; private set; }
+
         FtpHashAlgorithm m_hashAlgorithms = FtpHashAlgorithm.NONE;
         /// <summary>
         /// Get the hash types supported by the server, if any. This
@@ -747,6 +749,7 @@ namespace Neurotoxin.Godspeed.Core.Net {
         }
 
         public event EventHandler Connected;
+        public event EventHandler BeforeAuthentication;
 
         /// <summary>
         /// Connect to the server. Throws ObjectDisposedException if this object has been disposed.
@@ -790,7 +793,12 @@ namespace Neurotoxin.Godspeed.Core.Net {
                     m_stream.ActivateEncryption(Host,
                         m_clientCerts.Count > 0 ? m_clientCerts : null);
 
-                if (!(reply = GetReply()).Success) {
+                if ((reply = GetReply()).Success)
+                {
+                    ServerName = reply.Message;
+                } 
+                else 
+                {
                     if (reply.Code == null) {
                         throw new IOException("The connection was terminated before a greeting could be read.");
                     }
@@ -805,6 +813,8 @@ namespace Neurotoxin.Godspeed.Core.Net {
                     m_stream.ActivateEncryption(Host,
                         m_clientCerts.Count > 0 ? m_clientCerts : null);
                 }
+
+                OnBeforeAuthentication();
 
                 if (m_credentials != null) {
                     Authenticate();
@@ -842,6 +852,12 @@ namespace Neurotoxin.Godspeed.Core.Net {
             finally {
                 m_lock.ReleaseMutex();
             }
+        }
+
+        private void OnBeforeAuthentication()
+        {
+            var handler = BeforeAuthentication;
+            if (handler != null) handler.Invoke(this, new EventArgs());
         }
 
         private void OnConnected()

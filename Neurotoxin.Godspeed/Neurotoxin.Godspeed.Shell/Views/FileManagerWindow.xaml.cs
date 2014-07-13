@@ -78,9 +78,9 @@ namespace Neurotoxin.Godspeed.Shell.Views
         {
             if (e.Key != Key.Delete) return;
             var deleteCommand = ViewModel.DeleteCommand;
-            if (!deleteCommand.CanExecute()) return;
+            if (!deleteCommand.CanExecute(null)) return;
             e.Handled = true;
-            deleteCommand.Execute();
+            deleteCommand.Execute(null);
         }
 
         protected override void OnSourceInitialized(EventArgs e)

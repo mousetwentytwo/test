@@ -227,8 +227,10 @@
     <Compile Include="Extensions\ResourcesExtension.cs" />
     <Compile Include="Helpers\FtpTraceListener.cs" />
     <Compile Include="Database\QueryBuilder.cs" />
+    <Compile Include="Interfaces\ILoginViewModel.cs" />
     <Compile Include="Models\UnityItem.cs" />
     <Compile Include="Models\UnityResponse.cs" />
+    <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\RecognizeFromProfileViewModel.cs" />
     <Compile Include="ViewModels\SanityCheckerViewModel.cs" />
     <Compile Include="Helpers\Web.cs" />

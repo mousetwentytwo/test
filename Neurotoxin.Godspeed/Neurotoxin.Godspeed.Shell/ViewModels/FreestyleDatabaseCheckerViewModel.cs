@@ -24,6 +24,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private int _itemsCount;
         private int _itemsChecked;
 
+        private readonly IFileManagerViewModel _fileManager;
+
         private readonly FtpContentViewModel _parent;
         public IViewModel Parent
         {
@@ -143,42 +145,56 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void ExecuteCleanUpCommand()
         {
             var tree = new Tree<FileSystemItem>();
-            foreach (var entry in MissingEntries.SelectMany(entry => (IList<FileSystemItem>)entry.Content))
+            foreach (var item in MissingEntries.SelectMany(entry => (IList<FileSystemItem>)entry.Content))
             {
-                tree.Insert(entry.Path, entry, name => new FileSystemItem
+                tree.Insert(item.Path, item, name => new FileSystemItem
                                                            {
                                                                Name = name,
                                                                Type = ItemType.Directory
                                                            });
             }
             SelectionTree = new ObservableCollection<TreeItemViewModel>();
-            WrapTreeIntoViewModel(tree, SelectionTree);
-            if (WindowManager.ShowTreeSelectorDialog(this))
-            {
-                //TODO
-            }
+            WrapTreeIntoViewModels(tree, SelectionTree);
+            if (!WindowManager.ShowTreeSelectorDialog(this)) return;
+            var selection = new List<FileSystemItem>();
+            GetSelectionFromTree(SelectionTree, selection);
+            _fileManager.Delete(selection);
         }
 
-        private static void WrapTreeIntoViewModel(TreeItem<FileSystemItem> tree, ObservableCollection<TreeItemViewModel> treeViewModel)
+        private void WrapTreeIntoViewModels(TreeItem<FileSystemItem> tree, ObservableCollection<TreeItemViewModel> treeViewModel)
         {
             foreach (var treeItem in tree.Children.Values)
             {
+                var icon = treeItem.Content.Type == ItemType.Directory ? "/Resources/folder.png" : "/Resources/file.png";
+                //TODO: refactor viewmodel to be model-based
                 var vm = new TreeItemViewModel
                              {
                                  Name = treeItem.Name,
+                                 Title = treeItem.Content.Title,
+                                 Content = treeItem.Content,
+                                 Thumbnail = StfsPackageExtensions.GetBitmapFromByteArray(treeItem.Content.Thumbnail ?? ResourceManager.GetContentByteArray(icon)),
                                  IsSelected = true,
-                                 IsDirectory = treeItem.Content.Type == ItemType.Directory,
-                                 Children = new ObservableCollection<TreeItemViewModel>()
+                                 IsDirectory = treeItem.Content.Type == ItemType.Directory
                              };
                 treeViewModel.Add(vm);
-                WrapTreeIntoViewModel(treeItem, vm.Children);
+                WrapTreeIntoViewModels(treeItem, vm.Children);
+            }
+        }
+
+        private void GetSelectionFromTree(ObservableCollection<TreeItemViewModel> tree, IList<FileSystemItem> selection)
+        {
+            foreach (var treeItem in tree)
+            {
+                GetSelectionFromTree(treeItem.Children, selection);
+                if (treeItem.IsSelected) selection.Add(treeItem.Content as FileSystemItem);
             }
         }
 
         #endregion
 
-        public FreestyleDatabaseCheckerViewModel(FtpContentViewModel parent)
+        public FreestyleDatabaseCheckerViewModel(IFileManagerViewModel fileManager, FtpContentViewModel parent)
         {
+            _fileManager = fileManager;
             _parent = parent;
             CloseCommand = new DelegateCommand(ExecuteCloseCommand);
             CleanUpCommand = new DelegateCommand(ExecuteCleanUpCommand);

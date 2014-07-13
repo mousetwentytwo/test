@@ -156,13 +156,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             } 
             else if (SelectedItem is NewConnectionPlaceholderViewModel)
             {
-                newItem = new FtpConnectionItemViewModel(new FtpConnection
-                    {
-                        Port = 21,
-                        Username = "xbox",
-                        Password = "xbox",
-                        ConnectionImage = (int)ConnectionImage.Fat,
-                    });
+                var model = new FtpConnection
+                                {
+                                    Port = 21,
+                                    ConnectionImage = (int) ConnectionImage.Fat,
+                                };
+                newItem = new FtpConnectionItemViewModel(model);
                 replace = false;
             }
             else

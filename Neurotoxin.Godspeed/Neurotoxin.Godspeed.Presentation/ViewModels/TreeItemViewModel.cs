@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Windows.Media;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
+using Microsoft.Practices.ObjectBuilder2;
 
 namespace Neurotoxin.Godspeed.Presentation.ViewModels
 {
@@ -12,6 +14,22 @@ namespace Neurotoxin.Godspeed.Presentation.ViewModels
         {
             get { return _name; }
             set { _name = value; NotifyPropertyChanged(NAME); }
+        }
+
+        private const string TITLE = "Title";
+        private string _title;
+        public string Title
+        {
+            get { return _title; }
+            set { _title = value; NotifyPropertyChanged(TITLE); }
+        }
+
+        private const string THUMBNAIL = "THUMBNAIL";
+        private ImageSource _thumbnail;
+        public ImageSource Thumbnail
+        {
+            get { return _thumbnail; }
+            set { _thumbnail = value; NotifyPropertyChanged(THUMBNAIL); }
         }
 
         private const string CHILDREN = "Children";
@@ -35,7 +53,19 @@ namespace Neurotoxin.Godspeed.Presentation.ViewModels
         public bool IsSelected
         {
             get { return _isSelected; }
-            set { _isSelected = value; NotifyPropertyChanged(ISSELECTED); }
+            set
+            {
+                _isSelected = value; 
+                if (Children != null) Children.ForEach(c => c.IsSelected = value);
+                NotifyPropertyChanged(ISSELECTED);
+            }
+        }
+
+        public object Content { get; set; }
+
+        public TreeItemViewModel()
+        {
+            Children = new ObservableCollection<TreeItemViewModel>();
         }
     }
 }

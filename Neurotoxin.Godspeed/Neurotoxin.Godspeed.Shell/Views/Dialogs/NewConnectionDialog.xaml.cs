@@ -25,7 +25,6 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
             ConnectionImages = Enum.GetValues(typeof(ConnectionImage)).Cast<ConnectionImage>().ToArray();
             InitializeComponent();
             ViewModel = viewModel;
-            if (string.IsNullOrEmpty(viewModel.Username)) AnonymousLogin.IsChecked = true;
             Loaded += OnLoaded;
         }
 
@@ -43,26 +42,13 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
         private bool HasError()
         {
             var result = false;
-            var controls = new[] {ConnectionName, Address, Port, Username, Password};
+            var controls = new[] {ConnectionName, Address, Port};
             foreach (var control in controls.Where(c => c.IsEnabled))
             {
                 control.GetBindingExpression(TextBox.TextProperty).UpdateSource();
                 if (Validation.GetHasError(control)) result = true;
             }
             return result;
-        }
-
-        private void AnonymousLoginOnChange(object sender, RoutedEventArgs e)
-        {
-            Username.Text = null;
-            var usernameBinding = Username.GetBindingExpression(TextBox.TextProperty);
-            usernameBinding.UpdateSource();
-            Validation.ClearInvalid(usernameBinding);
-
-            Password.Text = null;
-            var passwordBinding = Password.GetBindingExpression(TextBox.TextProperty);
-            passwordBinding.UpdateSource();
-            Validation.ClearInvalid(passwordBinding);
         }
     }
 }

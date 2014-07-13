@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
@@ -23,12 +24,14 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
         DelegateCommand CopyCommand { get; }
         DelegateCommand MoveCommand { get; }
         DelegateCommand NewFolderCommand { get; }
-        DelegateCommand DeleteCommand { get; }
+        DelegateCommand<IEnumerable<FileSystemItem>> DeleteCommand { get; }
         DelegateCommand<UserMessageCommandParameter> OpenUserMessageCommand { get; }
         DelegateCommand<UserMessageViewModel> RemoveUserMessageCommand { get; }
 
         void Initialize();
         void SetUserMessagesToRead(IUserMessageViewModel[] items);
         void RaiseCanExecuteChanges();
+
+        void Delete(IEnumerable<FileSystemItem> items);
     }
 }

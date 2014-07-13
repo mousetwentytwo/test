@@ -57,6 +57,7 @@ namespace Neurotoxin.Godspeed.Shell
             Container.RegisterType<StfsPackageContentViewModel>();
             Container.RegisterType<CompressedFileContentViewModel>();
             Container.RegisterType<FreestyleDatabaseCheckerViewModel>();
+            Container.RegisterType<ILoginViewModel, LoginViewModel>();
 
             // Views
             Container.RegisterType<FileManagerWindow>(new ContainerControlledLifetimeManager());

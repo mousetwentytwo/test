@@ -21,9 +21,7 @@
             </TreeView.ItemContainerStyle>
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate ItemsSource="{Binding Path=Children}">
-                    <CheckBox IsChecked="{Binding IsSelected}">
-                        <TextBlock Text="{Binding Name}" Margin="0,-2,0,0"/>
-                    </CheckBox>
+                    <CheckBox IsChecked="{Binding IsSelected}" ContentTemplate="{StaticResource FileSystemItemTitleTemplate}" Padding="0,-2,0,0"/>
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>
         </TreeView>

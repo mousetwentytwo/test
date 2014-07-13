@@ -310,10 +310,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             AsyncJob(() => SourcePane.PopulateQueue(FileOperation.Copy), queue => InitializeTransfer(queue, FileOperation.Move), PopulationError);
         }
 
-        public void Delete(IFileListPaneViewModel sourcePane)
+        public void Delete(IFileListPaneViewModel sourcePane, IEnumerable<FileSystemItem> queue = null)
         {
             SourcePane = sourcePane;
-            AsyncJob(() => SourcePane.PopulateQueue(FileOperation.Delete), queue => InitializeTransfer(queue, FileOperation.Delete), PopulationError);
+            AsyncJob(() => queue != null ? new Queue<QueueItem>(queue.Select(item => new QueueItem(item, FileOperation.Delete))) : SourcePane.PopulateQueue(FileOperation.Delete), 
+                      q => InitializeTransfer(q, FileOperation.Delete), 
+                      PopulationError);    
         }
 
         private OperationResult ExecuteCopy(QueueItem queueitem, CopyAction? action, string rename)
@@ -822,7 +824,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void RenameExistingFile(TransferException exception, CopyAction? action, Action<CopyAction?, string> rename, Action<Exception> chooseDifferentOption)
         {
-            var name = WindowManager.ShowTextInputDialog(Resx.Rename, Resx.NewName + Strings.Colon, Path.GetFileName(exception.TargetFile));
+            var name = WindowManager.ShowTextInputDialog(Resx.Rename, Resx.NewName + Strings.Colon, Path.GetFileName(exception.TargetFile), null);
             if (!string.IsNullOrEmpty(name))
             {
                 rename.Invoke(action, name);

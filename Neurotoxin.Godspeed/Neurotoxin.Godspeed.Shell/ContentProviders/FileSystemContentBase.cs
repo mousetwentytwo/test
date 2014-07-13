@@ -115,13 +115,18 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                 stream.Flush();
                 NotifyTransferFinished(stream.Length);
             }
-            catch
+            catch (Exception ex)
             {
                 if (copyStarted) NotifyTransferProgressChanged(byteLimit, bufferSize, transferred, startPosition, true);
                 NotifyTransferFinished();
-                throw;
+                if (!HandleCopyStreamExceptions(ex, IsAborted)) throw;
             }
             return !IsAborted;
+        }
+
+        protected virtual bool HandleCopyStreamExceptions(Exception ex, bool isAborted)
+        {
+            return false;
         }
 
         protected virtual void AbortStream(Stream stream)

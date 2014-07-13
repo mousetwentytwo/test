@@ -1,33 +1,23 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Input;
-using Neurotoxin.Godspeed.Shell.Models;
+using Neurotoxin.Godspeed.Presentation.Infrastructure;
+using Neurotoxin.Godspeed.Shell.Interfaces;
 
 namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
 {
-    public partial class LoginDialog
+    public partial class LoginDialog : IView<ILoginViewModel>
     {
-        public static LoginDialogResult Show(string title, string message, string defaultUsername, string defaultPassword)
+        public ILoginViewModel ViewModel
         {
-            var dialog = new LoginDialog(title, message, defaultUsername, defaultPassword);
-            return dialog.ShowDialog() == true
-                ? new LoginDialogResult
-                {
-                    Username = dialog.Username.Text,
-                    Password = dialog.Password.Text,
-                    RememberPassword = dialog.RememberPassword.IsChecked == true
-                }
-                : null;
+            get { return DataContext as ILoginViewModel; }
         }
-
-        private LoginDialog(string title, string message, string defaultUsername, string defaultPassword)
+        
+        public LoginDialog(ILoginViewModel viewModel)
         {
             Owner = Application.Current.MainWindow;
+            DataContext = viewModel;
             InitializeComponent();
-            Title = title;
-            Message.Text = message;
-            Username.Text = defaultUsername;
-            Password.Text = defaultPassword;
             Loaded += OnLoaded;
         }
 
@@ -44,6 +34,14 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
         {
             Username.Focus();
             Loaded -= OnLoaded;
+        }
+
+        private void DefaultButtonClick(object sender, RoutedEventArgs e)
+        {
+            DialogResult = true;
+            Close();
+            ViewModel.Username = string.Empty;
+            ViewModel.Password = string.Empty;
         }
     }
 }

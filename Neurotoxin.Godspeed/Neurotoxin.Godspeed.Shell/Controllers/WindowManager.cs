@@ -101,10 +101,50 @@ namespace Neurotoxin.Godspeed.Shell.Controllers
             _notificationMessage = null;
         }
 
-        public string ShowTextInputDialog(string title, string message, string defaultValue, IList<InputDialogOptionViewModel> options = null)
+        public string ShowTextInputDialog(string title, string message, string defaultValue, IList<InputDialogOptionViewModel> options)
         {
-            return InputDialog.ShowText(title, message, defaultValue, options);
+            var viewModel = new InputDialogViewModel
+            {
+                Title = title,
+                Message = message,
+                DefaultValue = defaultValue,
+                Options = options,
+                Mode = InputDialogMode.ComboBox
+            };
+            var dialog = new InputDialog(viewModel);
+
+            if (dialog.ShowDialog() == true)
+            {
+                var selectedItem = dialog.ComboBox.SelectedItem;
+                if (selectedItem != null)
+                {
+                    var selectedValue = ((InputDialogOptionViewModel)dialog.ComboBox.SelectedItem);
+                    if (selectedValue.DisplayName == dialog.ComboBox.Text) return (string)selectedValue.Value;
+                }
+                return dialog.ComboBox.Text;
+            }
+            return null;
         }
+
+        public object ShowListInputDialog(string title, string message, object defaultValue, IList<InputDialogOptionViewModel> options)
+        {
+            if (options == null) throw new ArgumentException();
+
+            var viewModel = new InputDialogViewModel
+            {
+                Title = title,
+                Message = message,
+                DefaultValue = defaultValue,
+                Options = options,
+                Mode = InputDialogMode.RadioGroup
+            };
+
+            var dialog = new InputDialog(viewModel);
+
+            dialog.ShowDialog();
+            return options.First(o => o.IsSelected).Value;
+        }
+
 
         public bool ShowTreeSelectorDialog(ITreeSelectionViewModel viewModel)
         {
@@ -116,6 +156,19 @@ namespace Neurotoxin.Godspeed.Shell.Controllers
             }
             var dialog = new TreeSelectionDialog(viewModel) { Owner = owner };
             return dialog.ShowDialog() == true;
+        }
+
+        public LoginDialogResult ShowLoginDialog(ILoginViewModel viewModel)
+        {
+            var dialog = new LoginDialog(viewModel);
+            if (dialog.ShowDialog() != true) return null;
+
+            return new LoginDialogResult
+            {
+                Username = viewModel.Username,
+                Password = viewModel.Password,
+                RememberPassword = viewModel.IsRememberPasswordEnabled ? (bool?)viewModel.RememberPassword : null
+            };
         }
 
         public bool Confirm(string title, string message)

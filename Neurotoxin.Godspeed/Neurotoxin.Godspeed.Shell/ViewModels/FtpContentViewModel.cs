@@ -18,6 +18,7 @@ using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
 using Neurotoxin.Godspeed.Shell.Exceptions;
 using Neurotoxin.Godspeed.Shell.Extensions;
+using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
 using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
@@ -292,10 +293,17 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     bool result;
                     do
                     {
-                        var login = LoginDialog.Show(Resx.Login, Resx.LoginToFreestyleDashHttpServer, username, password);
+                        var loginViewModel = Container.Resolve<ILoginViewModel>();
+                        loginViewModel.Title = Resx.Login;
+                        loginViewModel.Message = Resx.LoginToFreestyleDashHttpServer;
+                        loginViewModel.Username = username;
+                        loginViewModel.Password = password;
+                        loginViewModel.IsRememberPasswordEnabled = true;
+
+                        var login = WindowManager.ShowLoginDialog(loginViewModel);
                         if (login == null)
                         {
-                            var answer = (DisableOption)InputDialog.ShowList(Resx.DisableFsdContentScanTriggerTitle, Resx.DisableFsdContentScanTriggerMessage, DisableOption.None, GetDisableOptionList());
+                            var answer = (DisableOption)WindowManager.ShowListInputDialog(Resx.DisableFsdContentScanTriggerTitle, Resx.DisableFsdContentScanTriggerMessage, DisableOption.None, GetDisableOptionList());
                             switch (answer)
                             {
                                 case DisableOption.All:
@@ -320,7 +328,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                             else
                             {
                                 result = status != HttpStatusCode.Unauthorized;
-                                if (result && login.RememberPassword)
+                                if (result && login.RememberPassword == true)
                                 {
                                     Connection.HttpUsername = username;
                                     Connection.HttpPassword = password;
@@ -332,7 +340,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     break;
                 case HttpStatusCode.RequestTimeout:
                     {
-                        var answer = (DisableOption)InputDialog.ShowList(Resx.DisableFsdContentScanTriggerTitle, Resx.DisableFsdContentScanTriggerMessage, DisableOption.None, GetDisableOptionList());
+                        var answer = (DisableOption)WindowManager.ShowListInputDialog(Resx.DisableFsdContentScanTriggerTitle, Resx.DisableFsdContentScanTriggerMessage, DisableOption.None, GetDisableOptionList());
                         switch (answer)
                         {
                             case DisableOption.All:

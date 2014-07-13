@@ -1,10 +1,11 @@
 ﻿using System.Windows.Media;
+using Microsoft.Practices.Unity;
+using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Database.Models;
 using Neurotoxin.Godspeed.Shell.Interfaces;
-using Neurotoxin.Godspeed.Shell.Models;
 using Neurotoxin.Godspeed.Presentation.Extensions;
-using Neurotoxin.Godspeed.Presentation.Infrastructure;
+using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
@@ -101,9 +102,40 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             set { Model.HttpPassword = value ?? string.Empty; NotifyPropertyChanged(HTTPPASSWORD); }
         }
 
+        private const string LOGININFO = "LoginInfo";
+        private string _loginInfo;
+        public string LoginInfo
+        {
+            get { return _loginInfo; }
+            set { _loginInfo = value; NotifyPropertyChanged(LOGININFO); }
+        }
+
+        #region ChangeLoginCommand
+
+        public DelegateCommand ChangeLoginCommand { get; set; }
+
+        public void ExecuteChangeLoginCommand()
+        {
+            var loginViewModel = Container.Resolve<ILoginViewModel>();
+            loginViewModel.Title = Resx.Login; //TODO
+            loginViewModel.Message = "TODO"; //TODO
+            loginViewModel.IsUseDefaultEnabled = true;
+            loginViewModel.Username = Username;
+            loginViewModel.Password = Password;
+            var login = WindowManager.ShowLoginDialog(loginViewModel);
+            if (login == null) return;
+            Username = login.Username;
+            Password = login.Password;
+            LoginInfo = string.IsNullOrEmpty(Username) && string.IsNullOrEmpty(Password) ? Resx.Default : string.Format("{0} / {1}", Username, Password);
+        }
+
+        #endregion
+
         public FtpConnectionItemViewModel(FtpConnection model)
         {
             Model = model;
+            LoginInfo = Resx.Default;
+            ChangeLoginCommand = new DelegateCommand(ExecuteChangeLoginCommand);
         }
 
         public FtpConnectionItemViewModel Clone()
