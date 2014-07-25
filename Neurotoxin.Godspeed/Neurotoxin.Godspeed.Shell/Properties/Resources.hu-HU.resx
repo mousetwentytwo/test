@@ -352,7 +352,7 @@
     <value>Port</value>
   </data>
   <data name="PopulationFailed" xml:space="preserve">
-    <value></value>
+    <value>Hiba a feladatlista összeállítása közben ({0})</value>
   </data>
   <data name="PodcastVideoSingular" xml:space="preserve">
     <value>Podcast videó</value>
@@ -648,9 +648,6 @@
   <data name="Address" xml:space="preserve">
     <value>IP Cím</value>
   </data>
-  <data name="AddNewFolder" xml:space="preserve">
-    <value>Új Mappa létrehozása</value>
-  </data>
   <data name="UseUnity" xml:space="preserve">
     <value>A xboxunity.net használata a játékok felismeréséhez</value>
   </data>
@@ -821,14 +818,8 @@
   <data name="SaveThumbnailAs" xml:space="preserve">
     <value>Miniatűr mentése fájlba...</value>
   </data>
-  <data name="AboutContent" xml:space="preserve">
-    <value>&lt;p&gt;Készítette: Mercenary/Neurotoxin&lt;br/&gt;Honlap: &lt;a href="http://godspeed.codeplex.com" target="_blank"&gt;http://godspeed.codeplex.com&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;Ez a program szabad szoftver; terjeszthető illetve módosítható a Free Software Foundation által kiadott GNU General Public License dokumentumában leírtak; akár a licenc 2-es, akár (tetszőleges) későbbi változata szerint.&lt;/p&gt;
-&lt;p&gt;Ez a program abban a reményben kerül közreadásra, hogy hasznos lesz, de minden egyéb GARANCIA NÉLKÜL, az ELADHATÓSÁGRA vagy VALAMELY CÉLRA VALÓ ALKALMAZHATÓSÁGRA való származtatott garanciát is beleértve. További részleteket a GNU General Public License tartalmaz.&lt;/p&gt;
-&lt;p&gt;A felhasználónak a programmal együtt meg kell kapnia a GNU General Public License egy példányát; ha mégsem kapta meg, akkor tekintse meg a &lt;a href="http://www.gnu.org/licenses/"&gt;http://www.gnu.org/licenses/&lt;/a&gt; oldalon.</value>
-  </data>
   <data name="About" xml:space="preserve">
-    <value>Infó</value>
+    <value>Névjegy</value>
   </data>
   <data name="SizeInfo" xml:space="preserve">
     <value>{0:#,0} / {1:#,0} bájt - {2} / {3:fájl;fájl}, {4} / {5:mappa;mappa}</value>
@@ -939,7 +930,7 @@
     <value>Ellenőrzés</value>
   </data>
   <data name="VerifyFileHashAfterFtpUpload" xml:space="preserve">
-    <value>Ellenőrzés feltöltés után</value>
+    <value>CRC ellenőrzés feltöltés után</value>
   </data>
   <data name="FtpTraceWindowTitle" xml:space="preserve">
     <value>{0} FTP logja</value>
@@ -963,9 +954,134 @@
     <value>Lehetséges szemetek</value>
   </data>
   <data name="UseDefault" xml:space="preserve">
-    <value>Alapértelmezett jelszó használata</value>
+    <value>Alapértelmezett</value>
   </data>
   <data name="Default" xml:space="preserve">
     <value>Alapértelmezett</value>
+  </data>
+  <data name="Change" xml:space="preserve">
+    <value>Megváltoztat</value>
+  </data>
+  <data name="SetCredentials" xml:space="preserve">
+    <value>Belépési adatok megadása</value>
+  </data>
+  <data name="Xbox360TitlePlural" xml:space="preserve">
+    <value>Xbox360 Címek</value>
+  </data>
+  <data name="Xbox360TitleSingular" xml:space="preserve">
+    <value>Xbox360 Cím</value>
+  </data>
+  <data name="XboxDownloadPlural" xml:space="preserve">
+    <value>Xbox Letöltések</value>
+  </data>
+  <data name="XboxDownloadSingular" xml:space="preserve">
+    <value>Xbox Letöltés</value>
+  </data>
+  <data name="XboxOriginalGamePlural" xml:space="preserve">
+    <value>Xbox Eredeti Játékok</value>
+  </data>
+  <data name="XboxOriginalGameSingular" xml:space="preserve">
+    <value>Xbox Eredeti Játék</value>
+  </data>
+  <data name="XboxSavedGamePlural" xml:space="preserve">
+    <value>Xbox Kimentett állások</value>
+  </data>
+  <data name="XboxSavedGameSingular" xml:space="preserve">
+    <value>Xbox Kimentett állás</value>
+  </data>
+  <data name="VerifyFileHash" xml:space="preserve">
+    <value>CRC ellenőrzés</value>
+  </data>
+  <data name="ShutdownPc" xml:space="preserve">
+    <value>Számítógép kikapcsolása ha kész</value>
+  </data>
+  <data name="ShutdownXbox" xml:space="preserve">
+    <value>{0} kikapcsolása ha kész</value>
+  </data>
+  <data name="StorageDownloadPlural" xml:space="preserve">
+    <value>Letöltések</value>
+  </data>
+  <data name="StorageDownloadSingular" xml:space="preserve">
+    <value>Letöltés</value>
+  </data>
+  <data name="SavedGamePlural" xml:space="preserve">
+    <value>Kimentett állások</value>
+  </data>
+  <data name="SavedGameSingular" xml:space="preserve">
+    <value>Kimentett állás</value>
+  </data>
+  <data name="LoginToFreestyleDashHttpServer" xml:space="preserve">
+    <value>A Freestyle Dash HTTP szerverének eléréséhez azonosítás szükséges. Kérlek add meg az ehhez használt nevet és jelszót:</value>
+  </data>
+  <data name="LicenseStorePlural" xml:space="preserve">
+    <value>Licensz-tárolók</value>
+  </data>
+  <data name="LicenseStoreSingular" xml:space="preserve">
+    <value>Licensz-tároló</value>
+  </data>
+  <data name="IptvPauseBufferPlural" xml:space="preserve">
+    <value>IPTV Pufferek</value>
+  </data>
+  <data name="IptvPauseBufferSingular" xml:space="preserve">
+    <value>IPTV Puffer</value>
+  </data>
+  <data name="GamerPicturePlural" xml:space="preserve">
+    <value>Gamer Picture-ök</value>
+  </data>
+  <data name="GamerTitlePlural" xml:space="preserve">
+    <value>Titulusok</value>
+  </data>
+  <data name="GamerTitleSingular" xml:space="preserve">
+    <value>Titulus</value>
+  </data>
+  <data name="GamerPictureSingular" xml:space="preserve">
+    <value>Gamer Picture</value>
+  </data>
+  <data name="EmptyFieldErrorMessage" xml:space="preserve">
+    <value>Ez a mező nem maradhat üresen</value>
+  </data>
+  <data name="CompleteShutdown" xml:space="preserve">
+    <value>Számítógép és {0} kikapcsolása ha kész</value>
+  </data>
+  <data name="AvatarAssetPackPlural" xml:space="preserve">
+    <value>Avatar kiegészítők</value>
+  </data>
+  <data name="AvatarAssetPackSingular" xml:space="preserve">
+    <value>Avatar kiegészítő</value>
+  </data>
+  <data name="AvatarEditor" xml:space="preserve">
+    <value>Avatar szerkesztő</value>
+  </data>
+  <data name="AvatarItemPlural" xml:space="preserve">
+    <value>Avatar kiegészítők</value>
+  </data>
+  <data name="AvatarItemSingular" xml:space="preserve">
+    <value>Avatar kiegészítő</value>
+  </data>
+  <data name="CacheFilePlural" xml:space="preserve">
+    <value>Gyorsítótár-fájlok</value>
+  </data>
+  <data name="CacheFileSingular" xml:space="preserve">
+    <value>Gyorsítótár-fájl</value>
+  </data>
+  <data name="CacheExpiration" xml:space="preserve">
+    <value>Gyorsítótár elemeinek lejárati ideje</value>
+  </data>
+  <data name="LoginAs" xml:space="preserve">
+    <value>Belépés mint:</value>
+  </data>
+  <data name="SelectTheItemsYouWantToRemove" xml:space="preserve">
+    <value>Jelöld ki az eltávolítandó elemeket</value>
+  </data>
+  <data name="CreditsContent" xml:space="preserve">
+    <value>&lt;p&gt;&lt;b&gt;Készítők:&lt;/b&gt;&lt;br/&gt;Fejlesztés: mercenary&lt;br/&gt;Tesztelés: mousetwentytwo&lt;/p&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Honlap:&lt;/b&gt;&lt;br/&gt;&lt;a href="http://godspeed.codeplex.com" target="_blank"&gt;http://godspeed.codeplex.com&lt;/a&gt;</value>
+  </data>
+  <data name="AddNewFolder" xml:space="preserve">
+    <value>Új Mappa létrehozása</value>
+  </data>
+  <data name="LicenseContent" xml:space="preserve">
+    <value>&lt;p&gt;Ez a program szabad szoftver; terjeszthető illetve módosítható a Free Software Foundation által kiadott GNU General Public License dokumentumában leírtak; akár a licenc 2-es, akár (tetszőleges) későbbi változata szerint.&lt;/p&gt;
+&lt;p&gt;Ez a program abban a reményben kerül közreadásra, hogy hasznos lesz, de minden egyéb GARANCIA NÉLKÜL, az ELADHATÓSÁGRA vagy VALAMELY CÉLRA VALÓ ALKALMAZHATÓSÁGRA való származtatott garanciát is beleértve. További részleteket a GNU General Public License tartalmaz.&lt;/p&gt;
+&lt;p&gt;A felhasználónak a programmal együtt meg kell kapnia a GNU General Public License egy példányát; ha mégsem kapta meg, akkor tekintse meg a &lt;a href="http://www.gnu.org/licenses/"&gt;http://www.gnu.org/licenses/&lt;/a&gt; oldalon.</value>
   </data>
 </root>

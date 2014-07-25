@@ -48,7 +48,7 @@ namespace Neurotoxin.Godspeed.Shell
 
             // ViewModels
             Container.RegisterType<FileManagerViewModel>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<TransferManagerViewModel>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<ITransferManagerViewModel, TransferManagerViewModel>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ISettingsViewModel, SettingsViewModel>();
             Container.RegisterType<IStatisticsViewModel, StatisticsViewModel>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ConnectionsViewModel>(new ContainerControlledLifetimeManager());

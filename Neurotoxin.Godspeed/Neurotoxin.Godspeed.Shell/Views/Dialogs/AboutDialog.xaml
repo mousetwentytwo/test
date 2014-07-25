@@ -8,20 +8,52 @@
                        lex:LocalizeDictionary.DesignCulture="en-US"
                        lex:ResxLocalizationProvider.DefaultAssembly="Neurotoxin.Godspeed.Shell"
                        lex:ResxLocalizationProvider.DefaultDictionary="Resources"
-                       Width="400">
+                       Width="600" Title="{lex:Loc About}">
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
+        
+        <Grid Margin="0,0,0,10">
+            <Image Source="/Resources/header.png" Width="578" Height="77"  VerticalAlignment="Center"/>
+            <TextBlock Width="170" x:Name="Version" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,45,208,0" TextAlignment="Right"/>
+        </Grid>
 
-        <controls:RichTextBox Grid.Row="0" Margin="5,0,0,15" Text="{lex:LocText AboutContent}">
+        <Grid Grid.Row="2" Margin="0,0,0,15">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <controls:RichTextBox Grid.Column="0" Text="{lex:LocText CreditsContent}">
+                <controls:RichTextBox.Resources>
+                    <Style TargetType="Hyperlink">
+                        <Setter Property="Cursor" Value="Hand"/>
+                        <EventSetter Event="RequestNavigate" Handler="OnHyperlinkRequestNavigate"/>
+                    </Style>
+                </controls:RichTextBox.Resources>
+                <controls:RichTextBox.TextFormatter>
+                    <f:HtmlFormatter/>
+                </controls:RichTextBox.TextFormatter>
+            </controls:RichTextBox>
+            <controls:RichTextBox Grid.Column="2" Text="{lex:LocText GreetzContent}">
+                <controls:RichTextBox.TextFormatter>
+                    <f:HtmlFormatter/>
+                </controls:RichTextBox.TextFormatter>
+            </controls:RichTextBox>
+        </Grid>
+
+        <controls:RichTextBox Grid.Row="3" Margin="0,0,0,15" Text="{lex:LocText LicenseContent}" BorderThickness="0" Background="Transparent">
             <controls:RichTextBox.TextFormatter>
                 <f:HtmlFormatter/>
             </controls:RichTextBox.TextFormatter>
         </controls:RichTextBox>
 
-        <Button Grid.Row="1" Content="{lex:LocText Close}" Width="75" x:Name="Ok" Click="OkButtonClick"/>
-
+        <Button Grid.Row="4" Content="{lex:LocText Close}" Width="75" x:Name="Ok" Click="OkButtonClick"/>
     </Grid>
 </primitives:DialogBase>

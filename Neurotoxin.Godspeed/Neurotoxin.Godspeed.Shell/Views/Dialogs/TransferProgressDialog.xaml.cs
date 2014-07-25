@@ -4,7 +4,7 @@ using Neurotoxin.Godspeed.Shell.ViewModels;
 
 namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
 {
-    public partial class TransferProgressDialog : IView<TransferManagerViewModel>
+    public partial class TransferProgressDialog : IView<ITransferManagerViewModel>
     {
         public const string BytesFormat = "{0:#,0} / {1:#,0} Bytes";
         public const string TitleFormat = "{0} ({1}%)";
@@ -13,13 +13,13 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
         public const string TimeFormat = "{0:hh\\:mm\\:ss} / {1:hh\\:mm\\:ss}";
         public const string ActionFormat = "{0}: ";
 
-        public TransferManagerViewModel ViewModel
+        public ITransferManagerViewModel ViewModel
         {
-            get { return DataContext as TransferManagerViewModel; }
+            get { return DataContext as ITransferManagerViewModel; }
             private set { DataContext = value; }
         }
 
-        public TransferProgressDialog(TransferManagerViewModel viewModel)
+        public TransferProgressDialog(ITransferManagerViewModel viewModel)
         {
             Owner = Application.Current.MainWindow;
             InitializeComponent();

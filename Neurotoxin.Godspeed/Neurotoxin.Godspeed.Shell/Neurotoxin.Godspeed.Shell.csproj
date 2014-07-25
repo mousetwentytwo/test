@@ -230,6 +230,7 @@
     <Compile Include="Interfaces\ILoginViewModel.cs" />
     <Compile Include="Models\UnityItem.cs" />
     <Compile Include="Models\UnityResponse.cs" />
+    <Compile Include="ViewModels\ITransferManagerViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\RecognizeFromProfileViewModel.cs" />
     <Compile Include="ViewModels\SanityCheckerViewModel.cs" />
@@ -739,6 +740,9 @@
     <None Include="x86\SQLite.Interop.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\header.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -94,6 +94,7 @@
     <Compile Include="Events\RequestWindowCloseEvent.cs" />
     <Compile Include="Extensions\ColorExtensions.cs" />
     <Compile Include="Extensions\DataGridExtensions.cs" />
+    <Compile Include="Extensions\FlowDocumentExtensions.cs" />
     <Compile Include="Extensions\FrameworkElementExtensions.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\IconExtensions.cs" />

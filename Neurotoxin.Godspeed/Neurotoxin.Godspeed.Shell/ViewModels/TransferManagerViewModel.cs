@@ -21,7 +21,7 @@ using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
 
-    public class TransferManagerViewModel : CommonViewModelBase
+    public class TransferManagerViewModel : CommonViewModelBase, ITransferManagerViewModel
     {
         private const string RenameFromPattern = @"([\/]){0}$";
         private const string RenameToPattern = @"${{1}}{0}";
@@ -772,7 +772,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             ProgressState = TaskbarItemProgressState.Indeterminate;
         }
 
-        internal void AbortTransfer()
+        public void AbortTransfer()
         {
             _isAborted = true;
             if (_remoteCopy == RemoteCopyMode.Disabled)

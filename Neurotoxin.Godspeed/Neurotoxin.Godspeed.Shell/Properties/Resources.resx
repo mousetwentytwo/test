@@ -192,12 +192,6 @@
   <data name="DeleteButton" xml:space="preserve">
     <value>F8 Delete</value>
   </data>
-  <data name="AboutContent" xml:space="preserve">
-    <value>&lt;p&gt;Author: Mercenary/Neurotoxin&lt;br/&gt;Homepage: &lt;a href="http://godspeed.codeplex.com" target="_blank"&gt;http://godspeed.codeplex.com&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.&lt;/p&gt;
-&lt;p&gt;This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.&lt;/p&gt;
-&lt;p&gt;You should have received a copy of the GNU General Public License along with this program; if not, see &lt;a href="http://www.gnu.org/licenses/"&gt;http://www.gnu.org/licenses/&lt;/a&gt;.&lt;/p&gt;</value>
-  </data>
   <data name="Close" xml:space="preserve">
     <value>Close</value>
   </data>
@@ -455,9 +449,6 @@
   <data name="ApplicationCrashed" xml:space="preserve">
     <value>Application crashed</value>
   </data>
-  <data name="AddNewFolder" xml:space="preserve">
-    <value>Add New Folder</value>
-  </data>
   <data name="ApplicationIsBusy" xml:space="preserve">
     <value>Application is busy</value>
   </data>
@@ -543,7 +534,7 @@
     <value>Downloadable Contents</value>
   </data>
   <data name="EmptyFieldErrorMessage" xml:space="preserve">
-    <value>You can't leave this field empty.</value>
+    <value>You can't leave this field empty</value>
   </data>
   <data name="Extract" xml:space="preserve">
     <value>Extract</value>
@@ -1069,5 +1060,31 @@
   </data>
   <data name="Default" xml:space="preserve">
     <value>Default</value>
+  </data>
+  <data name="Change" xml:space="preserve">
+    <value>Change</value>
+  </data>
+  <data name="SetCredentials" xml:space="preserve">
+    <value>Set Credentials</value>
+  </data>
+  <data name="LoginAs" xml:space="preserve">
+    <value>Log in as:</value>
+  </data>
+  <data name="SelectTheItemsYouWantToRemove" xml:space="preserve">
+    <value>Select the items you want to remove</value>
+  </data>
+  <data name="CreditsContent" xml:space="preserve">
+    <value>&lt;p&gt;&lt;b&gt;Credits:&lt;/b&gt;&lt;br/&gt;Developer: mercenary&lt;br/&gt;QA: mousetwentytwo&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Homepage:&lt;/b&gt;&lt;br/&gt;&lt;a href="http://godspeed.codeplex.com" target="_blank"&gt;http://godspeed.codeplex.com&lt;/a&gt;&lt;/p&gt;</value>
+  </data>
+  <data name="GreetzContent" xml:space="preserve">
+    <value>&lt;p&gt;&lt;b&gt;Greetz:&lt;/b&gt;&lt;br/&gt;Phoenix crew&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Thanks:&lt;/b&gt;&lt;br/&gt;J.P. Trosclair for System.Net.FtpClient&lt;br/&gt;rcarz for ReparsePoint.cs&lt;br/&gt;Darko Kenda for UsbNotification.cs&lt;br/&gt;Damien Guard for Crc32.cs&lt;/p&gt;</value>
+  </data>
+  <data name="AddNewFolder" xml:space="preserve">
+    <value>Add New Folder</value>
+  </data>
+  <data name="LicenseContent" xml:space="preserve">
+    <value>&lt;p&gt;This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.&lt;/p&gt;
+&lt;p&gt;This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.&lt;/p&gt;
+&lt;p&gt;You should have received a copy of the GNU General Public License along with this program; if not, see &lt;a href="http://www.gnu.org/licenses/"&gt;http://www.gnu.org/licenses/&lt;/a&gt;.&lt;/p&gt;</value>
   </data>
 </root>

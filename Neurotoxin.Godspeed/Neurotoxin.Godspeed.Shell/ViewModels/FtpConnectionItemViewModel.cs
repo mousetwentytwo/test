@@ -29,9 +29,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 Model.ConnectionImage = (int)value;
                 _thumbnail = null;
                 NotifyPropertyChanged(CONNECTIONIMAGE);
+                NotifyPropertyChanged(THUMBNAIL);
             }
         }
 
+        private const string THUMBNAIL = "Thumbnail";
         private ImageSource _thumbnail;
         public ImageSource Thumbnail
         {
@@ -117,8 +119,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public void ExecuteChangeLoginCommand()
         {
             var loginViewModel = Container.Resolve<ILoginViewModel>();
-            loginViewModel.Title = Resx.Login; //TODO
-            loginViewModel.Message = "TODO"; //TODO
+            loginViewModel.Title = Resx.SetCredentials;
+            loginViewModel.Message = Resx.LoginAs;
             loginViewModel.IsUseDefaultEnabled = true;
             loginViewModel.Username = Username;
             loginViewModel.Password = Password;

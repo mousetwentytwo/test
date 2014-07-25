@@ -31,7 +31,5 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
         void Initialize();
         void SetUserMessagesToRead(IUserMessageViewModel[] items);
         void RaiseCanExecuteChanges();
-
-        void Delete(IEnumerable<FileSystemItem> items);
     }
 }

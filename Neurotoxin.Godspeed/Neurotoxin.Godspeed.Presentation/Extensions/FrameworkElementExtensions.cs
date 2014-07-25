@@ -26,5 +26,24 @@ namespace Neurotoxin.Godspeed.Presentation.Extensions
                 f = (FrameworkElement)p;
             }
         }
+
+        public static IEnumerable<T> FindDescendants<T>(this FrameworkElement f) where T : FrameworkElement
+        {
+            for (var i = 0; i < VisualTreeHelper.GetChildrenCount(f); i++)
+            {
+                var c = VisualTreeHelper.GetChild(f, i) as FrameworkElement;
+                if (c is T)
+                {
+                    yield return (T)c;
+                } 
+                else
+                {
+                    foreach (var cc in FindDescendants<T>(c))
+                    {
+                        yield return cc;
+                    }
+                }
+            }
+        } 
     }
 }

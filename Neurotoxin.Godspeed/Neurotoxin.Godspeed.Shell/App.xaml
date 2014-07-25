@@ -83,7 +83,7 @@
                                                 <RowDefinition Height="*"/>
                                             </Grid.RowDefinitions>
                                             
-                                            <Image Source="{TemplateBinding Icon}" Width="16" Height="16" Margin="10,3,5,3" DockPanel.Dock="Left"/>
+                                            <Image Source="{TemplateBinding Icon}" Width="16" Height="16" Margin="10,3,5,3"/>
                                             <TextBlock Text="{TemplateBinding Title}" Grid.Column="1" VerticalAlignment="Center" Foreground="White" FontWeight="Bold"/>
                                             <TextBlock Text="{TemplateBinding Title}" Grid.Column="1" VerticalAlignment="Center" Margin="-1,-1,1,1" Foreground="{StaticResource NormalBrush}" FontWeight="Bold"/>
 
@@ -132,7 +132,7 @@
                                                     <RowDefinition Height="*"/>
                                                 </Grid.RowDefinitions>
 
-                                                <Image Source="{TemplateBinding Icon}" Width="16" Height="16" Margin="7,3,5,3" DockPanel.Dock="Left"/>
+                                                <Image Source="{TemplateBinding Icon}" Width="16" Height="16" Margin="7,3,5,3" Visibility="{TemplateBinding IconVisibility}"/>
                                                 <TextBlock Text="{TemplateBinding Title}" Grid.Column="1" VerticalAlignment="Center" Foreground="White" FontWeight="Bold"/>
                                                 <TextBlock Text="{TemplateBinding Title}" Grid.Column="1" VerticalAlignment="Center" Margin="-1,-1,1,1" Foreground="{StaticResource NormalBrush}" FontWeight="Bold"/>
 
@@ -333,7 +333,6 @@
                             </DataTrigger>
                         </DataTemplate.Triggers>
                     </DataTemplate>
-
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>        

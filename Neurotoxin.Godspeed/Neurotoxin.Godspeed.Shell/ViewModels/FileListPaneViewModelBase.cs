@@ -1198,7 +1198,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void RecognitionSuccess(FileSystemItem item)
         {
-            Items.Single(i => i.Model == item).NotifyModelChanges();
+            var vm = Items.FirstOrDefault(i => i.Model == item);
+            //if vm not exists it means a directory changed has been occured so this recognition loop is unnecessary anymore 
+            //(the queue has been emptied and a new loop has been started on a different thread)
+            if (vm == null) return;
+            
+            vm.NotifyModelChanges();
             lock (_queueLock)
             {
                 _queue.Dequeue();

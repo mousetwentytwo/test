@@ -26,7 +26,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
     public class FileManagerViewModel : CommonViewModelBase, IFileManagerViewModel
     {
-        private readonly TransferManagerViewModel _transferManager;
+        private readonly ITransferManagerViewModel _transferManager;
         private readonly IUserSettingsProvider _userSettings;
 
         #region Main window properties
@@ -267,11 +267,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
         }
 
-        public void Delete(IEnumerable<FileSystemItem> queue)
-        {
-            DeleteCommand.Execute(queue);
-        }
-
         #endregion
 
         #region OpenUserMessageCommand
@@ -320,7 +315,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #endregion
 
-        public FileManagerViewModel(TransferManagerViewModel transferManager, IUserSettingsProvider userSettings)
+        public FileManagerViewModel(ITransferManagerViewModel transferManager, IUserSettingsProvider userSettings)
         {
             _transferManager = transferManager;
             _userSettings = userSettings;

@@ -6,6 +6,7 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
 {
     public interface ITreeSelectionViewModel
     {
+        string TreeSelectionTitle { get; }
         ObservableCollection<TreeItemViewModel> SelectionTree { get; set; }
         IViewModel Parent { get; }
     }

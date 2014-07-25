@@ -24,7 +24,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private int _itemsCount;
         private int _itemsChecked;
 
-        private readonly IFileManagerViewModel _fileManager;
+        private readonly ITransferManagerViewModel _transferManager;
 
         private readonly FtpContentViewModel _parent;
         public IViewModel Parent
@@ -82,6 +82,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 NotifyPropertyChanged(HASMISSINGENTRIES);
                 NotifyPropertyChanged(MISSINGENTRIESCOUNT);
             }
+        }
+
+        public string TreeSelectionTitle
+        {
+            get { return Resx.SelectTheItemsYouWantToRemove; }
         }
 
         private const string SELECTIONTREE = "SelectionTree";
@@ -158,7 +163,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             if (!WindowManager.ShowTreeSelectorDialog(this)) return;
             var selection = new List<FileSystemItem>();
             GetSelectionFromTree(SelectionTree, selection);
-            _fileManager.Delete(selection);
+            _transferManager.Delete(_parent, selection);
         }
 
         private void WrapTreeIntoViewModels(TreeItem<FileSystemItem> tree, ObservableCollection<TreeItemViewModel> treeViewModel)
@@ -192,9 +197,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #endregion
 
-        public FreestyleDatabaseCheckerViewModel(IFileManagerViewModel fileManager, FtpContentViewModel parent)
+        public FreestyleDatabaseCheckerViewModel(ITransferManagerViewModel transferManager, FtpContentViewModel parent)
         {
-            _fileManager = fileManager;
+            _transferManager = transferManager;
             _parent = parent;
             CloseCommand = new DelegateCommand(ExecuteCloseCommand);
             CleanUpCommand = new DelegateCommand(ExecuteCleanUpCommand);

@@ -5,16 +5,13 @@
                        xmlns:validation="clr-namespace:Neurotoxin.Godspeed.Presentation.Validation;assembly=Neurotoxin.Godspeed.Presentation"
                        xmlns:dialogs="clr-namespace:Neurotoxin.Godspeed.Shell.Views.Dialogs"
                        xmlns:primitives="clr-namespace:Neurotoxin.Godspeed.Shell.Primitives"
-                       xmlns:converters="clr-namespace:Neurotoxin.Godspeed.Presentation.Converters;assembly=Neurotoxin.Godspeed.Presentation"
-                       xmlns:constants="clr-namespace:Neurotoxin.Godspeed.Shell.Constants"
                        xmlns:shellValidations="clr-namespace:Neurotoxin.Godspeed.Shell.Views.Validations"
                        xmlns:lex="http://wpflocalizeextension.codeplex.com"
                        lex:LocalizeDictionary.DesignCulture="en-US"
                        lex:ResxLocalizationProvider.DefaultAssembly="Neurotoxin.Godspeed.Shell"
                        lex:ResxLocalizationProvider.DefaultDictionary="Resources"
-                       Width="420" Title="{lex:LocText ConnectionDetails}">
+                       Width="500" Title="{lex:LocText ConnectionDetails}">
     <primitives:DialogBase.Resources>
-        <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
         <Style TargetType="TextBox" x:Key="TextBoxStyle">
             <Style.Triggers>
                 <Trigger Property="Validation.HasError" Value="True">
@@ -76,12 +73,13 @@
         <i:DataResource x:Key="ItemState" BindingTarget="{Binding ItemState}"/>
         <i:DataResource x:Key="ConnectionNames" BindingTarget="{Binding RelativeSource={RelativeSource AncestorType={x:Type dialogs:NewConnectionDialog}}, Path=ConnectionNames}"/>
     </primitives:DialogBase.Resources>
-    <Grid x:Name="LayoutRoot" Margin="2">
+    <Grid x:Name="LayoutRoot" Margin="5">
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="142" />
             <ColumnDefinition Width="100" />
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="40" />
-            <ColumnDefinition Width="70" />
+            <ColumnDefinition Width="50" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -90,11 +88,15 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <TextBlock Grid.Column="0" Grid.Row="0" Text="{lex:LocText ConnectionName, Suffix={x:Static constants:Strings.Colon}}" VerticalAlignment="Center" Margin="0,0,0,5" />
-        <TextBox Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="3" Margin="0,0,0,5" x:Name="ConnectionName" Style="{StaticResource TextBoxStyle}">
+
+        <Grid Width="132" Margin="0,0,10,0" Height="132" Grid.RowSpan="5" VerticalAlignment="Top">
+            <Border BorderBrush="{StaticResource NormalBrush}" BorderThickness="1" Background="White"/>
+            <Image Source="{Binding Thumbnail}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="128" Height="128"/>
+        </Grid>
+
+        <TextBlock Grid.Column="1" Grid.Row="0" Text="{lex:Loc ConnectionName}" VerticalAlignment="Center" Margin="0,0,0,5" />
+        <TextBox Grid.Column="2" Grid.Row="0" Grid.ColumnSpan="3" Margin="0,0,0,5" x:Name="ConnectionName" Style="{StaticResource TextBoxStyle}">
             <TextBox.Text>
                 <Binding Path="Name" UpdateSourceTrigger="LostFocus">
                     <Binding.ValidationRules>
@@ -108,8 +110,8 @@
                 </Binding>
             </TextBox.Text>
         </TextBox>
-        <TextBlock Grid.Column="0" Grid.Row="1" Text="{lex:LocText Console, Suffix={x:Static constants:Strings.Colon}}" VerticalAlignment="Center" Margin="0,0,0,5" />
-        <ComboBox Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="3" Margin="0,0,0,5" 
+        <TextBlock Grid.Column="1" Grid.Row="1" Text="{lex:Loc Console}" VerticalAlignment="Center" Margin="0,0,0,5" />
+        <ComboBox Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="3" Margin="0,0,0,5" 
                   ItemsSource="{Binding RelativeSource={RelativeSource AncestorType={x:Type dialogs:NewConnectionDialog}}, Path=ConnectionImages}"
                   SelectedItem="{Binding ConnectionImage}">
             <ComboBox.ItemTemplate>
@@ -118,8 +120,9 @@
                 </DataTemplate>
             </ComboBox.ItemTemplate>
         </ComboBox>
-        <TextBlock Grid.Column="0" Grid.Row="2" Text="{lex:LocText Address, Suffix={x:Static constants:Strings.Colon}}" VerticalAlignment="Center" Margin="0,0,0,5" />
-        <TextBox Grid.Column="1" Grid.Row="2" Margin="0,0,0,5" x:Name="Address" Style="{StaticResource TextBoxStyle}">
+        
+        <TextBlock Grid.Column="1" Grid.Row="2" Text="{lex:Loc Address}" VerticalAlignment="Center" Margin="0,0,0,5" />
+        <TextBox Grid.Column="2" Grid.Row="2" Margin="0,0,0,5" x:Name="Address" Style="{StaticResource TextBoxStyle}">
             <TextBox.Text>
                 <Binding Path="Address" UpdateSourceTrigger="LostFocus">
                     <Binding.ValidationRules>
@@ -132,8 +135,9 @@
                 </Binding>
             </TextBox.Text>
         </TextBox>
-        <TextBlock Grid.Column="2" Grid.Row="2" Text="{lex:LocText Port, Suffix={x:Static constants:Strings.Colon}}" VerticalAlignment="Center" Margin="10,0,0,5" />
-        <TextBox Grid.Column="3" Grid.Row="2" Margin="0,0,0,5" x:Name="Port" Style="{StaticResource TextBoxStyle}">
+        
+        <TextBlock Grid.Column="3" Grid.Row="2" Text="{lex:Loc Port}" VerticalAlignment="Center" Margin="10,0,0,5" />
+        <TextBox Grid.Column="4" Grid.Row="2" Margin="0,0,0,5" x:Name="Port" Style="{StaticResource TextBoxStyle}">
             <TextBox.Text>
                 <Binding Path="Port" UpdateSourceTrigger="LostFocus">
                     <Binding.ValidationRules>
@@ -143,43 +147,16 @@
             </TextBox.Text>
         </TextBox>
 
-        <TextBlock Grid.Column="0" Grid.Row="3" Text="{lex:LocText Login, Suffix={x:Static constants:Strings.Colon}}" VerticalAlignment="Center" Margin="0,0,0,5" />
-        <StackPanel Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="3" Margin="0,0,0,5" Orientation="Horizontal">
+        <TextBlock Grid.Column="1" Grid.Row="3" Text="{lex:Loc Login}" VerticalAlignment="Center" Margin="0,0,0,5" />
+        <DockPanel Grid.Column="2" Grid.Row="3" Grid.ColumnSpan="3" Margin="0,0,0,5">
+            <Button DockPanel.Dock="Right" Content="{lex:Loc Change}" Command="{Binding ChangeLoginCommand}" Margin="15,0,0,0" Padding="10,0,10,0" MinWidth="75" Height="22"/>
             <TextBlock Text="{Binding LoginInfo}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-            <Button Content="{lex:Loc Change}" Command="{Binding ChangeLoginCommand}" Margin="15,0,0,0"/>
-        </StackPanel>
-        
+        </DockPanel>
 
-        <!--<TextBlock Grid.Column="0" Grid.Row="3" Text="{lex:LocText Username, Suffix={x:Static constants:Strings.Colon}}" VerticalAlignment="Center" Margin="0,0,0,5" />
-        <TextBox Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="3" Margin="0,0,0,5" x:Name="Username" Style="{StaticResource TextBoxStyle}" 
-                 IsEnabled="{Binding ElementName=AnonymousLogin, Path=IsChecked, Converter={StaticResource InverseBooleanConverter}}">
-            <TextBox.Text>
-                <Binding Path="Username" UpdateSourceTrigger="LostFocus">
-                    <Binding.ValidationRules>
-                        <validation:IsRequired ValidatesOnTargetUpdated="True" ErrorMessage="{lex:LocText Neurotoxin.Godspeed.Shell:Resources:EmptyFieldErrorMessage}" />
-                    </Binding.ValidationRules>
-                </Binding>
-            </TextBox.Text>
-        </TextBox>
-        <TextBlock Grid.Column="0" Grid.Row="4" Text="{lex:LocText Password, Suffix={x:Static constants:Strings.Colon}}" VerticalAlignment="Center" Margin="0,0,0,5" />
-        <TextBox Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="3" Margin="0,0,0,5" x:Name="Password" Style="{StaticResource TextBoxStyle}" 
-                 IsEnabled="{Binding ElementName=AnonymousLogin, Path=IsChecked, Converter={StaticResource InverseBooleanConverter}}">
-            <TextBox.Text>
-                <Binding Path="Password" UpdateSourceTrigger="LostFocus">
-                    <Binding.ValidationRules>
-                        <validation:IsRequired ValidatesOnTargetUpdated="True" ErrorMessage="{lex:LocText Neurotoxin.Godspeed.Shell:Resources:EmptyFieldErrorMessage}" />
-                    </Binding.ValidationRules>
-                </Binding>
-            </TextBox.Text>
-        </TextBox>
-        <CheckBox Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="5" Margin="0,0,0,5" x:Name="AnonymousLogin" Checked="AnonymousLoginOnChange" Unchecked="AnonymousLoginOnChange">
-            <TextBlock TextWrapping="Wrap" Text="{lex:LocText AnonymousLogin}" Margin="0,-2,0,0"/>
-        </CheckBox>-->
-        
-        <CheckBox Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="6" Margin="0,0,0,15" IsChecked="{Binding UsePassiveMode}">
-            <TextBlock TextWrapping="Wrap" Text="{lex:LocText UsePassiveMode}" Margin="0,-2,0,0"/>
-        </CheckBox>
-        <StackPanel Grid.ColumnSpan="4" Grid.Row="7" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,5,0">
+        <TextBlock Grid.Column="1" Grid.Row="4" Text="{lex:Loc UsePassiveMode}" VerticalAlignment="Center" Margin="0,0,0,15" />
+        <CheckBox Grid.Column="2" Grid.Row="4" Margin="0,0,0,15" IsChecked="{Binding UsePassiveMode}" VerticalAlignment="Center"/>
+
+        <StackPanel Grid.ColumnSpan="5" Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,5,0">
             <Button Content="{lex:LocText Ok}" Width="75" Margin="0,0,5,0" Click="OkButtonClick" />
             <Button Content="{lex:LocText Cancel}" Width="75" Click="CancelButtonClick" />
         </StackPanel>

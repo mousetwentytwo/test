@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
+using System.Windows.Navigation;
 using System.Windows.Threading;
 using Microsoft.Practices.Unity;
 using Neurotoxin.Godspeed.Core.Extensions;
@@ -157,6 +158,5 @@ namespace Neurotoxin.Godspeed.Shell
             var fvi = FileVersionInfo.GetVersionInfo(applicationAssembly.Location);
             return fvi.ProductVersion;
         }
-
     }
 }

@@ -196,7 +196,7 @@ namespace Neurotoxin.Godspeed.Shell.Controllers
         {
             if (_transferProgressDialog == null)
             {
-                _transferProgressDialog = new TransferProgressDialog(e.Sender as TransferManagerViewModel);
+                _transferProgressDialog = new TransferProgressDialog(e.Sender as ITransferManagerViewModel);
                 _transferProgressDialog.Closing += TransferProgressDialogOnClosing;
                 _transferProgressDialog.Closed += TransferProgressDialogOnClosed;
             }

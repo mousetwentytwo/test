@@ -79,17 +79,6 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;p&gt;Author: Mercenary/Neurotoxin&lt;br/&gt;Homepage: &lt;a href=&quot;http://godspeed.codeplex.com&quot; target=&quot;_blank&quot;&gt;http://godspeed.codeplex.com&lt;/a&gt;&lt;/p&gt;
-        ///&lt;p&gt;This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.&lt;/p&gt;
-        ///&lt;p&gt;This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warrant [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string AboutContent {
-            get {
-                return ResourceManager.GetString("AboutContent", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Add New Folder.
         /// </summary>
         internal static string AddNewFolder {
@@ -284,6 +273,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         internal static string CantOpenFile {
             get {
                 return ResourceManager.GetString("CantOpenFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change.
+        /// </summary>
+        internal static string Change {
+            get {
+                return ResourceManager.GetString("Change", resourceCulture);
             }
         }
         
@@ -540,6 +538,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;p&gt;&lt;b&gt;Credits:&lt;/b&gt;&lt;br/&gt;Developer: mercenary&lt;br/&gt;QA: mousetwentytwo&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Homepage:&lt;/b&gt;&lt;br/&gt;&lt;a href=&quot;http://godspeed.codeplex.com&quot; target=&quot;_blank&quot;&gt;http://godspeed.codeplex.com&lt;/a&gt;&lt;/p&gt;.
+        /// </summary>
+        internal static string CreditsContent {
+            get {
+                return ResourceManager.GetString("CreditsContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Date.
         /// </summary>
         internal static string Date {
@@ -765,7 +772,7 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You can&apos;t leave this field empty..
+        ///   Looks up a localized string similar to You can&apos;t leave this field empty.
         /// </summary>
         internal static string EmptyFieldErrorMessage {
             get {
@@ -1062,6 +1069,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;p&gt;&lt;b&gt;Greetz:&lt;/b&gt;&lt;br/&gt;Phoenix crew&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Thanks:&lt;/b&gt;&lt;br/&gt;J.P. Trosclair for System.Net.FtpClient&lt;br/&gt;rcarz for ReparsePoint.cs&lt;br/&gt;Darko Kenda for UsbNotification.cs&lt;br/&gt;Damien Guard for Crc32.cs&lt;/p&gt;.
+        /// </summary>
+        internal static string GreetzContent {
+            get {
+                return ResourceManager.GetString("GreetzContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Help.
         /// </summary>
         internal static string HelpMenu {
@@ -1269,6 +1285,17 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;p&gt;This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.&lt;/p&gt;
+        ///&lt;p&gt;This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.&lt;/p&gt;
+        ///&lt;p&gt;You should have rec [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string LicenseContent {
+            get {
+                return ResourceManager.GetString("LicenseContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to License Stores.
         /// </summary>
         internal static string LicenseStorePlural {
@@ -1301,6 +1328,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         internal static string Login {
             get {
                 return ResourceManager.GetString("Login", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Log in as:.
+        /// </summary>
+        internal static string LoginAs {
+            get {
+                return ResourceManager.GetString("LoginAs", resourceCulture);
             }
         }
         
@@ -2115,11 +2151,29 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Select the items you want to remove.
+        /// </summary>
+        internal static string SelectTheItemsYouWantToRemove {
+            get {
+                return ResourceManager.GetString("SelectTheItemsYouWantToRemove", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Session initiation failed.
         /// </summary>
         internal static string SessionInitiationFailed {
             get {
                 return ResourceManager.GetString("SessionInitiationFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Set Credentials.
+        /// </summary>
+        internal static string SetCredentials {
+            get {
+                return ResourceManager.GetString("SetCredentials", resourceCulture);
             }
         }
         

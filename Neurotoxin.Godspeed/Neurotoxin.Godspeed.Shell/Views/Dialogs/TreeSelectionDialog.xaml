@@ -6,7 +6,7 @@
                        lex:LocalizeDictionary.DesignCulture="en-US"
                        lex:ResxLocalizationProvider.DefaultAssembly="Neurotoxin.Godspeed.Shell"
                        lex:ResxLocalizationProvider.DefaultDictionary="Resources"
-                       Width="400" Height="400">
+                       Width="400" Height="400" Title="{Binding TreeSelectionTitle}">
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
