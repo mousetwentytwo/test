@@ -100,7 +100,7 @@
             <TextBox.Text>
                 <Binding Path="Name" UpdateSourceTrigger="LostFocus">
                     <Binding.ValidationRules>
-                        <validation:IsRequired ValidatesOnTargetUpdated="True" ErrorMessage="{lex:LocText EmptyFieldErrorMessage}" />
+                        <validation:IsRequired ValidatesOnTargetUpdated="True" ErrorMessage="{lex:LocText Neurotoxin.Godspeed.Shell:Resources:EmptyFieldErrorMessage}" />
                         <shellValidations:IsNonExistentConnection ValidatesOnTargetUpdated="True" 
                                                                   ErrorMessage="{lex:LocText Neurotoxin.Godspeed.Shell:Resources:ConnectionNameExistsErrorMessage}" 
                                                                   OriginalValue="{i:DataResourceBinding DataResource={StaticResource OriginalName}}"

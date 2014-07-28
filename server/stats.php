@@ -22,13 +22,25 @@ function visitor_country()
         $ip = $remote;
     }
 
-    $ip_data = @json_decode(file_get_contents("http://www.geoplugin.net/json.gp?ip=".$ip));
+	$data = file_get_contents("http://www.geoplugin.net/json.gp?ip=".$ip);
+    $ip_data = @json_decode($data);
 
-    if($ip_data)
+    if($ip_data && $ip_data->geoplugin_status == 200)
     {
+		$result['ip'] = $ip;
         $result['name'] = $ip_data->geoplugin_countryName;
 		$result['code'] = $ip_data->geoplugin_countryCode;
-    }
+		$result['data'] = $data;
+    } else {
+		$data = file_get_contents("http://freegeoip.net/json/".$ip);
+		$ip_data = @json_decode($data);
+		if ($ip_data) {
+			$result['ip'] = $ip;
+			$result['name'] = $ip_data->country_name;
+			$result['code'] = $ip_data->country_code;
+			$result['data'] = $data;
+		}
+	}
 
     return $result;
 }
@@ -38,6 +50,12 @@ include('db.php');
 $country = visitor_country();
 $columns = '`country_code`, `country_name`';
 $values = "'".$country['code']."','".$country['name']."'";
+
+if ($country['code'] == '') {
+	$f = fopen('./ipdata/'.$country['ip'], 'w');
+	fwrite($f, $country['data']);
+	fclose($f);
+}
 
 foreach ($_POST as $k => $v) {
 	if ($k == 'command_usage') {

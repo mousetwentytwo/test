@@ -226,6 +226,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             sw.Stop();
             Debug.WriteLine("[MIGRATION] Database created in {0}", sw.Elapsed);
 
+            if (!Directory.Exists(_esentDir)) return;
             foreach (var postData in Directory.GetFiles(Path.Combine(_esentDir, "post")))
             {
                 File.Move(postData, Path.Combine(App.PostDirectory, Path.GetFileName(postData)));
