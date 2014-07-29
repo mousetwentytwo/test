@@ -171,7 +171,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             foreach (var treeItem in tree.Children.Values)
             {
                 var icon = treeItem.Content.Type == ItemType.Directory ? "/Resources/folder.png" : "/Resources/file.png";
-                //TODO: refactor viewmodel to be model-based
                 var vm = new TreeItemViewModel
                              {
                                  Name = treeItem.Name,
@@ -305,7 +304,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 IsBusy = false;
                 ProgressMessage = string.Empty;
                 this.NotifyProgressFinished();
-                //TODO: popup error message
+                //TODO: swallow error and pop up a "something went wrong" text?
+                WindowManager.ShowErrorMessage(error);
             });
         }
 

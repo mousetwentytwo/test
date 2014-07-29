@@ -17,7 +17,7 @@
 using System;
 using System.Windows;
 using System.Windows.Data;
-using Xceed.Wpf.Toolkit;
+using Neurotoxin.Godspeed.Presentation.Formatters;
 
 namespace Neurotoxin.Godspeed.Presentation.Controls
 {

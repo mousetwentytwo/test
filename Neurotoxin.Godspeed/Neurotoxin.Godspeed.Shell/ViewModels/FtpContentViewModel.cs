@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows;
 using HtmlAgilityPack;
 using Microsoft.Practices.ObjectBuilder2;
 using Microsoft.Practices.Unity;
@@ -115,6 +116,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public void ExecuteLaunchGameCommand()
         {
+            LaunchErrorCode error;
             try
             {
                 var scanFolder = GetCorrespondingScanFolder(CurrentRow.Path);
@@ -134,17 +136,18 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                             return;
                         }
                     }
-                    //TODO
-                } 
+                    error = LaunchErrorCode.NotFound;
+                }
                 else
                 {
-                    //TODO
+                    error = LaunchErrorCode.NotUnderScanFolder;
                 }
             }
             catch
             {
-                //TODO
+                error = LaunchErrorCode.UnspecifiedError;
             }
+            WindowManager.ShowMessage(Resx.LaunchGame, string.Format(Resx.UnableToLaunchGame, (int)error, error.ToString().ToUpper()));
         }
 
         #endregion

@@ -58,9 +58,6 @@
     <Reference Include="Fizzler">
       <HintPath>..\packages\Fizzler.0.9.3\lib\net35\Fizzler.dll</HintPath>
     </Reference>
-    <Reference Include="Fizzler.Sandbox">
-      <HintPath>..\packages\Fizzler.0.9.3\lib\net35\Fizzler.Sandbox.dll</HintPath>
-    </Reference>
     <Reference Include="Fizzler.Systems.HtmlAgilityPack">
       <HintPath>..\packages\Fizzler.0.9.3\lib\net35\Fizzler.Systems.HtmlAgilityPack.dll</HintPath>
     </Reference>
@@ -130,8 +127,8 @@
     <Reference Include="XAMLMarkupExtensions">
       <HintPath>..\packages\XAMLMarkupExtensions.1.1.6.3\lib\net40\XAMLMarkupExtensions.dll</HintPath>
     </Reference>
-    <Reference Include="Xceed.Wpf.Toolkit">
-      <HintPath>..\packages\Extended.Wpf.Toolkit.2.2.0\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
+    <Reference Include="Xceed.Wpf.Toolkit, Version=2.2.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.2.1\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -153,6 +150,7 @@
     <Compile Include="Constants\FtpTransferDirection.cs" />
     <Compile Include="Constants\InputDialogMode.cs" />
     <Compile Include="Constants\ItemType.cs" />
+    <Compile Include="Constants\LaunchErrorCode.cs" />
     <Compile Include="Constants\MessageFlags.cs" />
     <Compile Include="Constants\Modules.cs" />
     <Compile Include="Constants\ModuleLoadInfoCollection.cs" />

@@ -1088,4 +1088,7 @@
     <value>A migráció elkészült.
 Le akarod törölni a régi verzióhoz tartozó adatokat?</value>
   </data>
+  <data name="UnableToLaunchGame" xml:space="preserve">
+    <value>A játékot nem sikerült elindítani. (Hibakód: {0} - {1})</value>
+  </data>
 </root>

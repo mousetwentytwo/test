@@ -2548,6 +2548,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to launch game. (Error code: {0} - {1}).
+        /// </summary>
+        internal static string UnableToLaunchGame {
+            get {
+                return ResourceManager.GetString("UnableToLaunchGame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unhandled error occurred.
         /// </summary>
         internal static string UnhandledErrorOccurred {

@@ -20,7 +20,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Documents;
 
-namespace Xceed.Wpf.Toolkit
+namespace Neurotoxin.Godspeed.Presentation.Formatters
 {
   /// <summary>
   /// Formats the RichTextBox text as RTF

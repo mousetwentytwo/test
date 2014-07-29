@@ -28,6 +28,7 @@ namespace Neurotoxin.Godspeed.Shell.Views
     public partial class FileManagerWindow : IView<FileManagerViewModel>
     {
         private readonly IEventAggregator _eventAggregator;
+        private readonly IWorkHandler _workHandler;
         private Queue<Timer> _userMessageReadTimers;
 
         public FileManagerViewModel ViewModel
@@ -35,9 +36,10 @@ namespace Neurotoxin.Godspeed.Shell.Views
             get { return (FileManagerViewModel) DataContext; }
         }
 
-        public FileManagerWindow(IEventAggregator eventAggregator)
+        public FileManagerWindow(IEventAggregator eventAggregator, IWorkHandler workHandler)
         {
             _eventAggregator = eventAggregator;
+            _workHandler = workHandler;
             var assembly = Assembly.GetAssembly(typeof(FileManagerWindow));
             var assemblyName = assembly.GetName();
             var version = assemblyName.Version;
@@ -114,7 +116,7 @@ namespace Neurotoxin.Godspeed.Shell.Views
 
             combobox.IsDropDownOpen = true;
             var item = combobox.ItemContainerGenerator.ContainerFromItem(combobox.SelectedItem) as ComboBoxItem;
-            item.Focus();
+            if (item != null) item.Focus();
         }
 
         private void ExecuteSettingsCommand(object sender, ExecutedRoutedEventArgs e)
@@ -141,7 +143,7 @@ namespace Neurotoxin.Godspeed.Shell.Views
 
         private void ExecuteUserStatisticsParticipationCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            new UserStatisticsParticipationDialog().ShowDialog();
+            new UserStatisticsParticipationDialog(_workHandler).ShowDialog();
         }
 
         private void ExecuteExitCommand(object sender, ExecutedRoutedEventArgs e)

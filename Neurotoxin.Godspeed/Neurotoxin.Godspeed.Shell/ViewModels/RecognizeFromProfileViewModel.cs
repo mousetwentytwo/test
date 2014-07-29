@@ -21,10 +21,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private int _itemsChecked;
         private readonly ITitleRecognizer _titleRecognizer;
 
-        //TODO: replace text
         public string ProgressDialogTitle
         {
-            get { return Resx.MigrationProgressDialogTitle; }
+            get { return Resx.RecognizeTitlesFromProfile; }
         }
 
         private const string PROGRESSMESSAGE = "ProgressMessage";
@@ -69,8 +68,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public void Recognize(FileSystemItem item, Action<int> success, Action<Exception> error)
         {
-            //TODO: replace text
-            ProgressMessage = "Opening profile";
+            ProgressMessage = Resx.OpeningProfile;
             this.NotifyProgressStarted();
             WorkHandler.Run(() => RecognizeFromProfile(item), 
                 result =>

@@ -360,7 +360,6 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
                                                         && ProfileInfo.TitlesPlayed.Any(t => t.TitleCode == Path.GetFileNameWithoutExtension(f.Name)));
                 var count = games.Count();
                 NotifyContentCountDetermined(count);
-                var i = 0;
                 Games = new Dictionary<FileEntry, GameFile>();
                 foreach (var game in games.Select(gpd => GetGameFile(gpd)))
                 {
@@ -612,8 +611,6 @@ namespace Neurotoxin.Godspeed.Core.Io.Stfs
             var otherPec = otherProfile.ExtractPec();
             var pecFileEntry = GetFileEntry("PEC");
             var pec = ExtractPec();
-
-            var i = 0;
 
             //HACK horizon
             int? newBlock = AllocateBlocks(1)[0];

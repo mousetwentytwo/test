@@ -16,7 +16,7 @@
 
 using System.Windows.Documents;
 
-namespace Xceed.Wpf.Toolkit
+namespace Neurotoxin.Godspeed.Presentation.Formatters
 {
   public interface ITextFormatter
   {

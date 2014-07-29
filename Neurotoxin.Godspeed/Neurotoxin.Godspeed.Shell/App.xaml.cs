@@ -2,13 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
-using System.Windows.Navigation;
 using System.Windows.Threading;
 using Microsoft.Practices.Unity;
 using Neurotoxin.Godspeed.Core.Extensions;
@@ -29,32 +25,17 @@ namespace Neurotoxin.Godspeed.Shell
         public static string PostDirectory { get; set; }
         public static bool ShellInitialized { get; set; }
 
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool SetForegroundWindow(IntPtr hWnd);
-
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            var currentProcess = Process.GetCurrentProcess();
-            var otherProcess = Process.GetProcessesByName(currentProcess.ProcessName).FirstOrDefault(process => process.Id != currentProcess.Id);
-            if (otherProcess != null)
-            {
-                //TODO: what if there are three or more processes and the First grabs a wrong one?
-                SetForegroundWindow(otherProcess.MainWindowHandle);
-                Shutdown();
-            } 
-            else
-            {
-                Dispatcher.CurrentDispatcher.UnhandledException += UnhandledThreadingException;
-                ShutdownMode = ShutdownMode.OnMainWindowClose;
+            Dispatcher.CurrentDispatcher.UnhandledException += UnhandledThreadingException;
+            ShutdownMode = ShutdownMode.OnMainWindowClose;
 
 #if (DEBUG)
-                RunInDebugMode();
+            RunInDebugMode();
 #else
-                RunInReleaseMode();
+            RunInReleaseMode();
 #endif
-            }
         }
 
         private void RunInDebugMode()
