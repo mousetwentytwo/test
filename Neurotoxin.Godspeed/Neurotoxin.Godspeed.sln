@@ -11,11 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neurotoxin.Godspeed.Present
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neurotoxin.Godspeed.Core.Tests", "Neurotoxin.Godspeed.Core.Tests\Neurotoxin.Godspeed.Core.Tests.csproj", "{1EB15C92-B536-490D-966D-3CA2D96C0137}"
 EndProject
-Project("{6141683F-8A12-4E36-9623-2EB02B2C2303}") = "Neurotoxin.Godspeed.Installer", "Neurotoxin.Godspeed.Installer\Neurotoxin.Godspeed.Installer.isproj", "{499F900A-77C8-4082-9457-57CF0A89A5A2}"
-	ProjectSection(ProjectDependencies) = postProject
-		{B80F4FF9-D93B-474B-A86E-6B6EB70E92F7} = {B80F4FF9-D93B-474B-A86E-6B6EB70E92F7}
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{EDEFA83C-86BB-42FF-AC81-1CB87B29CB74}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neurotoxin.Godspeed.Shell.Tests", "Neurotoxin.Godspeed.Shell.Tests\Neurotoxin.Godspeed.Shell.Tests.csproj", "{BDC5A7D5-855B-4A9E-BF02-A918FB44A67C}"
@@ -175,36 +170,6 @@ Global
 		{1EB15C92-B536-490D-966D-3CA2D96C0137}.SingleImage|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{1EB15C92-B536-490D-966D-3CA2D96C0137}.SingleImage|Mixed Platforms.Build.0 = Release|Any CPU
 		{1EB15C92-B536-490D-966D-3CA2D96C0137}.SingleImage|x86.ActiveCfg = Release|Any CPU
-		{499F900A-77C8-4082-9457-57CF0A89A5A2}.CD_ROM|Any CPU.ActiveCfg = CD_ROM
-		{499F900A-77C8-4082-9457-57CF0A89A5A2}.CD_ROM|Any CPU.Build.0 = CD_ROM
-		{499F900A-77C8-4082-9457-57CF0A89A5A2}.CD_ROM|Mixed Platforms.ActiveCfg = CD_ROM
-		{499F900A-77C8-4082-9457-57CF0A89A5A2}.CD_ROM|Mixed Platforms.Build.0 = CD_ROM
-		{499F900A-77C8-4082-9457-57CF0A89A5A2}.CD_ROM|x86.ActiveCfg = CD_ROM
-		{499F900A-77C8-4082-9457-57CF0A89A5A2}.CD_ROM|x86.Build.0 = CD_ROM
-		{499F900A-77C8-4082-9457-57CF0A89A5A2}.Debug|Any CPU.ActiveCfg = DVD-5
-		{499F900A-77C8-4082-9457-57CF0A89A5A2}.Debug|Any CPU.Build.0 = DVD-5
-		{499F900A-77C8-4082-9457-57CF0A89A5A2}.Debug|Mixed Platforms.ActiveCfg = SingleImage
-		{499F900A-77C8-4082-9457-57CF0A89A5A2}.Debug|Mixed Platforms.Build.0 = SingleImage
-		{499F900A-77C8-4082-9457-57CF0A89A5A2}.Debug|x86.ActiveCfg = DVD-5
-		{499F900A-77C8-4082-9457-57CF0A89A5A2}.Debug|x86.Build.0 = DVD-5
-		{499F900A-77C8-4082-9457-57CF0A89A5A2}.DVD-5|Any CPU.ActiveCfg = DVD-5
-		{499F900A-77C8-4082-9457-57CF0A89A5A2}.DVD-5|Any CPU.Build.0 = DVD-5
-		{499F900A-77C8-4082-9457-57CF0A89A5A2}.DVD-5|Mixed Platforms.ActiveCfg = DVD-5
-		{499F900A-77C8-4082-9457-57CF0A89A5A2}.DVD-5|Mixed Platforms.Build.0 = DVD-5
-		{499F900A-77C8-4082-9457-57CF0A89A5A2}.DVD-5|x86.ActiveCfg = DVD-5
-		{499F900A-77C8-4082-9457-57CF0A89A5A2}.DVD-5|x86.Build.0 = DVD-5
-		{499F900A-77C8-4082-9457-57CF0A89A5A2}.Release|Any CPU.ActiveCfg = SingleImage
-		{499F900A-77C8-4082-9457-57CF0A89A5A2}.Release|Any CPU.Build.0 = SingleImage
-		{499F900A-77C8-4082-9457-57CF0A89A5A2}.Release|Mixed Platforms.ActiveCfg = SingleImage
-		{499F900A-77C8-4082-9457-57CF0A89A5A2}.Release|Mixed Platforms.Build.0 = SingleImage
-		{499F900A-77C8-4082-9457-57CF0A89A5A2}.Release|x86.ActiveCfg = SingleImage
-		{499F900A-77C8-4082-9457-57CF0A89A5A2}.Release|x86.Build.0 = SingleImage
-		{499F900A-77C8-4082-9457-57CF0A89A5A2}.SingleImage|Any CPU.ActiveCfg = SingleImage
-		{499F900A-77C8-4082-9457-57CF0A89A5A2}.SingleImage|Any CPU.Build.0 = SingleImage
-		{499F900A-77C8-4082-9457-57CF0A89A5A2}.SingleImage|Mixed Platforms.ActiveCfg = SingleImage
-		{499F900A-77C8-4082-9457-57CF0A89A5A2}.SingleImage|Mixed Platforms.Build.0 = SingleImage
-		{499F900A-77C8-4082-9457-57CF0A89A5A2}.SingleImage|x86.ActiveCfg = SingleImage
-		{499F900A-77C8-4082-9457-57CF0A89A5A2}.SingleImage|x86.Build.0 = SingleImage
 		{BDC5A7D5-855B-4A9E-BF02-A918FB44A67C}.CD_ROM|Any CPU.ActiveCfg = Release|Any CPU
 		{BDC5A7D5-855B-4A9E-BF02-A918FB44A67C}.CD_ROM|Any CPU.Build.0 = Release|Any CPU
 		{BDC5A7D5-855B-4A9E-BF02-A918FB44A67C}.CD_ROM|Mixed Platforms.ActiveCfg = Release|Any CPU

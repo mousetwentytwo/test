@@ -20,6 +20,7 @@ using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
 using Neurotoxin.Godspeed.Shell.Reporting;
 using Neurotoxin.Godspeed.Shell.Extensions;
+using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 
 namespace Neurotoxin.Godspeed.Shell.ViewModels
 {
@@ -106,23 +107,25 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private bool CheckDatabase()
         {
             CheckDataDirectory();
-            var exists = DatabaseExists();
-            if (!exists) MigrateEsentToDatabase();
-            return exists;
+            return DatabaseExists();
         }
 
         private void CheckDatabaseCallback(bool databaseExisted, Action<SanityCheckResult> callback)
         {
             var result = new SanityCheckResult();
+            var frameworkMessage = CheckFrameworkVersion();
+            if (frameworkMessage != null) result.UserMessages = new List<NotifyUserMessageEventArgs> { frameworkMessage };
+            WorkHandler.Run(RetryFailedUserReports);
+
             if (!databaseExisted)
             {
                 result.DatabaseCreated = true;
-                if (_windowManager.Confirm("TODO", "TODO")) DeleteEsent();
+                WorkHandler.Run(MigrateEsentToDatabase, cacheStore => MigrateEsentToDatabaseCallback(cacheStore, callback, result));
             }
-            WorkHandler.Run(RetryFailedUserReports);
-            var frameworkMessage = CheckFrameworkVersion();
-            if (frameworkMessage != null) result.UserMessages = new List<NotifyUserMessageEventArgs> { frameworkMessage };
-            callback.Invoke(result);
+            else
+            {
+                callback.Invoke(result);
+            }
         }
 
         private static NotifyUserMessageEventArgs CheckFrameworkVersion()
@@ -164,7 +167,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
             //for backward compatibility
             _esentDir = string.Format(@"{0}\{1}\{2}\1.0", appData, company, product);
-            AppDomain.CurrentDomain.SetData("DataDirectory", _esentDir);
         }
 
         private bool DatabaseExists()
@@ -180,8 +182,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
         }
 
-        private void MigrateEsentToDatabase()
+        private EsentPersistentDictionary MigrateEsentToDatabase()
         {
+            EsentPersistentDictionary cacheStore = null;
             var statistics = new Statistics();
             var userSettings = new UserSettings();
             var sw = new Stopwatch();
@@ -191,8 +194,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 if (EsentExists())
                 {
                     this.NotifyProgressStarted();
-                    UpgradeEsentToLatestVersion();
-                    var cacheStore = EsentPersistentDictionary.Instance;
+                    cacheStore = new EsentPersistentDictionary(_esentDir);
+                    UpgradeEsentToLatestVersion(cacheStore);
                     var keys = cacheStore.Keys;
                     SetItemsCount(keys.Length);
                     foreach (var key in keys)
@@ -218,7 +221,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         }
                         IncrementItemsMigrated();
                     }
-                    this.NotifyProgressFinished();
                 }
                 db.Insert(statistics);
                 db.Insert(userSettings);
@@ -226,11 +228,21 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             sw.Stop();
             Debug.WriteLine("[MIGRATION] Database created in {0}", sw.Elapsed);
 
-            if (!Directory.Exists(_esentDir)) return;
-            foreach (var postData in Directory.GetFiles(Path.Combine(_esentDir, "post")))
+            if (Directory.Exists(_esentDir))
             {
-                File.Move(postData, Path.Combine(App.PostDirectory, Path.GetFileName(postData)));
+                foreach (var postData in Directory.GetFiles(Path.Combine(_esentDir, "post")))
+                {
+                    File.Move(postData, Path.Combine(App.PostDirectory, Path.GetFileName(postData)));
+                }
             }
+            this.NotifyProgressFinished();
+            return cacheStore;
+        }
+
+        private void MigrateEsentToDatabaseCallback(EsentPersistentDictionary cacheStore, Action<SanityCheckResult> callback, SanityCheckResult result)
+        {
+            if (_windowManager.Confirm(Resx.Delete, Resx.DeleteEsentConfirmationMessage)) DeleteEsent(cacheStore);
+            callback.Invoke(result);
         }
 
         private void MigrateCacheItem(EsentPersistentDictionary cacheStore, IDbConnection db, string key)
@@ -253,7 +265,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             db.Insert(c);
         }
 
-        private void MigrateFtpConnection(EsentPersistentDictionary cacheStore, IDbConnection db, string key)
+        private static void MigrateFtpConnection(EsentPersistentDictionary cacheStore, IDbConnection db, string key)
         {
             var v = cacheStore.Get<FtpConnection>(key);
             db.Insert(v);
@@ -359,16 +371,15 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             return File.Exists(Path.Combine(_esentDir, "PersistentDictionary.edb"));
         }
 
-        private static void DeleteEsent()
+        private void DeleteEsent(EsentPersistentDictionary cacheStore)
         {
-            EsentPersistentDictionary.Release();
-            //Directory.Delete(_esentDir, true);
+            cacheStore.Dispose();
+            Directory.Delete(_esentDir, true);
         }
 
-        private void UpgradeEsentToLatestVersion()
+        private void UpgradeEsentToLatestVersion(EsentPersistentDictionary cacheStore)
         {
             const int requiredCacheVersion = 3;
-            var cacheStore = EsentPersistentDictionary.Instance;
             var actualCacheVersion = cacheStore.TryGet("CacheVersion", 1);
             if (actualCacheVersion == requiredCacheVersion) return;
 

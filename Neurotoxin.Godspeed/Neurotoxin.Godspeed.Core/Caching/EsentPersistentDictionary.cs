@@ -5,19 +5,12 @@ using System.Linq;
 
 namespace Neurotoxin.Godspeed.Core.Caching
 {
-	public class EsentPersistentDictionary
+	public class EsentPersistentDictionary : IDisposable
 	{
-	    private static EsentPersistentDictionary _instance;
-	    public static EsentPersistentDictionary Instance
-	    {
-	        get { return _instance ?? (_instance = new EsentPersistentDictionary()); }
-	    }
+		private PersistentDictionary<string, string> _persistentDictionary;
 
-		private readonly PersistentDictionary<string, string> _persistentDictionary;
-
-		private EsentPersistentDictionary()
+		public EsentPersistentDictionary(string path)
 		{
-		    var path = AppDomain.CurrentDomain.GetData("DataDirectory").ToString();
 			_persistentDictionary = new PersistentDictionary<string, string>(path);
 		}
 
@@ -89,11 +82,11 @@ namespace Neurotoxin.Godspeed.Core.Caching
 	        return Keys.Contains(key);
 	    }
 
-        public static void Release()
-        {
-            _instance._persistentDictionary.Dispose();
-            _instance = null;
+	    public void Dispose()
+	    {
+            _persistentDictionary.Dispose();
+	        _persistentDictionary = null;
             GC.Collect();
-        }
+	    }
 	}
 }

@@ -8,7 +8,6 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
         public ConfirmationDialog(string title, string message)
         {
             Title = title;
-            if (Application.Current.MainWindow != null) Owner = Application.Current.MainWindow;
             InitializeComponent();
             Message.Text = message;
             Loaded += OnLoaded;

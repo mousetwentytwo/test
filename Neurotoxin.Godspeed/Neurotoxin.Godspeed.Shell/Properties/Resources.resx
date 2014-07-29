@@ -1087,4 +1087,8 @@
 &lt;p&gt;This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.&lt;/p&gt;
 &lt;p&gt;You should have received a copy of the GNU General Public License along with this program; if not, see &lt;a href="http://www.gnu.org/licenses/"&gt;http://www.gnu.org/licenses/&lt;/a&gt;.&lt;/p&gt;</value>
   </data>
+  <data name="DeleteEsentConfirmationMessage" xml:space="preserve">
+    <value>Migration completed.
+Do you want to delete the old application data from your hard drive?</value>
+  </data>
 </root>

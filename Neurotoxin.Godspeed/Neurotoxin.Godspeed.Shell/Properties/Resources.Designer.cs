@@ -628,6 +628,16 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Migration completed.
+        ///Do you want to delete the old application data from your hard drive?.
+        /// </summary>
+        internal static string DeleteEsentConfirmationMessage {
+            get {
+                return ResourceManager.GetString("DeleteEsentConfirmationMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Details.
         /// </summary>
         internal static string Details {

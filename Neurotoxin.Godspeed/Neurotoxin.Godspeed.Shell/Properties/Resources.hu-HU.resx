@@ -1084,4 +1084,8 @@
 &lt;p&gt;Ez a program abban a reményben kerül közreadásra, hogy hasznos lesz, de minden egyéb GARANCIA NÉLKÜL, az ELADHATÓSÁGRA vagy VALAMELY CÉLRA VALÓ ALKALMAZHATÓSÁGRA való származtatott garanciát is beleértve. További részleteket a GNU General Public License tartalmaz.&lt;/p&gt;
 &lt;p&gt;A felhasználónak a programmal együtt meg kell kapnia a GNU General Public License egy példányát; ha mégsem kapta meg, akkor tekintse meg a &lt;a href="http://www.gnu.org/licenses/"&gt;http://www.gnu.org/licenses/&lt;/a&gt; oldalon.</value>
   </data>
+  <data name="DeleteEsentConfirmationMessage" xml:space="preserve">
+    <value>A migráció elkészült.
+Le akarod törölni a régi verzióhoz tartozó adatokat?</value>
+  </data>
 </root>

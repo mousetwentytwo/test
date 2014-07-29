@@ -14,7 +14,6 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
 
         public ProgressDialog(IProgressViewModel viewModel)
         {
-            if (Application.Current.MainWindow.Visibility == Visibility.Visible) Owner = Application.Current.MainWindow;
             CloseButtonVisibility = Visibility.Collapsed;
             InitializeComponent();
             ViewModel = viewModel;
