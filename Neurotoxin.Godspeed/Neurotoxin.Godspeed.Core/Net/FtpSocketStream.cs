@@ -488,7 +488,7 @@ namespace Neurotoxin.Godspeed.Core.Net {
         }
 
         public new void Dispose() {
-            FtpTrace.WriteLine("Disposing FtpSocketStream...");
+            //FtpTrace.WriteLine("Disposing FtpSocketStream...");
             Close();
         }
 

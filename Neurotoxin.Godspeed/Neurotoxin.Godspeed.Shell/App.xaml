@@ -315,7 +315,7 @@
                                     </TextBlock.Text>
                             </TextBlock>
                             <Image Source="/Resources/fileaccesserror.png" Width="11" Height="16" Margin="0" 
-                                        Visibility="{Binding IsLocked, Converter={StaticResource BoolToVis}}"
+                                        Visibility="{Binding IsLocked, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}"
                                         ToolTip="{Binding LockMessage}" />
                             <TextBlock Opacity="0.4" x:Name="Secondary">
                                     <TextBlock.Text>

@@ -313,6 +313,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cleanup.
+        /// </summary>
+        internal static string Cleanup {
+            get {
+                return ResourceManager.GetString("Cleanup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Clear Cache.
         /// </summary>
         internal static string ClearCache {

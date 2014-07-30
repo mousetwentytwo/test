@@ -150,13 +150,13 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void ExecuteCleanUpCommand()
         {
             var tree = new Tree<FileSystemItem>();
-            foreach (var item in MissingEntries.SelectMany(entry => (IList<FileSystemItem>)entry.Content))
+            foreach (var entry in MissingEntries)
             {
-                tree.Insert(item.Path, item, name => new FileSystemItem
-                                                           {
-                                                               Name = name,
-                                                               Type = ItemType.Directory
-                                                           });
+                tree.Insert(entry.Path, entry.Model, CreateEmptyParentNode);
+                foreach (var item in (IList<FileSystemItem>)entry.Content)
+                {
+                    tree.Insert(item.Path, item, CreateEmptyParentNode);
+                }
             }
             SelectionTree = new ObservableCollection<TreeItemViewModel>();
             WrapTreeIntoViewModels(tree, SelectionTree);
@@ -164,6 +164,15 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             var selection = new List<FileSystemItem>();
             GetSelectionFromTree(SelectionTree, selection);
             _transferManager.Delete(_parent, selection);
+        }
+
+        private FileSystemItem CreateEmptyParentNode(string name)
+        {
+            return new FileSystemItem
+                       {
+                           Name = name,
+                           Type = ItemType.Directory
+                       };
         }
 
         private void WrapTreeIntoViewModels(TreeItem<FileSystemItem> tree, ObservableCollection<TreeItemViewModel> treeViewModel)

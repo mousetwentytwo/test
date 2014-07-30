@@ -1094,4 +1094,7 @@ Do you want to delete the old application data from your hard drive?</value>
   <data name="UnableToLaunchGame" xml:space="preserve">
     <value>Unable to launch game. (Error code: {0} - {1})</value>
   </data>
+  <data name="Cleanup" xml:space="preserve">
+    <value>Cleanup</value>
+  </data>
 </root>

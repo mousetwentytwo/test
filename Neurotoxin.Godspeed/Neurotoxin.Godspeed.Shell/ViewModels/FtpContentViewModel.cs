@@ -273,7 +273,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
             if (!IsContentScanTriggerAvailable) return;
             var username = Connection.HttpUsername;
-            var password = Connection.Password;
+            var password = Connection.HttpPassword;
             if (username == null)
             {
                 switch (FileManager.ServerType)

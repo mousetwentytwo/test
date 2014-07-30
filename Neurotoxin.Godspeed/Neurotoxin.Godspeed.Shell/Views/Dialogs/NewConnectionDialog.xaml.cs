@@ -18,11 +18,13 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
         }
 
         public ConnectionImage[] ConnectionImages { get; private set; }
+        public List<string> ConnectionNames { get; private set; }
 
         public NewConnectionDialog(List<string> connectionNames, FtpConnectionItemViewModel viewModel)
         {
             Owner = Application.Current.MainWindow;
             ConnectionImages = Enum.GetValues(typeof(ConnectionImage)).Cast<ConnectionImage>().ToArray();
+            ConnectionNames = connectionNames;
             InitializeComponent();
             ViewModel = viewModel;
             Loaded += OnLoaded;

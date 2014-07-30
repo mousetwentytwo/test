@@ -1091,4 +1091,7 @@ Le akarod törölni a régi verzióhoz tartozó adatokat?</value>
   <data name="UnableToLaunchGame" xml:space="preserve">
     <value>A játékot nem sikerült elindítani. (Hibakód: {0} - {1})</value>
   </data>
+  <data name="Cleanup" xml:space="preserve">
+    <value>Tisztogatás</value>
+  </data>
 </root>

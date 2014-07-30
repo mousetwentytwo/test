@@ -127,7 +127,7 @@
                         </DataGrid>
                         
                         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,5,0,0">
-                            <Button MinWidth="75" Content="{lex:Loc CleanUp}" Margin="5,0,0,0" Command="{Binding CleanUpCommand}"/>
+                            <Button MinWidth="75" Content="{lex:Loc Cleanup}" Margin="5,0,0,0" Command="{Binding CleanUpCommand}"/>
                         </StackPanel>
                     </Grid>
                 </TabItem.Content>

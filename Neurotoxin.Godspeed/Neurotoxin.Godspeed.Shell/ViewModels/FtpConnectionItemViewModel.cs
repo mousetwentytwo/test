@@ -128,7 +128,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             if (login == null) return;
             Username = login.Username;
             Password = login.Password;
-            LoginInfo = string.IsNullOrEmpty(Username) && string.IsNullOrEmpty(Password) ? Resx.Default : string.Format("{0} / {1}", Username, Password);
+            SetLoginInfo();
         }
 
         #endregion
@@ -136,13 +136,18 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public FtpConnectionItemViewModel(FtpConnection model)
         {
             Model = model;
-            LoginInfo = Resx.Default;
+            SetLoginInfo();
             ChangeLoginCommand = new DelegateCommand(ExecuteChangeLoginCommand);
         }
 
         public FtpConnectionItemViewModel Clone()
         {
             return new FtpConnectionItemViewModel(Model.Clone(ItemState.Persisted));
+        }
+
+        private void SetLoginInfo()
+        {
+            LoginInfo = string.IsNullOrEmpty(Username) && string.IsNullOrEmpty(Password) ? Resx.Default : string.Format("{0} / {1}", Username, Password);
         }
     }
 }

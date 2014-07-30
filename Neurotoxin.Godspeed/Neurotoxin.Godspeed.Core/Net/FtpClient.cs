@@ -662,10 +662,6 @@ namespace Neurotoxin.Godspeed.Core.Net {
                 m_lock.ReleaseMutex();
             }
 
-            if (!reply.Success)
-            {
-                Debugger.Break();
-            }
             return reply;
         }
 
@@ -3235,7 +3231,7 @@ namespace Neurotoxin.Godspeed.Core.Net {
         /// object.
         /// </summary>
         public void Dispose() {
-            FtpTrace.WriteLine("Disposing FtpClient object...");
+            //FtpTrace.WriteLine("Disposing FtpClient object...");
 
             try {
                 m_lock.WaitOne();

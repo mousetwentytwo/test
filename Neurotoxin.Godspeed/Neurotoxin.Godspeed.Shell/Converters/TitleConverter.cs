@@ -13,9 +13,12 @@ namespace Neurotoxin.Godspeed.Shell.Converters
             if (values[0] == DependencyProperty.UnsetValue || values[1] == DependencyProperty.UnsetValue) return null;
             var title = (string) values[0];
             var titleid = (string)values[1];
-            var type = (ItemType) values[2];
 
-            return title ?? string.Format(type == ItemType.Directory ? "[{0}]" : "{0}", titleid);
+            if (!string.IsNullOrEmpty(title)) return title;
+            var format = values[2] != DependencyProperty.UnsetValue && ((ItemType) values[2]) == ItemType.Directory
+                             ? "[{0}]"
+                             : "{0}";
+            return string.Format(format, titleid);
         }
 
         public object[] ConvertBack(object value, Type[] targetType, object parameter, System.Globalization.CultureInfo culture)
