@@ -797,14 +797,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             _queue = null;
             _statistics.TimeSpentWithTransfer += _elapsedTimeMeter.Elapsed;
             if (_remoteCopy != RemoteCopyMode.Disabled) CloseTelnetSession();
-            SourcePane.FinishTransferAsSource();
-            if (TargetPane != null) TargetPane.FinishTransferAsTarget();
             _speedMeter.Stop();
             _speedMeter.Reset();
             _elapsedTimeMeter.Stop();
             ProgressState = TaskbarItemProgressState.None;
 
-            var args = new TransferFinishedEventArgs(this);
+            var args = new TransferFinishedEventArgs(this, SourcePane, TargetPane);
 
             if (_shutdown.HasFlag(Shutdown.Xbox))
             {
@@ -817,9 +815,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
             if (_sourceChanged) SourcePane.Refresh();
             if (_targetChanged) TargetPane.Refresh();
+            EventAggregator.GetEvent<TransferFinishedEvent>().Publish(args);
             SourcePane = null;
             TargetPane = null;
-            EventAggregator.GetEvent<TransferFinishedEvent>().Publish(args);
         }
 
         private void RenameExistingFile(TransferException exception, CopyAction? action, Action<CopyAction?, string> rename, Action<Exception> chooseDifferentOption)

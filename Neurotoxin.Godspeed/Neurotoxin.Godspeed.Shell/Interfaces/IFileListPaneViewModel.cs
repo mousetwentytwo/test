@@ -40,7 +40,5 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
         void Refresh();
         void Refresh(Action callback);
         void Abort();
-        void FinishTransferAsSource();
-        void FinishTransferAsTarget();
     }
 }

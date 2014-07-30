@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Security.Cryptography.X509Certificates;
 using System.Globalization;
+using Neurotoxin.Godspeed.Core.Extensions;
 
 namespace Neurotoxin.Godspeed.Core.Net {
     /// <summary>
@@ -624,9 +625,10 @@ namespace Neurotoxin.Godspeed.Core.Net {
         /// </summary>
         /// <returns>FtpReply representing the response from the server</returns>
         /// <example><code source="..\Examples\BeginGetReply.cs" lang="cs" /></example>
-        internal FtpReply GetReply() {
-            FtpReply reply = new FtpReply();
-            string buf;
+        internal FtpReply GetReply(bool multipart) {
+            var sb = new StringBuilder();
+            var reply = new FtpReply();
+            Match m;
 
             try {
                 m_lock.WaitOne();
@@ -635,25 +637,45 @@ namespace Neurotoxin.Godspeed.Core.Net {
                     throw new InvalidOperationException("No connection to the server has been established.");
 
                 m_stream.ReadTimeout = m_readTimeout;
-                while ((buf = m_stream.ReadLine(Encoding)) != null) {
-                    Match m;
+                ReadReply(sb);
 
-                    FtpTrace.WriteLine(buf);
-
-                    if ((m = Regex.Match(buf, "^(?<code>[0-9]{3})[ -](?<message>.*)$")).Success) {
-                        reply.Code = m.Groups["code"].Value;
-                        reply.Message = m.Groups["message"].Value;
-                        break;
+                m = Regex.Match(sb.ToString(), "^(?<code>[0-9]{3})(?<delimiter>[ -])(?<message>.*)$", RegexOptions.Multiline);
+                if (m.Success)
+                {
+                    reply.Code = m.Groups["code"].Value;
+                    reply.Message = m.Groups["message"].Value;
+                    if (multipart || m.Groups["delimiter"].Value == "-")
+                    {
+                        while (!sb.ToString().Trim().ToUpper().EndsWith("END")) 
+                        {
+                            //TODO: Aurora check
+                            ReadReply(sb);
+                        }
+                        var message = sb.ToString();
+                        reply.Message = message.SubstringBefore("\n").TrimEnd();
+                        var lastIndex = message.LastIndexOf("\n", StringComparison.InvariantCultureIgnoreCase);
+                        reply.InfoMessages = message.Substring(0, lastIndex).SubstringAfter("\n").TrimEnd();
                     }
-
-                    reply.InfoMessages += string.Format("{0}\n", buf);
                 }
             }
             finally {
                 m_lock.ReleaseMutex();
             }
 
+            if (!reply.Success)
+            {
+                Debugger.Break();
+            }
             return reply;
+        }
+
+        private void ReadReply(StringBuilder sb)
+        {
+            var buf = new byte[0xFFFF];
+            var bufferSize = m_stream.Read(buf, 0, buf.Length);
+            var text = Encoding.GetString(buf, 0, bufferSize).TrimEnd();
+            FtpTrace.WriteLine(text);
+            sb.Append(text);
         }
 
         /// <summary>
@@ -706,7 +728,8 @@ namespace Neurotoxin.Godspeed.Core.Net {
 
                 FtpTrace.WriteLine(command.StartsWith("PASS") ? "PASS <omitted>" : command);
                 m_stream.WriteLine(m_textEncoding, command);
-                reply = GetReply();
+                //TODO: Aurora HACK
+                reply = GetReply(command.StartsWith("FEAT"));
             }
             finally 
             {
@@ -793,7 +816,7 @@ namespace Neurotoxin.Godspeed.Core.Net {
                     m_stream.ActivateEncryption(Host,
                         m_clientCerts.Count > 0 ? m_clientCerts : null);
 
-                if ((reply = GetReply()).Success)
+                if ((reply = GetReply(false)).Success)
                 {
                     ServerName = reply.Message;
                 } 
@@ -832,7 +855,8 @@ namespace Neurotoxin.Godspeed.Core.Net {
                 // so save some bandwidth and CPU
                 // time and skip executing this again.
                 if (!IsClone) {
-                    if ((reply = Feat()).Success && reply.InfoMessages != null) {
+                    if ((reply = Execute("FEAT")).Success && reply.InfoMessages != null)
+                    {
                         GetFeatures(reply);
                     }
                 }
@@ -864,22 +888,6 @@ namespace Neurotoxin.Godspeed.Core.Net {
         {
             var handler = Connected;
             if (handler != null) handler.Invoke(this, new EventArgs());
-        }
-
-        protected virtual FtpReply Feat()
-        {
-            var reply = Execute("FEAT");
-            while (!reply.Message.Trim().EndsWith("END"))
-            {
-                while (m_stream.SocketDataAvailable == 0)
-                {
-                    Thread.Sleep(10);
-                }
-                var nextReply = GetReply();
-                nextReply.InfoMessages = reply.InfoMessages += nextReply.InfoMessages;
-                reply = nextReply;
-            }
-            return reply;
         }
 
         /// <summary>
@@ -1338,7 +1346,7 @@ namespace Neurotoxin.Godspeed.Core.Net {
                         // the server will send a reply when the data connection
                         // is closed.
                         if (stream.CommandStatus.Type == FtpResponseType.PositivePreliminary) {
-                            var reply = GetReply();
+                            var reply = GetReply(false);
                             if (!reply.Success && reply.Code != "426") 
                                 throw new FtpCommandException(reply);
                         }

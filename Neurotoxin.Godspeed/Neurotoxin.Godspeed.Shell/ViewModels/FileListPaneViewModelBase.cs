@@ -1050,14 +1050,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             Drives = FileManager.GetDrives().Select(d => new FileSystemItemViewModel(d)).ToObservableCollection();
         }
 
-        public virtual void FinishTransferAsSource()
-        {
-        }
-
-        public virtual void FinishTransferAsTarget()
-        {
-        }
-
         public override void Dispose()
         {
             EventAggregator.GetEvent<TransferProgressChangedEvent>().Unsubscribe(OnTransferProgressChanged);

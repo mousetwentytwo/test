@@ -187,6 +187,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             LaunchGameCommand = new DelegateCommand(ExecuteLaunchGameCommand, CanExecuteLaunchGameCommand);
             LaunchXexCommand = new DelegateCommand(ExecuteLaunchXexCommand, CanExecuteLaunchXexCommand);
             ShowFtpLogCommand = new DelegateCommand(ExecuteShowFtpLogCommand);
+            EventAggregator.GetEvent<TransferFinishedEvent>().Subscribe(OnTransferFinished);
         }
 
         public override void LoadDataAsync(LoadCommand cmd, LoadDataAsyncParameters cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase, Exception> error = null)
@@ -380,16 +381,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             FileManager.Shutdown();
         }
 
-        public override void FinishTransferAsSource()
+        private void OnTransferFinished(TransferFinishedEventArgs e)
         {
-            IsKeepAliveEnabled = false;
-        }
-
-        public override void FinishTransferAsTarget()
-        {
-            IsKeepAliveEnabled = false;
-
-            if (!IsContentScanTriggerAvailable) return;
+            if (e.Target != this || !IsContentScanTriggerAvailable) return;
 
             var scanFolder = GetCorrespondingScanFolder(CurrentFolder.Path);
             if (scanFolder == null) return;
