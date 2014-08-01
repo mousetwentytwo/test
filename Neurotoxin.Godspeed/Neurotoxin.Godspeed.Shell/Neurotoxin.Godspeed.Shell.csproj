@@ -743,6 +743,15 @@
     <Resource Include="Resources\header.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>echo off
+echo pdb &gt; exclude.lst
+echo xml &gt;&gt; exclude.lst
+echo vshost &gt;&gt; exclude.lst
+echo exclude.lst &gt;&gt; exclude.lst
+xcopy "$(TargetDir)*" "$(SolutionDir)..\Install\GODspeed\" /E /Y /EXCLUDE:exclude.lst
+del exclude.lst</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
