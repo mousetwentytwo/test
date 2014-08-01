@@ -64,7 +64,7 @@
                     <Component Id="NEUROTOXIN.GODSPEED.SHELL.EXE" DiskId="1" Guid="E1F28F19-D7EB-43AB-AE7E-6CA55A08BB9D">
                         <File Id="NEUROTOXIN.GODSPEED.SHELL.EXE" Name="Neurotoxin.Godspeed.Shell.exe" Source="$(var.SourceDir)Neurotoxin.Godspeed.Shell.exe"/>
 						<fire:FirewallException Id="FWX1" Name="GODspeed" Port="21" Protocol="tcp" Scope="any" Profile="all"/>
-						<fire:FirewallException Id="FWX1" Name="GODspeed" Port="80" Protocol="tcp" Scope="any" Profile="all"/>
+						<fire:FirewallException Id="FWX2" Name="GODspeed" Port="80" Protocol="tcp" Scope="any" Profile="all"/>
                     </Component>
                     <Component Id="NEUROTOXIN.GODSPEED.SHELL.EXE.CONFIG" DiskId="1" Guid="8160AD1E-071E-495B-BEE2-997DA4D6D6B2">
                         <File Id="NEUROTOXIN.GODSPEED.SHELL.EXE.CONFIG" Name="Neurotoxin.Godspeed.Shell.exe.config" Source="$(var.SourceDir)Neurotoxin.Godspeed.Shell.exe.config" />
