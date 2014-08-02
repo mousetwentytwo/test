@@ -5,7 +5,6 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Windows;
 using HtmlAgilityPack;
 using Microsoft.Practices.ObjectBuilder2;
 using Microsoft.Practices.Unity;
@@ -21,7 +20,6 @@ using Neurotoxin.Godspeed.Shell.Exceptions;
 using Neurotoxin.Godspeed.Shell.Extensions;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
-using Neurotoxin.Godspeed.Shell.Views.Dialogs;
 using Resx = Neurotoxin.Godspeed.Shell.Properties.Resources;
 using Fizzler.Systems.HtmlAgilityPack;
 
@@ -93,7 +91,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public bool CanExecuteCheckFreestyleDatabaseCommand()
         {
-            return FileManager.IsFSD;
+            //TODO: temporary
+            return true;
+            //return FileManager.IsFSD;
         }
 
         public void ExecuteCheckFreestyleDatabaseCommand()

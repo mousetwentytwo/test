@@ -1,5 +1,7 @@
 ﻿using System;
+using System.CodeDom;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -10,6 +12,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Security.Cryptography.X509Certificates;
 using System.Globalization;
+using Castle.Core.Internal;
 using Neurotoxin.Godspeed.Core.Extensions;
 
 namespace Neurotoxin.Godspeed.Core.Net {
@@ -83,7 +86,7 @@ namespace Neurotoxin.Godspeed.Core.Net {
         /// <summary>
         /// Control connection socket stream
         /// </summary>
-        FtpSocketStream m_stream = null;
+        FtpControlConnection m_stream = null;
 
         bool m_isDisposed = false;
         /// <summary>
@@ -95,16 +98,6 @@ namespace Neurotoxin.Godspeed.Core.Net {
             }
             private set {
                 m_isDisposed = value;
-            }
-        }
-
-        /// <summary>
-        /// Gets the base stream for talking to the server via
-        /// the control connection.
-        /// </summary>
-        protected Stream BaseStream {
-            get {
-                return m_stream;
             }
         }
 
@@ -617,80 +610,10 @@ namespace Neurotoxin.Godspeed.Core.Net {
             return conn;
         }
 
-        /// <summary>
-        /// Retreives a reply from the server. Do not execute this method
-        /// unless you are sure that a reply has been sent, i.e., you
-        /// executed a command. Doing so will cause the code to hang
-        /// indefinitely waiting for a server reply that is never comming.
-        /// </summary>
-        /// <returns>FtpReply representing the response from the server</returns>
-        /// <example><code source="..\Examples\BeginGetReply.cs" lang="cs" /></example>
-        internal FtpReply GetReply(bool multipart) {
-            var sb = new StringBuilder();
-            var reply = new FtpReply();
-            Match m;
-
-            try {
-                m_lock.WaitOne();
-
-                if (!IsConnected)
-                    throw new InvalidOperationException("No connection to the server has been established.");
-
-                m_stream.ReadTimeout = m_readTimeout;
-                ReadReply(sb);
-
-                m = Regex.Match(sb.ToString(), "^(?<code>[0-9]{3})(?<delimiter>[ -])(?<message>.*)$", RegexOptions.Multiline);
-                if (m.Success)
-                {
-                    reply.Code = m.Groups["code"].Value;
-                    reply.Message = m.Groups["message"].Value;
-                    if (multipart || m.Groups["delimiter"].Value == "-")
-                    {
-                        while (!sb.ToString().Trim().ToUpper().EndsWith("END")) 
-                        {
-                            //TODO: Aurora check
-                            ReadReply(sb);
-                        }
-                        var message = sb.ToString();
-                        reply.Message = message.SubstringBefore("\n").TrimEnd();
-                        var lastIndex = message.LastIndexOf("\n", StringComparison.InvariantCultureIgnoreCase);
-                        reply.InfoMessages = message.Substring(0, lastIndex).SubstringAfter("\n").TrimEnd();
-                    }
-                }
-            }
-            finally {
-                m_lock.ReleaseMutex();
-            }
-
-            return reply;
-        }
-
-        private void ReadReply(StringBuilder sb)
-        {
-            var buf = new byte[0xFFFF];
-            var bufferSize = m_stream.Read(buf, 0, buf.Length);
-            var text = Encoding.GetString(buf, 0, bufferSize).TrimEnd();
-            FtpTrace.WriteLine(text);
-            sb.Append(text);
-        }
-
-        /// <summary>
-        /// Executes a command
-        /// </summary>
-        /// <param name="command">The command to execute with optional format place holders</param>
-        /// <param name="args">Format parameters to the command</param>
-        /// <returns>The servers reply to the command</returns>
-        /// <example><code source="..\Examples\Execute.cs" lang="cs" /></example>
         public FtpReply Execute(string command, params object[] args) {
             return Execute(string.Format(command, args));
         }
 
-        /// <summary>
-        /// Executes a command
-        /// </summary>
-        /// <param name="command">The command to execute</param>
-        /// <returns>The servers reply to the command</returns>
-        /// <example><code source="..\Examples\Execute.cs" lang="cs" /></example>
         public FtpReply Execute(string command) {
             FtpReply reply;
 
@@ -722,10 +645,7 @@ namespace Neurotoxin.Godspeed.Core.Net {
                     Connect();
                 }
 
-                FtpTrace.WriteLine(command.StartsWith("PASS") ? "PASS <omitted>" : command);
-                m_stream.WriteLine(m_textEncoding, command);
-                //TODO: Aurora HACK
-                reply = GetReply(command.StartsWith("FEAT"));
+                reply = m_stream.Execute(command);
             }
             finally 
             {
@@ -783,36 +703,32 @@ namespace Neurotoxin.Godspeed.Core.Net {
                 if (IsDisposed)
                     throw new ObjectDisposedException("This FtpClient object has been disposed. It is no longer accessible.");
 
-                if (m_stream == null) {
-                    m_stream = new FtpSocketStream();
-                    m_stream.ValidateCertificate += new FtpSocketStreamSslValidation(FireValidateCertficate);
-                }
-                else
-                    if (IsConnected)
-                        Disconnect();
-
                 if (Host == null)
                     throw new FtpException("No host has been specified");
 
-                //if (Credentials == null)
-                //    throw new FtpException("No credentials have been specified");
+                if (IsConnected) Disconnect();
+                m_stream = new FtpControlConnection(FireValidateCertficate)
+                {
+                    TextEncoding = Encoding,
+                    ConnectTimeout = ConnectTimeout,
+                    ReadTimeout = ReadTimeout,
+                    EncryptionMode = EncryptionMode,
+                    SocketPollInterval = SocketPollInterval,
+                    Host = Host,
+                    Port = Port,
+                    IpVersion = InternetProtocolVersions,
+                    ClientCertificates = ClientCertificates,
+                    KeepAlive = SocketKeepAlive
+                };
 
                 if (!IsClone) {
                     m_caps = FtpCapability.NONE;
                 }
 
                 m_hashAlgorithms = FtpHashAlgorithm.NONE;
-                m_stream.ConnectTimeout = m_connectTimeout;
-                m_stream.SocketPollInterval = m_socketPollInterval;
-                m_stream.Connect(Host, Port, InternetProtocolVersions);
-                m_stream.SetSocketOption(System.Net.Sockets.SocketOptionLevel.Socket,
-                    System.Net.Sockets.SocketOptionName.KeepAlive, m_keepAlive);
+                m_stream.Connect();
 
-                if (EncryptionMode == FtpEncryptionMode.Implicit)
-                    m_stream.ActivateEncryption(Host,
-                        m_clientCerts.Count > 0 ? m_clientCerts : null);
-
-                if ((reply = GetReply(false)).Success)
+                if ((reply = m_stream.GetReply(false)).Success)
                 {
                     ServerName = reply.Message;
                 } 
@@ -1082,41 +998,175 @@ namespace Neurotoxin.Godspeed.Core.Net {
             GetAsyncDelegate<AsyncDisconnect>(ar).EndInvoke(ar);
         }
 
-        /// <summary>
-        /// Opens the specified type of passive data stream
-        /// </summary>
-        /// <param name="type">Type of passive data stream to open</param>
-        /// <param name="command">The command to execute that requires a data stream</param>
-        /// <param name="restart">Restart location in bytes for file transfer</param>
-        /// <returns>A data stream ready to be used</returns>
-        FtpDataStream OpenPassiveDataStream(FtpDataConnectionType type, string command, long restart) {
+        private FtpDataStream OpenDataConnection(string command, long restart)
+        {
+            var type = m_dataConnectionType;
             FtpDataStream stream = null;
+
+            try
+            {
+                m_lock.WaitOne();
+
+                if (!IsConnected)
+                    Connect();
+
+                // The PORT and PASV commands do not work with IPv6 so
+                // if either one of those types are set change them
+                // to EPSV or EPRT appropriately.
+                if (m_stream.LocalEndPoint.AddressFamily == AddressFamily.InterNetworkV6)
+                {
+                    switch (type)
+                    {
+                        case FtpDataConnectionType.PORT:
+                            type = FtpDataConnectionType.EPRT;
+                            FtpTrace.WriteLine("Changed data connection type to EPRT because we are connected with IPv6.");
+                            break;
+                        case FtpDataConnectionType.PASV:
+                        case FtpDataConnectionType.PASVEX:
+                            type = FtpDataConnectionType.EPSV;
+                            FtpTrace.WriteLine("Changed data connection type to EPSV because we are connected with IPv6.");
+                            break;
+                    }
+                }
+
+                switch (type)
+                {
+                    case FtpDataConnectionType.AutoPassive:
+                    case FtpDataConnectionType.EPSV:
+                    case FtpDataConnectionType.PASV:
+                    case FtpDataConnectionType.PASVEX:
+                        stream = OpenPassiveDataStream(type, command, restart);
+                        break;
+                    case FtpDataConnectionType.AutoActive:
+                    case FtpDataConnectionType.EPRT:
+                    case FtpDataConnectionType.PORT:
+                        stream = OpenActiveDataStream(type, command, restart);
+                        break;
+                }
+
+                if (stream == null)
+                    throw new InvalidOperationException("The specified data channel type is not implemented.");
+            }
+            finally
+            {
+                m_lock.ReleaseMutex();
+            }
+
+            return stream;
+        }
+
+        private FtpDataStream OpenActiveDataStream(FtpDataConnectionType type, string command, long restart)
+        {
+            var stream = new FtpDataStream(this);
+            FtpReply reply;
+
+            stream.Listen(m_stream.LocalEndPoint.Address, 0);
+            var ar = stream.BeginAccept(null, null);
+
+            if (type == FtpDataConnectionType.EPRT || type == FtpDataConnectionType.AutoActive)
+            {
+                int ipver;
+
+                switch (stream.LocalEndPoint.AddressFamily)
+                {
+                    case AddressFamily.InterNetwork:
+                        ipver = 1; // IPv4
+                        break;
+                    case AddressFamily.InterNetworkV6:
+                        ipver = 2; // IPv6
+                        break;
+                    default:
+                        throw new InvalidOperationException("The IP protocol being used is not supported.");
+                }
+
+                if (!(reply = Execute("EPRT |{0}|{1}|{2}|", ipver, stream.LocalEndPoint.Address.ToString(), stream.LocalEndPoint.Port)).Success)
+                {
+                    // if we're connected with IPv4 and the data channel type is AutoActive then try to fall back to the PORT command
+                    if (reply.Type == FtpResponseType.PermanentNegativeCompletion && type == FtpDataConnectionType.AutoActive && m_stream != null && m_stream.LocalEndPoint.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                    {
+                        stream.ControlConnection = null; // we don't want this failed EPRT attempt to close our control connection when the stream is closed so clear out the reference.
+                        stream.Close();
+                        return OpenActiveDataStream(FtpDataConnectionType.PORT, command, restart);
+                    }
+                    stream.Close();
+                    throw new FtpCommandException(reply);
+                }
+            }
+            else
+            {
+                if (m_stream.LocalEndPoint.AddressFamily != AddressFamily.InterNetwork)
+                    throw new FtpException("Only IPv4 is supported by the PORT command. Use EPRT instead.");
+
+                if (!(reply = Execute("PORT {0},{1},{2}",
+                        stream.LocalEndPoint.Address.ToString().Replace('.', ','),
+                        stream.LocalEndPoint.Port / 256,
+                        stream.LocalEndPoint.Port % 256)).Success)
+                {
+                    stream.Close();
+                    throw new FtpCommandException(reply);
+                }
+            }
+
+            if (restart > 0)
+            {
+                if (!(reply = Execute("REST {0}", restart)).Success)
+                    throw new FtpCommandException(reply);
+            }
+
+            if (!(reply = Execute(command)).Success)
+            {
+                stream.Close();
+                throw new FtpCommandException(reply);
+            }
+
+            ar.AsyncWaitHandle.WaitOne(DataConnectionConnectTimeout);
+            if (!ar.IsCompleted)
+            {
+                stream.Close();
+                throw new TimeoutException("Timed out waiting for the server to connect to the active data socket.");
+            }
+
+            stream.EndAccept(ar);
+
+            if (DataConnectionEncryption && EncryptionMode != FtpEncryptionMode.None)
+                stream.ActivateEncryption(Host, ClientCertificates.Count > 0 ? ClientCertificates : null);
+
+            stream.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, SocketKeepAlive);
+            stream.ReadTimeout = DataConnectionReadTimeout;
+            stream.CommandStatus = reply;
+
+            return stream;
+        }
+
+        private FtpDataStream OpenPassiveDataStream(FtpDataConnectionType type, string command, long restart)
+        {
+            FtpDataStream stream;
             FtpReply reply;
             Match m;
-            string host = null;
+            string host = Host;
             int port = 0;
 
-            if (m_stream == null)
-                throw new InvalidOperationException("The control connection stream is null! Generally this means there is no connection to the server. Cannot open a passive data stream.");
-
-            if (type == FtpDataConnectionType.EPSV || type == FtpDataConnectionType.AutoPassive) {
-                if (!(reply = Execute("EPSV")).Success) {
+            if (type == FtpDataConnectionType.EPSV || type == FtpDataConnectionType.AutoPassive)
+            {
+                if (!(reply = Execute("EPSV")).Success)
+                {
                     // if we're connected with IPv4 and data channel type is AutoPassive then fallback to IPv4
-                    if (reply.Type == FtpResponseType.PermanentNegativeCompletion && type == FtpDataConnectionType.AutoPassive && m_stream != null && m_stream.LocalEndPoint.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                    if (reply.Type == FtpResponseType.PermanentNegativeCompletion && type == FtpDataConnectionType.AutoPassive && m_stream != null && m_stream.LocalEndPoint.AddressFamily == AddressFamily.InterNetwork)
                         return OpenPassiveDataStream(FtpDataConnectionType.PASV, command, restart);
                     throw new FtpCommandException(reply);
                 }
 
                 m = Regex.Match(reply.Message, @"\(\|\|\|(?<port>\d+)\|\)");
-                if (!m.Success) {
+                if (!m.Success)
+                {
                     throw new FtpException("Failed to get the EPSV port from: " + reply.Message);
                 }
 
-                host = m_host;
                 port = int.Parse(m.Groups["port"].Value);
             }
-            else {
-                if (m_stream.LocalEndPoint.AddressFamily != System.Net.Sockets.AddressFamily.InterNetwork)
+            else
+            {
+                if (m_stream.LocalEndPoint.AddressFamily != AddressFamily.InterNetwork)
                     throw new FtpException("Only IPv4 is supported by the PASV command. Use EPSV instead.");
 
                 if (!(reply = Execute("PASV")).Success)
@@ -1135,9 +1185,7 @@ namespace Neurotoxin.Godspeed.Core.Net {
                     throw new FtpException(string.Format("Malformed PASV response: {0}", reply.Message));
 
                 // PASVEX mode ignores the host supplied in the PASV response
-                if (type == FtpDataConnectionType.PASVEX)
-                    host = m_host;
-                else
+                if (type != FtpDataConnectionType.PASVEX)
                     host = string.Format("{0}.{1}.{2}.{3}",
                         m.Groups["quad1"].Value,
                         m.Groups["quad2"].Value,
@@ -1147,26 +1195,29 @@ namespace Neurotoxin.Godspeed.Core.Net {
                 port = (int.Parse(m.Groups["port1"].Value) << 8) + int.Parse(m.Groups["port2"].Value);
             }
 
-            stream = new FtpDataStream(this);
-            stream.ConnectTimeout = DataConnectionConnectTimeout;
-            stream.ReadTimeout = DataConnectionReadTimeout;
+            stream = new FtpDataStream(this)
+            {
+                ConnectTimeout = DataConnectionConnectTimeout,
+                ReadTimeout = DataConnectionReadTimeout
+            };
             stream.Connect(host, port, InternetProtocolVersions);
-            stream.SetSocketOption(System.Net.Sockets.SocketOptionLevel.Socket, System.Net.Sockets.SocketOptionName.KeepAlive, m_keepAlive);
+            stream.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, SocketKeepAlive);
 
-            if (restart > 0) {
+            if (restart > 0)
+            {
                 if (!(reply = Execute("REST {0}", restart)).Success)
                     throw new FtpCommandException(reply);
             }
 
-            if (!(reply = Execute(command)).Success) {
+            if (!(reply = Execute(command)).Success)
+            {
                 stream.Close();
                 throw new FtpCommandException(reply);
             }
 
             // this needs to take place after the command is executed
-            if (m_dataConnectionEncryption && m_encryptionmode != FtpEncryptionMode.None)
-                stream.ActivateEncryption(m_host,
-                    this.ClientCertificates.Count > 0 ? this.ClientCertificates : null);
+            if (DataConnectionEncryption && EncryptionMode != FtpEncryptionMode.None)
+                stream.ActivateEncryption(Host, ClientCertificates.Count > 0 ? ClientCertificates : null);
 
             // the command status is used to determine
             // if a reply needs to be read from the server
@@ -1177,187 +1228,45 @@ namespace Neurotoxin.Godspeed.Core.Net {
             return stream;
         }
 
-        /// <summary>
-        /// Opens the specified type of active data stream
-        /// </summary>
-        /// <param name="type">Type of passive data stream to open</param>
-        /// <param name="command">The command to execute that requires a data stream</param>
-        /// <param name="restart">Restart location in bytes for file transfer</param>
-        /// <returns>A data stream ready to be used</returns>
-        FtpDataStream OpenActiveDataStream(FtpDataConnectionType type, string command, long restart) {
-            FtpDataStream stream = new FtpDataStream(this);
-            FtpReply reply;
-            IAsyncResult ar;
-
-            if (m_stream == null)
-                throw new InvalidOperationException("The control connection stream is null! Generally this means there is no connection to the server. Cannot open an active data stream.");
-
-            stream.Listen(m_stream.LocalEndPoint.Address, 0);
-            ar = stream.BeginAccept(null, null);
-
-            if (type == FtpDataConnectionType.EPRT || type == FtpDataConnectionType.AutoActive) {
-                int ipver = 0;
-
-                switch (stream.LocalEndPoint.AddressFamily) {
-                    case System.Net.Sockets.AddressFamily.InterNetwork:
-                        ipver = 1; // IPv4
-                        break;
-                    case System.Net.Sockets.AddressFamily.InterNetworkV6:
-                        ipver = 2; // IPv6
-                        break;
-                    default:
-                        throw new InvalidOperationException("The IP protocol being used is not supported.");
-                }
-
-                if (!(reply = Execute("EPRT |{0}|{1}|{2}|", ipver,
-                    stream.LocalEndPoint.Address.ToString(), stream.LocalEndPoint.Port)).Success) {
-
-                    // if we're connected with IPv4 and the data channel type is AutoActive then try to fall back to the PORT command
-                    if (reply.Type == FtpResponseType.PermanentNegativeCompletion && type == FtpDataConnectionType.AutoActive && m_stream != null && m_stream.LocalEndPoint.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
-                        stream.ControlConnection = null; // we don't want this failed EPRT attempt to close our control connection when the stream is closed so clear out the reference.
-                        stream.Close();
-                        return OpenActiveDataStream(FtpDataConnectionType.PORT, command, restart);
-                    }
-                    else {
-                        stream.Close();
-                        throw new FtpCommandException(reply);
-                    }
-                }
-            }
-            else {
-                if (m_stream.LocalEndPoint.AddressFamily != System.Net.Sockets.AddressFamily.InterNetwork)
-                    throw new FtpException("Only IPv4 is supported by the PORT command. Use EPRT instead.");
-
-                if (!(reply = Execute("PORT {0},{1},{2}",
-                        stream.LocalEndPoint.Address.ToString().Replace('.', ','),
-                        stream.LocalEndPoint.Port / 256,
-                        stream.LocalEndPoint.Port % 256)).Success) {
-                    stream.Close();
-                    throw new FtpCommandException(reply);
-                }
-            }
-
-            if (restart > 0) {
-                if (!(reply = Execute("REST {0}", restart)).Success)
-                    throw new FtpCommandException(reply);
-            }
-
-            if (!(reply = Execute(command)).Success) {
-                stream.Close();
-                throw new FtpCommandException(reply);
-            }
-
-            ar.AsyncWaitHandle.WaitOne(m_dataConnectionConnectTimeout);
-            if (!ar.IsCompleted) {
-                stream.Close();
-                throw new TimeoutException("Timed out waiting for the server to connect to the active data socket.");
-            }
-
-            stream.EndAccept(ar);
-
-            if (m_dataConnectionEncryption && m_encryptionmode != FtpEncryptionMode.None)
-                stream.ActivateEncryption(m_host,
-                    this.ClientCertificates.Count > 0 ? this.ClientCertificates : null);
-
-            stream.SetSocketOption(System.Net.Sockets.SocketOptionLevel.Socket, System.Net.Sockets.SocketOptionName.KeepAlive, m_keepAlive);
-            stream.ReadTimeout = m_dataConnectionReadTimeout;
-            stream.CommandStatus = reply;
-
-            return stream;
-        }
-
-        /// <summary>
-        /// Opens a data stream.
-        /// </summary>
-        /// <param name='command'>The command to execute that requires a data stream</param>
-        /// <param name="restart">Restart location in bytes for file transfer</param>
-        /// <returns>The data stream.</returns>
-        FtpDataStream OpenDataStream(string command, long restart) {
-            FtpDataConnectionType type = m_dataConnectionType;
-            FtpDataStream stream = null;
-
-            try {
-                m_lock.WaitOne();
-
-                if (!IsConnected)
-                    Connect();
-
-                // The PORT and PASV commands do not work with IPv6 so
-                // if either one of those types are set change them
-                // to EPSV or EPRT appropriately.
-                if (m_stream.LocalEndPoint.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6) {
-                    switch (type) {
-                        case FtpDataConnectionType.PORT:
-                            type = FtpDataConnectionType.EPRT;
-                            FtpTrace.WriteLine("Changed data connection type to EPRT because we are connected with IPv6.");
-                            break;
-                        case FtpDataConnectionType.PASV:
-                        case FtpDataConnectionType.PASVEX:
-                            type = FtpDataConnectionType.EPSV;
-                            FtpTrace.WriteLine("Changed data connection type to EPSV because we are connected with IPv6.");
-                            break;
-                    }
-                }
-
-                switch (type) {
-                    case FtpDataConnectionType.AutoPassive:
-                    case FtpDataConnectionType.EPSV:
-                    case FtpDataConnectionType.PASV:
-                    case FtpDataConnectionType.PASVEX:
-                        stream = OpenPassiveDataStream(type, command, restart);
-                        break;
-                    case FtpDataConnectionType.AutoActive:
-                    case FtpDataConnectionType.EPRT:
-                    case FtpDataConnectionType.PORT:
-                        stream = OpenActiveDataStream(type, command, restart);
-                        break;
-                }
-
-                if (stream == null)
-                    throw new InvalidOperationException("The specified data channel type is not implemented.");
-            }
-            finally {
-                m_lock.ReleaseMutex();
-            }
-
-            return stream;
-        }
-
-        /// <summary>
-        /// Disconnects a data stream
-        /// </summary>
-        /// <param name="stream">The data stream to close</param>
-        internal void CloseDataStream(FtpDataStream stream) {
+        internal void CloseDataStream(FtpDataStream stream)
+        {
             if (stream == null)
                 throw new ArgumentException("The data stream parameter was null");
 
-            try {
+            try
+            {
                 m_lock.WaitOne();
 
-                try {
-                    if (IsConnected) {
+                try
+                {
+                    if (IsConnected)
+                    {
                         // if the command that required the data connection was
                         // not successful then there will be no reply from
                         // the server, however if the command was successful
                         // the server will send a reply when the data connection
                         // is closed.
-                        if (stream.CommandStatus.Type == FtpResponseType.PositivePreliminary) {
-                            var reply = GetReply(false);
-                            if (!reply.Success && reply.Code != "426") 
+                        if (stream.CommandStatus.Type == FtpResponseType.PositivePreliminary)
+                        {
+                            var reply = m_stream.GetReply(false);
+                            if (!reply.Success && reply.Code != "426")
                                 throw new FtpCommandException(reply);
                         }
                     }
                 }
-                finally {
+                finally
+                {
                     // if this is a clone of the original control
                     // connection we should Dispose()
-                    if (IsClone) {
+                    if (IsClone)
+                    {
                         Disconnect();
                         Dispose();
                     }
                 }
             }
-            finally {
+            finally
+            {
                 m_lock.ReleaseMutex();
             }
         }
@@ -1421,7 +1330,7 @@ namespace Neurotoxin.Godspeed.Core.Net {
 
                 client.SetDataType(type);
                 length = client.GetFileSize(path);
-                stream = client.OpenDataStream(string.Format("RETR {0}", path.GetFtpPath()), restart);
+                stream = OpenDataConnection(string.Format("RETR {0}", path.GetFtpPath()), restart);
             }
             finally {
                 m_lock.ReleaseMutex();
@@ -1546,7 +1455,7 @@ namespace Neurotoxin.Godspeed.Core.Net {
 
                 client.SetDataType(type);
                 length = client.GetFileSize(path);
-                stream = client.OpenDataStream(string.Format("STOR {0}", path.GetFtpPath()), 0);
+                stream = OpenDataConnection(string.Format("STOR {0}", path.GetFtpPath()), 0);
 
                 if (length > 0 && stream != null)
                     stream.SetLength(length);
@@ -1639,7 +1548,7 @@ namespace Neurotoxin.Godspeed.Core.Net {
 
                 client.SetDataType(type);
                 length = client.GetFileSize(path);
-                stream = client.OpenDataStream(string.Format("APPE {0}", path.GetFtpPath()), 0);
+                stream = OpenDataConnection(string.Format("APPE {0}", path.GetFtpPath()), 0);
 
                 if (length > 0 && stream != null) {
                     stream.SetLength(length);
@@ -1898,20 +1807,38 @@ namespace Neurotoxin.Godspeed.Core.Net {
                 Execute("TYPE I");
 
                 // read in raw file listing
-                using (FtpDataStream stream = OpenDataStream(listcmd, 0))
+                using (var stream = OpenDataConnection(listcmd, 0))
                 {
-                    try {
-                        while ((buf = stream.ReadLine(Encoding)) != null) {
-                            if (buf.Length > 0) {
-                                rawlisting.Add(buf);
-                                FtpTrace.WriteLine(buf);
+                    try
+                    {
+                        var ms = new MemoryStream();
+                        var size = 0;
+                        var buffer = new byte[0xFFFF];
+                        FtpReply reply = null;
+                        m_stream.ReadLineAsync(r => reply = r);
+                        do
+                        {
+                            int bufferSize;
+                            while ((bufferSize = stream.Read(buffer, 0, buffer.Length)) > 0)
+                            {
+                                ms.Write(buffer, size, bufferSize);
+                                size += bufferSize;
                             }
+                        } while (reply == null);
+                        if (reply.Success)
+                        {
+                            var text = Encoding.GetString(ms.GetBuffer()).TrimEnd();
+                            FtpTrace.WriteLine(text);
+                            rawlisting = text.Split('\n').ToList();
                         }
                     }
-                    finally {
+                    finally
+                    {
+                        stream.ControlConnection = null;
                         stream.Close();
                     }
                 }
+                //var reply = GetReply(false);
             }
             finally {
                 m_lock.ReleaseMutex();
@@ -1919,7 +1846,7 @@ namespace Neurotoxin.Godspeed.Core.Net {
 
             FtpListItem.Parser parser = null;
             for (int i = 0; i < rawlisting.Count; i++) {
-                buf = rawlisting[i];
+                buf = rawlisting[i].TrimEnd();
                 if (buf == "..") continue;
 
                 FtpListItem item;
@@ -2104,7 +2031,7 @@ namespace Neurotoxin.Godspeed.Core.Net {
                 // problems that would happen if in ASCII.
                 Execute("TYPE I");
 
-                using (FtpDataStream stream = OpenDataStream(string.Format("NLST {0}", path.GetFtpPath()), 0)) {
+                using (FtpDataStream stream = OpenDataConnection(string.Format("NLST {0}", path.GetFtpPath()), 0)) {
                     string buf;
 
                     try {

@@ -328,6 +328,7 @@
     <Compile Include="Views\Dialogs\TreeSelectionDialog.xaml.cs">
       <DependentUpon>TreeSelectionDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Formatters\HtmlFormatter.cs" />
     <Compile Include="Views\FtpTraceWindow.xaml.cs">
       <DependentUpon>FtpTraceWindow.xaml</DependentUpon>
     </Compile>

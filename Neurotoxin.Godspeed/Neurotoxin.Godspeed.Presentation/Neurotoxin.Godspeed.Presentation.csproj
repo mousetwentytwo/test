@@ -63,7 +63,6 @@
       <DependentUpon>ProgressIndicator.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ProportionalPanel.cs" />
-    <Compile Include="Controls\RichTextBox.cs" />
     <Compile Include="Controls\Rollover.xaml.cs">
       <DependentUpon>Rollover.xaml</DependentUpon>
     </Compile>
@@ -108,12 +107,7 @@
     <Compile Include="Formatters\HtmlConverter\HtmlSchema.cs" />
     <Compile Include="Formatters\HtmlConverter\HtmlTokenType.cs" />
     <Compile Include="Formatters\HtmlConverter\HtmlToXamlConverter.cs" />
-    <Compile Include="Formatters\HtmlFormatter.cs" />
-    <Compile Include="Formatters\ITextFormatter.cs" />
-    <Compile Include="Formatters\PlainTextFormatter.cs" />
     <Compile Include="Formatters\PluralFormatProvider.cs" />
-    <Compile Include="Formatters\RtfFormatter.cs" />
-    <Compile Include="Formatters\XamlFormatter.cs" />
     <Compile Include="Infrastructure\AsyncResult.cs" />
     <Compile Include="Infrastructure\BindingProxy.cs" />
     <Compile Include="Infrastructure\Constants\LoadCommand.cs" />

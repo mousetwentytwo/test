@@ -20,7 +20,7 @@ namespace Neurotoxin.Godspeed.Presentation.Formatters.HtmlConverter
     /// HtmlToXamlConverter is a static class that takes an HTML string
     /// and converts it into XAML
     /// </summary>
-    internal static class HtmlFromXamlConverter
+    public static class HtmlFromXamlConverter
     {
         // ---------------------------------------------------------------------
         //
@@ -40,7 +40,7 @@ namespace Neurotoxin.Godspeed.Presentation.Formatters.HtmlConverter
         /// <returns>
         /// Html string produced from a source xaml.
         /// </returns>
-        internal static string ConvertXamlToHtml(string xamlString)
+        public static string ConvertXamlToHtml(string xamlString)
         {
             XmlTextReader xamlReader;
             StringBuilder htmlStringBuilder;

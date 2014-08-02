@@ -21,8 +21,7 @@ namespace Neurotoxin.Godspeed.Shell.Views.Validations
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
             var v = value as string;
-            //TODO: wrong conditions!!!
-            var result = ItemState == ItemState.New || v == OriginalValue || !ConnectionNames.Contains(v);
+            var result = v == OriginalValue || !ConnectionNames.Contains(v);
             return new ValidationResult(result, ErrorMessage);
         }
     }

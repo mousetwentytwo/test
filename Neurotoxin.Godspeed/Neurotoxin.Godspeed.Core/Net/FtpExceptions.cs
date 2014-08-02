@@ -61,7 +61,7 @@ namespace Neurotoxin.Godspeed.Core.Net {
         /// </summary>
         /// <param name="reply">The FtpReply to build the exception from</param>
         public FtpCommandException(FtpReply reply)
-            : this(reply.Code, reply.ErrorMessage) {
+            : this(reply.Code, reply.Message + reply.InfoMessages) {
         }
     }
 

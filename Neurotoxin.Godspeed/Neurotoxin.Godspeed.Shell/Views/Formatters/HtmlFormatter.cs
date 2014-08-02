@@ -4,8 +4,9 @@ using System.Text;
 using System.Windows;
 using System.Windows.Documents;
 using Neurotoxin.Godspeed.Presentation.Formatters.HtmlConverter;
+using Xceed.Wpf.Toolkit;
 
-namespace Neurotoxin.Godspeed.Presentation.Formatters
+namespace Neurotoxin.Godspeed.Shell.Views.Formatters
 {
     public class HtmlFormatter : ITextFormatter
     {

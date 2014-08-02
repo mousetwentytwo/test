@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -430,16 +431,14 @@ namespace Neurotoxin.Godspeed.Core.Net {
                 return 0;
 
             m_lastActivity = DateTime.Now;
-            //return BaseStream.Read(buffer, offset, count);
 
             ar = BaseStream.BeginRead(buffer, offset, count, null, null);
-            if (!ar.AsyncWaitHandle.WaitOne(m_readTimeout, true))
-            {
+            if (!ar.AsyncWaitHandle.WaitOne(m_readTimeout, true)) {
                 Close();
                 throw new TimeoutException("Timed out trying to read data from the socket stream!");
             }
-
-            return BaseStream.EndRead(ar);
+            var x = BaseStream.EndRead(ar);
+            return x;
         }
 
         /// <summary>

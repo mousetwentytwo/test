@@ -126,7 +126,6 @@ namespace Neurotoxin.Godspeed.Core.Net {
                     ControlConnection.CloseDataStream(this);
             }
             finally {
-                m_commandStatus = new FtpReply();
                 m_control = null;
             }
         }

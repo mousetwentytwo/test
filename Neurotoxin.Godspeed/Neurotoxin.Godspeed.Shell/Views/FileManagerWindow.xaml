@@ -8,9 +8,10 @@
                              xmlns:commands="clr-namespace:Neurotoxin.Godspeed.Shell.Commands" 
                              xmlns:primitives="clr-namespace:Neurotoxin.Godspeed.Shell.Primitives"
                              xmlns:controls="clr-namespace:Neurotoxin.Godspeed.Presentation.Controls;assembly=Neurotoxin.Godspeed.Presentation"
-                             xmlns:f="clr-namespace:Neurotoxin.Godspeed.Presentation.Formatters;assembly=Neurotoxin.Godspeed.Presentation"
                              xmlns:s="clr-namespace:Neurotoxin.Godspeed.Shell.Views.Selectors" 
                              xmlns:lex="http://wpflocalizeextension.codeplex.com"
+                             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+                             xmlns:f="clr-namespace:Neurotoxin.Godspeed.Shell.Views.Formatters"
                              lex:LocalizeDictionary.DesignCulture="en-US"
                              lex:ResxLocalizationProvider.DefaultAssembly="Neurotoxin.Godspeed.Shell"
                              lex:ResxLocalizationProvider.DefaultDictionary="Resources"
@@ -35,7 +36,7 @@
                             </Trigger>
                         </Style.Triggers>
                     </Style>
-                    <Style TargetType="controls:RichTextBox">
+                    <Style TargetType="xctk:RichTextBox">
                         <Setter Property="Background" Value="Transparent" />
                         <Setter Property="BorderBrush" Value="Transparent" />
                         <Setter Property="BorderThickness" Value="0" />
@@ -134,7 +135,7 @@
                                         </Grid.ColumnDefinitions>
                                         <controls:GreyableImage Margin="6,3,8,0" Width="16" Height="16" SnapsToDevicePixels="True"
                                              Source="{Binding Icon}" VerticalAlignment="Top" />
-                                        <controls:RichTextBox Grid.Column="1" Text="{Binding Path=Message, Mode=OneWay}" TextFormatter="{StaticResource Formatter}"
+                                        <xctk:RichTextBox Grid.Column="1" Text="{Binding Path=Message, Mode=OneWay}" TextFormatter="{StaticResource Formatter}"
                                              Cursor="Hand" />
                                         <StackPanel Grid.Column="2" Margin="6,3,12,0" VerticalAlignment="Top" Width="13">
                                             <Border Name="Checked" Height="13" Background="Transparent" Margin="0,0,0,3">

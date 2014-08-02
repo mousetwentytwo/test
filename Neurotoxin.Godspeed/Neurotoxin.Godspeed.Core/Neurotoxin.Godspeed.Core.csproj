@@ -170,6 +170,7 @@
     <Compile Include="Net\Cryptography\XSHA256.cs" />
     <Compile Include="Net\Cryptography\XSHA512.cs" />
     <Compile Include="Net\FtpClient.cs" />
+    <Compile Include="Net\FtpControlConnection.cs" />
     <Compile Include="Net\FtpDataStream.cs" />
     <Compile Include="Net\FtpEnums.cs" />
     <Compile Include="Net\FtpExceptions.cs" />
