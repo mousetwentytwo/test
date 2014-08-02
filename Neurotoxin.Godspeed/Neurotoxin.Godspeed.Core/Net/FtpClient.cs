@@ -1811,25 +1811,33 @@ namespace Neurotoxin.Godspeed.Core.Net {
                 {
                     try
                     {
-                        var ms = new MemoryStream();
-                        var size = 0;
-                        var buffer = new byte[0xFFFF];
-                        FtpReply reply = null;
-                        m_stream.ReadLineAsync(r => reply = r);
-                        do
+                        using (var ms = new MemoryStream())
                         {
-                            int bufferSize;
-                            while ((bufferSize = stream.Read(buffer, 0, buffer.Length)) > 0)
+                            var size = 0;
+                            var buffer = new byte[0x8000];
+                            FtpReply reply = null;
+                            m_stream.ReadLineAsync(r => reply = r);
+                            do
                             {
-                                ms.Write(buffer, size, bufferSize);
-                                size += bufferSize;
+                                int bufferSize;
+                                while ((bufferSize = stream.Read(buffer, 0, buffer.Length)) > 0)
+                                {
+                                    ms.Write(buffer, 0, bufferSize);
+                                    size += bufferSize;
+                                }
+                            } while (reply == null);
+                            if (reply.Success)
+                            {
+                                ms.Flush();
+                                ms.Seek(0, SeekOrigin.Begin);
+                                using (var sr = new StreamReader(ms, Encoding))
+                                {
+                                    var text = sr.ReadToEnd().TrimEnd();
+                                    var x = stream.SocketDataAvailable;
+                                    FtpTrace.WriteLine(text);
+                                    rawlisting = text.Split('\n').ToList();
+                                }
                             }
-                        } while (reply == null);
-                        if (reply.Success)
-                        {
-                            var text = Encoding.GetString(ms.GetBuffer()).TrimEnd();
-                            FtpTrace.WriteLine(text);
-                            rawlisting = text.Split('\n').ToList();
                         }
                     }
                     finally

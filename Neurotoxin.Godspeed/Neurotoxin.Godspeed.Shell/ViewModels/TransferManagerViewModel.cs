@@ -224,7 +224,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             get
             {
                 return SourcePane.ResumeCapability.HasFlag(ResumeCapability.Restart) &&
-                       TargetPane.ResumeCapability.HasFlag(ResumeCapability.Append);
+                       (TargetPane == null || TargetPane.ResumeCapability.HasFlag(ResumeCapability.Append));
             }
         }
 
