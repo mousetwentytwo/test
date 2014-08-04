@@ -9,11 +9,14 @@
                        Width="400" Height="400" Title="{Binding TreeSelectionTitle}">
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="{Binding TreeSelectionDescription}" Margin="0,0,0,5"/>
         
-        <TreeView ItemsSource="{Binding SelectionTree}">
+        <TreeView Grid.Row="1" ItemsSource="{Binding SelectionTree}">
             <TreeView.ItemContainerStyle>
                 <Style TargetType="{x:Type TreeViewItem}">
                     <Setter Property="IsExpanded" Value="True"/>
@@ -21,13 +24,13 @@
             </TreeView.ItemContainerStyle>
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate ItemsSource="{Binding Path=Children}">
-                    <CheckBox IsChecked="{Binding IsSelected}" Content="{Binding}" ContentTemplate="{StaticResource FileSystemItemTitleTemplate}" Padding="0,-2,0,0"/>
+                    <CheckBox IsChecked="{Binding IsChecked}" Content="{Binding}" ContentTemplate="{StaticResource FileSystemItemTitleTemplate}" Padding="0,-2,0,0"/>
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>
         </TreeView>
 
-        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5,0,0">
-            <Button Content="{lex:LocText Ok}" MinWidth="75" x:Name="Ok" Click="OkButtonClick" Margin="0,0,5,0"/>
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,5">
+            <Button Content="{lex:LocText Ok}" MinWidth="75" x:Name="Ok" Click="OkButtonClick" Margin="0,0,5"/>
             <Button Content="{lex:LocText Cancel}" MinWidth="75" x:Name="Cancel" Click="CancelButtonClick"/>
         </StackPanel>
     </Grid>

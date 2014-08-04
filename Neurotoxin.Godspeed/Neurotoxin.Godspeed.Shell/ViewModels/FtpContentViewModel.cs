@@ -91,9 +91,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public bool CanExecuteCheckFreestyleDatabaseCommand()
         {
-            //TODO: temporary
-            return true;
-            //return FileManager.IsFSD;
+            return FileManager.IsFSD;
         }
 
         public void ExecuteCheckFreestyleDatabaseCommand()
@@ -272,6 +270,23 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             Drive = drive ?? Drives.First();
 
             if (!IsContentScanTriggerAvailable) return;
+
+            //TODO: temporary hack
+            if (FileManager.ServerType == FtpServerType.IIS)
+            {
+                ScanFolders = new Dictionary<int, FsdScanPath>()
+                {
+                    {1, new FsdScanPath
+                    {
+                        PathId = 1,
+                        Path = "/Content/0000000000000000/",
+                        ScanDepth = 2,
+                        Drive = "Hdd1"
+                    }}
+                };
+                return;
+            }
+
             var username = Connection.HttpUsername;
             var password = Connection.HttpPassword;
             if (username == null)

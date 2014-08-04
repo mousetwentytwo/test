@@ -48,16 +48,16 @@ namespace Neurotoxin.Godspeed.Presentation.ViewModels
             set { _isDirectory = value; NotifyPropertyChanged(ISDIRECTORY); }
         }
 
-        private const string ISSELECTED = "IsSelected";
-        private bool _isSelected;
-        public bool IsSelected
+        private const string ISCHECKED = "IsChecked";
+        private bool _isChecked;
+        public bool IsChecked
         {
-            get { return _isSelected; }
+            get { return _isChecked; }
             set
             {
-                _isSelected = value; 
-                if (Children != null) Children.ForEach(c => c.IsSelected = value);
-                NotifyPropertyChanged(ISSELECTED);
+                _isChecked = value; 
+                if (Children != null) Children.ForEach(c => c.IsChecked = value);
+                NotifyPropertyChanged(ISCHECKED);
             }
         }
 

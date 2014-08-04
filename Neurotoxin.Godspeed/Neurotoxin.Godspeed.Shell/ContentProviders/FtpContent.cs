@@ -56,7 +56,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public bool IsFSD
         {
-            get { return ServerType == FtpServerType.F3 || ServerType == FtpServerType.FSD; }
+            get { return ServerType == FtpServerType.F3 || ServerType == FtpServerType.FSD || ServerType == FtpServerType.IIS; }
         }
 
         public Stack<string> Log

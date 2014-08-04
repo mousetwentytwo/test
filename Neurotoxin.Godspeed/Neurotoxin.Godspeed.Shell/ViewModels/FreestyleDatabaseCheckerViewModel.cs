@@ -86,7 +86,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public string TreeSelectionTitle
         {
-            get { return Resx.SelectTheItemsYouWantToRemove; }
+            get { return Resx.Cleanup; }
+        }
+
+        public string TreeSelectionDescription
+        {
+            get { return Resx.SelectTheItemsYouWantToRemove + Strings.Colon; }
         }
 
         private const string SELECTIONTREE = "SelectionTree";
@@ -186,7 +191,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                                  Title = treeItem.Content.Title,
                                  Content = treeItem.Content,
                                  Thumbnail = StfsPackageExtensions.GetBitmapFromByteArray(treeItem.Content.Thumbnail ?? ResourceManager.GetContentByteArray(icon)),
-                                 IsSelected = true,
+                                 IsChecked = true,
                                  IsDirectory = treeItem.Content.Type == ItemType.Directory
                              };
                 treeViewModel.Add(vm);
@@ -199,7 +204,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             foreach (var treeItem in tree)
             {
                 GetSelectionFromTree(treeItem.Children, selection);
-                if (treeItem.IsSelected) selection.Add(treeItem.Content as FileSystemItem);
+                if (treeItem.IsChecked) selection.Add(treeItem.Content as FileSystemItem);
             }
         }
 
@@ -264,7 +269,13 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         NotifyPropertyChanged(PROGRESSVALUEDOUBLE);
                         NotifyPropertyChanged(PROGRESSDIALOGTITLE);
                     });
+                    _itemsChecked++;
                     var scanPathId = Int32.Parse(cells[FsdContentItemProperty.ScanPathId]);
+                    if (!_parent.ScanFolders.ContainsKey(scanPathId))
+                    {
+                        //TODO: handle non-existent scan path
+                        continue;
+                    }
                     var f = _parent.ScanFolders[scanPathId];
                     var path = string.Format("/{0}{1}", f.Drive, cells[FsdContentItemProperty.Path].Replace("\\", "/"));
                     if (!_parent.FileExists(path))
@@ -276,7 +287,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                             Thumbnail = _parent.HttpGet(string.Format("assets/gameicon.png?contentid={0:X2}", contentId))
                         });
                     }
-                    _itemsChecked++;
                 }
 
                 UIThread.Run(() => ProgressMessage = Resx.PleaseWait + Strings.DotDotDot); //TODO: 'just a little bit longer' text
