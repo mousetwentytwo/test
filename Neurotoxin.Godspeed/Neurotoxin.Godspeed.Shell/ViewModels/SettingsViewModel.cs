@@ -161,9 +161,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void ExecuteClearCacheCommand()
         {
-            WindowManager.ShowMessage(Resx.ApplicationIsBusy, Resx.PleaseWait, NotificationMessageFlags.NonClosable);
             WorkHandler.Run(() =>
                                  {
+                                     WindowManager.ShowMessage(Resx.ApplicationIsBusy, Resx.PleaseWait, NotificationMessageFlags.NonClosable);
                                      _cacheManager.Clear();
                                      return true;
                                  }, 

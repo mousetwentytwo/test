@@ -172,6 +172,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             var dialog = new NewConnectionDialog(Items.OfType<FtpConnectionItemViewModel>().Select(item => item.Name).ToList(), newItem);
             if (dialog.ShowDialog() != true) return;
 
+            newItem.Name = newItem.Name.Trim();
+            if (newItem.Username != null) newItem.Username = newItem.Username.Trim();
+            if (newItem.Password != null) newItem.Password = newItem.Password.Trim();
             if (replace) Items.Remove(ftpconn);
 
             var i = 0;

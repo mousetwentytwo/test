@@ -14,7 +14,7 @@ namespace Neurotoxin.Godspeed.Presentation.Validation
 
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
-            return new ValidationResult(value == null || value.ToString() != string.Empty, ErrorMessage);
+            return new ValidationResult(value == null || value.ToString().Trim() != string.Empty, ErrorMessage);
         }
     }
 }

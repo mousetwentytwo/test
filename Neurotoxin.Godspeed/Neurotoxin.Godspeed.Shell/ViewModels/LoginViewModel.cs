@@ -60,7 +60,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private const string ISVALID = "IsValid";
         public bool IsValid
         {
-            get { return !string.IsNullOrEmpty(Username) && !string.IsNullOrEmpty(Password); }
+            get { return !string.IsNullOrWhiteSpace(Username) && !string.IsNullOrWhiteSpace(Password); }
         }
 
         private const string ISUSEDEFAULTENABLED = "IsUseDefaultEnabled";

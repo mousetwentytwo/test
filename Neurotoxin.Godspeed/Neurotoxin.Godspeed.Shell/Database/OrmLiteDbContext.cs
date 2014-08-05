@@ -15,7 +15,7 @@ namespace Neurotoxin.Godspeed.Shell.Database
         public OrmLiteDbContext()
         {
             SqliteOrmLiteDialectProvider.Instance = new SqliteOrmLiteDialectProviderEx();
-            LogManager.LogFactory = new OrmLiteLogFactory();
+            //LogManager.LogFactory = new OrmLiteLogFactory();
         }
 
         public IDbConnection Open()
