@@ -19,5 +19,7 @@ namespace Neurotoxin.Godspeed.Shell.Commands
             {
                 new KeyGesture(Key.F4, ModifierKeys.Alt)
             });
+
+        public static readonly RoutedUICommand SplitterCommand = new RoutedUICommand("Splitter", "Splitter", typeof(FileManagerWindow));
     }
 }

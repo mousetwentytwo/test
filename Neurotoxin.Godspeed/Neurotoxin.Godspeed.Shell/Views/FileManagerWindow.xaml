@@ -220,18 +220,28 @@
                 </MenuItem>
             </Menu>
             <AdornerDecorator Grid.Row="1" Grid.ColumnSpan="2">
-                <Grid>
+                <Grid x:Name="PanesGrid">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="50*" />
+                        <ColumnDefinition Width="3" />
+                        <ColumnDefinition Width="50*" />
                     </Grid.ColumnDefinitions>
-                    <ContentControl Grid.Column="0" Grid.Row="1" Content="{Binding LeftPane}" ContentTemplateSelector="{StaticResource PaneTemplateSelector}"
-                         x:Name="LeftPane" />
-                    <GridSplitter Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Stretch"
-                         ShowsPreview="True" Width="3" Background="{StaticResource ControlBackgroundBrush}" />
-                    <ContentControl Grid.Column="2" Grid.Row="1" Content="{Binding RightPane}" ContentTemplateSelector="{StaticResource PaneTemplateSelector}"
-                         x:Name="RightPane" />
+                    <ContentControl Grid.Column="0" Grid.Row="1" Content="{Binding LeftPane}" ContentTemplateSelector="{StaticResource PaneTemplateSelector}" x:Name="LeftPane" />
+                    <GridSplitter Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True" Width="3" 
+                                  Background="{StaticResource ControlBackgroundBrush}" x:Name="Splitter">
+                        <GridSplitter.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="20/80" Command="{x:Static commands:FileManagerCommands.SplitterCommand}" CommandParameter="20"/>
+                                <MenuItem Header="30/70" Command="{x:Static commands:FileManagerCommands.SplitterCommand}" CommandParameter="30"/>
+                                <MenuItem Header="40/60" Command="{x:Static commands:FileManagerCommands.SplitterCommand}" CommandParameter="40"/>
+                                <MenuItem Header="50/50" Command="{x:Static commands:FileManagerCommands.SplitterCommand}" CommandParameter="50"/>
+                                <MenuItem Header="60/40" Command="{x:Static commands:FileManagerCommands.SplitterCommand}" CommandParameter="60"/>
+                                <MenuItem Header="70/30" Command="{x:Static commands:FileManagerCommands.SplitterCommand}" CommandParameter="70"/>
+                                <MenuItem Header="80/20" Command="{x:Static commands:FileManagerCommands.SplitterCommand}" CommandParameter="80"/>
+                            </ContextMenu>
+                        </GridSplitter.ContextMenu>
+                    </GridSplitter>
+                    <ContentControl Grid.Column="2" Grid.Row="1" Content="{Binding RightPane}" ContentTemplateSelector="{StaticResource PaneTemplateSelector}" x:Name="RightPane" />
                 </Grid>
             </AdornerDecorator>
             <Grid Grid.Row="2" Grid.ColumnSpan="2" Margin="0,3,0,0">

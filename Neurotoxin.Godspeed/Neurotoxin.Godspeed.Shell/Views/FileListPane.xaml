@@ -139,7 +139,7 @@
             <TextBlock Text="{Binding CurrentFolder.Path}" Padding="2" FontWeight="Bold" />
         </Border>
         
-        <DataGrid x:Name="Grid" 
+        <DataGrid x:Name="Grid"
                   Grid.Row="2" 
                   ItemsSource="{Binding Items}" 
                   SelectedItem="{Binding CurrentRow}"

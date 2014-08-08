@@ -40,7 +40,18 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             sw.Start();
             using (var db = _dbContext.Open())
             {
-                db.Get<CacheItem>(ci => _inMemoryCache.Add(ci.Id, ci));
+                db.Get<CacheItem>(ci =>
+                                      {
+                                          if (!_inMemoryCache.ContainsKey(ci.Id))
+                                          {
+                                              _inMemoryCache.Add(ci.Id, ci);    
+                                          }
+                                          else
+                                          {
+                                              //TODO: check this, occurred one time, but cannot reproduce since. (hint: unknown game, and unity is inaccessible)
+                                              Debugger.Break();
+                                          }
+                                      });
             }
             sw.Stop();
             Debug.WriteLine("[CACHE] Populated in {0}. Item count: {1}", sw.Elapsed, _inMemoryCache.Count);

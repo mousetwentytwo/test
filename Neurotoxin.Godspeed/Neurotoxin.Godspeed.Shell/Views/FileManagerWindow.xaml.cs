@@ -53,6 +53,7 @@ namespace Neurotoxin.Godspeed.Shell.Views
             CommandBindings.Add(new CommandBinding(FileManagerCommands.VisitWebsiteCommand, ExecuteVisitWebsiteCommand));
             CommandBindings.Add(new CommandBinding(FileManagerCommands.UserStatisticsParticipationCommand, ExecuteUserStatisticsParticipationCommand));
             CommandBindings.Add(new CommandBinding(FileManagerCommands.ExitCommand, ExecuteExitCommand));
+            CommandBindings.Add(new CommandBinding(FileManagerCommands.SplitterCommand, ExecuteSplitterCommand));
 
             LayoutRoot.PreviewKeyDown += LayoutRootOnPreviewKeyDown;
             Closing += OnClosing;
@@ -149,6 +150,13 @@ namespace Neurotoxin.Godspeed.Shell.Views
         private void ExecuteExitCommand(object sender, ExecutedRoutedEventArgs e)
         {
             Application.Current.Shutdown();
+        }
+
+        private void ExecuteSplitterCommand(object sender, ExecutedRoutedEventArgs e)
+        {
+            var l = Convert.ToDouble(e.Parameter);
+            PanesGrid.ColumnDefinitions[0].Width = new GridLength(l, GridUnitType.Star);
+            PanesGrid.ColumnDefinitions[2].Width = new GridLength(100 - l, GridUnitType.Star);
         }
 
         private void OnUserMessagesOpened(object sender, RoutedEventArgs e)
