@@ -1,11 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Reflection;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Threading;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
 using Neurotoxin.Godspeed.Presentation.Extensions;
@@ -55,7 +53,6 @@ namespace Neurotoxin.Godspeed.Shell.Views
             var settings = vm.Settings;
             var column = Grid.Columns.Single(c => c.SortMemberPath == settings.SortByField);
             column.SortDirection = settings.SortDirection == ListSortDirection.Ascending ? ListSortDirection.Descending : ListSortDirection.Ascending;
-            //TODO: This causes the blackness?!
             m.Invoke(Grid, new object[] { column });
         }
 

@@ -12,12 +12,6 @@
         <ResourceDictionary Source="/Themes/WhistlerBlue.xaml"/>
     </UserControl.Resources>
     
-    <e:Interaction.Triggers>
-        <e:EventTrigger EventName="MouseUp">
-            <inf:MapMouseEventToCommand Command="{Binding SetActiveCommand}"/>
-        </e:EventTrigger>
-    </e:Interaction.Triggers>
-    
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
             <RowDefinition Height="29"/>
@@ -56,6 +50,9 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
             <e:Interaction.Triggers>
+                <e:EventTrigger EventName="MouseUp">
+                    <inf:MapMouseEventToCommand Command="{Binding SetActiveCommand}"/>
+                </e:EventTrigger>
                 <e:EventTrigger EventName="MouseDoubleClick">
                     <inf:MapMouseEventToCommand Command="{Binding ConnectCommand}"/>
                 </e:EventTrigger>

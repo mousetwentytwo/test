@@ -117,12 +117,6 @@
 
     </UserControl.Resources>
     
-    <e:Interaction.Triggers>
-        <e:EventTrigger EventName="MouseUp">
-            <inf:MapMouseEventToCommand Command="{Binding SetActiveCommand}" />
-        </e:EventTrigger>
-    </e:Interaction.Triggers>
-    
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
             <RowDefinition Height="29" />
@@ -183,6 +177,11 @@
                     </DockPanel>
                 </DataTemplate>
             </TabControl.ItemTemplate>
+            <e:Interaction.Triggers>
+                <e:EventTrigger EventName="MouseUp">
+                    <inf:MapMouseEventToCommand Command="{Binding SetActiveCommand}" />
+                </e:EventTrigger>
+            </e:Interaction.Triggers>
         </TabControl>
 
         <vc:ProgressNotificationBar Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" />

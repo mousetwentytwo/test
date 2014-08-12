@@ -30,7 +30,7 @@
         </TreeView>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,5">
-            <Button Content="{lex:LocText Ok}" MinWidth="75" x:Name="Ok" Click="OkButtonClick" Margin="0,0,5"/>
+            <Button Content="{lex:LocText Ok}" MinWidth="75" x:Name="Ok" Click="OkButtonClick" Margin="0,0,5,0"/>
             <Button Content="{lex:LocText Cancel}" MinWidth="75" x:Name="Cancel" Click="CancelButtonClick"/>
         </StackPanel>
     </Grid>

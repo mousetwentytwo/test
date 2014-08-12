@@ -86,15 +86,6 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <e:Interaction.Triggers>
-        <e:EventTrigger EventName="MouseUp">
-            <inf:MapMouseEventToCommand Command="{Binding SetActiveCommand}" />
-        </e:EventTrigger>
-        <e:EventTrigger EventName="PreviewMouseDown">
-            <inf:MapMouseEventToCommand Command="{Binding MouseSelectionCommand}" />
-        </e:EventTrigger>
-    </e:Interaction.Triggers>
-
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -363,6 +354,12 @@
                 </Style>
             </DataGrid.CellStyle>
             <e:Interaction.Triggers>
+                <e:EventTrigger EventName="MouseUp">
+                    <inf:MapMouseEventToCommand Command="{Binding SetActiveCommand}" />
+                </e:EventTrigger>
+                <e:EventTrigger EventName="PreviewMouseDown">
+                    <inf:MapMouseEventToCommand Command="{Binding MouseSelectionCommand}" />
+                </e:EventTrigger>
                 <e:EventTrigger EventName="MouseDoubleClick">
                     <inf:MapMouseEventToCommand Command="{Binding ChangeDirectoryCommand}" />
                 </e:EventTrigger>
