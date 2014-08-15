@@ -2395,7 +2395,7 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The following items to not belong to any FSD database entries. Please check to ensure that these are not leftovers from formerly deleted games..
+        ///   Looks up a localized string similar to The following items do not belong to any FSD database entries. Please check to ensure that these are not leftovers from formerly deleted games..
         /// </summary>
         internal static string TheFollowingGamesMightHaveLeftovers {
             get {

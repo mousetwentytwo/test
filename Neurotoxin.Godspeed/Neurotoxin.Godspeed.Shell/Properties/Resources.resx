@@ -1047,7 +1047,7 @@
     <value>FSD Database check</value>
   </data>
   <data name="TheFollowingGamesMightHaveLeftovers" xml:space="preserve">
-    <value>The following items to not belong to any FSD database entries. Please check to ensure that these are not leftovers from formerly deleted games.</value>
+    <value>The following items do not belong to any FSD database entries. Please check to ensure that these are not leftovers from formerly deleted games.</value>
   </data>
   <data name="MissingGames" xml:space="preserve">
     <value>Missing games</value>

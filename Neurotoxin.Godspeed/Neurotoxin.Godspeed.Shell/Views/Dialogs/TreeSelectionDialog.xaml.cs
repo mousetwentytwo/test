@@ -15,7 +15,6 @@ namespace Neurotoxin.Godspeed.Shell.Views.Dialogs
         public TreeSelectionDialog(ITreeSelectionViewModel viewModel)
         {
             SizeToContent = SizeToContent.Manual;
-            WindowStartupLocation = WindowStartupLocation.CenterOwner;
             ViewModel = viewModel;
             InitializeComponent();
             Loaded += OnLoaded;

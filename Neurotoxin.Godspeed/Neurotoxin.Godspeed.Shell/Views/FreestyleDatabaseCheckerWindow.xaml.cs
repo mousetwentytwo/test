@@ -14,6 +14,8 @@ namespace Neurotoxin.Godspeed.Shell.Views
 
         public FreestyleDatabaseCheckerWindow(FreestyleDatabaseCheckerViewModel viewModel)
         {
+            WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            Owner = Application.Current.MainWindow;
             InitializeComponent();
             ViewModel = viewModel;
         }

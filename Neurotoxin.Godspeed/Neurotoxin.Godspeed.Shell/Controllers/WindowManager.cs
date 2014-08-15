@@ -154,7 +154,13 @@ namespace Neurotoxin.Godspeed.Shell.Controllers
                 var parentType = viewModel.Parent.GetType();
                 if (_windows.ContainsKey(parentType)) owner = _windows[parentType];
             }
-            var dialog = new TreeSelectionDialog(viewModel) { Owner = owner };
+            if (owner == null)
+            {
+                var currentType = viewModel.GetType();
+                if (_windows.ContainsKey(currentType)) owner = _windows[currentType];
+            }
+            var dialog = new TreeSelectionDialog(viewModel);
+            if (owner != null) dialog.Owner = owner;
             return dialog.ShowDialog() == true;
         }
 
