@@ -48,7 +48,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                                           }
                                           else
                                           {
-                                              //TODO: check this, occurred one time, but cannot reproduce since. (hint: unknown game, and unity is inaccessible)
+                                              //TODO: title recognition might occur sooner than this. problems: 1) unwanted recognition 2) inMemory will already contain item
                                               Debugger.Break();
                                           }
                                       });

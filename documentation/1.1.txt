@@ -12,6 +12,7 @@
 * FIXED Issue #244: Special characters in FTP item names
 * FIXED Issue #267: No application is associated with URLs
 * FIXED Issue #283: Handle permission denied errors on FTP
+* FIXED: Black Window on Windows 7 Aero theme
 * FIXED: Misbehaving [..] folder on local file system
 * FIXED: Stored participation answer isn't displayed if I open the User Participation Window again
 * FIXED: Editing connection highlight name as an already existing one
@@ -41,3 +42,4 @@
 * ADDED: FTP Log Viewer
 * ADDED: Hungarian language
 * ADDED: New About window
+* ADDED: Grid splitter presets

@@ -814,7 +814,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             if (_shutdown.HasFlag(Shutdown.PC)) args.Shutdown = true;
 
             if (_sourceChanged) SourcePane.Refresh();
-            if (_targetChanged) TargetPane.Refresh();
+            if (_targetChanged && TargetPane != null) TargetPane.Refresh();
             EventAggregator.GetEvent<TransferFinishedEvent>().Publish(args);
             SourcePane = null;
             TargetPane = null;
