@@ -153,7 +153,7 @@ namespace Neurotoxin.Godspeed.Core.Net {
                     }
 
                     if (m_socketPollInterval > 0 && DateTime.Now.Subtract(m_lastActivity).TotalMilliseconds > m_socketPollInterval) {
-                        FtpTrace.WriteLine("Testing connectivity using Socket.Poll()...");
+                        //FtpTrace.WriteLine("Testing connectivity using Socket.Poll()...");
                         if (m_socket.Poll(500000, SelectMode.SelectRead) && m_socket.Available == 0) {
                             Close();
                             return false;

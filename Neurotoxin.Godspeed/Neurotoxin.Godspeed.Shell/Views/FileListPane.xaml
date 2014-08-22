@@ -212,11 +212,11 @@
                                     </MenuItem.Icon>
                                 </MenuItem>
                                 <MenuItem Header="{lex:LocText Neurotoxin.Godspeed.Shell:Resources:LaunchGame}" 
-                                          Command="{Binding Source={StaticResource ViewModel}, Path=Data.LaunchGameCommand}">
+                                          Command="{Binding Source={StaticResource ViewModel}, Path=Data.LaunchCommand}">
                                     <MenuItem.Visibility>
                                         <MultiBinding Converter="{StaticResource BoolToVis}" FallbackValue="Collapsed">
                                             <Binding Source="{StaticResource ViewModel}" Path="Data.CurrentRow.IsGame"/>
-                                            <Binding Source="{StaticResource ViewModel}" Path="Data.LaunchGameCommand"/>
+                                            <Binding Source="{StaticResource ViewModel}" Path="Data.LaunchCommand"/>
                                         </MultiBinding>
                                     </MenuItem.Visibility>
                                     <MenuItem.Icon>
@@ -224,11 +224,11 @@
                                     </MenuItem.Icon>
                                 </MenuItem>
                                 <MenuItem Header="{lex:LocText Neurotoxin.Godspeed.Shell:Resources:LaunchXex}" 
-                                          Command="{Binding Source={StaticResource ViewModel}, Path=Data.LaunchXexCommand}">
+                                          Command="{Binding Source={StaticResource ViewModel}, Path=Data.LaunchCommand}">
                                     <MenuItem.Visibility>
                                         <MultiBinding Converter="{StaticResource BoolToVis}" FallbackValue="Collapsed">
                                             <Binding Source="{StaticResource ViewModel}" Path="Data.CurrentRow.IsXex"/>
-                                            <Binding Source="{StaticResource ViewModel}" Path="Data.LaunchXexCommand"/>
+                                            <Binding Source="{StaticResource ViewModel}" Path="Data.LaunchCommand"/>
                                         </MultiBinding>
                                     </MenuItem.Visibility>
                                     <MenuItem.Icon>
@@ -375,7 +375,7 @@
                 <KeyBinding Command="{Binding ToggleSelectionCommand}" CommandParameter="{StaticResource Space}" Key="Space" />
                 <KeyBinding Command="{Binding ToggleSelectionCommand}" CommandParameter="{StaticResource ShiftDown}" Key="Down" Modifiers="Shift" />
                 <KeyBinding Command="{Binding ToggleSelectionCommand}" CommandParameter="{StaticResource ShiftUp}" Key="Up" Modifiers="Shift" />
-                <KeyBinding Command="{Binding CalculateSizeCommand}" CommandParameter="{StaticResource True}" Key="L" Modifiers="Control" />
+                <KeyBinding Command="{Binding CalculateSizeCommand}" CommandParameter="{StaticResource True}" Key="Enter" Modifiers="Ctrl+Shift" />
                 <KeyBinding Command="{Binding SelectAllCommand}" Key="A" Modifiers="Control" />
                 <KeyBinding Command="{Binding GoToFirstCommand}" CommandParameter="{StaticResource False}" Key="Home" />
                 <KeyBinding Command="{Binding GoToFirstCommand}" CommandParameter="{StaticResource True}" Key="Home" Modifiers="Shift" />
@@ -387,6 +387,7 @@
                 <KeyBinding Command="{Binding InvertSelectionCommand}" Key="Multiply" />
                 <KeyBinding Command="{Binding UpCommand}" Key="Back" />
                 <KeyBinding Command="{Binding CancelCommand}" Key="Escape" />
+                <KeyBinding Command="{Binding LaunchCommand}" Key="Enter" Modifiers="Control"/>
             </DataGrid.InputBindings>
         </DataGrid>
 

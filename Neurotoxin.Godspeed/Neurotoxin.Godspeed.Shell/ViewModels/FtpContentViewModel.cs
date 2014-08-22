@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -83,6 +84,16 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             return false;
         }
 
+        protected override void ExecuteChangeDirectoryCommand(object cmdParam)
+        {
+            if (CurrentRow != null && CurrentRow.IsXex)
+            {
+                if (WindowManager.Confirm(Resx.LaunchXex, Resx.LaunchXexConfirmation)) ExecuteLaunchCommand();
+                return;
+            }
+            base.ExecuteChangeDirectoryCommand(cmdParam);
+        }
+
         #endregion
 
         #region CheckFreestyleDatabaseCommand
@@ -103,66 +114,58 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #endregion
 
-        #region LaunchGameCommand
+        #region LaunchCommand
 
-        public DelegateCommand LaunchGameCommand { get; private set; }
+        public DelegateCommand LaunchCommand { get; private set; }
 
-        public bool CanExecuteLaunchGameCommand()
+        public bool CanExecuteLaunchCommand()
         {
-            return FileManager.IsFSD;
+            return FileManager.IsFSD && CurrentRow != null && (CurrentRow.IsGame || CurrentRow.IsXex);
         }
 
-        public void ExecuteLaunchGameCommand()
+        public void ExecuteLaunchCommand()
         {
-            LaunchErrorCode error;
-            try
+            if (CurrentRow.IsGame)
             {
-                var scanFolder = GetCorrespondingScanFolder(CurrentRow.Path);
-                if (scanFolder != null)
+                LaunchErrorCode error;
+                try
                 {
-                    var prefix = CurrentRow.Path.Replace("/", "\\").SubstringAfter(scanFolder.Drive);
-                    var html = new HtmlDocument();
-                    html.LoadHtml(HttpGetString("gettable.html?name=ContentItems"));
-                    foreach (var row in html.DocumentNode.QuerySelectorAll("table.GameContentHeader > tr").Skip(2))
+                    var scanFolder = GetCorrespondingScanFolder(CurrentRow.Path);
+                    if (scanFolder != null)
                     {
-                        var cells = row.SelectNodes("td");
-                        if (Int32.Parse(cells[1].InnerText.Trim()) == scanFolder.PathId && cells[6].InnerText.Trim().StartsWith(prefix))
+                        var prefix = CurrentRow.Path.Replace("/", "\\").SubstringAfter(scanFolder.Drive);
+                        var html = new HtmlDocument();
+                        html.LoadHtml(HttpGetString("gettable.html?name=ContentItems"));
+                        foreach (var row in html.DocumentNode.QuerySelectorAll("table.GameContentHeader > tr").Skip(2))
                         {
-                            var contentId = Int32.Parse(cells[0].InnerText.Trim());
-                            HttpPost("launch", string.Format("sessionid={0}&contentid={1:X2}&Action=launch", _httpSessionId, contentId));
-                            ExecuteCloseCommand();
-                            return;
+                            var cells = row.SelectNodes("td");
+                            if (Int32.Parse(cells[1].InnerText.Trim()) == scanFolder.PathId && cells[6].InnerText.Trim().StartsWith(prefix))
+                            {
+                                var contentId = Int32.Parse(cells[0].InnerText.Trim());
+                                HttpPost("launch", string.Format("sessionid={0}&contentid={1:X2}&Action=launch", _httpSessionId, contentId));
+                                ExecuteCloseCommand();
+                                return;
+                            }
                         }
+                        error = LaunchErrorCode.NotFound;
                     }
-                    error = LaunchErrorCode.NotFound;
+                    else
+                    {
+                        error = LaunchErrorCode.NotUnderScanFolder;
+                    }
                 }
-                else
+                catch
                 {
-                    error = LaunchErrorCode.NotUnderScanFolder;
+                    error = LaunchErrorCode.UnspecifiedError;
                 }
+                WindowManager.ShowMessage(Resx.LaunchGame, string.Format(Resx.UnableToLaunchGame, (int)error, error.ToString().ToUpper()));
             }
-            catch
+
+            if (CurrentRow.IsXex)
             {
-                error = LaunchErrorCode.UnspecifiedError;
+                FileManager.Execute(CurrentRow.Path);
+                ExecuteCloseCommand();
             }
-            WindowManager.ShowMessage(Resx.LaunchGame, string.Format(Resx.UnableToLaunchGame, (int)error, error.ToString().ToUpper()));
-        }
-
-        #endregion
-
-        #region LaunchXexCommand
-
-        public DelegateCommand LaunchXexCommand { get; private set; }
-
-        public bool CanExecuteLaunchXexCommand()
-        {
-            return FileManager.IsFSD;
-        }
-
-        public void ExecuteLaunchXexCommand()
-        {
-            FileManager.Execute(CurrentRow.Path);
-            ExecuteCloseCommand();
         }
 
         #endregion
@@ -178,13 +181,70 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #endregion
 
+        #region ShutdownCommand
+
+        public DelegateCommand ShutdownCommand { get; private set; }
+
+        public bool CanExecuteShutdownCommand()
+        {
+            return FileManager.IsFSD;
+        }
+
+        public void ExecuteShutdownCommand()
+        {
+            if (WindowManager.Confirm(Resx.Shutdown, string.Format(Resx.ShutdownConfirmation, Connection.Name))) Shutdown();
+        }
+
+        #endregion
+
+        #region StartContentScanCommand
+
+        public DelegateCommand StartContentScanCommand { get; private set; }
+
+        public bool CanExecuteStartContentScanCommand()
+        {
+            return FileManager.IsFSD;
+        }
+
+        public void ExecuteStartContentScanCommand()
+        {
+            try
+            {
+                HttpPost("paths.html", string.Format("sessionid={0}&Action=Scan+All", _httpSessionId));
+            }
+            catch
+            {
+                WindowManager.ShowMessage(Resx.FsdContentScan, Resx.ContentScanFailedErrorMessage);
+            }
+        }
+
+        #endregion
+
+        #region OpenWebUICommand
+
+        public DelegateCommand OpenWebUICommand { get; private set; }
+
+        public bool CanExecuteOpenWebUICommand()
+        {
+            return FileManager.IsFSD;
+        }
+
+        public void ExecuteOpenWebUICommand()
+        {
+            Process.Start(string.Format("http://{0}", Connection.Address));
+        }
+
+        #endregion
+
         public FtpContentViewModel()
         {
             CloseCommand = new DelegateCommand(ExecuteCloseCommand);
             CheckFreestyleDatabaseCommand = new DelegateCommand(ExecuteCheckFreestyleDatabaseCommand, CanExecuteCheckFreestyleDatabaseCommand);
-            LaunchGameCommand = new DelegateCommand(ExecuteLaunchGameCommand, CanExecuteLaunchGameCommand);
-            LaunchXexCommand = new DelegateCommand(ExecuteLaunchXexCommand, CanExecuteLaunchXexCommand);
+            LaunchCommand = new DelegateCommand(ExecuteLaunchCommand, CanExecuteLaunchCommand);
             ShowFtpLogCommand = new DelegateCommand(ExecuteShowFtpLogCommand);
+            ShutdownCommand = new DelegateCommand(ExecuteShutdownCommand, CanExecuteShutdownCommand);
+            StartContentScanCommand = new DelegateCommand(ExecuteStartContentScanCommand, CanExecuteStartContentScanCommand);
+            OpenWebUICommand = new DelegateCommand(ExecuteOpenWebUICommand, CanExecuteOpenWebUICommand);
             EventAggregator.GetEvent<TransferFinishedEvent>().Subscribe(OnTransferFinished);
         }
 
@@ -271,7 +331,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
             if (!IsContentScanTriggerAvailable) return;
 
-            //TODO: temporary hack
+            //HACK: for testing purposes only
             if (FileManager.ServerType == FtpServerType.IIS)
             {
                 ScanFolders = new Dictionary<int, FsdScanPath>()
@@ -499,7 +559,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
             catch
             {
-                WindowManager.ShowMessage(Resx.FsdContentScanTrigger, Resx.ContentScanFailedErrorMessage);
+                WindowManager.ShowMessage(Resx.FsdContentScan, Resx.ContentScanFailedErrorMessage);
             }
         }
 
@@ -665,7 +725,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public override void RaiseCanExecuteChanges()
         {
             base.RaiseCanExecuteChanges();
-            if (CheckFreestyleDatabaseCommand != null) CheckFreestyleDatabaseCommand.RaiseCanExecuteChanged();
+            if (CheckFreestyleDatabaseCommand == null) return;
+            CheckFreestyleDatabaseCommand.RaiseCanExecuteChanged();
+            LaunchCommand.RaiseCanExecuteChanged();
+            ShowFtpLogCommand.RaiseCanExecuteChanged();
+            ShutdownCommand.RaiseCanExecuteChanged();
         }
 
         public override void Dispose()

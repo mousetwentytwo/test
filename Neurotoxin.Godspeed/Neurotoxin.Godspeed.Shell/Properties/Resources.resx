@@ -954,7 +954,7 @@
     <value>Login</value>
   </data>
   <data name="LoginToFreestyleDashHttpServer" xml:space="preserve">
-    <value>The HTTP Authentication with non-default username and/or password is enabled in your FreestyleDash. If you want GODspeed to be able to notify FSD about content changes please enter the corresponding login information:</value>
+    <value>The HTTP Authentication with non-default username and/or password is enabled in your FreestyleDash. If you want GODspeed to be able to notify FSD/F3 about content changes please enter the corresponding login information:</value>
   </data>
   <data name="DisableFsdContentScanTriggerTitle" xml:space="preserve">
     <value>Disable FSD/F3 Content Scan Trigger</value>
@@ -996,7 +996,7 @@
     <value>FSD/F3 Content Scan Trigger</value>
   </data>
   <data name="ContentScanFailedErrorMessage" xml:space="preserve">
-    <value>Content scan failed. Please update your FSD game list manually.</value>
+    <value>Content scan failed. Please update your FSD/F3 game list manually.</value>
   </data>
   <data name="SystemError" xml:space="preserve">
     <value>System Error</value>
@@ -1020,16 +1020,16 @@
     <value>Checking</value>
   </data>
   <data name="TheFollowingGamesAreMissing" xml:space="preserve">
-    <value>The following games do not exist on your Xbox anymore. You should delete them manually from your FSD database.</value>
+    <value>The following games do not exist on your Xbox anymore. You should delete them manually from your FSD/F3 database.</value>
   </data>
   <data name="Path" xml:space="preserve">
     <value>Path</value>
   </data>
   <data name="ErrorsInFreestyleDatabase" xml:space="preserve">
-    <value>Errors in your FSD database</value>
+    <value>Errors in your FSD/F3 database</value>
   </data>
   <data name="VerifyFileHashAfterFtpUploadRemarks" xml:space="preserve">
-    <value>Please note that file hash verification takes time and supported only by FSD. It's hash algorithm can verify approx. 18 megabytes per second.</value>
+    <value>Please note that file hash verification takes time and supported only by FSD/F3. It's hash algorithm can verify approx. 18 megabytes per second.</value>
   </data>
   <data name="Verifying" xml:space="preserve">
     <value>Verifying</value>
@@ -1041,13 +1041,13 @@
     <value>Show FTP Log</value>
   </data>
   <data name="NoErrorsInFreestyleDatabase" xml:space="preserve">
-    <value>No errors found in your FSD database</value>
+    <value>No errors found in your FSD/F3 database</value>
   </data>
   <data name="FreestyleDatabaseCheck" xml:space="preserve">
-    <value>FSD Database check</value>
+    <value>Database check</value>
   </data>
   <data name="TheFollowingGamesMightHaveLeftovers" xml:space="preserve">
-    <value>The following items do not belong to any FSD database entries. Please check to ensure that these are not leftovers from formerly deleted games.</value>
+    <value>The following items do not belong to any FSD/F3 database entries. Please check to ensure that these are not leftovers from formerly deleted games.</value>
   </data>
   <data name="MissingGames" xml:space="preserve">
     <value>Missing games</value>
@@ -1096,5 +1096,27 @@ Do you want to delete the old application data from your hard drive?</value>
   </data>
   <data name="Cleanup" xml:space="preserve">
     <value>Cleanup</value>
+  </data>
+  <data name="LaunchXexConfirmation" xml:space="preserve">
+    <value>Do you really want to launch the application?
+It will automatically close the FTP connection.</value>
+  </data>
+  <data name="FsdMenu" xml:space="preserve">
+    <value>FSD/F3</value>
+  </data>
+  <data name="Shutdown" xml:space="preserve">
+    <value>Shutdown</value>
+  </data>
+  <data name="ShutdownConfirmation" xml:space="preserve">
+    <value>Do you really want to shutdown {0}?</value>
+  </data>
+  <data name="FsdContentScan" xml:space="preserve">
+    <value>FSD/F3 Content Scan</value>
+  </data>
+  <data name="OpenWebUI" xml:space="preserve">
+    <value>Open WebUI</value>
+  </data>
+  <data name="StartContentScan" xml:space="preserve">
+    <value>Start Content Scan</value>
   </data>
 </root>

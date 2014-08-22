@@ -24,6 +24,7 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
         bool IsVerificationEnabled { get; }
 
         Queue<QueueItem> PopulateQueue(FileOperation action);
+        Queue<QueueItem> PopulateQueue(FileOperation action, IEnumerable<FileSystemItem> selection);
         TransferResult CreateFolder(string path);
         TransferResult Delete(FileSystemItem item);
 

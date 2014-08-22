@@ -17,7 +17,6 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 {
     public class CacheManager : ICacheManager
     {
-        private bool _isCachePopulated;
         private bool _isPersisting;
         private readonly IEventAggregator _eventAggregator;
         private readonly IWorkHandler _workHandler;
@@ -30,32 +29,20 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             _eventAggregator = eventAggregator;
             _workHandler = workHandler;
             _dbContext = dbContext;
-            _workHandler.Run(PopulateItems, c => _isCachePopulated = true);
+            PopulateItems();
             _timer = new Timer(PersistCacheData, null, Timeout.Infinite, Timeout.Infinite);
         }
 
-        private int PopulateItems()
+        private void PopulateItems()
         {
             var sw = new Stopwatch();
             sw.Start();
             using (var db = _dbContext.Open())
             {
-                db.Get<CacheItem>(ci =>
-                                      {
-                                          if (!_inMemoryCache.ContainsKey(ci.Id))
-                                          {
-                                              _inMemoryCache.Add(ci.Id, ci);    
-                                          }
-                                          else
-                                          {
-                                              //TODO: title recognition might occur sooner than this. problems: 1) unwanted recognition 2) inMemory will already contain item
-                                              Debugger.Break();
-                                          }
-                                      });
+                db.Get<CacheItem>(ci => _inMemoryCache.Add(ci.Id, ci));
             }
             sw.Stop();
             Debug.WriteLine("[CACHE] Populated in {0}. Item count: {1}", sw.Elapsed, _inMemoryCache.Count);
-            return _inMemoryCache.Count;
         } 
 
         private void PersistCacheData(object state)
@@ -181,7 +168,6 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public int EntryCount(Func<CacheItem, bool> predicate)
         {
-            while (!_isCachePopulated) Thread.Sleep(100);
             return _inMemoryCache.Count(kvp => predicate(kvp.Value));
         }
 

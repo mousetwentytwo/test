@@ -631,7 +631,7 @@
                                             </LinearGradientBrush>
                                         </Rectangle.Fill>
                                     </Rectangle>
-                                    <Rectangle x:Name="IndeterminateIcon" Width="5" Height="2" Fill="{StaticResource checkIconStroke}" Opacity="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    <Rectangle x:Name="IndeterminateIcon" Width="9" Height="9" Fill="{StaticResource checkIconStroke}" Opacity="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     <Path x:Name="CheckIcon" Margin="0,3.333,3.833,0" Width="7" Height="9" Fill="{StaticResource checkIconStroke}" Stretch="Fill" Opacity="0" VerticalAlignment="Top" HorizontalAlignment="Right" Data="M103.78572,598.96112 L105.09846,597.5661 L107.00806,600.16229 C107.00806,600.16229 109.91004,592.74463 109.91004,592.74463 C109.91004,592.74463 111.74678,593.79761 111.74678,593.79761 C111.74678,593.79761 107.88566,602.75848 107.88566,602.75848 L106.60118,602.75848 z"/>
                                     <Rectangle x:Name="FocusedVisualElement" Stroke="{StaticResource btnFocus}" StrokeThickness="1" Visibility="Visible" Opacity="0"/>
                                     <Rectangle x:Name="DisabledVisualElement" Margin="1" Fill="#4CFFFFFF" Visibility="Collapsed"/>

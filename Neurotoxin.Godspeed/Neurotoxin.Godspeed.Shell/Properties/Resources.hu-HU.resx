@@ -915,16 +915,16 @@
     <value>Ellenőrzés</value>
   </data>
   <data name="TheFollowingGamesAreMissing" xml:space="preserve">
-    <value>Az alábbi játékok már hiányoznak az Xboxodról, töröld őket az FSD adatbázisából!</value>
+    <value>Az alábbi játékok már hiányoznak az Xboxodról, töröld őket az FSD/F3 adatbázisából!</value>
   </data>
   <data name="Path" xml:space="preserve">
     <value>Útvonal</value>
   </data>
   <data name="ErrorsInFreestyleDatabase" xml:space="preserve">
-    <value>Hibák az FSD adatbázisában</value>
+    <value>Hibák az FSD/F3 adatbázisában</value>
   </data>
   <data name="VerifyFileHashAfterFtpUploadRemarks" xml:space="preserve">
-    <value>Ez a művelet meglehetősen időigényes és csak az FSD támogatja. Az általa használt algoritmus kb. 18 megabájtot képes leellenőrizni másodpercenként.</value>
+    <value>Ez a művelet meglehetősen időigényes és csak az FSD/F3 támogatja. Az általa használt algoritmus kb. 18 megabájtot képes leellenőrizni másodpercenként.</value>
   </data>
   <data name="Verifying" xml:space="preserve">
     <value>Ellenőrzés</value>
@@ -939,13 +939,13 @@
     <value>FTP naplófájl megjelenítése</value>
   </data>
   <data name="NoErrorsInFreestyleDatabase" xml:space="preserve">
-    <value>Nincs hiba az FSD adatbázisában</value>
+    <value>Nincs hiba az FSD/F3 adatbázisában</value>
   </data>
   <data name="FreestyleDatabaseCheck" xml:space="preserve">
-    <value>Az FSD adatbázisának ellenőrzése</value>
+    <value>Adatbázis ellenőrzés</value>
   </data>
   <data name="TheFollowingGamesMightHaveLeftovers" xml:space="preserve">
-    <value>Az alábbi tartalmak nem tartoznak egyik FSD adatbázis-bejegyzéshez sem. Ellenőrizd, hogy jogosan foglalják-e a helyet vagy csak korábbi játékeltávolítások során maradtak-e ott.</value>
+    <value>Az alábbi tartalmak nem tartoznak egyik FSD/F3 adatbázis-bejegyzéshez sem. Ellenőrizd, hogy jogosan foglalják-e a helyet vagy csak korábbi játékeltávolítások során maradtak-e ott.</value>
   </data>
   <data name="MissingGames" xml:space="preserve">
     <value>Hiányzó játékok</value>
@@ -1093,5 +1093,27 @@ Le akarod törölni a régi verzióhoz tartozó adatokat?</value>
   </data>
   <data name="Cleanup" xml:space="preserve">
     <value>Tisztogatás</value>
+  </data>
+  <data name="LaunchXexConfirmation" xml:space="preserve">
+    <value>Biztos el szeretnéd indítani az alkalmazást?
+Ha igen, az FTP kapcsolat automatikusan kerül.</value>
+  </data>
+  <data name="FsdMenu" xml:space="preserve">
+    <value>FSD/F3</value>
+  </data>
+  <data name="Shutdown" xml:space="preserve">
+    <value>Kikapcsolás</value>
+  </data>
+  <data name="ShutdownConfirmation" xml:space="preserve">
+    <value>Biztos ki szeretnéd kapcsolni a(z) {0} nevű Xboxot?</value>
+  </data>
+  <data name="FsdContentScan" xml:space="preserve">
+    <value>FSD/F3 tartalomfrissítés</value>
+  </data>
+  <data name="OpenWebUI" xml:space="preserve">
+    <value>WebUI megnyitása</value>
+  </data>
+  <data name="StartContentScan" xml:space="preserve">
+    <value>Tartalomfrissítés indítása</value>
   </data>
 </root>

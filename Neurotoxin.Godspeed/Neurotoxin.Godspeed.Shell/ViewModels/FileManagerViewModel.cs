@@ -48,7 +48,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public IPaneViewModel RightPane
         {
             get { return _rightPane; }
-            set { _rightPane = value; NotifyPropertyChanged(RIGHTPANE); }
+            set
+            {
+                _rightPane = value; 
+                NotifyPropertyChanged(RIGHTPANE);
+                NotifyPropertyChanged(FTPPANE);
+            }
         }
 
         private const string ACTIVEPANE = "ActivePane";
@@ -94,11 +99,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
         }
 
-        private FtpContentViewModel Ftp
+        private const string FTPPANE = "FtpPane";
+        public FtpContentViewModel FtpPane
         {
             get
             {
-                return SourcePane as FtpContentViewModel ?? TargetPane as FtpContentViewModel;
+                return RightPane as FtpContentViewModel;
             }
         }
 

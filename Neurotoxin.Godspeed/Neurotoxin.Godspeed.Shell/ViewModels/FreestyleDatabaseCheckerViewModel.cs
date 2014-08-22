@@ -164,11 +164,13 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 }
             }
             SelectionTree = new ObservableCollection<TreeItemViewModel>();
-            WrapTreeIntoViewModels(tree, SelectionTree);
+            WrapTreeIntoViewModels(tree, SelectionTree, null);
             if (!WindowManager.ShowTreeSelectorDialog(this)) return;
+
             var selection = new List<FileSystemItem>();
             GetSelectionFromTree(SelectionTree, selection);
             _transferManager.Delete(_parent, selection);
+            ExecuteCloseCommand();
         }
 
         private FileSystemItem CreateEmptyParentNode(string name)
@@ -180,12 +182,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                        };
         }
 
-        private void WrapTreeIntoViewModels(TreeItem<FileSystemItem> tree, ObservableCollection<TreeItemViewModel> treeViewModel)
+        private void WrapTreeIntoViewModels(TreeItem<FileSystemItem> tree, ObservableCollection<TreeItemViewModel> children, TreeItemViewModel parent)
         {
             foreach (var treeItem in tree.Children.Values)
             {
                 var icon = treeItem.Content.Type == ItemType.Directory ? "/Resources/folder.png" : "/Resources/file.png";
-                var vm = new TreeItemViewModel
+                var vm = new TreeItemViewModel(parent)
                              {
                                  Name = treeItem.Name,
                                  Title = treeItem.Content.Title,
@@ -194,8 +196,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                                  IsChecked = true,
                                  IsDirectory = treeItem.Content.Type == ItemType.Directory
                              };
-                treeViewModel.Add(vm);
-                WrapTreeIntoViewModels(treeItem, vm.Children);
+                children.Add(vm);
+                WrapTreeIntoViewModels(treeItem, vm.Children, vm);
             }
         }
 
@@ -203,8 +205,19 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             foreach (var treeItem in tree)
             {
-                GetSelectionFromTree(treeItem.Children, selection);
-                if (treeItem.IsChecked) selection.Add(treeItem.Content as FileSystemItem);
+                if (treeItem.Children != null && treeItem.Children.Any())
+                {
+                    var content = treeItem.Content as FileSystemItem;
+                    if (content != null && content.TitleType == TitleType.Game && treeItem.IsChecked == true)
+                    {
+                        selection.Add(content);
+                    }
+                    else
+                    {
+                        GetSelectionFromTree(treeItem.Children, selection);
+                    }
+                }
+                else if (treeItem.IsChecked == true) selection.Add(treeItem.Content as FileSystemItem);
             }
         }
 
@@ -289,7 +302,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     }
                 }
 
-                UIThread.Run(() => ProgressMessage = Resx.PleaseWait + Strings.DotDotDot); //TODO: 'just a little bit longer' text
+                UIThread.Run(() => ProgressMessage = Resx.PleaseWait);
 
                 foreach (var item in gameFolders)
                 {
@@ -297,14 +310,16 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     if (item.TitleType != TitleType.Game) continue;
                     if (!_parent.TitleRecognizer.MergeWithCachedEntry(item)) _parent.TitleRecognizer.RecognizeTitle(item);
                     var content = _parent.GetList(item.Path);
+                    long sum = 0;
                     content.ForEach(c =>
                                         {
                                             _parent.TitleRecognizer.RecognizeType(c);
-                                            c.Size = _parent.CalculateSize(c.Path);
+                                            var size = _parent.CalculateSize(c.Path);
+                                            c.Size = size;
+                                            sum += size;
                                         });
-
-                    item.Size = content.Sum(c => c.Size);
-                    missingEntries.Add(item, content);
+                    item.Size = sum;
+                    missingEntries.Add(item, content.OrderByDescending(c => c.Size).ToList());
                 }
 
                 return true;

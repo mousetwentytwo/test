@@ -101,10 +101,15 @@
                     <MenuItem Header="{lex:LocText Exit}" Command="{x:Static commands:FileManagerCommands.ExitCommand}" />
                 </MenuItem>
                 <MenuItem Header="{lex:LocText CommandsMenu}">
-                    <MenuItem Header="{lex:LocText CalculateOccupiedSpace}" InputGestureText="Ctrl+L"
+                    <MenuItem Header="{lex:LocText CalculateOccupiedSpace}" InputGestureText="Ctrl+Shift+Enter"
                               Command="{Binding ActivePane.CalculateSizeCommand}" CommandParameter="{StaticResource True}" />
-                    <MenuItem Header="{lex:LocText FreestyleDatabaseCheck}" Command="{Binding ActivePane.CheckFreestyleDatabaseCommand}" />
                     <MenuItem Header="{lex:LocText ShowFtpLog}" Command="{Binding ActivePane.ShowFtpLogCommand}" />
+                </MenuItem>
+                <MenuItem Header="{lex:LocText FsdMenu}" Visibility="{Binding FtpPane.IsFSD, FallbackValue=Collapsed, Converter={StaticResource BoolToVis}}">
+                    <MenuItem Header="{lex:LocText FreestyleDatabaseCheck}" Command="{Binding ActivePane.CheckFreestyleDatabaseCommand}" />
+                    <MenuItem Header="{lex:LocText StartContentScan}" Command="{Binding ActivePane.StartContentScanCommand}" />
+                    <MenuItem Header="{lex:LocText OpenWebUI}" Command="{Binding ActivePane.OpenWebUICommand}" />
+                    <MenuItem Header="{lex:LocText Shutdown}" Command="{Binding ActivePane.ShutdownCommand}" />
                 </MenuItem>
                 <MenuItem Header="{lex:LocText OptionsMenu}">
                     <MenuItem Header="{lex:LocText Settings, Suffix={x:Static constants:Strings.DotDotDot}}" Command="{x:Static commands:FileManagerCommands.SettingsCommand}" />

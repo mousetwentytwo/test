@@ -313,7 +313,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public void Delete(IFileListPaneViewModel sourcePane, IEnumerable<FileSystemItem> queue = null)
         {
             SourcePane = sourcePane;
-            AsyncJob(() => queue != null ? new Queue<QueueItem>(queue.Select(item => new QueueItem(item, FileOperation.Delete))) : SourcePane.PopulateQueue(FileOperation.Delete), 
+            AsyncJob(() => SourcePane.PopulateQueue(FileOperation.Delete, queue), 
                       q => InitializeTransfer(q, FileOperation.Delete), 
                       PopulationError);    
         }

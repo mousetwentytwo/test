@@ -7,6 +7,10 @@
                        lex:ResxLocalizationProvider.DefaultAssembly="Neurotoxin.Godspeed.Shell"
                        lex:ResxLocalizationProvider.DefaultDictionary="Resources"
                        Width="400" Height="400" Title="{Binding TreeSelectionTitle}">
+    <primitives:DialogBase.Resources>
+        <ResourceDictionary>
+        </ResourceDictionary>
+    </primitives:DialogBase.Resources>
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -24,7 +28,10 @@
             </TreeView.ItemContainerStyle>
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate ItemsSource="{Binding Path=Children}">
-                    <CheckBox IsChecked="{Binding IsChecked}" Content="{Binding}" ContentTemplate="{StaticResource FileSystemItemTitleTemplate}" Padding="0,-2,0,0"/>
+                    <DockPanel Margin="0,0,0,1">
+                        <CheckBox IsChecked="{Binding IsChecked}" Padding="0,-2,0,0" IsThreeState="True"/>
+                        <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource FileSystemItemTitleTemplate}"/>
+                    </DockPanel>
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>
         </TreeView>

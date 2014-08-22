@@ -186,12 +186,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 var e = keyEvent.EventArgs;
                 var dataContext = ((FrameworkElement)e.OriginalSource).DataContext;
                 if (!(dataContext is FileSystemItemViewModel)) return false;
-                return e.Key == Key.Enter;
+                return e.Key == Key.Enter && Keyboard.Modifiers == ModifierKeys.None;
             }
             return true;
         }
 
-        private void ExecuteChangeDirectoryCommand(object cmdParam)
+        protected virtual void ExecuteChangeDirectoryCommand(object cmdParam)
         {
             var keyEvent = cmdParam as EventInformation<KeyEventArgs>;
             if (keyEvent != null) keyEvent.EventArgs.Handled = true;
@@ -1229,12 +1229,23 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public Queue<QueueItem> PopulateQueue(FileOperation action)
         {
-            if (!SelectedItems.Any()) CurrentRow.IsSelected = true;
+            return PopulateQueue(action, null);
+        }
+
+        public Queue<QueueItem> PopulateQueue(FileOperation action, IEnumerable<FileSystemItem> selection)
+        {
+            var notify = false;
+            if (selection == null)
+            {
+                if (!SelectedItems.Any()) CurrentRow.IsSelected = true;
+                selection = SelectedItems.Select(vm => vm.Model);
+                notify = true;
+            }
             var direction = action == FileOperation.Delete
                                 ? TreeTraversalDirection.Upward
                                 : TreeTraversalDirection.Downward;
-            var res = PopulateQueue(SelectedItems.Select(vm => vm.Model), direction, action);
-            SelectedItems.ForEach(item => item.NotifyModelChanges());
+            var res = PopulateQueue(selection, direction, action);
+            if (notify) SelectedItems.ForEach(item => item.NotifyModelChanges());
             var queue = new Queue<QueueItem>();
             res.ForEach(queue.Enqueue);
             return queue;

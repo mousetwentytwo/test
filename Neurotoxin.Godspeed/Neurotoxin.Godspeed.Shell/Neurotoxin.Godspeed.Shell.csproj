@@ -744,6 +744,9 @@
   <ItemGroup>
     <Resource Include="Resources\header.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\xex.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>echo off

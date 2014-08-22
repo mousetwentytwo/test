@@ -475,7 +475,7 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Content scan failed. Please update your FSD game list manually..
+        ///   Looks up a localized string similar to Content scan failed. Please update your FSD/F3 game list manually..
         /// </summary>
         internal static string ContentScanFailedErrorMessage {
             get {
@@ -800,7 +800,7 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Errors in your FSD database.
+        ///   Looks up a localized string similar to Errors in your FSD/F3 database.
         /// </summary>
         internal static string ErrorsInFreestyleDatabase {
             get {
@@ -872,11 +872,20 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to FSD Database check.
+        ///   Looks up a localized string similar to Database check.
         /// </summary>
         internal static string FreestyleDatabaseCheck {
             get {
                 return ResourceManager.GetString("FreestyleDatabaseCheck", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to FSD/F3 Content Scan.
+        /// </summary>
+        internal static string FsdContentScan {
+            get {
+                return ResourceManager.GetString("FsdContentScan", resourceCulture);
             }
         }
         
@@ -913,6 +922,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         internal static string FsdContentScanTriggerDisabled {
             get {
                 return ResourceManager.GetString("FsdContentScanTriggerDisabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to FSD/F3.
+        /// </summary>
+        internal static string FsdMenu {
+            get {
+                return ResourceManager.GetString("FsdMenu", resourceCulture);
             }
         }
         
@@ -1304,6 +1322,16 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Do you really want to launch the application?
+        ///It will automatically close the FTP connection..
+        /// </summary>
+        internal static string LaunchXexConfirmation {
+            get {
+                return ResourceManager.GetString("LaunchXexConfirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;p&gt;This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.&lt;/p&gt;
         ///&lt;p&gt;This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.&lt;/p&gt;
         ///&lt;p&gt;You should have rec [rest of string was truncated]&quot;;.
@@ -1360,7 +1388,7 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The HTTP Authentication with non-default username and/or password is enabled in your FreestyleDash. If you want GODspeed to be able to notify FSD about content changes please enter the corresponding login information:.
+        ///   Looks up a localized string similar to The HTTP Authentication with non-default username and/or password is enabled in your FreestyleDash. If you want GODspeed to be able to notify FSD/F3 about content changes please enter the corresponding login information:.
         /// </summary>
         internal static string LoginToFreestyleDashHttpServer {
             get {
@@ -1585,7 +1613,7 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No errors found in your FSD database.
+        ///   Looks up a localized string similar to No errors found in your FSD/F3 database.
         /// </summary>
         internal static string NoErrorsInFreestyleDatabase {
             get {
@@ -1680,6 +1708,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         internal static string OpenProfile {
             get {
                 return ResourceManager.GetString("OpenProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open WebUI.
+        /// </summary>
+        internal static string OpenWebUI {
+            get {
+                return ResourceManager.GetString("OpenWebUI", resourceCulture);
             }
         }
         
@@ -2215,6 +2252,24 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Shutdown.
+        /// </summary>
+        internal static string Shutdown {
+            get {
+                return ResourceManager.GetString("Shutdown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do you really want to shutdown {0}?.
+        /// </summary>
+        internal static string ShutdownConfirmation {
+            get {
+                return ResourceManager.GetString("ShutdownConfirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Shutdown PC when done.
         /// </summary>
         internal static string ShutdownPc {
@@ -2283,6 +2338,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         internal static string SpecialCharactersNotSupported {
             get {
                 return ResourceManager.GetString("SpecialCharactersNotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Start Content Scan.
+        /// </summary>
+        internal static string StartContentScan {
+            get {
+                return ResourceManager.GetString("StartContentScan", resourceCulture);
             }
         }
         
@@ -2386,7 +2450,7 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The following games do not exist on your Xbox anymore. You should delete them manually from your FSD database..
+        ///   Looks up a localized string similar to The following games do not exist on your Xbox anymore. You should delete them manually from your FSD/F3 database..
         /// </summary>
         internal static string TheFollowingGamesAreMissing {
             get {
@@ -2395,7 +2459,7 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The following items do not belong to any FSD database entries. Please check to ensure that these are not leftovers from formerly deleted games..
+        ///   Looks up a localized string similar to The following items do not belong to any FSD/F3 database entries. Please check to ensure that these are not leftovers from formerly deleted games..
         /// </summary>
         internal static string TheFollowingGamesMightHaveLeftovers {
             get {
@@ -2739,7 +2803,7 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please note that file hash verification takes time and supported only by FSD. It&apos;s hash algorithm can verify approx. 18 megabytes per second..
+        ///   Looks up a localized string similar to Please note that file hash verification takes time and supported only by FSD/F3. It&apos;s hash algorithm can verify approx. 18 megabytes per second..
         /// </summary>
         internal static string VerifyFileHashAfterFtpUploadRemarks {
             get {
