@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Management;
 using System.Windows;
 using System.Windows.Input;
 using Microsoft.Practices.Composite.Events;
@@ -192,7 +191,11 @@ namespace Neurotoxin.Godspeed.Shell.Controllers
 
         public bool CloseWindowOf<TViewModel>()
         {
-            var type = typeof(TViewModel);
+            return CloseWindowOf(typeof(TViewModel));
+        }
+
+        public bool CloseWindowOf(Type type)
+        {
             if (!_windows.ContainsKey(type)) return false;
             _windows[type].Close();
             return true;
@@ -241,7 +244,6 @@ namespace Neurotoxin.Godspeed.Shell.Controllers
                 _transferProgressDialog.Closing -= TransferProgressDialogOnClosing;
                 _transferProgressDialog.Close();
             }
-            if (e.Shutdown) Shutdown();
         }
 
         private void OnMigrationStarted(MigrationStartedEventArgs e)
@@ -271,13 +273,13 @@ namespace Neurotoxin.Godspeed.Shell.Controllers
             }
         }
 
-        private void ShowModelessWindow<TWindow, TViewModel>(TViewModel vm) where TWindow : Window, IView where TViewModel : class, IViewModel
+        public void ShowModelessWindow<TWindow, TViewModel>(TViewModel viewModel) where TWindow : IView where TViewModel : class, IViewModel
         {
-            var w = _container.Resolve<TWindow, TViewModel>(vm);
-            _windows.Add(typeof(FreestyleDatabaseCheckerViewModel), w);
+            var w = _container.Resolve<TWindow, TViewModel>(viewModel) as Window;
+            if (w == null) throw new ArgumentException(typeof(TWindow) + " must be derived from Window class");
+            _windows.Add(typeof(TViewModel), w);
             w.Closed += OnModelessWindowClosed;
             w.Show();
-            
         }
 
         private void OnModelessWindowClosed(object sender, EventArgs e)
@@ -324,24 +326,6 @@ namespace Neurotoxin.Godspeed.Shell.Controllers
         private static void PreventAllKeyboardActions(object sender, KeyEventArgs e)
         {
             e.Handled = true;
-        }
-
-        private static void Shutdown()
-        {
-            var mcWin32 = new ManagementClass("Win32_OperatingSystem");
-            mcWin32.Get();
-
-            // You can't shutdown without security privileges
-            mcWin32.Scope.Options.EnablePrivileges = true;
-            var mboShutdownParams = mcWin32.GetMethodParameters("Win32Shutdown");
-
-            // Flag 1 means we want to shut down the system. Use "2" to reboot.
-            mboShutdownParams["Flags"] = "1";
-            mboShutdownParams["Reserved"] = "0";
-            foreach (ManagementObject manObj in mcWin32.GetInstances())
-            {
-                manObj.InvokeMethod("Win32Shutdown", mboShutdownParams, null);
-            }
         }
     }
 }

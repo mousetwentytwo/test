@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Windows;
+using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Models;
 using Neurotoxin.Godspeed.Shell.ViewModels;
@@ -23,5 +25,9 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
         bool Confirm(string title, string message);
         bool ActivateWindowOf<TViewModel>();
         bool CloseWindowOf<TViewModel>();
+        bool CloseWindowOf(Type type);
+
+        void ShowModelessWindow<TWindow, TViewModel>(TViewModel viewModel) where TWindow : IView where TViewModel : class, IViewModel;
+
     }
 }

@@ -184,7 +184,6 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         {
             if (!IsFSD) return; //TODO: throw exception?
             FtpClient.Execute("SHUTDOWN");
-            Disconnect();
         }
 
         public override IList<FileSystemItem> GetDrives()

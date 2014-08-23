@@ -1040,9 +1040,6 @@
   <data name="EmptyFieldErrorMessage" xml:space="preserve">
     <value>Ez a mező nem maradhat üresen</value>
   </data>
-  <data name="CompleteShutdown" xml:space="preserve">
-    <value>Számítógép és {0} kikapcsolása ha kész</value>
-  </data>
   <data name="AvatarAssetPackPlural" xml:space="preserve">
     <value>Avatar kiegészítők</value>
   </data>
@@ -1115,5 +1112,29 @@ Ha igen, az FTP kapcsolat automatikusan kerül.</value>
   </data>
   <data name="StartContentScan" xml:space="preserve">
     <value>Tartalomfrissítés indítása</value>
+  </data>
+  <data name="ShutdownDialogCaption" xml:space="preserve">
+    <value>Biztos hogy ki szeretnéd kapcsolni {0}?</value>
+  </data>
+  <data name="ShutdownDialogMessage" xml:space="preserve">
+    <value>Ha nem csinálsz semmit, {0} {1} másodpercen belül automatikusan ki fog kapcsolni.</value>
+  </data>
+  <data name="ShutdownDialogOptionNow" xml:space="preserve">
+    <value>Kikapcsolás most</value>
+  </data>
+  <data name="ShutdownDialogOptionPCOnly" xml:space="preserve">
+    <value>Csak a számítógépet</value>
+  </data>
+  <data name="ShutdownDialogOptionXboxOnly" xml:space="preserve">
+    <value>Csak az Xboxot</value>
+  </data>
+  <data name="ShutdownDialogModeComputer" xml:space="preserve">
+    <value>a számítógéped</value>
+  </data>
+  <data name="ShutdownDialogModeXbox" xml:space="preserve">
+    <value>az Xboxod</value>
+  </data>
+  <data name="ShutdownDialogModeComputerAndXbox" xml:space="preserve">
+    <value>a számítógéped és az Xboxod</value>
   </data>
 </root>

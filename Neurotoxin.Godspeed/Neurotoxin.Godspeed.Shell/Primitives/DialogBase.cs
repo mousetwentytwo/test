@@ -37,6 +37,8 @@ namespace Neurotoxin.Godspeed.Shell.Primitives
             {
                 WindowStartupLocation = WindowStartupLocation.CenterScreen;
             }
+
+            var type = GetType();
         }
 
         protected virtual void OnPreviewKeyDown(object sender, KeyEventArgs e)

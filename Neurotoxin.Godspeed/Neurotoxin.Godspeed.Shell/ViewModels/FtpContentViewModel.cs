@@ -454,6 +454,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public void Shutdown()
         {
             FileManager.Shutdown();
+            CloseCommand.Execute();
         }
 
         private void OnTransferFinished(TransferFinishedEventArgs e)

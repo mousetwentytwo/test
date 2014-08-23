@@ -376,15 +376,6 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Shutdown PC+{0} when done.
-        /// </summary>
-        internal static string CompleteShutdown {
-            get {
-                return ResourceManager.GetString("CompleteShutdown", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Connecting to {0}....
         /// </summary>
         internal static string ConnectingToFtp {
@@ -2266,6 +2257,78 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         internal static string ShutdownConfirmation {
             get {
                 return ResourceManager.GetString("ShutdownConfirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to shutdown your {0} now?.
+        /// </summary>
+        internal static string ShutdownDialogCaption {
+            get {
+                return ResourceManager.GetString("ShutdownDialogCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to If you do nothing, your {0} will shut down automatically in {1} seconds..
+        /// </summary>
+        internal static string ShutdownDialogMessage {
+            get {
+                return ResourceManager.GetString("ShutdownDialogMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to computer.
+        /// </summary>
+        internal static string ShutdownDialogModeComputer {
+            get {
+                return ResourceManager.GetString("ShutdownDialogModeComputer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to computer and Xbox.
+        /// </summary>
+        internal static string ShutdownDialogModeComputerAndXbox {
+            get {
+                return ResourceManager.GetString("ShutdownDialogModeComputerAndXbox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Xbox.
+        /// </summary>
+        internal static string ShutdownDialogModeXbox {
+            get {
+                return ResourceManager.GetString("ShutdownDialogModeXbox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Shutdown now.
+        /// </summary>
+        internal static string ShutdownDialogOptionNow {
+            get {
+                return ResourceManager.GetString("ShutdownDialogOptionNow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Shutdown your PC only.
+        /// </summary>
+        internal static string ShutdownDialogOptionPCOnly {
+            get {
+                return ResourceManager.GetString("ShutdownDialogOptionPCOnly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Shutdown your Xbox only.
+        /// </summary>
+        internal static string ShutdownDialogOptionXboxOnly {
+            get {
+                return ResourceManager.GetString("ShutdownDialogOptionXboxOnly", resourceCulture);
             }
         }
         

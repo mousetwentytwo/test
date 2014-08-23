@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
@@ -91,6 +92,16 @@ namespace Neurotoxin.Godspeed.Shell.Tests.Dummies
         public bool CloseWindowOf<TViewModel>()
         {
             return true;
+        }
+
+        public bool CloseWindowOf(Type type)
+        {
+            return true;
+        }
+
+        public void ShowModelessWindow<TWindow, TViewModel>(TViewModel viewModel) where TWindow : IView where TViewModel : class, IViewModel
+        {
+            throw new NotImplementedException();
         }
     }
 }

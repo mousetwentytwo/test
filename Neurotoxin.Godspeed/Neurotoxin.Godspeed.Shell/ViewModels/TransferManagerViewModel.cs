@@ -55,15 +55,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
         }
 
-        public string CompleteShutdown
-        {
-            get
-            {
-                var ftp = Pane<FtpContentViewModel>();
-                return string.Format(Resx.CompleteShutdown, ftp != null ? ftp.Connection.Name : "Xbox");
-            }
-        }
-
         private const string USERACTION = "UserAction";
         private FileOperation _userAction;
         public FileOperation UserAction
@@ -238,22 +229,15 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private const string ISSHUTDOWNPCENABLED = "IsShutdownPcEnabled";
         public bool IsShutdownPcEnabled
         {
-            get { return _shutdown == Shutdown.PC; }
+            get { return _shutdown.HasFlag(Shutdown.PC); }
             set { _shutdown = EnumHelper.SetFlag(_shutdown, Shutdown.PC, value); NotifyPropertyChanged(ISSHUTDOWNPCENABLED); }
         }
 
         private const string ISSHUTDOWNXBOXENABLED = "IsShutdownXboxEnabled";
         public bool IsShutdownXboxEnabled
         {
-            get { return _shutdown == Shutdown.Xbox; }
+            get { return _shutdown.HasFlag(Shutdown.Xbox); }
             set { _shutdown = EnumHelper.SetFlag(_shutdown, Shutdown.Xbox, value); NotifyPropertyChanged(ISSHUTDOWNXBOXENABLED); }
-        }
-
-        private const string ISCOMPLETESHUTDOWNENABLED = "IsCompleteShutdownEnabled";
-        public bool IsCompleteShutdownEnabled
-        {
-            get { return _shutdown == Shutdown.Both; }
-            set { _shutdown = EnumHelper.SetFlag(_shutdown, Shutdown.Both, value); NotifyPropertyChanged(ISCOMPLETESHUTDOWNENABLED); }
         }
 
         #endregion
@@ -620,6 +604,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public void InitializeTransfer(Queue<QueueItem> queue, FileOperation mode)
         {
             _queue = queue;
+            _paneCache.Clear();
             _isAborted = false;
             UserAction = mode;
             TransferAction = mode == FileOperation.Copy ? GetCopyActionText() : Resx.ResourceManager.GetString(mode.ToString());
@@ -711,11 +696,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                             if (exceptionType == TransferErrorType.WriteAccessError) flags = flags | CopyAction.Overwrite | CopyAction.OverwriteOlder;
                             var sourcePath = sourceFile.Path;
                             var targetPath = transferException.TargetFile;
-                            var r = WindowManager.ShowWriteErrorDialog(sourcePath, targetPath, flags, () =>
-                                                                                                          {
-                                                                                                              SourcePane.GetItemViewModel(sourcePath);
-                                                                                                              TargetPane.GetItemViewModel(targetPath);
-                                                                                                          });
+                            var r = WindowManager.ShowWriteErrorDialog(sourcePath, targetPath, ~flags, () =>
+                                                                                                           {
+                                                                                                               SourcePane.GetItemViewModel(sourcePath);
+                                                                                                               TargetPane.GetItemViewModel(targetPath);
+                                                                                                           });
                             if (r != null) result = r;
                         }
                     }
@@ -804,18 +789,27 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
             var args = new TransferFinishedEventArgs(this, SourcePane, TargetPane);
 
-            if (_shutdown.HasFlag(Shutdown.Xbox))
+            if (_shutdown != Shutdown.Disabled && (UserAction == FileOperation.Copy || UserAction == FileOperation.Move))
             {
-                var ftp = Pane<FtpContentViewModel>();
-                if (ftp == SourcePane) _sourceChanged = false;
-                if (ftp == TargetPane) _targetChanged = false;
-                ftp.Shutdown();
+                ShutdownDialogViewModel vm;
+                if (_shutdown.HasFlag(Shutdown.Xbox))
+                {
+                    var ftp = Pane<FtpContentViewModel>();
+                    if (ftp == SourcePane) _sourceChanged = false;
+                    if (ftp == TargetPane) _targetChanged = false;
+                    vm = new ShutdownDialogViewModel(WindowManager, _shutdown, ftp);
+                } 
+                else
+                {
+                    vm = new ShutdownDialogViewModel(WindowManager, _shutdown);
+                }
+                WindowManager.ShowModelessWindow<ShutdownDialog, ShutdownDialogViewModel>(vm);
             }
-            if (_shutdown.HasFlag(Shutdown.PC)) args.Shutdown = true;
 
             if (_sourceChanged) SourcePane.Refresh();
             if (_targetChanged && TargetPane != null) TargetPane.Refresh();
             EventAggregator.GetEvent<TransferFinishedEvent>().Publish(args);
+
             SourcePane = null;
             TargetPane = null;
         }

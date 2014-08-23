@@ -226,9 +226,11 @@
     <Compile Include="Extensions\ResourcesExtension.cs" />
     <Compile Include="Helpers\FtpTraceListener.cs" />
     <Compile Include="Database\QueryBuilder.cs" />
+    <Compile Include="Interfaces\IDialog.cs" />
     <Compile Include="Interfaces\ILoginViewModel.cs" />
     <Compile Include="Models\UnityItem.cs" />
     <Compile Include="Models\UnityResponse.cs" />
+    <Compile Include="ViewModels\DialogViewModelBase.cs" />
     <Compile Include="ViewModels\ITransferManagerViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\RecognizeFromProfileViewModel.cs" />
@@ -283,6 +285,7 @@
     <Compile Include="Constants\FileBlockHealthStatus.cs" />
     <Compile Include="Interfaces\ISettingsViewModel.cs" />
     <Compile Include="ViewModels\FtpTraceViewModel.cs" />
+    <Compile Include="ViewModels\ShutdownDialogViewModel.cs" />
     <Compile Include="ViewModels\TransferManagerViewModel.cs" />
     <Compile Include="ViewModels\FreestyleDatabaseCheckerViewModel.cs" />
     <Compile Include="ViewModels\GpdFileEntryViewModel.cs" />
@@ -325,6 +328,9 @@
     </Compile>
     <Compile Include="Views\Controls\ProgressNotificationBar.xaml.cs">
       <DependentUpon>ProgressNotificationBar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Dialogs\ShutdownDialog.xaml.cs">
+      <DependentUpon>ShutdownDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Dialogs\TreeSelectionDialog.xaml.cs">
       <DependentUpon>TreeSelectionDialog.xaml</DependentUpon>
@@ -451,6 +457,10 @@
     <Page Include="Views\Controls\ProgressNotificationBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Dialogs\ShutdownDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Dialogs\TreeSelectionDialog.xaml">
       <Generator>MSBuild:Compile</Generator>

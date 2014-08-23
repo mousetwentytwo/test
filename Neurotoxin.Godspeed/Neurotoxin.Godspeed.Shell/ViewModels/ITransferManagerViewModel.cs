@@ -13,7 +13,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         IFileListPaneViewModel SourcePane { get; }
         IFileListPaneViewModel TargetPane { get; }
         string ShutdownXbox { get; }
-        string CompleteShutdown { get; }
         FileOperation UserAction { get; set; }
         string TransferAction { get; set; }
         string SourceFile { get; set; }
@@ -35,7 +34,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         bool IsVerificationEnabled { get; set; }
         bool IsShutdownPcEnabled { get; set; }
         bool IsShutdownXboxEnabled { get; set; }
-        bool IsCompleteShutdownEnabled { get; set; }
  
         DelegateCommand PauseCommand { get; }
         DelegateCommand ContinueCommand { get; }

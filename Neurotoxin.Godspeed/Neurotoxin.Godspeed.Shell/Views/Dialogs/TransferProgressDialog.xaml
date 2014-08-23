@@ -12,7 +12,7 @@
                        lex:LocalizeDictionary.DesignCulture="en-US"
                        lex:ResxLocalizationProvider.DefaultAssembly="Neurotoxin.Godspeed.Shell"
                        lex:ResxLocalizationProvider.DefaultDictionary="Resources"
-                       Width="450">
+                       Width="520">
     <primitives:DialogBase.TaskbarItemInfo>
         <TaskbarItemInfo ProgressValue="{Binding TotalProgressDouble}" ProgressState="{Binding ProgressState}">
             <TaskbarItemInfo.ThumbButtonInfos>
@@ -98,8 +98,28 @@
             </TextBlock>
         </DockPanel>
 
-        <StackPanel Grid.Row="5" HorizontalAlignment="Right" Orientation="Horizontal">
-            <xctk:DropDownButton Width="75" Content="{lex:Loc OptionsMenu}" Margin="0,0,5,0" Visibility="{Binding UserAction, Converter={StaticResource FileOperationConverter}}">
+        <Grid Grid.Row="5" HorizontalAlignment="Left" Visibility="{Binding UserAction, Converter={StaticResource FileOperationConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <CheckBox Grid.Row="0" IsChecked="{Binding IsShutdownXboxEnabled}" Visibility="{Binding IsShutdownSupported, Converter={StaticResource BoolToVis}}"/>
+            <CheckBox Grid.Row="1" IsChecked="{Binding IsShutdownPcEnabled}"/>
+            <CheckBox Grid.Row="2" IsChecked="{Binding IsVerificationEnabled}"/>
+            
+            <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Path=ShutdownXbox}" Visibility="{Binding IsShutdownSupported, Converter={StaticResource BoolToVis}}" Margin="0,-2,0,0"/>
+            <TextBlock Grid.Column="1" Grid.Row="1" Text="{lex:Loc ShutdownPc}" VerticalAlignment="Top" Margin="0,-2,0,0"/>
+            <TextBlock Grid.Column="1" Grid.Row="2" Text="{lex:Loc VerifyFileHash}" Visibility="{Binding IsVerificationSupported, Converter={StaticResource BoolToVis}}" Margin="0,-2,0,0"/>
+        </Grid>
+
+        <StackPanel Grid.Row="5" HorizontalAlignment="Right" Orientation="Horizontal" VerticalAlignment="Bottom">
+            <!--<xctk:DropDownButton Width="75" Content="{lex:Loc OptionsMenu}" Margin="0,0,5,0" Visibility="{Binding UserAction, Converter={StaticResource FileOperationConverter}}">
                 <xctk:DropDownButton.DropDownContent>
                     <StackPanel>
                         <MenuItem Header="{lex:Loc Neurotoxin.Godspeed.Shell:Resources:VerifyFileHash}" IsCheckable="True" IsChecked="{Binding IsVerificationEnabled}" IsEnabled="{Binding IsVerificationSupported}"/>
@@ -112,7 +132,7 @@
                         </i:Interaction.Behaviors>
                     </StackPanel>
                 </xctk:DropDownButton.DropDownContent>
-            </xctk:DropDownButton>
+            </xctk:DropDownButton>-->
             <Button Width="75" Content="{lex:LocText Pause}" Command="{Binding PauseCommand}" Margin="0,0,5,0" 
                     Visibility="{Binding Path=IsPaused, Converter={StaticResource BoolToVis}, ConverterParameter=True}" 
                     IsEnabled="{Binding Path=IsResumeSupported}" />
