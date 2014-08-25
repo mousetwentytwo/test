@@ -1140,4 +1140,13 @@ It will automatically close the FTP connection.</value>
   <data name="ShutdownDialogModeComputerAndXbox" xml:space="preserve">
     <value>computer and Xbox</value>
   </data>
+  <data name="TheDirectoryIsNotEmpty" xml:space="preserve">
+    <value>The directory {0} is not empty!</value>
+  </data>
+  <data name="DoYouWantToDeleteItWithAll" xml:space="preserve">
+    <value>Do you want to delete it with all its files and subdirectories?</value>
+  </data>
+  <data name="DeleteAll" xml:space="preserve">
+    <value>Delete all</value>
+  </data>
 </root>

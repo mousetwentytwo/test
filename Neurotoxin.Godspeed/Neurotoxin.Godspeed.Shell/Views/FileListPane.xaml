@@ -375,7 +375,7 @@
                 <KeyBinding Command="{Binding ToggleSelectionCommand}" CommandParameter="{StaticResource Space}" Key="Space" />
                 <KeyBinding Command="{Binding ToggleSelectionCommand}" CommandParameter="{StaticResource ShiftDown}" Key="Down" Modifiers="Shift" />
                 <KeyBinding Command="{Binding ToggleSelectionCommand}" CommandParameter="{StaticResource ShiftUp}" Key="Up" Modifiers="Shift" />
-                <KeyBinding Command="{Binding CalculateSizeCommand}" CommandParameter="{StaticResource True}" Key="Enter" Modifiers="Ctrl+Shift" />
+                <KeyBinding Command="{Binding CalculateSizeCommand}" CommandParameter="{StaticResource True}" Key="Enter" Modifiers="Shift+Alt" />
                 <KeyBinding Command="{Binding SelectAllCommand}" Key="A" Modifiers="Control" />
                 <KeyBinding Command="{Binding GoToFirstCommand}" CommandParameter="{StaticResource False}" Key="Home" />
                 <KeyBinding Command="{Binding GoToFirstCommand}" CommandParameter="{StaticResource True}" Key="Home" Modifiers="Shift" />

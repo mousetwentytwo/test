@@ -282,6 +282,14 @@ namespace Neurotoxin.Godspeed.Shell.Controllers
             w.Show();
         }
 
+        public DeleteConfirmationResult ShowDeleteConfirmationDialog(string path)
+        {
+            var result = DeleteConfirmationResult.Cancel;
+            var dialog = new DeleteConfirmationDialog(path);
+            if (dialog.ShowDialog() == true) result = dialog.Result;
+            return result;
+        }
+
         private void OnModelessWindowClosed(object sender, EventArgs e)
         {
             var w = _windows.FirstOrDefault(kvp => kvp.Value.Equals(sender));

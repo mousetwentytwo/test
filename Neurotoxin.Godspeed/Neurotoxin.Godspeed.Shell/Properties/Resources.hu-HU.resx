@@ -1137,4 +1137,13 @@ Ha igen, az FTP kapcsolat automatikusan kerül.</value>
   <data name="ShutdownDialogModeComputerAndXbox" xml:space="preserve">
     <value>a számítógéped és az Xboxod</value>
   </data>
+  <data name="TheDirectoryIsNotEmpty" xml:space="preserve">
+    <value>A(z) {0} könyvtár nem üres!</value>
+  </data>
+  <data name="DoYouWantToDeleteItWithAll" xml:space="preserve">
+    <value>Biztos le szeretnéd törölni, annak minden fájljával és alkönyvtárával együtt?</value>
+  </data>
+  <data name="DeleteAll" xml:space="preserve">
+    <value>Mindet töröl</value>
+  </data>
 </root>

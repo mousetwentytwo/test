@@ -8,6 +8,7 @@ namespace Neurotoxin.Godspeed.Shell.Models
         public FileOperation Operation { get; set; }
         public CopyAction? CopyAction { get; set; }
         public object Payload { get; set; }
+        public bool Confirmation { get; set; }
 
         public QueueItem(FileSystemItem fileSystemItem, FileOperation fileOperation, object payload = null)
         {

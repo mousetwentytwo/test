@@ -103,5 +103,10 @@ namespace Neurotoxin.Godspeed.Shell.Tests.Dummies
         {
             throw new NotImplementedException();
         }
+
+        public DeleteConfirmationResult ShowDeleteConfirmationDialog(string path)
+        {
+            return DeleteConfirmationResult.Delete;
+        }
     }
 }

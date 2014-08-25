@@ -137,6 +137,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="Constants\DeleteConfirmationResult.cs" />
     <Compile Include="Constants\ItemState.cs" />
     <Compile Include="Constants\ConnectionImage.cs" />
     <Compile Include="Constants\ConnectionType.cs" />
@@ -329,6 +330,9 @@
     <Compile Include="Views\Controls\ProgressNotificationBar.xaml.cs">
       <DependentUpon>ProgressNotificationBar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Dialogs\DeleteConfirmationDialog.xaml.cs">
+      <DependentUpon>DeleteConfirmationDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Dialogs\ShutdownDialog.xaml.cs">
       <DependentUpon>ShutdownDialog.xaml</DependentUpon>
     </Compile>
@@ -457,6 +461,10 @@
     <Page Include="Views\Controls\ProgressNotificationBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Dialogs\DeleteConfirmationDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Dialogs\ShutdownDialog.xaml">
       <Generator>MSBuild:Compile</Generator>

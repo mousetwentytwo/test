@@ -36,6 +36,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private bool _isContinued;
         private bool _sourceChanged;
         private bool _targetChanged;
+        private bool _deleteAll;
         private Shutdown _shutdown;
 
         private readonly IStatisticsViewModel _statistics;
@@ -424,6 +425,43 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 var queueitem = _queue.Peek();
                 var item = queueitem.FileSystemItem;
                 SourceFile = string.IsNullOrEmpty(SourcePane.CurrentFolder.Path) ? item.Path : item.Path.Replace(SourcePane.CurrentFolder.Path, string.Empty);
+
+                if (queueitem.Confirmation)
+                {
+                    switch (queueitem.Operation)
+                    {
+                        case FileOperation.Delete:
+                            if (!_deleteAll)
+                            {
+                                var payload = queueitem.Payload as FileSystemItem;
+                                if (payload == null) throw new Exception("payload cannot be null");
+                                switch (WindowManager.ShowDeleteConfirmationDialog(payload.Path))
+                                {
+                                    case DeleteConfirmationResult.Delete:
+                                        //do nothing
+                                        break;
+                                    case DeleteConfirmationResult.DeleteAll:
+                                        _deleteAll = true;
+                                        break;
+                                    case DeleteConfirmationResult.Skip:
+                                        while (queueitem.FileSystemItem != payload)
+                                        {
+                                            _queue.Dequeue();
+                                            queueitem = _queue.Peek();
+                                        }
+                                        ProcessSuccess(new OperationResult(TransferResult.Skipped));
+                                        return;
+                                    case DeleteConfirmationResult.Cancel:
+                                        FinishTransfer();
+                                        return;
+                                }
+                            }
+                            break;
+                        default:
+                            throw new NotSupportedException("Invalid operation: " + queueitem.Operation);
+                    }
+                }
+
                 WorkHandler.Run(() =>
                 {
                     switch (queueitem.Operation)
@@ -606,6 +644,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             _queue = queue;
             _paneCache.Clear();
             _isAborted = false;
+            _deleteAll = false;
             UserAction = mode;
             TransferAction = mode == FileOperation.Copy ? GetCopyActionText() : Resx.ResourceManager.GetString(mode.ToString());
             _rememberedCopyAction = CopyAction.CreateNew;

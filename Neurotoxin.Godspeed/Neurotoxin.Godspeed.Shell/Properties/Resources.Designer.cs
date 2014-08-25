@@ -601,6 +601,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete all.
+        /// </summary>
+        internal static string DeleteAll {
+            get {
+                return ResourceManager.GetString("DeleteAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to F8 Delete.
         /// </summary>
         internal static string DeleteButton {
@@ -742,6 +751,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         internal static string DownloadableContentSingular {
             get {
                 return ResourceManager.GetString("DownloadableContentSingular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do you want to delete it with all its files and subdirectories?.
+        /// </summary>
+        internal static string DoYouWantToDeleteItWithAll {
+            get {
+                return ResourceManager.GetString("DoYouWantToDeleteItWithAll", resourceCulture);
             }
         }
         
@@ -2509,6 +2527,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         internal static string TelevisionSingular {
             get {
                 return ResourceManager.GetString("TelevisionSingular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The directory {0} is not empty!.
+        /// </summary>
+        internal static string TheDirectoryIsNotEmpty {
+            get {
+                return ResourceManager.GetString("TheDirectoryIsNotEmpty", resourceCulture);
             }
         }
         

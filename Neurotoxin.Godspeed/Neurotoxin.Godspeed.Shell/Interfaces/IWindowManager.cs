@@ -26,6 +26,7 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
         bool ActivateWindowOf<TViewModel>();
         bool CloseWindowOf<TViewModel>();
         bool CloseWindowOf(Type type);
+        DeleteConfirmationResult ShowDeleteConfirmationDialog(string path);
 
         void ShowModelessWindow<TWindow, TViewModel>(TViewModel viewModel) where TWindow : IView where TViewModel : class, IViewModel;
 

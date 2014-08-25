@@ -1244,26 +1244,34 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             var direction = action == FileOperation.Delete
                                 ? TreeTraversalDirection.Upward
                                 : TreeTraversalDirection.Downward;
-            var res = PopulateQueue(selection, direction, action);
+            var res = PopulateQueue(selection, direction, action, true);
             if (notify) SelectedItems.ForEach(item => item.NotifyModelChanges());
             var queue = new Queue<QueueItem>();
             res.ForEach(queue.Enqueue);
             return queue;
         }
 
-        private List<QueueItem> PopulateQueue(IEnumerable<FileSystemItem> items, TreeTraversalDirection direction, FileOperation action)
+        private List<QueueItem> PopulateQueue(IEnumerable<FileSystemItem> items, TreeTraversalDirection direction, FileOperation action, bool topLevel)
         {
             var result = new List<QueueItem>();
             foreach (var item in items)
             {
                 if (direction == TreeTraversalDirection.Downward) result.Add(new QueueItem(item, action));
+                List<QueueItem> sub = null;
                 if (item.Type == ItemType.Directory) //TODO: Link?
                 {
-                    var sub = PopulateQueue(GetList(item.Path), direction, action);
+                    sub = PopulateQueue(GetList(item.Path), direction, action, false);
                     item.Size = sub.Where(i => i.FileSystemItem.Type == ItemType.File).Sum(i => i.FileSystemItem.Size ?? 0);
                     result.AddRange(sub);
                 }
-                if (direction == TreeTraversalDirection.Upward) result.Add(new QueueItem(item, action));
+                if (direction != TreeTraversalDirection.Upward) continue;
+                if (topLevel && action == FileOperation.Delete && sub != null && sub.Any())
+                {
+                    var s = sub[0];
+                    s.Confirmation = true;
+                    s.Payload = item;
+                }
+                result.Add(new QueueItem(item, action));
             }
             return result;
         }
