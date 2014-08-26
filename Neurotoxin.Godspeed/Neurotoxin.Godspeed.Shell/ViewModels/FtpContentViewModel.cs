@@ -339,7 +339,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     {1, new FsdScanPath
                     {
                         PathId = 1,
-                        Path = "/Content/0000000000000000/",
+                        Path = "/Hdd1/Content/0000000000000000/",
                         ScanDepth = 2,
                         Drive = "Hdd1"
                     }}
@@ -721,6 +721,28 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             var match = FileManager.Verify(remotePath, localPath);
             if (!match) throw new FtpHashVerificationException(Resx.FtpHashVerificationFailed);
             return TransferResult.Ok;
+        }
+
+        public override Queue<QueueItem> PopulateQueue(FileOperation action)
+        {
+            var queue = base.PopulateQueue(action);
+            CheckQueueForGameDeletion(queue);
+            return queue;
+        }
+
+        public override Queue<QueueItem> PopulateQueue(FileOperation action, IEnumerable<FileSystemItem> selection)
+        {
+            var queue = base.PopulateQueue(action, selection);
+            CheckQueueForGameDeletion(queue);
+            return queue;
+        }
+
+        private void CheckQueueForGameDeletion(Queue<QueueItem> queue)
+        {
+            if (IsFSD && queue.Any(item => item.FileSystemItem.TitleType == TitleType.Game && GetCorrespondingScanFolder(item.FileSystemItem.Path) != null))
+            {
+                UIThread.Run(() => EventAggregator.GetEvent<NotifyUserMessageEvent>().Publish(new NotifyUserMessageEventArgs("GameDeletionMessage", MessageIcon.Warning)));
+            }
         }
 
         public override void RaiseCanExecuteChanges()

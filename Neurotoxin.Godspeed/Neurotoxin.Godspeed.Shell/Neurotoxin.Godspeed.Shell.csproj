@@ -765,6 +765,11 @@
   <ItemGroup>
     <Resource Include="Resources\xex.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Sounds\notification.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>echo off

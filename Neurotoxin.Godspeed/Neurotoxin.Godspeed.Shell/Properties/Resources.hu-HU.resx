@@ -1146,4 +1146,7 @@ Ha igen, az FTP kapcsolat automatikusan kerül.</value>
   <data name="DeleteAll" xml:space="preserve">
     <value>Mindet töröl</value>
   </data>
+  <data name="GameDeletionMessage" xml:space="preserve">
+    <value>&lt;b&gt;Letöröltél egy játékot, ami lehet, hogy az FSD/F3 adatbázisában is szerepel.&lt;/b&gt; Mivel ezeket az FSD/F3 nem tudta detektálni, a későbbi problémák elkerülése végett ajánlott kézzel eltávolítani az adatbázisból. Használd a GODspeed Adatbázis Ellenőrző modulját a hibás bejegyzések megtalálásához!</value>
+  </data>
 </root>

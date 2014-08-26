@@ -4,7 +4,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Timers;
 using System.Windows.Shell;
+using Neurotoxin.Godspeed.Core.Diagnostics;
 using Neurotoxin.Godspeed.Core.Exceptions;
 using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Core.Net;
@@ -26,7 +28,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private const string RenameFromPattern = @"([\/]){0}$";
         private const string RenameToPattern = @"${{1}}{0}";
         private readonly Stopwatch _speedMeter = new Stopwatch();
-        private readonly Stopwatch _elapsedTimeMeter = new Stopwatch();
+        private readonly Ticker _elapsedTimeMeter = new Ticker { Interval = 100 };
         private Queue<QueueItem> _queue;
         private RemoteCopyMode _remoteCopy;
         private CopyAction _rememberedCopyAction;
@@ -275,6 +277,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             _userSettingsProvider = userSettingsProvider;
             _statistics = statistics;
+            _elapsedTimeMeter.Tick += OnTransferProgressTick;
             PauseCommand = new DelegateCommand(ExecutePauseCommand);
             ContinueCommand = new DelegateCommand(ExecuteContinueCommand);
             EventAggregator.GetEvent<TransferProgressChangedEvent>().Subscribe(OnTransferProgressChanged);
@@ -597,6 +600,17 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             return Resx.ResourceManager.GetString(UserAction.ToString());
         }
 
+        private void OnTransferProgressTick(object sender, ElapsedEventArgs e)
+        {
+            var elapsed = _elapsedTimeMeter.Elapsed;
+            var transferred = BytesTransferred;
+            ElapsedTime = elapsed;
+
+            if (elapsed.Ticks <= 0 || transferred <= 0) return;
+            var estimated = new TimeSpan((long)Math.Floor((double)elapsed.Ticks / transferred * TotalBytes));
+            RemainingTime = estimated - elapsed;
+        }
+
         private void OnTransferProgressChanged(TransferProgressChangedEventArgs args)
         {
             if (_isContinued)
@@ -607,16 +621,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
             UIThread.Run(() =>
                 {
-                    var elapsed = _elapsedTimeMeter.Elapsed;
-                    var transferred = BytesTransferred;
-                    ElapsedTime = elapsed;
-
-                    if (elapsed.Ticks > 0 && transferred > 0)
-                    {
-                        var estimated = new TimeSpan((long)Math.Floor((double)elapsed.Ticks / transferred * TotalBytes));
-                        RemainingTime = estimated - elapsed;
-                    }
-
                     if (args.Percentage == 100)
                     {
                         _speedMeter.Stop();
@@ -691,8 +695,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         _remoteCopy = remoteCopy;
                         ProgressState = TaskbarItemProgressState.Normal;
                         EventAggregator.GetEvent<TransferStartedEvent>().Publish(new TransferStartedEventArgs(this));
-                        _elapsedTimeMeter.Reset();
-                        _elapsedTimeMeter.Start();
+                        _elapsedTimeMeter.Restart();
                         ProcessQueueItem();
                     });
         }

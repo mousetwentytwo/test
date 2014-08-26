@@ -84,6 +84,7 @@
     <Compile Include="Constants\UsbDeviceChange.cs" />
     <Compile Include="Constants\VolumeDescriptorType.cs" />
     <Compile Include="Constants\XboxLiveServiceProvider.cs" />
+    <Compile Include="Diagnostics\Ticker.cs" />
     <Compile Include="Exceptions\ModelFactoryException.cs" />
     <Compile Include="Exceptions\TelnetException.cs" />
     <Compile Include="Extensions\ByteArrayExtensions.cs" />

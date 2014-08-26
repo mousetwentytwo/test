@@ -1227,12 +1227,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             EventAggregator.GetEvent<ViewModelGeneratedEvent>().Publish(new ViewModelGeneratedEventArgs(vm));
         }
 
-        public Queue<QueueItem> PopulateQueue(FileOperation action)
+        public virtual Queue<QueueItem> PopulateQueue(FileOperation action)
         {
             return PopulateQueue(action, null);
         }
 
-        public Queue<QueueItem> PopulateQueue(FileOperation action, IEnumerable<FileSystemItem> selection)
+        public virtual Queue<QueueItem> PopulateQueue(FileOperation action, IEnumerable<FileSystemItem> selection)
         {
             var notify = false;
             if (selection == null)

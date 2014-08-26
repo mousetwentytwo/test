@@ -1149,4 +1149,7 @@ It will automatically close the FTP connection.</value>
   <data name="DeleteAll" xml:space="preserve">
     <value>Delete all</value>
   </data>
+  <data name="GameDeletionMessage" xml:space="preserve">
+    <value>&lt;b&gt;You deleted a game folder which might belong to an FSD/F3 database entry.&lt;/b&gt; Since FSD/F3 cannot detect this removal it might cause problems later. You should remove its database entry if available. Use GODspeed's Database Checker tool to identify invalid database entries and remove them manually.</value>
+  </data>
 </root>

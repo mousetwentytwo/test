@@ -971,6 +971,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;b&gt;You deleted a game folder which might belong to an FSD/F3 database entry.&lt;/b&gt; Since FSD/F3 cannot detect this removal it might cause problems later. You should remove its database entry if available. Use GODspeed&apos;s Database Checker tool to identify invalid database entries and remove them manually..
+        /// </summary>
+        internal static string GameDeletionMessage {
+            get {
+                return ResourceManager.GetString("GameDeletionMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Game Demos.
         /// </summary>
         internal static string GameDemoPlural {

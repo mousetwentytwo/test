@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Media;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
@@ -440,6 +441,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             {
                 if (UserMessages.First() is NoMessagesViewModel) UserMessages.RemoveAt(0);
                 UserMessages.Insert(0, new UserMessageViewModel(message, e));
+                var notificationSound = new SoundPlayer(new MemoryStream(ResourceManager.GetContentByteArray("/Resources/Sounds/notification.wav")));
+                notificationSound.Play();
             }
             else if (i != 0)
             {
