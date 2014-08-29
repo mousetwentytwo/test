@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using Microsoft.Practices.Composite.Events;
+using Neurotoxin.Godspeed.Core.Attributes;
 using Neurotoxin.Godspeed.Core.Constants;
 using Neurotoxin.Godspeed.Core.Extensions;
 using Neurotoxin.Godspeed.Core.Io.Gpd;
@@ -175,11 +176,16 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                     {
                         try
                         {
-                            var header = _fileManager.ReadFileContent(item.Path, StfsPackage.DefaultHeaderSizeVersion1);
+                            var header = _fileManager.ReadFileContent(item.Path, StfsPackage.DefaultHeaderSizeVersion1 + 12);
                             var svod = ModelFactory.GetModel<SvodPackage>(header);
                             if (svod.IsValid)
                             {
                                 item.Title = svod.DisplayName;
+                                if (svod.InstallerType == InstallerType.TitleUpdate)
+                                {
+                                    var ver = svod.ReadValue<Version>(StfsPackage.DefaultHeaderSizeVersion1 + 8, 4, new BinaryDataAttribute(EndianType.BigEndian));
+                                    item.Title = string.Format("{0} (TU{1})", svod.DisplayName, ver.Build);
+                                }
                                 item.Thumbnail = svod.ThumbnailImage;
                                 item.ContentType = svod.ContentType;
                                 item.RecognitionState = RecognitionState.Recognized;

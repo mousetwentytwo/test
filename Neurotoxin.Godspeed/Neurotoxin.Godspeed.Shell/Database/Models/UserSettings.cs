@@ -7,9 +7,11 @@ namespace Neurotoxin.Godspeed.Shell.Database.Models
 {
     public class UserSettings : ModelBase
     {
-        private Guid _clientId;
         [Index]
         [PrimaryKey]
+        public int Id { get; set; }
+
+        private Guid _clientId;
         public Guid ClientId
         {
             get { return _clientId; }
@@ -21,7 +23,6 @@ namespace Neurotoxin.Godspeed.Shell.Database.Models
         }
 
         private int _version;
-
         public int Version
         {
             get { return _version; }
@@ -54,6 +55,18 @@ namespace Neurotoxin.Godspeed.Shell.Database.Models
             {
                 _disableCustomChrome = value;
                 SetDirtyFlag("DisableCustomChrome");
+            }
+        }
+
+        private bool _disableNotificationSound;
+
+        public bool DisableNotificationSound
+        {
+            get { return _disableNotificationSound; }
+            set
+            {
+                _disableNotificationSound = value;
+                SetDirtyFlag("DisableNotificationSound");
             }
         }
 

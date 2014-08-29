@@ -441,6 +441,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             {
                 if (UserMessages.First() is NoMessagesViewModel) UserMessages.RemoveAt(0);
                 UserMessages.Insert(0, new UserMessageViewModel(message, e));
+                if (_userSettings.DisableNotificationSound) return;
                 var notificationSound = new SoundPlayer(new MemoryStream(ResourceManager.GetContentByteArray("/Resources/Sounds/notification.wav")));
                 notificationSound.Play();
             }

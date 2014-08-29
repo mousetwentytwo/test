@@ -10,6 +10,7 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
         Guid ClientId { get; set; }
         CultureInfo Language { get; set; }
         bool DisableCustomChrome { get; set; }
+        bool DisableNotificationSound { get; set; }
         bool UseVersionChecker { get; set; }
         bool VerifyFileHashAfterFtpUpload { get; set; }
         FsdContentScanTrigger FsdContentScanTrigger { get; set; }

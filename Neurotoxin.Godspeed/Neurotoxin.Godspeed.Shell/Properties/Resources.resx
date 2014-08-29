@@ -1071,10 +1071,10 @@
     <value>Select the items you want to remove</value>
   </data>
   <data name="CreditsContent" xml:space="preserve">
-    <value>&lt;p&gt;&lt;b&gt;Credits:&lt;/b&gt;&lt;br/&gt;Developer: mercenary&lt;br/&gt;QA: mousetwentytwo&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Homepage:&lt;/b&gt;&lt;br/&gt;&lt;a href="http://godspeed.codeplex.com" target="_blank"&gt;http://godspeed.codeplex.com&lt;/a&gt;&lt;/p&gt;</value>
+    <value>&lt;p&gt;&lt;b&gt;Credits:&lt;/b&gt;&lt;br/&gt;Developer: mercenary&lt;br/&gt;QA: mousetwentytwo&lt;br/&gt;Translations: wilee360&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Homepage:&lt;/b&gt;&lt;br/&gt;&lt;a href="http://godspeed.codeplex.com" target="_blank"&gt;http://godspeed.codeplex.com&lt;/a&gt;&lt;/p&gt;</value>
   </data>
   <data name="GreetzContent" xml:space="preserve">
-    <value>&lt;p&gt;&lt;b&gt;Greetz:&lt;/b&gt;&lt;br/&gt;Phoenix crew&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Thanks:&lt;/b&gt;&lt;br/&gt;J.P. Trosclair for System.Net.FtpClient&lt;br/&gt;rcarz for ReparsePoint.cs&lt;br/&gt;Darko Kenda for UsbNotification.cs&lt;br/&gt;Damien Guard for Crc32.cs&lt;/p&gt;</value>
+    <value>&lt;p&gt;&lt;b&gt;Greetz:&lt;/b&gt;&lt;br/&gt;Phoenix crew&lt;br/&gt;Team Xecuter&lt;br/&gt;Members of RealModScene.com&lt;br/&gt;Members of Xmedia360.hu&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Thanks:&lt;/b&gt;&lt;br/&gt;J.P. Trosclair for System.Net.FtpClient&lt;br/&gt;rcarz for ReparsePoint.cs&lt;br/&gt;Darko Kenda for UsbNotification.cs&lt;br/&gt;Damien Guard for Crc32.cs&lt;/p&gt;</value>
   </data>
   <data name="AddNewFolder" xml:space="preserve">
     <value>Add New Folder</value>
@@ -1151,5 +1151,8 @@ It will automatically close the FTP connection.</value>
   </data>
   <data name="GameDeletionMessage" xml:space="preserve">
     <value>&lt;b&gt;You deleted a game folder which might belong to an FSD/F3 database entry.&lt;/b&gt; Since FSD/F3 cannot detect this removal it might cause problems later. You should remove its database entry if available. Use GODspeed's Database Checker tool to identify invalid database entries and remove them manually.</value>
+  </data>
+  <data name="DisableNotificationSound" xml:space="preserve">
+    <value>Disable notification sound</value>
   </data>
 </root>

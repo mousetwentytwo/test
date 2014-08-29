@@ -574,7 +574,7 @@
     <value>Nap</value>
   </data>
   <data name="DayPlural" xml:space="preserve">
-    <value>Napok</value>
+    <value>Nap</value>
   </data>
   <data name="DateTimeFormat" xml:space="preserve">
     <value>yyyy-MM-dd HH:mm</value>
@@ -1071,7 +1071,7 @@
     <value>Jelöld ki az eltávolítandó elemeket</value>
   </data>
   <data name="CreditsContent" xml:space="preserve">
-    <value>&lt;p&gt;&lt;b&gt;Készítők:&lt;/b&gt;&lt;br/&gt;Fejlesztés: mercenary&lt;br/&gt;Tesztelés: mousetwentytwo&lt;/p&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Honlap:&lt;/b&gt;&lt;br/&gt;&lt;a href="http://godspeed.codeplex.com" target="_blank"&gt;http://godspeed.codeplex.com&lt;/a&gt;</value>
+    <value>&lt;p&gt;&lt;b&gt;Készítők:&lt;/b&gt;&lt;br/&gt;Fejlesztő: mercenary&lt;br/&gt;Vezető tesztelő: mousetwentytwo&lt;br/&gt;Fordítás: wilee360&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Honlap:&lt;/b&gt;&lt;br/&gt;&lt;a href="http://godspeed.codeplex.com" target="_blank"&gt;http://godspeed.codeplex.com&lt;/a&gt;&lt;/p&gt;</value>
   </data>
   <data name="AddNewFolder" xml:space="preserve">
     <value>Új Mappa létrehozása</value>
@@ -1148,5 +1148,8 @@ Ha igen, az FTP kapcsolat automatikusan kerül.</value>
   </data>
   <data name="GameDeletionMessage" xml:space="preserve">
     <value>&lt;b&gt;Letöröltél egy játékot, ami lehet, hogy az FSD/F3 adatbázisában is szerepel.&lt;/b&gt; Mivel ezeket az FSD/F3 nem tudta detektálni, a későbbi problémák elkerülése végett ajánlott kézzel eltávolítani az adatbázisból. Használd a GODspeed Adatbázis Ellenőrző modulját a hibás bejegyzések megtalálásához!</value>
+  </data>
+  <data name="DisableNotificationSound" xml:space="preserve">
+    <value>Hangjelzés kikapcsolása</value>
   </data>
 </root>

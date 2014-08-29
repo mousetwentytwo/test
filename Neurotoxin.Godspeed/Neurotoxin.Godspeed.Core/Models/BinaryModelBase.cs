@@ -83,8 +83,8 @@ namespace Neurotoxin.Godspeed.Core.Models
 
             var property = GetType().GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             attribute = attribute ?? property.GetAttribute<BinaryDataAttribute>();
-            byte[] buffer;
 
+            byte[] buffer;
             if (attribute.StringReadOptions == StringReadOptions.NullTerminated && loc.Length == 1)
             {
                 buffer = Binary.ReadBytes(loc.Offset);
@@ -108,7 +108,17 @@ namespace Neurotoxin.Godspeed.Core.Models
                 buffer = Binary.ReadBytes(loc.Offset, loc.Length);
             }
 
-            var propertyType = property.PropertyType;
+            return ReadValue(buffer, property.PropertyType, attribute);
+        }
+
+        public T ReadValue<T>(int offset, int length, BinaryDataAttribute attribute = null)
+        {
+            var buffer = Binary.ReadBytes(offset, length);
+            return (T)ReadValue(buffer, typeof(T), attribute);
+        }
+
+        private static object ReadValue(byte[] buffer, Type propertyType, BinaryDataAttribute attribute = null)
+        {
             var valueType = propertyType.IsEnum ? Enum.GetUnderlyingType(propertyType) : propertyType;
 
             if (propertyType.IsArray)
@@ -118,24 +128,24 @@ namespace Neurotoxin.Godspeed.Core.Models
                 {
                     if (attribute.EndianType == EndianType.SwapBytesBy4 ||
                         attribute.EndianType == EndianType.SwapBytesBy8)
-                        buffer.SwapBytes((int) attribute.EndianType);
+                        buffer.SwapBytes((int)attribute.EndianType);
                     return buffer;
                 }
                 if (elementType.IsEnum)
                 {
-                    var array = Array.CreateInstance(propertyType.GetElementType(), loc.Length);
-                    for (var i = 0; i < loc.Length; i++)
+                    var array = Array.CreateInstance(propertyType.GetElementType(), buffer.Length);
+                    for (var i = 0; i < buffer.Length; i++)
                         array.SetValue(Enum.ToObject(elementType, buffer[i]), i);
                     return array;
                 }
-                
+
                 throw new NotSupportedException("Invalid array type: " + propertyType);
             }
-            if (valueType == typeof (byte))
+            if (valueType == typeof(byte))
             {
                 return buffer[0];
             }
-            if (valueType == typeof (string))
+            if (valueType == typeof(string))
             {
                 switch (attribute.StringReadOptions)
                 {
@@ -150,26 +160,23 @@ namespace Neurotoxin.Godspeed.Core.Models
                         throw new NotSupportedException("Invalid StringReadOptions value: " + attribute.StringReadOptions);
                 }
             }
-            if (valueType == typeof (DateTime))
+            if (valueType == typeof(DateTime))
             {
                 return ByteArrayExtensions.ToDateTime(buffer);
             }
-            if (valueType == typeof (Version))
-            {
-                return ByteArrayExtensions.ToVersion(buffer);
-            }
             if (attribute.EndianType == EndianType.BigEndian)
                 Array.Reverse(buffer);
-            var valueSize = valueType.IsValueType ? Marshal.SizeOf(valueType) : (int?) null;
+            var valueSize = valueType.IsValueType ? Marshal.SizeOf(valueType) : (int?)null;
             if (valueSize.HasValue && buffer.Length < valueSize)
                 Array.Resize(ref buffer, valueSize.Value);
 
-            if (valueType == typeof (short)) return BitConverter.ToInt16(buffer, 0);
-            if (valueType == typeof (ushort)) return BitConverter.ToUInt16(buffer, 0);
-            if (valueType == typeof (int)) return BitConverter.ToInt32(buffer, 0);
-            if (valueType == typeof (uint)) return BitConverter.ToUInt32(buffer, 0);
-            if (valueType == typeof (long)) return BitConverter.ToInt64(buffer, 0);
-            if (valueType == typeof (ulong)) return BitConverter.ToUInt64(buffer, 0);
+            if (valueType == typeof(Version)) return ByteArrayExtensions.ToVersion(buffer);
+            if (valueType == typeof(short)) return BitConverter.ToInt16(buffer, 0);
+            if (valueType == typeof(ushort)) return BitConverter.ToUInt16(buffer, 0);
+            if (valueType == typeof(int)) return BitConverter.ToInt32(buffer, 0);
+            if (valueType == typeof(uint)) return BitConverter.ToUInt32(buffer, 0);
+            if (valueType == typeof(long)) return BitConverter.ToInt64(buffer, 0);
+            if (valueType == typeof(ulong)) return BitConverter.ToUInt64(buffer, 0);
 
             throw new NotSupportedException("Invalid value type: " + valueType);
         }

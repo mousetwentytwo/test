@@ -538,7 +538,7 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;p&gt;&lt;b&gt;Credits:&lt;/b&gt;&lt;br/&gt;Developer: mercenary&lt;br/&gt;QA: mousetwentytwo&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Homepage:&lt;/b&gt;&lt;br/&gt;&lt;a href=&quot;http://godspeed.codeplex.com&quot; target=&quot;_blank&quot;&gt;http://godspeed.codeplex.com&lt;/a&gt;&lt;/p&gt;.
+        ///   Looks up a localized string similar to &lt;p&gt;&lt;b&gt;Credits:&lt;/b&gt;&lt;br/&gt;Developer: mercenary&lt;br/&gt;QA: mousetwentytwo&lt;br/&gt;Translations: wilee360&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Homepage:&lt;/b&gt;&lt;br/&gt;&lt;a href=&quot;http://godspeed.codeplex.com&quot; target=&quot;_blank&quot;&gt;http://godspeed.codeplex.com&lt;/a&gt;&lt;/p&gt;.
         /// </summary>
         internal static string CreditsContent {
             get {
@@ -679,6 +679,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         internal static string DisableFsdContentScanTriggerTitle {
             get {
                 return ResourceManager.GetString("DisableFsdContentScanTriggerTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disable notification sound.
+        /// </summary>
+        internal static string DisableNotificationSound {
+            get {
+                return ResourceManager.GetString("DisableNotificationSound", resourceCulture);
             }
         }
         
@@ -1124,7 +1133,7 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;p&gt;&lt;b&gt;Greetz:&lt;/b&gt;&lt;br/&gt;Phoenix crew&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Thanks:&lt;/b&gt;&lt;br/&gt;J.P. Trosclair for System.Net.FtpClient&lt;br/&gt;rcarz for ReparsePoint.cs&lt;br/&gt;Darko Kenda for UsbNotification.cs&lt;br/&gt;Damien Guard for Crc32.cs&lt;/p&gt;.
+        ///   Looks up a localized string similar to &lt;p&gt;&lt;b&gt;Greetz:&lt;/b&gt;&lt;br/&gt;Phoenix crew&lt;br/&gt;Team Xecuter&lt;br/&gt;Members of RealModScene.com&lt;br/&gt;Members of Xmedia360.hu&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Thanks:&lt;/b&gt;&lt;br/&gt;J.P. Trosclair for System.Net.FtpClient&lt;br/&gt;rcarz for ReparsePoint.cs&lt;br/&gt;Darko Kenda for UsbNotification.cs&lt;br/&gt;Damien Guard for Crc32.cs&lt;/p&gt;.
         /// </summary>
         internal static string GreetzContent {
             get {

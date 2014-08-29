@@ -78,7 +78,7 @@ namespace Neurotoxin.Godspeed.Shell.Extensions
                     db.DeleteById<T>(definition.PrimaryKey.GetValue(model));
                     break;
             }
-            //Debug.WriteLine(db.GetLastSql());
+            Debug.WriteLine(db.GetLastSql());
         }
     }
 }

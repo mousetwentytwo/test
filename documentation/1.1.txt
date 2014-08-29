@@ -39,6 +39,7 @@
 * ADDED: Launch .xex file via FTP
 * ADDED: FSD Database Checker and Clean up
 * ADDED: Shutdown PC and/or Xbox after transfer completed
+* ADDED: Displaying version number of Title Updates
 * ADDED: FTP Log Viewer
 * ADDED: Hungarian language
 * ADDED: New About window

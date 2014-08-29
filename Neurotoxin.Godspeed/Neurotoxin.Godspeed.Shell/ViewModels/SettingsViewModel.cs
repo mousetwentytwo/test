@@ -107,6 +107,14 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             set { _useVersionChecker = value; NotifyPropertyChanged(USEVERSIONCHECKER); }
         }
 
+        private const string PROPERTYNAME = "DisableNotificationSound";
+        private bool _disableNotificationSound;
+        public bool DisableNotificationSound
+        {
+            get { return _disableNotificationSound; }
+            set { _disableNotificationSound = value; NotifyPropertyChanged(PROPERTYNAME); }
+        }
+
         private const string VERIFYFILEHASHAFTERFTPUPLOAD = "VerifyFileHashAfterFtpUpload";
         private bool _verifyFileHashAfterFtpUpload;
         public bool VerifyFileHashAfterFtpUpload
@@ -205,6 +213,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             XboxLiveContentInvalidation = _userSettingsProvider.XboxLiveContentInvalidation;
             UnknownContentExpiration = _userSettingsProvider.UnknownContentExpiration;
             UseVersionChecker = _userSettingsProvider.UseVersionChecker;
+            DisableNotificationSound = _userSettingsProvider.DisableNotificationSound;
             VerifyFileHashAfterFtpUpload = _userSettingsProvider.VerifyFileHashAfterFtpUpload;
             FsdContentScanTrigger = _userSettingsProvider.FsdContentScanTrigger;
             UseRemoteCopy = _userSettingsProvider.UseRemoteCopy;
@@ -224,6 +233,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             _userSettingsProvider.XboxLiveContentInvalidation = XboxLiveContentInvalidation;
             _userSettingsProvider.UnknownContentExpiration = UnknownContentExpiration;
             _userSettingsProvider.UseVersionChecker = UseVersionChecker;
+            _userSettingsProvider.DisableNotificationSound = DisableNotificationSound;
             _userSettingsProvider.VerifyFileHashAfterFtpUpload = VerifyFileHashAfterFtpUpload;
             _userSettingsProvider.FsdContentScanTrigger = FsdContentScanTrigger;
             _userSettingsProvider.UseRemoteCopy = UseRemoteCopy;

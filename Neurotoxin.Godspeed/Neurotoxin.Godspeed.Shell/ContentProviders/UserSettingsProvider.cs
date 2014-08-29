@@ -37,6 +37,12 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             set { _userSettings.DisableCustomChrome = value; }
         }
 
+        public bool DisableNotificationSound
+        {
+            get { return _userSettings.DisableNotificationSound; }
+            set { _userSettings.DisableNotificationSound = value; }
+        }
+
         public bool UseVersionChecker
         {
             get { return _userSettings.UseVersionChecker; }
