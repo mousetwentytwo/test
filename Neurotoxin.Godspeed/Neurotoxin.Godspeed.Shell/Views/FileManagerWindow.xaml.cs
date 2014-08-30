@@ -154,7 +154,8 @@ namespace Neurotoxin.Godspeed.Shell.Views
 
         private void ExecuteSplitterCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            var l = Convert.ToDouble(e.Parameter);
+            var eventInformation = e.Parameter as EventInformation<MouseEventArgs>;
+            var l = Convert.ToDouble(eventInformation != null ? eventInformation.CommandArgument : e.Parameter);
             PanesGrid.ColumnDefinitions[0].Width = new GridLength(l, GridUnitType.Star);
             PanesGrid.ColumnDefinitions[2].Width = new GridLength(100 - l, GridUnitType.Star);
         }

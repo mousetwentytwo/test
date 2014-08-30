@@ -1,5 +1,6 @@
 using System;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Interactivity;
 
 namespace Neurotoxin.Godspeed.Presentation.Infrastructure
@@ -7,7 +8,7 @@ namespace Neurotoxin.Godspeed.Presentation.Infrastructure
     public abstract class MapEventToCommandBase<TEventArgsType> : TriggerAction<FrameworkElement>
         where TEventArgsType : EventArgs
     {
-        public static readonly DependencyProperty CommandProperty = DependencyProperty.Register("Command", typeof(IDelegateCommand), typeof(MapEventToCommandBase<TEventArgsType>), new PropertyMetadata(null, OnCommandPropertyChanged));
+        public static readonly DependencyProperty CommandProperty = DependencyProperty.Register("Command", typeof(ICommand), typeof(MapEventToCommandBase<TEventArgsType>), new PropertyMetadata(null, OnCommandPropertyChanged));
         public static readonly DependencyProperty CommandParameterProperty = DependencyProperty.Register("CommandParameter", typeof(object), typeof(MapEventToCommandBase<TEventArgsType>), new PropertyMetadata(null, OnCommandParameterPropertyChanged));
 
         private static void OnCommandParameterPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -42,11 +43,11 @@ namespace Neurotoxin.Godspeed.Presentation.Infrastructure
             if (this.Command.CanExecute(eventInfo)) this.Command.Execute(eventInfo);
         }
 
-        public IDelegateCommand Command
+        public ICommand Command
         {
             get
             {
-                return (IDelegateCommand)base.GetValue(CommandProperty);
+                return (ICommand)base.GetValue(CommandProperty);
             }
             set
             {

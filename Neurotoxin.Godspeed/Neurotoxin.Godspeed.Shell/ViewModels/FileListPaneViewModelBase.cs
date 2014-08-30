@@ -849,28 +849,42 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             var tag = (string)content.FindAncestor<DataGridCell>().Tag;
             var template = content.ContentTemplateSelector.SelectTemplate(null, content);
             var textBox = (TextBox)template.FindName("TitleEditBox", content);
-            var newValue = textBox.Text;
+            var newValue = textBox.Text.Trim();
 
             switch (tag)
             {
                 case FileSystemItemViewModel.TITLE:
                     if (CurrentRow.Title != newValue)
                     {
-                        CurrentRow.Title = newValue;
-                        TitleRecognizer.UpdateTitle(CurrentRow.Model);
+                        if (string.IsNullOrEmpty(newValue))
+                        {
+                            CurrentRow.Title = CurrentRow.Title;
+                        } 
+                        else
+                        {
+                            CurrentRow.Title = newValue;
+                            TitleRecognizer.UpdateTitle(CurrentRow.Model);
+                        }
                     }
                     break;
                 case FileSystemItemViewModel.NAME:
                     if (CurrentRow.Name != newValue)
                     {
-                        var newModel = FileManager.Rename(CurrentRow.Model.Path, newValue);
-                        TitleRecognizer.RecognizeType(newModel);
-                        TitleRecognizer.RecognizeTitle(newModel);
-                        var newItem = new FileSystemItemViewModel(newModel);
-                        Items.Replace(CurrentRow, newItem);
-                        EventAggregator.GetEvent<FileListPaneViewModelItemsChangedEvent>()
-                                       .Publish(new FileListPaneViewModelItemsChangedEventArgs(NotifyCollectionChangedAction.Replace, newItem, CurrentRow, this));
-                        CurrentRow = newItem;
+                        if (string.IsNullOrEmpty(newValue))
+                        {
+                            CurrentRow.Name  = CurrentRow.Name;
+                        }
+                        else
+                        {
+                            var newModel = FileManager.Rename(CurrentRow.Model.Path, newValue);
+                            TitleRecognizer.RecognizeType(newModel);
+                            TitleRecognizer.RecognizeTitle(newModel);
+                            var newItem = new FileSystemItemViewModel(newModel);
+                            Items.Replace(CurrentRow, newItem);
+                            EventAggregator.GetEvent<FileListPaneViewModelItemsChangedEvent>()
+                                           .Publish(new FileListPaneViewModelItemsChangedEventArgs(NotifyCollectionChangedAction.Replace, newItem, CurrentRow, this));
+                            CurrentRow = newItem;
+                        }
                     }
                     break;
                 default:

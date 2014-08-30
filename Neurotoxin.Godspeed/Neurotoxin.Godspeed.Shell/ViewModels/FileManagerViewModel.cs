@@ -297,8 +297,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     break;
                 case MessageCommand.OpenDialog:
                     var dialogType = (Type) p.Parameter;
-                    var c = dialogType.GetConstructor(Type.EmptyTypes);
-                    var d = c.Invoke(new object[0]) as Window;
+                    var c = dialogType.GetConstructor(new[] {typeof (IWorkHandler)});
+                    var d = c.Invoke(new object[] { WorkHandler }) as Window;
                     if (d.ShowDialog() == true) _userSettings.IgnoreMessage(message.Message);
                     break;
             }

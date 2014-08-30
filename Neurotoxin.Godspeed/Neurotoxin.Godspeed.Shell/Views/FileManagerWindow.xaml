@@ -40,6 +40,12 @@
                         <Setter Property="Background" Value="Transparent" />
                         <Setter Property="BorderBrush" Value="Transparent" />
                         <Setter Property="BorderThickness" Value="0" />
+                        <Setter Property="IsReadOnly" Value="True"/>
+                        <Setter Property="SelectionOpacity" Value="0"/>
+                        <Setter Property="IsReadOnlyCaretVisible" Value="False"/>
+                        <Setter Property="IsDocumentEnabled" Value="False"/>
+                        <Setter Property="IsHitTestVisible" Value="False"/>
+                        <Setter Property="IsManipulationEnabled" Value="False"/>
                     </Style>
                     <ControlTemplate TargetType="MenuItem" x:Key="UserMessageTemplate">
                         <Border Name="Border" Background="White" BorderThickness="0,0,0,1" BorderBrush="{StaticResource ControlBackgroundBrush}">
@@ -105,7 +111,7 @@
                               Command="{Binding ActivePane.CalculateSizeCommand}" CommandParameter="{StaticResource True}" />
                     <MenuItem Header="{lex:LocText ShowFtpLog}" Command="{Binding ActivePane.ShowFtpLogCommand}" />
                 </MenuItem>
-                <MenuItem Header="{lex:LocText FsdMenu}" Visibility="{Binding FtpPane.IsFSD, FallbackValue=Collapsed, Converter={StaticResource BoolToVis}}">
+                <MenuItem Header="{lex:LocText FsdMenu}" IsEnabled="{Binding FtpPane.IsFSD, FallbackValue=False}">
                     <MenuItem Header="{lex:LocText FreestyleDatabaseCheck}" Command="{Binding ActivePane.CheckFreestyleDatabaseCommand}" />
                     <MenuItem Header="{lex:LocText StartContentScan}" Command="{Binding ActivePane.StartContentScanCommand}" />
                     <MenuItem Header="{lex:LocText OpenWebUI}" Command="{Binding ActivePane.OpenWebUICommand}" />
@@ -245,6 +251,11 @@
                                 <MenuItem Header="80/20" Command="{x:Static commands:FileManagerCommands.SplitterCommand}" CommandParameter="80"/>
                             </ContextMenu>
                         </GridSplitter.ContextMenu>
+                        <e:Interaction.Triggers>
+                            <e:EventTrigger EventName="MouseDoubleClick">
+                                <inf:MapMouseEventToCommand Command="{x:Static commands:FileManagerCommands.SplitterCommand}" CommandParameter="50" />
+                            </e:EventTrigger>
+                        </e:Interaction.Triggers>
                     </GridSplitter>
                     <ContentControl Grid.Column="2" Grid.Row="1" Content="{Binding RightPane}" ContentTemplateSelector="{StaticResource PaneTemplateSelector}" x:Name="RightPane" />
                 </Grid>
