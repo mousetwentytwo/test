@@ -28,7 +28,7 @@ namespace Neurotoxin.Godspeed.Shell.Primitives
             if (!App.ShellInitialized || !UserSettings.DisableCustomChrome) Style = (Style)Application.Current.Resources["Dialog"];
             PreviewKeyDown += OnPreviewKeyDown;
 
-            if (App.ShellInitialized)
+            if (App.ShellInitialized && Application.Current.MainWindow.IsVisible)
             {
                 WindowStartupLocation = WindowStartupLocation.CenterOwner;
                 Owner = Application.Current.MainWindow;

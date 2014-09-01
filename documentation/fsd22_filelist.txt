@@ -1,0 +1,7 @@
+drwxrwxrwx   1 root  root    0 Jul 06 2014 Data
+drwxrwxrwx   1 root  root    0 Jul 06 2014 Media
+drwxrwxrwx   1 root  root    0 Jul 06 2014 Plugins
+drwxrwxrwx   1 root  root    0 Jul 06 2014 Skins
+-rwxrwxrwx   1 root  root    8302592 Jul 06 21:16 Aurora.xex
+-rwxrwxrwx   1 root  root    3210 Jul 06 21:16 live.json
+-rwxrwxrwx   1 root  root    708608 Jul 06 21:16 nxeart

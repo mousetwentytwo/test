@@ -256,8 +256,21 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 }
 
                 var html = new HtmlDocument();
-                html.LoadHtml(_parent.HttpGetString("gettable.html?name=ContentItems", Encoding.UTF8));
-                var rows = html.DocumentNode.QuerySelectorAll("table.GameContentHeader > tr").Skip(2);
+                IEnumerable<HtmlNode> rows;
+                switch (_parent.ServerType)
+                {
+                    case FtpServerType.F3:
+                        html.LoadHtml(_parent.HttpGetString("gettable.html?name=ContentItems", Encoding.UTF8));
+                        rows = html.DocumentNode.QuerySelectorAll("table.GameContentHeader > tr").Skip(2);
+                        break;
+                    case FtpServerType.FSD:
+                        html.LoadHtml(_parent.HttpPostString("gettable?name=ContentItems", "sessionid=" + _parent.HttpSessionId, Encoding.UTF8));
+                        rows = html.DocumentNode.QuerySelectorAll("tr").Skip(1);
+                        break;
+                    default:
+                        throw new NotSupportedException("Invalid server type: " + _parent.ServerType);
+                }
+                
                 _itemsCount = rows.Count();
                 UIThread.Run(() => IsIndetermine = false);
                 foreach (var row in rows)

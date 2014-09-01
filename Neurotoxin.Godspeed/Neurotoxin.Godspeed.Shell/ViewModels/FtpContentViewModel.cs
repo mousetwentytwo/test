@@ -30,11 +30,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
     {
         private readonly HashSet<int> _doContentScanOn = new HashSet<int>();
         private readonly Dictionary<string, string> _driveLabelCache = new Dictionary<string, string>();
-        private string _httpSessionId;
 
         public FtpConnectionItemViewModel Connection { get; private set; }
         public Stack<string> Log { get { return FileManager.Log; } }
         public Dictionary<int, FsdScanPath> ScanFolders { get; private set; }
+        public string HttpSessionId { get; private set; }
 
         public bool IsConnected
         {
@@ -147,7 +147,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                             if (Int32.Parse(cells[1].InnerText.Trim()) == scanFolder.PathId && cells[6].InnerText.Trim().StartsWith(prefix))
                             {
                                 var contentId = Int32.Parse(cells[0].InnerText.Trim());
-                                HttpPost("launch", string.Format("sessionid={0}&contentid={1:X2}&Action=launch", _httpSessionId, contentId));
+                                HttpPostAsync("launch", string.Format("sessionid={0}&contentid={1:X2}&Action=launch", HttpSessionId, contentId));
                                 ExecuteCloseCommand();
                                 return;
                             }
@@ -215,7 +215,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             try
             {
-                HttpPost("paths.html", string.Format("sessionid={0}&Action=Scan+All", _httpSessionId));
+                HttpPostAsync("paths.html", string.Format("sessionid={0}&Action=Scan+All", HttpSessionId));
             }
             catch
             {
@@ -506,7 +506,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         response = client.UploadData(url, body);
                     }
                     var responseString = Encoding.UTF8.GetString(response);
-                    if (responseString.Contains("j_password")) return HttpStatusCode.Unauthorized;
+                    if (responseString.Contains("j_password") || responseString.Contains("Username / Password incorrect.  Please try again")) return HttpStatusCode.Unauthorized;
 
                     var r = new Regex(@"<tr.*?pathid:'(?<PathId>\d+)'.*?depth"">(?<ScanDepth>\d+).*?path"">(?<Path>.*?)</td>", RegexOptions.Singleline);
                     ScanFolders = new Dictionary<int, FsdScanPath>();
@@ -532,10 +532,23 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         }
                     }
 
-                    const string sessionCookie = "session=";
-                    var setCookie = client.ResponseHeaders[HttpResponseHeader.SetCookie].Split('&');
-                    var session = setCookie.FirstOrDefault(c => c.StartsWith(sessionCookie));
-                    if (session != null) _httpSessionId = session.Substring(sessionCookie.Length);
+                    switch (ServerType)
+                    {
+                        case FtpServerType.F3:
+                            const string sessionCookie = "session=";
+                            var setCookie = client.ResponseHeaders[HttpResponseHeader.SetCookie].Split('&');
+                            var session = setCookie.FirstOrDefault(c => c.StartsWith(sessionCookie));
+                            if (session != null) HttpSessionId = session.Substring(sessionCookie.Length);
+                            break;
+                        case FtpServerType.FSD:
+                            var sessionidRegex = new Regex(@"\{sessionid:'(.*?)'\}");
+                            var m = sessionidRegex.Match(responseString);
+                            if (m.Success) HttpSessionId = m.Groups[1].Value;
+                            break;
+                        default:
+                            throw new NotSupportedException("Invalid server type: " + ServerType);
+                    }
+
 
                     return HttpStatusCode.OK;
                 }
@@ -561,7 +574,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             try
             {
-                HttpPost("paths.html", string.Format("sessionid={0}&pathid={1}&Action=scan", _httpSessionId, pathid));
+                HttpPostAsync("paths.html", string.Format("sessionid={0}&pathid={1}&Action=scan", HttpSessionId, pathid));
             }
             catch
             {
@@ -574,7 +587,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             using (var client = new WebClient())
             {
                 client.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
-                client.Headers[HttpRequestHeader.Cookie] = "session=" + _httpSessionId;
+                client.Headers[HttpRequestHeader.Cookie] = "session=" + HttpSessionId;
+                client.Headers[HttpRequestHeader.Referer] = "http://" + Connection.Address;
                 var result = client.DownloadData(string.Format("http://{0}/{1}", Connection.Address, target));
                 return result;
             }
@@ -586,7 +600,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             return encoding.GetString(HttpGet(target));
         }
 
-        private void HttpPost(string target, string formData)
+        private byte[] HttpPost(string target, string formData)
         {
             using (var client = new WebClient())
             {
@@ -599,9 +613,33 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     body = ms.ToArray();
                 }
                 client.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
-                client.Headers[HttpRequestHeader.Cookie] = "session=" + _httpSessionId;
+                client.Headers[HttpRequestHeader.Cookie] = "session=" + HttpSessionId;
+                return client.UploadData(new Uri(string.Format("http://{0}/{1}", Connection.Address, target)), body);
+            }
+        }
+
+        private void HttpPostAsync(string target, string formData)
+        {
+            using (var client = new WebClient())
+            {
+                byte[] body;
+                using (var ms = new MemoryStream())
+                {
+                    var sw = new StreamWriter(ms);
+                    sw.Write(formData);
+                    sw.Flush();
+                    body = ms.ToArray();
+                }
+                client.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+                client.Headers[HttpRequestHeader.Cookie] = "session=" + HttpSessionId;
                 client.UploadDataAsync(new Uri(string.Format("http://{0}/{1}", Connection.Address, target)), body);
             }
+        }
+
+        public string HttpPostString(string target, string formData, Encoding encoding = null)
+        {
+            if (encoding == null) encoding = Encoding.Default;
+            return encoding.GetString(HttpPost(target, formData));
         }
 
         protected override void ChangeDrive()
