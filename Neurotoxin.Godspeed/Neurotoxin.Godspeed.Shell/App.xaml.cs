@@ -98,6 +98,12 @@ namespace Neurotoxin.Godspeed.Shell
                         commandUsage.AppendLine(string.Format("{0}={1}", kvp.Key, kvp.Value));
                     }
 
+                    var serverUsage = new StringBuilder();
+                    foreach (var kvp in statistics.ServerUsage)
+                    {
+                        serverUsage.AppendLine(string.Format("{0}={1}", kvp.Key, kvp.Value));
+                    }
+
                     var utcOffset = TimeZone.CurrentTimeZone.GetUtcOffset(statistics.UsageStart);
                     HttpForm.Post("stats.php", new List<IFormData>
                         {
@@ -119,7 +125,8 @@ namespace Neurotoxin.Godspeed.Shell
                             new RawPostData("transferred_bytes", statistics.BytesTransferred),
                             new RawPostData("transferred_files", statistics.FilesTransferred),
                             new RawPostData("transfer_time", Math.Floor(statistics.TimeSpentWithTransfer.TotalSeconds)),
-                            new RawPostData("command_usage", commandUsage)
+                            new RawPostData("command_usage", commandUsage),
+                            new RawPostData("server_usage", serverUsage)
                         });
                 }
             }

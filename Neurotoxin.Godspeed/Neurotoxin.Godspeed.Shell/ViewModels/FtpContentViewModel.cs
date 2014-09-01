@@ -71,6 +71,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             get { return UserSettingsProvider.VerifyFileHashAfterFtpUpload && FileManager.IsFSD; }
         }
 
+        public FtpServerType ServerType
+        {
+            get { return FileManager.ServerType; }
+        }
+
         #region Command overrides
 
         private void ExecuteCloseCommand()

@@ -6,6 +6,7 @@ using Neurotoxin.Godspeed.Core.Constants;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
 using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Database.Models;
+using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Extensions;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using Neurotoxin.Godspeed.Shell.Models;
@@ -21,6 +22,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public DateTime UsageStart { get; private set; }
         public Dictionary<string, int> CommandUsage { get; private set; }
+        public Dictionary<FtpServerType, int> ServerUsage { get; private set; }
 
         private const string GAMESRECOGNIZEDFULLY = "GamesRecognizedFully";
         public int GamesRecognizedFully
@@ -122,6 +124,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             UsageStart = DateTime.Now;
             CommandUsage = new Dictionary<string, int>();
+            ServerUsage = new Dictionary<FtpServerType, int>();
 
             _cacheManager = cacheManager;
             _dbContext = dbContext;
@@ -130,6 +133,21 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 _statistics = db.Get<Statistics>().First();
             }
             DelegateCommand.BeforeAction = CountCommandUsage;
+            EventAggregator.GetEvent<OpenNestedPaneEvent>().Subscribe(OnPaneOpen);
+        }
+
+        private void OnPaneOpen(OpenNestedPaneEventArgs e)
+        {
+            var ftp = e.Openee as FtpContentViewModel;
+            if (ftp == null) return;
+            if (ServerUsage.ContainsKey(ftp.ServerType))
+            {
+                ServerUsage[ftp.ServerType]++;
+            }
+            else
+            {
+                ServerUsage.Add(ftp.ServerType, 1);
+            }
         }
 
         public void PersistData()

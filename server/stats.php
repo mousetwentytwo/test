@@ -70,6 +70,19 @@ foreach ($_POST as $k => $v) {
 		}
 		continue;
 	}
+	
+	if ($k == 'server_usage') {
+		$rows = explode("\n", trim($v));
+		$c = $_POST['client_id'];
+		$d = date('Y-m-d H:i:s', trim($_POST['date']));
+		foreach($rows as $row) {
+			$r = explode('=', trim($row));
+			$query = sprintf("INSERT INTO godspeed_server_usage (client_id, date, server, count) VALUES ('%s','%s','%s','%s')", $c, $d, $r[0], $r[1]);
+			
+			mysql_query($query);
+		}
+		continue;
+	}
 
 	$columns .= ', `'.mysql_real_escape_string($k).'`';
 	$values .= ', ';
