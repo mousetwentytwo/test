@@ -2288,7 +2288,7 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Do you really want to shutdown {0}?.
+        ///   Looks up a localized string similar to Do you really want to shut down {0}?.
         /// </summary>
         internal static string ShutdownConfirmation {
             get {
@@ -2297,7 +2297,7 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to shutdown your {0} now?.
+        ///   Looks up a localized string similar to Are you sure you want to shut down your {0} now?.
         /// </summary>
         internal static string ShutdownDialogCaption {
             get {
@@ -2342,7 +2342,7 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Shutdown now.
+        ///   Looks up a localized string similar to Shut down now.
         /// </summary>
         internal static string ShutdownDialogOptionNow {
             get {
@@ -2351,7 +2351,7 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Shutdown your PC only.
+        ///   Looks up a localized string similar to Shut down your PC only.
         /// </summary>
         internal static string ShutdownDialogOptionPCOnly {
             get {
@@ -2360,7 +2360,7 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Shutdown your Xbox only.
+        ///   Looks up a localized string similar to Shut down your Xbox only.
         /// </summary>
         internal static string ShutdownDialogOptionXboxOnly {
             get {
@@ -2369,7 +2369,7 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Shutdown PC when done.
+        ///   Looks up a localized string similar to Shut down PC when done.
         /// </summary>
         internal static string ShutdownPc {
             get {
@@ -2378,7 +2378,7 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Shutdown {0} when done.
+        ///   Looks up a localized string similar to Shut down {0} when done.
         /// </summary>
         internal static string ShutdownXbox {
             get {

@@ -978,10 +978,10 @@
     <value>Verify file hash after upload/download</value>
   </data>
   <data name="ShutdownPc" xml:space="preserve">
-    <value>Shutdown PC when done</value>
+    <value>Shut down PC when done</value>
   </data>
   <data name="ShutdownXbox" xml:space="preserve">
-    <value>Shutdown {0} when done</value>
+    <value>Shut down {0} when done</value>
   </data>
   <data name="FtpHashVerificationFailed" xml:space="preserve">
     <value>File hash verification failed. No space left on device?</value>
@@ -1105,7 +1105,7 @@ It will automatically close the FTP connection.</value>
     <value>Shutdown</value>
   </data>
   <data name="ShutdownConfirmation" xml:space="preserve">
-    <value>Do you really want to shutdown {0}?</value>
+    <value>Do you really want to shut down {0}?</value>
   </data>
   <data name="FsdContentScan" xml:space="preserve">
     <value>FSD/F3 Content Scan</value>
@@ -1117,19 +1117,19 @@ It will automatically close the FTP connection.</value>
     <value>Start Content Scan</value>
   </data>
   <data name="ShutdownDialogCaption" xml:space="preserve">
-    <value>Are you sure you want to shutdown your {0} now?</value>
+    <value>Are you sure you want to shut down your {0} now?</value>
   </data>
   <data name="ShutdownDialogMessage" xml:space="preserve">
     <value>If you do nothing, your {0} will shut down automatically in {1} seconds.</value>
   </data>
   <data name="ShutdownDialogOptionNow" xml:space="preserve">
-    <value>Shutdown now</value>
+    <value>Shut down now</value>
   </data>
   <data name="ShutdownDialogOptionPCOnly" xml:space="preserve">
-    <value>Shutdown your PC only</value>
+    <value>Shut down your PC only</value>
   </data>
   <data name="ShutdownDialogOptionXboxOnly" xml:space="preserve">
-    <value>Shutdown your Xbox only</value>
+    <value>Shut down your Xbox only</value>
   </data>
   <data name="ShutdownDialogModeComputer" xml:space="preserve">
     <value>computer</value>

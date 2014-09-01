@@ -76,37 +76,21 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             if (_isIdle) FtpClient.Execute("NOOP");
         }
 
-        internal ResumeCapability Connect(FtpConnection connection)
+        internal ResumeCapability Connect(FtpConnection connection, bool addTraceListener = true)
         {
             _ftpClient = new FtpClient
                 {
                     EnableThreadSafeDataConnections = false,
                     DataConnectionType = connection.UsePassiveMode ? FtpDataConnectionType.PASV : FtpDataConnectionType.PORT,
                     Host = connection.Address, 
-                    Port = connection.Port,
-                    //Credentials = !string.IsNullOrEmpty(connection.Username)
-                    //    ? new NetworkCredential(connection.Username, connection.Password)
-                    //    : new NetworkCredential("anonymous", "no@email.com")
+                    Port = connection.Port
                 };
-            FtpTrace.AddListener(TraceListener);
+            if (addTraceListener) FtpTrace.AddListener(TraceListener);
 
             _connection = connection;
             _ftpClient.BeforeAuthentication += OnBeforeAuthentication;
             _ftpClient.Connected += OnConnected;
             _ftpClient.Connect();
-
-            //lock (Log)
-            //{
-            //    foreach (var log in Log.Where(e => e.StartsWith("220")))
-            //    {
-            //        FtpServerType type;
-            //        if (EnumHelper.TryGetField(log.Trim(), out type))
-            //        {
-            //            ServerType = type;
-            //            break;
-            //        }
-            //    }
-            //}
 
             var resume = ResumeCapability.None;
             var r = FtpClient.Execute("APPE");
@@ -438,7 +422,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public void RestoreConnection()
         {
-            Connect(_connection);
+            Connect(_connection, false);
         }
 
         public bool Verify(string remotePath, string localPath)

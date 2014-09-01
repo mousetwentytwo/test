@@ -217,17 +217,17 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             ChangeDirectory();
         }
 
-        public void ChangeDirectory(string path)
-        {
-            var drive = Drives.First(d => d.Name == path.SubstringBefore(FileManager.Slash));
-            Drive = drive;
+        //public void ChangeDirectory(string path)
+        //{
+        //    var drive = Drives.First(d => d.Name == path.SubstringBefore(FileManager.Slash));
+        //    Drive = drive;
             
-            var model = FileManager.GetItemInfo(path);
-            if (model == null) return;
-            if (path == drive.Path) model.Type = ItemType.Drive;
-            CurrentFolder = new FileSystemItemViewModel(model);
-            ChangeDirectoryCommand.Execute(null);
-        }
+        //    var model = FileManager.GetItemInfo(path);
+        //    if (model == null) return;
+        //    if (path == drive.Path) model.Type = ItemType.Drive;
+        //    CurrentFolder = new FileSystemItemViewModel(model);
+        //    ChangeDirectoryCommand.Execute(null);
+        //}
 
         protected virtual void ChangeDirectory(string message = null, Action callback = null)
         {

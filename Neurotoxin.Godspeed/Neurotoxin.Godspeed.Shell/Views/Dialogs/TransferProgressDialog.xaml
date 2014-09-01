@@ -111,7 +111,7 @@
 
             <CheckBox Grid.Row="0" IsChecked="{Binding IsShutdownXboxEnabled}" Visibility="{Binding IsShutdownSupported, Converter={StaticResource BoolToVis}}"/>
             <CheckBox Grid.Row="1" IsChecked="{Binding IsShutdownPcEnabled}"/>
-            <CheckBox Grid.Row="2" IsChecked="{Binding IsVerificationEnabled}"/>
+            <CheckBox Grid.Row="2" IsChecked="{Binding IsVerificationEnabled}" Visibility="{Binding IsVerificationSupported, Converter={StaticResource BoolToVis}}"/>
             
             <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Path=ShutdownXbox}" Visibility="{Binding IsShutdownSupported, Converter={StaticResource BoolToVis}}" Margin="0,-2,0,0"/>
             <TextBlock Grid.Column="1" Grid.Row="1" Text="{lex:Loc ShutdownPc}" VerticalAlignment="Top" Margin="0,-2,0,0"/>
