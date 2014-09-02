@@ -9,10 +9,12 @@ namespace Neurotoxin.Godspeed.Shell.Events
     public class CloseFtpTraceWindowEventArgs
     {
         public FtpTraceListener TraceListener { get; private set; }
+        public bool IsClosing { get; private set; }
 
-        public CloseFtpTraceWindowEventArgs(FtpTraceListener traceListener)
+        public CloseFtpTraceWindowEventArgs(FtpTraceListener traceListener, bool isClosing)
         {
             TraceListener = traceListener;
+            IsClosing = isClosing;
         }
     }
 }

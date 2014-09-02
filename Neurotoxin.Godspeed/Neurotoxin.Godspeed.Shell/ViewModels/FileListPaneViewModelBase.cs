@@ -484,6 +484,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             lock (_calculationQueue)
             {
                 var item = _calculationQueue.Dequeue();
+                _calculationQueue.ForEach(i => i.IsRefreshing = false);
                 _calculationQueue.Clear();
                 _calculationQueue.Enqueue(item);
             }

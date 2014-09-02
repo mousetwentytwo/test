@@ -12,6 +12,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
     {
         private readonly StringBuilder _stringBuilder = new StringBuilder();
         private readonly FtpTraceListener _traceListener;
+        private bool _isClosing;
 
         private const string LOG = "Log";
         private string _log;
@@ -29,13 +30,26 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             set { _title = value; NotifyPropertyChanged(TITLE); }
         }
 
+        #region ClosingCommand
+
+        public DelegateCommand ClosingCommand { get; private set; }
+
+        private void ExecuteClosingCommand()
+        {
+            if (_isClosing) return;
+            ExecuteCloseCommand(true);
+        }
+
+        #endregion
+
         #region CloseCommand
 
-        public DelegateCommand CloseCommand { get; private set; }
+        public DelegateCommand<bool> CloseCommand { get; private set; }
 
-        private void ExecuteCloseCommand()
+        private void ExecuteCloseCommand(bool isClosing)
         {
-            EventAggregator.GetEvent<CloseFtpTraceWindowEvent>().Publish(new CloseFtpTraceWindowEventArgs(_traceListener));
+            if (!isClosing) _isClosing = true;
+            EventAggregator.GetEvent<CloseFtpTraceWindowEvent>().Publish(new CloseFtpTraceWindowEventArgs(_traceListener, isClosing));
         }
 
         #endregion
@@ -52,7 +66,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             Title = string.Format(Resx.FtpTraceWindowTitle, connectionName);
             _traceListener.LogChanged += TraceListenerOnLogChanged;
 
-            CloseCommand = new DelegateCommand(ExecuteCloseCommand);
+            CloseCommand = new DelegateCommand<bool>(ExecuteCloseCommand);
+            ClosingCommand = new DelegateCommand(ExecuteClosingCommand);
         }
 
         private void TraceListenerOnLogChanged(object sender, LogChangedEventArgs e)

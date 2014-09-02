@@ -800,7 +800,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public override void Dispose()
         {
-            EventAggregator.GetEvent<CloseFtpTraceWindowEvent>().Publish(new CloseFtpTraceWindowEventArgs(FileManager.TraceListener));
+            EventAggregator.GetEvent<CloseFtpTraceWindowEvent>().Publish(new CloseFtpTraceWindowEventArgs(FileManager.TraceListener, false));
             FileManager.Disconnect();
             _doContentScanOn.ForEach(TriggerContentScan);
             if (CurrentFolder != null) Connection.Model.DefaultPath = CurrentFolder.Path;

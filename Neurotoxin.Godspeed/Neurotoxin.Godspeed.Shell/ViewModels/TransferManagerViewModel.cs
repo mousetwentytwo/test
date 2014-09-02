@@ -815,7 +815,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
             if (_isPaused)
             {
-                UIThread.Run(FinishTransfer);
+                UIThread.BeginRun(FinishTransfer);
             }
         }
 

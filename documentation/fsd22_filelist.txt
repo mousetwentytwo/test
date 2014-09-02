@@ -1,3 +1,4 @@
+[fsd 2.2]
 drwxrwxrwx   1 root  root    0 Jul 06 2014 Data
 drwxrwxrwx   1 root  root    0 Jul 06 2014 Media
 drwxrwxrwx   1 root  root    0 Jul 06 2014 Plugins
@@ -5,3 +6,16 @@ drwxrwxrwx   1 root  root    0 Jul 06 2014 Skins
 -rwxrwxrwx   1 root  root    8302592 Jul 06 21:16 Aurora.xex
 -rwxrwxrwx   1 root  root    3210 Jul 06 21:16 live.json
 -rwxrwxrwx   1 root  root    708608 Jul 06 21:16 nxeart
+
+[aurora 0.2]
+-rwxrwxrwx   1 root root      13799424 Jul 11 2011 AvatarAssetPack
+-rwxrwxrwx   1 root root      12337152 Jul 11 2011 Default.xex
+-rwxrwxrwx   1 root root       7185159 Jul 11 2011 UPlayBrowser.xex
+-rwxrwxrwx   1 root root        360448 Jul 11 2011 nxeart
+-rwxrwxrwx   1 root root       8777812 Jul 11 2011 UPlayBrowserMedia.ubf
+drwxrwxrwx   1 root root             0 Nov 22 2005 Locale
+drwxrwxrwx   1 root root             0 Nov 22 2005 Common
+drwxrwxrwx   1 root root             0 Nov 22 2005 Install
+drwxrwxrwx   1 root root             0 Nov 22 2005 media
+-rwxrwxrwx   1 root root      22369748 Sep 02 02:24 nxebg.dds
+-rwxrwxrwx   1 root root       1398228 Nov 19 2012 icon.dds

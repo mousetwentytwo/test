@@ -239,6 +239,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             _userSettingsProvider.UseRemoteCopy = UseRemoteCopy;
             _userSettingsProvider.Language = Language;
             _userSettingsProvider.DisableCustomChrome = DisableCustomChrome;
+            _userSettingsProvider.PersistData();
         }
     }
 }

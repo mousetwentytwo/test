@@ -235,13 +235,13 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     File.Move(postData, Path.Combine(App.PostDirectory, Path.GetFileName(postData)));
                 }
             }
-            this.NotifyProgressFinished();
+            if (cacheStore != null) this.NotifyProgressFinished();
             return cacheStore;
         }
 
         private void MigrateEsentToDatabaseCallback(EsentPersistentDictionary cacheStore, Action<SanityCheckResult> callback, SanityCheckResult result)
         {
-            if (_windowManager.Confirm(Resx.Delete, Resx.DeleteEsentConfirmationMessage)) DeleteEsent(cacheStore);
+            if (cacheStore != null && _windowManager.Confirm(Resx.Delete, Resx.DeleteEsentConfirmationMessage)) DeleteEsent(cacheStore);
             callback.Invoke(result);
         }
 

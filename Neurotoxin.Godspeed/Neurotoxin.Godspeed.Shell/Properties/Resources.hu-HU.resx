@@ -658,10 +658,10 @@
     <value>Távoli Másolás használata NAS és FTP között, ha lehetséges</value>
   </data>
   <data name="TotalFilesTransferred" xml:space="preserve">
-    <value>Másolt fájlok száma</value>
+    <value>Átmásolt fájlok összesen</value>
   </data>
   <data name="TotalBytesTransferred" xml:space="preserve">
-    <value>Másolt bájtok száma</value>
+    <value>Átmásolt bájtok összesen</value>
   </data>
   <data name="TurnOffRemoteCopyAndContinue" xml:space="preserve">
     <value>Távoli Másolás kikapcsolása és folytatás</value>

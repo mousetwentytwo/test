@@ -62,7 +62,8 @@ namespace Neurotoxin.Godspeed.Presentation.Infrastructure
         {
             if (!CanExecute(parameter)) return;
             if (DelegateCommand.BeforeAction != null) DelegateCommand.BeforeAction(_executeAction.Method);
-            _executeAction((T)parameter);
+            var type = typeof (T);
+            _executeAction(type.IsValueType && parameter == null ? default(T) : (T)parameter);
         }
 
         private void OnCanExecuteChanged(object sender, EventArgs args)

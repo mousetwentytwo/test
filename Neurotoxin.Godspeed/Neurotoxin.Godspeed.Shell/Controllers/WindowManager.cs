@@ -317,7 +317,7 @@ namespace Neurotoxin.Godspeed.Shell.Controllers
         {
             if (!_traceWindows.ContainsKey(e.TraceListener)) return;
             var window = _traceWindows[e.TraceListener];
-            window.Close();
+            if (!e.IsClosing) window.Close();
             _traceWindows.Remove(e.TraceListener);
         }
 
