@@ -1,0 +1,35 @@
+﻿help site
+211-SITE Commands
+ Command:  SITE LAUNCH <Path>
+ Description:  Launch a title from within the FTP client.
+ 
+ Command:  SITE MEMORYINFO
+ Description:  Shows the current memory information.
+ 
+ Command:  SITE STORAGEINFO
+ Description:  Shows list of drives and their storage info.
+ 
+ Command:  SITE DRIVEBYTESFREE
+ Description:  Shows the storage info of the drive containing the working path.
+ 
+ Command:  SITE REBOOT
+ Description:  Reboot the Xbox 360 console.
+ 
+ Command:  SITE RESTART
+ Description:  Restart Aurora.
+ 
+ Command:  SITE SHUTDOWN
+ Description:  Shutdown the Xbox 360 console.
+211 END
+
+
+site storageinfo
+211-Storage Space Information
+ Hdd1:  432.4 GB / 460.9 GB [6.2% free]
+ OnBoardMU:  32.0 kB / 451.8 MB [100.0% free]
+ System:  16.0 MB / 16.0 MB [0.0% free]
+ HddX:  177.8 MB / 256.0 MB [30.5% free]
+ SysExt:  136.6 MB / 206.2 MB [33.7% free]
+ Game:  432.4 GB / 460.9 GB [6.2% free]
+211 END
+

@@ -117,7 +117,7 @@
                 </e:Interaction.Triggers>
             </ComboBox>
             <TextBlock Grid.Column="1" Text="{Binding DriveLabel}" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,5,0" />
-            <TextBlock Grid.Column="2" Text="{Binding FreeSpace}" VerticalAlignment="Center" Visibility="{Binding FreeSpace, Converter={StaticResource NotNullOrEmptyConverter}, FallbackValue=Collapsed}" />
+            <TextBlock Grid.Column="2" Text="{Binding FreeSpaceText}" VerticalAlignment="Center" Visibility="{Binding FreeSpaceText, Converter={StaticResource NotNullOrEmptyConverter}, FallbackValue=Collapsed}" />
             
             <ContentControl Grid.Column="2" HorizontalAlignment="Right" Content="{Binding}" ContentTemplateSelector="{StaticResource CloseButtonsTemplateSelector}" />
         </Grid>

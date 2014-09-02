@@ -90,12 +90,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             set { _driveLabel = value; NotifyPropertyChanged(DRIVELABEL); }
         }
 
-        private const string FREESPACE = "FreeSpace";
-        private string _freeSpace;
-        public string FreeSpace
+        private const string FREESPACETEXT = "FreeSpaceText";
+        private string _freeSpaceText;
+        public string FreeSpaceText
         {
-            get { return _freeSpace; }
-            set { _freeSpace = value; NotifyPropertyChanged(FREESPACE); }
+            get { return _freeSpaceText; }
+            set { _freeSpaceText = value; NotifyPropertyChanged(FREESPACETEXT); }
         }
 
         private const string CURRENTFOLDER = "CurrentFolder";
@@ -148,6 +148,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
                 return string.Format(new PluralFormatProvider(), Resx.SizeInfo, selectedSize, totalSize, selectedFileCount, totalFileCount, selectedDirCount, totalDirCount);
             }
+        }
+
+        public long? FreeSpace
+        {
+            get { return FileManager.GetFreeSpace(Drive.Path); }
         }
 
         public ResumeCapability ResumeCapability { get; protected set; }

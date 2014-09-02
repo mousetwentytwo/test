@@ -166,8 +166,17 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         internal void Shutdown()
         {
-            if (!IsFSD) return; //TODO: throw exception?
-            FtpClient.Execute("SHUTDOWN");
+            switch (ServerType)
+            {
+                case FtpServerType.FSD:
+                case FtpServerType.F3:
+                    FtpClient.Execute("SHUTDOWN");
+                    break;
+                case FtpServerType.Aurora:
+                    FtpClient.Execute("SITE SHUTDOWN");
+                    break;
+            }
+            //TODO: default throw exception?
         }
 
         public override IList<FileSystemItem> GetDrives()
@@ -420,6 +429,16 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             _isIdle = true;
         }
 
+        public override long? GetFreeSpace(string drive)
+        {
+            if (ServerType != FtpServerType.Aurora) return null;
+
+            var reply = FtpClient.Execute("SITE DRIVEBYTESFREE");
+            long freespace;
+            if (long.TryParse(reply.Message, out freespace)) return freespace;
+            return null;
+        }
+
         public void RestoreConnection()
         {
             Connect(_connection, false);
@@ -454,6 +473,12 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         public void Execute(string path)
         {
             FtpClient.Execute("EXEC " + path);
+        }
+
+        public Dictionary<string, string> StorageInfo()
+        {
+            var reply = FtpClient.Execute("SITE STORAGEINFO");
+            return reply.InfoMessages.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries).ToDictionary(row => row.SubstringBefore(':').Trim(), row => row.SubstringAfter(':').Trim());
         }
 
         public bool UploadFile(string targetPath, string sourcePath)

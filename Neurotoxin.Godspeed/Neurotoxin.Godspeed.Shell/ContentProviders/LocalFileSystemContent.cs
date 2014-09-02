@@ -204,5 +204,11 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             if (startPosition != 0) stream.Seek(startPosition, SeekOrigin.Begin);
             return stream;
         }
+
+        public override long? GetFreeSpace(string drive)
+        {
+            var driveInfo = DriveInfo.GetDrives().First(d => d.Name == drive);
+            return driveInfo.AvailableFreeSpace;
+        }
     }
 }

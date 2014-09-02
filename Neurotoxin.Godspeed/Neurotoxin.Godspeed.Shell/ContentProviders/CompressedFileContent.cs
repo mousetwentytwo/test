@@ -143,6 +143,11 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             return stream;
         }
 
+        public override long? GetFreeSpace(string drive)
+        {
+            return 0;
+        }
+
         public void Open(string path)
         {
             _archivePath = path;

@@ -1155,4 +1155,7 @@ It will automatically close the FTP connection.</value>
   <data name="DisableNotificationSound" xml:space="preserve">
     <value>Disable notification sound</value>
   </data>
+  <data name="Free" xml:space="preserve">
+    <value>free</value>
+  </data>
 </root>

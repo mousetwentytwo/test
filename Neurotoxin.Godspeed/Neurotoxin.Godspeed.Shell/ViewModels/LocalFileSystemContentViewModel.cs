@@ -148,7 +148,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             var driveInfo = DriveInfo.GetDrives().First(d => d.Name == Drive.Path);
             DriveLabel = string.Format("[{0}]", string.IsNullOrEmpty(driveInfo.VolumeLabel) ? "_NONE_" : driveInfo.VolumeLabel);
-            FreeSpace = String.Format(Resx.LocalFileSystemFreeSpace, driveInfo.AvailableFreeSpace, driveInfo.TotalSize);
+            FreeSpaceText = String.Format(Resx.LocalFileSystemFreeSpace, driveInfo.AvailableFreeSpace, driveInfo.TotalSize);
         }
 
         public override string GetTargetPath(string path)

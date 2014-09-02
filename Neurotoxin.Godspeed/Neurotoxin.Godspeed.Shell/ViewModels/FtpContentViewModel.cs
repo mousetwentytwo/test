@@ -669,16 +669,25 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         protected override void ChangeDirectoryCallback(IList<FileSystemItem> result)
         {
             base.ChangeDirectoryCallback(result);
+            switch (ServerType)
+            {
+                case FtpServerType.PlayStation3:
+                    //PS3 Transfer complete response string
+                    var r = new Regex(string.Format(@"226 Transfer complete \[{0}\] \[ ([0-9]+.*?free) \]", Drive.Path.TrimEnd('/')));
+                    var m = r.Match(FileManager.Log.ElementAt(1));
+                    if (m.Success)
+                    {
+                        //TODO: localize
+                        FreeSpaceText = m.Groups[1].Value;
+                    }
+                    break;
+                case FtpServerType.Aurora:
+                    var storageInfo = FileManager.StorageInfo();
+                    if (storageInfo.ContainsKey(Drive.Name)) FreeSpaceText = storageInfo[Drive.Name].Replace("free", Resx.Free);
+                    break;
+            }
             if (FileManager.ServerType != FtpServerType.PlayStation3) return;
 
-            //PS3 Transfer complete response string
-            var r = new Regex(string.Format(@"226 Transfer complete \[{0}\] \[ ([0-9]+.*?free) \]", Drive.Path.TrimEnd('/')));
-            var m = r.Match(FileManager.Log.ElementAt(1));
-            if (m.Success)
-            {
-                //TODO: localize
-                FreeSpace = m.Groups[1].Value;
-            }
         }
 
         public override string GetTargetPath(string path)

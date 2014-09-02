@@ -48,6 +48,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
         public abstract void CreateFolder(string path);
         public abstract FileSystemItem Rename(string path, string newName);
         public abstract Stream GetStream(string path, FileMode mode, FileAccess access, long startPosition);
+        public abstract long? GetFreeSpace(string drive);
         
         public virtual FileSystemItem GetItemInfo(string path)
         {

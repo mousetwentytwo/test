@@ -163,6 +163,12 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             return stream;
         }
 
+        public override long? GetFreeSpace(string drive)
+        {
+            //TODO: calc unallocated blocks
+            return 0;
+        }
+
         public Account GetAccount()
         {
             if (_stfs.Account == null) _stfs.ExtractAccount();

@@ -1152,4 +1152,7 @@ Ha igen, az FTP kapcsolat automatikusan kerül.</value>
   <data name="DisableNotificationSound" xml:space="preserve">
     <value>Hangjelzés kikapcsolása</value>
   </data>
+  <data name="Free" xml:space="preserve">
+    <value>szabad</value>
+  </data>
 </root>

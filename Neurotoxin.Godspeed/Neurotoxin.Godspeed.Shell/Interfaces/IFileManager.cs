@@ -36,5 +36,6 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
         Stream GetStream(string path, FileMode mode, FileAccess access, long startPosition);
         bool CopyStream(FileSystemItem item, Stream stream, long startPosition = 0, long? byteLimit = null);
         void Abort();
+        long? GetFreeSpace(string drive);
     }
 }

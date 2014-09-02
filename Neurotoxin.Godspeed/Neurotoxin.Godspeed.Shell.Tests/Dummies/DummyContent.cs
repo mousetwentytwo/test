@@ -146,6 +146,12 @@ namespace Neurotoxin.Godspeed.Shell.Tests.Dummies
             return ms;
         }
 
+        public override long? GetFreeSpace(string drive)
+        {
+            //TODO
+            return 0;
+        }
+
         public void AddFile(FileSystemItem item)
         {
             _tree.Insert(item.Path, item);

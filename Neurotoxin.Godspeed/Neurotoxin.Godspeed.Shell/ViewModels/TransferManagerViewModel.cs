@@ -209,7 +209,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             get
             {
                 var ftp = Pane<FtpContentViewModel>();
-                return ftp != null && ftp.IsFSD;
+                return ftp != null && (ftp.IsFSD || ftp.ServerType == FtpServerType.Aurora);
             }
         }
 
@@ -663,41 +663,54 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             RemainingTime = new TimeSpan(0);
 
             TelnetException ex = null;
-            WorkHandler.Run(
-                () =>
-                    {
-                        if (mode == FileOperation.Delete) return RemoteCopyMode.Disabled;
+            WorkHandler.Run(BeforeTransferStart, BeforeTransferStartCallback);
+        }
 
-                        var ftpPane = Pane<FtpContentViewModel>();
-                        var localPane = Pane<LocalFileSystemContentViewModel>();
-                        if (ftpPane != null && localPane != null && localPane.IsNetworkDrive && _userSettingsProvider.UseRemoteCopy)
-                        {
-                            try
-                            {
-                                OpenTelnetSession(localPane, ftpPane);
-                                return SourcePane == ftpPane ? RemoteCopyMode.Download : RemoteCopyMode.Upload;
-                            }
-                            catch (TelnetException exception)
-                            {
-                                ex = exception;
-                            }
-                        }
-                        return RemoteCopyMode.Disabled;
-                    },
-                remoteCopy =>
+        private TransferInitializationResult BeforeTransferStart()
+        {
+            if (UserAction == FileOperation.Delete) return new TransferInitializationResult(RemoteCopyMode.Disabled);
+            var result = new TransferInitializationResult
+                             {
+                                 TargetFreeSpace = TargetPane.FreeSpace
+                             };
+            if (result.TargetFreeSpace == null || result.TargetFreeSpace > TotalBytes)
+            {
+                var ftpPane = Pane<FtpContentViewModel>();
+                var localPane = Pane<LocalFileSystemContentViewModel>();
+                if (ftpPane != null && localPane != null && localPane.IsNetworkDrive && _userSettingsProvider.UseRemoteCopy)
+                {
+                    try
                     {
-                        if (ex != null)
-                        {
-                            var dialog = new RemoteCopyErrorDialog(ex);
-                            if (dialog.ShowDialog() == false) return;
-                            if (dialog.TurnOffRemoteCopy) _userSettingsProvider.UseRemoteCopy = false;
-                        }
-                        _remoteCopy = remoteCopy;
-                        ProgressState = TaskbarItemProgressState.Normal;
-                        EventAggregator.GetEvent<TransferStartedEvent>().Publish(new TransferStartedEventArgs(this));
-                        _elapsedTimeMeter.Restart();
-                        ProcessQueueItem();
-                    });
+                        OpenTelnetSession(localPane, ftpPane);
+                        result.RemoteCopyMode = SourcePane == ftpPane ? RemoteCopyMode.Download : RemoteCopyMode.Upload;
+                    }
+                    catch (TelnetException exception)
+                    {
+                        result.RemoteCopyMode = RemoteCopyMode.Disabled;
+                        result.TelnetException = exception;
+                    }
+                }
+            }
+            return result;
+        }
+
+        private void BeforeTransferStartCallback(TransferInitializationResult result)
+        {
+            if (result.TargetFreeSpace.HasValue && result.TargetFreeSpace <= TotalBytes)
+            {
+                //TODO
+            }
+            if (result.TelnetException != null)
+            {
+                var dialog = new RemoteCopyErrorDialog(result.TelnetException);
+                if (dialog.ShowDialog() == false) return;
+                if (dialog.TurnOffRemoteCopy) _userSettingsProvider.UseRemoteCopy = false;
+            }
+            _remoteCopy = result.RemoteCopyMode;
+            ProgressState = TaskbarItemProgressState.Normal;
+            EventAggregator.GetEvent<TransferStartedEvent>().Publish(new TransferStartedEventArgs(this));
+            _elapsedTimeMeter.Restart();
+            ProcessQueueItem();
         }
 
         internal TransferErrorDialogResult ShowCorrespondingErrorDialog(Exception exception, bool feedbackNeeded = true)

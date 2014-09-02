@@ -890,6 +890,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to free.
+        /// </summary>
+        internal static string Free {
+            get {
+                return ResourceManager.GetString("Free", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Database check.
         /// </summary>
         internal static string FreestyleDatabaseCheck {

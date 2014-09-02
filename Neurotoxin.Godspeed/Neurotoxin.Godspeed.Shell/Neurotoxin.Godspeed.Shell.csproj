@@ -229,6 +229,7 @@
     <Compile Include="Database\QueryBuilder.cs" />
     <Compile Include="Interfaces\IDialog.cs" />
     <Compile Include="Interfaces\ILoginViewModel.cs" />
+    <Compile Include="Models\TransferInitializationResult.cs" />
     <Compile Include="Models\UnityItem.cs" />
     <Compile Include="Models\UnityResponse.cs" />
     <Compile Include="ViewModels\DialogViewModelBase.cs" />
