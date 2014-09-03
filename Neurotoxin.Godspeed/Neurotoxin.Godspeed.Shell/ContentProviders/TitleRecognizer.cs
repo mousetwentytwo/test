@@ -35,7 +35,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             {
                 new RecognitionInformation("^0000000000000000$", Resx.Games, TitleType.SystemDir),
                 new RecognitionInformation("^584E07D2$", Resx.XNAIndiePlayer, TitleType.SystemDir),
-                new RecognitionInformation("^FFFE07C3$", Resx.GamerPictureSingular, TitleType.SystemDir),
+                new RecognitionInformation("^FFFE07C3$", Resx.GamerPicturePlural, TitleType.SystemDir),
                 new RecognitionInformation("^FFFE07D1$", Resx.ProfileSingular, TitleType.SystemDir),
                 new RecognitionInformation("^FFFE07DF$", Resx.AvatarEditor, TitleType.SystemDir),
                 new RecognitionInformation("^F[0-9A-F]{7}$", Resx.SystemData, TitleType.SystemDir),
@@ -329,6 +329,8 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         private byte[] GetProfileData(FileSystemItem item, FileSystemItem cacheItem)
         {
+            if (cacheItem == null) return null;
+
             try
             {
                 var bytes = _fileManager.ReadFileContent(cacheItem.Path);

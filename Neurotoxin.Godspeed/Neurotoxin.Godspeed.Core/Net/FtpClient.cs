@@ -726,6 +726,7 @@ namespace Neurotoxin.Godspeed.Core.Net {
                 }
 
                 m_hashAlgorithms = FtpHashAlgorithm.NONE;
+                _currentWorkingDirectory = null;
                 m_stream.Connect();
 
                 if ((reply = m_stream.GetReply(false)).Success)
@@ -774,7 +775,7 @@ namespace Neurotoxin.Godspeed.Core.Net {
                 }
 
                 // Enable UTF8 if the encoding is ASCII and UTF8 is supported
-                if (m_textEncoding == Encoding.ASCII && HasFeature(FtpCapability.UTF8)) {
+                if (HasFeature(FtpCapability.UTF8)) {
                     // If the server supports UTF8 it should already be enabled and this
                     // command should not matter however there are conflicting drafts
                     // about this so we'll just execute it to be safe. 
@@ -1314,7 +1315,7 @@ namespace Neurotoxin.Godspeed.Core.Net {
         public virtual Stream OpenRead(string path, FtpDataType type, long restart) {
             FtpClient client = null;
             FtpDataStream stream = null;
-            long length = 0;
+            //long length = 0;
 
             try {
                 m_lock.WaitOne();
@@ -1329,20 +1330,20 @@ namespace Neurotoxin.Godspeed.Core.Net {
                 }
 
                 client.SetDataType(type);
-                length = client.GetFileSize(path);
+                //length = client.GetFileSize(path);
                 stream = OpenDataConnection(string.Format("RETR {0}", path.GetFtpPath()), restart);
             }
             finally {
                 m_lock.ReleaseMutex();
             }
 
-            if (stream != null) {
-                if (length > 0)
-                    stream.SetLength(length);
+            //if (stream != null) {
+            //    //if (length > 0)
+            //    //    stream.SetLength(length);
 
-                if (restart > 0)
-                    stream.SetPosition(restart);
-            }
+            //    if (restart > 0)
+            //        stream.SetPosition(restart);
+            //}
 
             return stream;
         }
@@ -1439,7 +1440,7 @@ namespace Neurotoxin.Godspeed.Core.Net {
         public virtual Stream OpenWrite(string path, FtpDataType type) {
             FtpClient client = null;
             FtpDataStream stream = null;
-            long length = 0;
+            //long length = 0;
 
             try {
                 m_lock.WaitOne();
@@ -1454,11 +1455,11 @@ namespace Neurotoxin.Godspeed.Core.Net {
                 }
 
                 client.SetDataType(type);
-                length = client.GetFileSize(path);
+                //length = client.GetFileSize(path);
                 stream = OpenDataConnection(string.Format("STOR {0}", path.GetFtpPath()), 0);
 
-                if (length > 0 && stream != null)
-                    stream.SetLength(length);
+                //if (length > 0 && stream != null)
+                //    stream.SetLength(length);
             }
             finally {
                 m_lock.ReleaseMutex();
@@ -1532,7 +1533,7 @@ namespace Neurotoxin.Godspeed.Core.Net {
         public virtual Stream OpenAppend(string path, FtpDataType type) {
             FtpClient client = null;
             FtpDataStream stream = null;
-            long length = 0;
+            //long length = 0;
 
             try {
                 m_lock.WaitOne();
@@ -1547,13 +1548,13 @@ namespace Neurotoxin.Godspeed.Core.Net {
                 }
 
                 client.SetDataType(type);
-                length = client.GetFileSize(path);
+                //length = client.GetFileSize(path);
                 stream = OpenDataConnection(string.Format("APPE {0}", path.GetFtpPath()), 0);
 
-                if (length > 0 && stream != null) {
-                    stream.SetLength(length);
-                    stream.SetPosition(length);
-                }
+                //if (length > 0 && stream != null) {
+                //    //stream.SetLength(length);
+                //    stream.SetPosition(length);
+                //}
             }
             finally {
                 m_lock.ReleaseMutex();
@@ -1833,7 +1834,6 @@ namespace Neurotoxin.Godspeed.Core.Net {
                                 using (var sr = new StreamReader(ms, Encoding))
                                 {
                                     var text = sr.ReadToEnd().TrimEnd();
-                                    var x = stream.SocketDataAvailable;
                                     FtpTrace.WriteLine(text);
                                     rawlisting = text.Split('\n').ToList();
                                 }
@@ -2162,12 +2162,21 @@ namespace Neurotoxin.Godspeed.Core.Net {
             GetAsyncDelegate<AsyncSetDataType>(ar).EndInvoke(ar);
         }
 
+        private string _currentWorkingDirectory;
+
         /// <summary>
         /// Sets the work directory on the server
         /// </summary>
         /// <param name="path">The path of the directory to change to</param>
         /// <example><code source="..\Examples\SetWorkingDirectory.cs" lang="cs" /></example>
-        public void SetWorkingDirectory(string path) {
+        public void SetWorkingDirectory(string path)
+        {
+            if (path.Contains("Hdd1"))
+            {
+                //Debugger.Break();
+            }
+            if (_currentWorkingDirectory == path) return;
+
             FtpReply reply;
             string ftppath = path.GetFtpPath();
 
@@ -2183,6 +2192,8 @@ namespace Neurotoxin.Godspeed.Core.Net {
             finally {
                 m_lock.ReleaseMutex();
             }
+
+            _currentWorkingDirectory = path;
         }
 
         delegate void AsyncSetWorkingDirectory(string path);

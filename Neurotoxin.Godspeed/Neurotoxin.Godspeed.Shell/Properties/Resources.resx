@@ -960,7 +960,7 @@
     <value>Disable FSD/F3 Content Scan Trigger</value>
   </data>
   <data name="DisableFsdContentScanTriggerMessage" xml:space="preserve">
-    <value>Do you want FSD/F3 Content Scan Trigger to be disabled?</value>
+    <value>Your FSD/F3 WebUI cannot be accessed. Without that the automatic FSD/F3 Content Scan Trigger cannot work. Do you want to turn this feature off?</value>
   </data>
   <data name="DisableOptionNone" xml:space="preserve">
     <value>No</value>
@@ -1157,5 +1157,11 @@ It will automatically close the FTP connection.</value>
   </data>
   <data name="Free" xml:space="preserve">
     <value>free</value>
+  </data>
+  <data name="NotEnoughFreeSpaceOnTargetDevice" xml:space="preserve">
+    <value>Insufficient free space on target device</value>
+  </data>
+  <data name="UnknownSingular" xml:space="preserve">
+    <value>Unknown</value>
   </data>
 </root>

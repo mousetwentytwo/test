@@ -330,7 +330,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             if (m.Success)
             {
                 drive = Drives.SingleOrDefault(d => d.Path == m.Value);
+                //FtpTrace.WriteLine("[DriveExists via FolderExists]");
                 if (drive != null && FileManager.FolderExists(defaultPath)) PathCache.Add(drive, defaultPath);
+                //FtpTrace.WriteLine("[/DriveExists via FolderExists]");
             }
             Drive = drive ?? Drives.First();
 
@@ -644,15 +646,17 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         protected override void ChangeDrive()
         {
+            //FtpTrace.WriteLine("[ChangeDrive]");
             if (!_driveLabelCache.ContainsKey(Drive.Path))
             {
                 var path = String.Format("{0}name.txt", Drive.Path);
                 string label = null;
-                if (FileManager.FileExists(path))
+                try
                 {
                     var bytes = FileManager.ReadFileContent(path);
                     label = String.Format("[{0}]", Encoding.BigEndianUnicode.GetString(bytes));
                 }
+                catch {}
                 _driveLabelCache.Add(Drive.Path, label);
             }
             DriveLabel = _driveLabelCache[Drive.Path];
@@ -785,7 +789,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         public override Queue<QueueItem> PopulateQueue(FileOperation action, IEnumerable<FileSystemItem> selection)
         {
             var queue = base.PopulateQueue(action, selection);
-            CheckQueueForGameDeletion(queue);
+            if (action == FileOperation.Delete) CheckQueueForGameDeletion(queue);
             return queue;
         }
 

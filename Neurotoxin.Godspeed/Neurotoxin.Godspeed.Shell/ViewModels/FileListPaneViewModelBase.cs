@@ -13,8 +13,8 @@ using System.Windows.Input;
 using Microsoft.Practices.Composite;
 using Microsoft.Practices.Unity;
 using Microsoft.Win32;
-using Neurotoxin.Godspeed.Core.Io.Stfs;
 using Neurotoxin.Godspeed.Core.Models;
+using Neurotoxin.Godspeed.Core.Net;
 using Neurotoxin.Godspeed.Presentation.Formatters;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
 using Neurotoxin.Godspeed.Shell.Constants;
@@ -64,6 +64,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             get { return _drive; }
             set
             {
+                //FtpTrace.WriteLine("[Drive setter]");
                 if (IsDriveAccessible(value))
                 {
                     if (CurrentFolder != null) PathCache[_drive] = CurrentFolder.Path;
@@ -79,6 +80,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 }
                 ChangeDrive();
                 NotifyPropertyChanged(DRIVE);
+                //FtpTrace.WriteLine("[/Drive setter]");
             }
         }
 
@@ -1067,7 +1069,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         protected void Initialize()
         {
+            //FtpTrace.WriteLine("[Initialize]");
             Drives = FileManager.GetDrives().Select(d => new FileSystemItemViewModel(d)).ToObservableCollection();
+            //FtpTrace.WriteLine("[/Initialize]");
         }
 
         public override void Dispose()
@@ -1119,6 +1123,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             try
             {
+                //FtpTrace.WriteLine("[IsDriveAccessible: DriveIsReady]");
                 return FileManager.DriveIsReady(drive.Path);
             }
             catch (Exception ex)
@@ -1136,6 +1141,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 var path = PathCache[Drive];
                 var clearPath = new Regex(@"^(.*)[\\/].*(:[\\/]).*$");
                 path = clearPath.Replace(path, "$1");
+                //FtpTrace.WriteLine("[PathCache hit]");
                 var model = FileManager.GetItemInfo(path);
                 if (path == Drive.Path) model.Type = ItemType.Drive;
                 CurrentFolder = model != null ? new FileSystemItemViewModel(model) : Drive;
@@ -1144,7 +1150,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             {
                 CurrentFolder = Drive;
             }
-            
+            //FtpTrace.WriteLine("[ChangeDrive] " + CurrentFolder.Path);
             ChangeDirectoryCommand.Execute(null);
         }
 

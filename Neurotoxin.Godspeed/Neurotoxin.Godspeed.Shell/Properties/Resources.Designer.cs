@@ -665,7 +665,7 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Do you want FSD/F3 Content Scan Trigger to be disabled?.
+        ///   Looks up a localized string similar to Your FSD/F3 WebUI cannot be accessed. Without that the automatic FSD/F3 Content Scan Trigger cannot work. Do you want to turn this feature off?.
         /// </summary>
         internal static string DisableFsdContentScanTriggerMessage {
             get {
@@ -1681,6 +1681,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         internal static string NoNewTitlesFound {
             get {
                 return ResourceManager.GetString("NoNewTitlesFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insufficient free space on target device.
+        /// </summary>
+        internal static string NotEnoughFreeSpaceOnTargetDevice {
+            get {
+                return ResourceManager.GetString("NotEnoughFreeSpaceOnTargetDevice", resourceCulture);
             }
         }
         
@@ -2788,6 +2797,15 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         internal static string UnknownProfile {
             get {
                 return ResourceManager.GetString("UnknownProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown.
+        /// </summary>
+        internal static string UnknownSingular {
+            get {
+                return ResourceManager.GetString("UnknownSingular", resourceCulture);
             }
         }
         

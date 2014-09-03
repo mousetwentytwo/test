@@ -317,7 +317,16 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             {
                 case ItemType.Directory:
                 case ItemType.Link:
-                    TargetPane.CreateFolder(targetPath);
+                    if (TargetPane.CreateFolder(targetPath) == TransferResult.Ok)
+                    {
+                        var i = 1;
+                        QueueItem qi;
+                        while (i < _queue.Count && (qi = _queue.ElementAt(i)) != null && qi.FileSystemItem.Path.StartsWith(item.Path))
+                        {
+                            qi.CopyAction = CopyAction.Overwrite;
+                            i++;
+                        }
+                    }
                     result = TransferResult.Ok;
                     break;
                 case ItemType.File:
@@ -647,8 +656,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             _queue = queue;
             _paneCache.Clear();
+            _isPaused = false;
             _isAborted = false;
+            _isContinued = false;
             _deleteAll = false;
+            _skipAll = null;
             UserAction = mode;
             TransferAction = mode == FileOperation.Copy ? GetCopyActionText() : Resx.ResourceManager.GetString(mode.ToString());
             _rememberedCopyAction = CopyAction.CreateNew;
@@ -662,7 +674,6 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             ElapsedTime = new TimeSpan(0);
             RemainingTime = new TimeSpan(0);
 
-            TelnetException ex = null;
             WorkHandler.Run(BeforeTransferStart, BeforeTransferStartCallback);
         }
 
@@ -698,7 +709,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             if (result.TargetFreeSpace.HasValue && result.TargetFreeSpace <= TotalBytes)
             {
-                //TODO
+                WindowManager.ShowMessage(Resx.IOError, Resx.NotEnoughFreeSpaceOnTargetDevice);
+                return;
             }
             if (result.TelnetException != null)
             {

@@ -870,7 +870,7 @@
     <value>Automatikus FSD/F3 tartalomfrissítés kikapcsolása</value>
   </data>
   <data name="DisableFsdContentScanTriggerMessage" xml:space="preserve">
-    <value>Ki szeretnéd kapcsolni az automatikus FSD/F3 tartalomfrissítést?</value>
+    <value>Az FSD/F3 webszerverét nem sikerült elérni. Anélkül az automatikus FSD/F3 tartalomfrissítés nem tud működni. Ki szeretnéd kapcsolni ezt a funkciót?</value>
   </data>
   <data name="DisableOptionNone" xml:space="preserve">
     <value>Nem</value>
@@ -1154,5 +1154,11 @@ Ha igen, az FTP kapcsolat automatikusan kerül.</value>
   </data>
   <data name="Free" xml:space="preserve">
     <value>szabad</value>
+  </data>
+  <data name="NotEnoughFreeSpaceOnTargetDevice" xml:space="preserve">
+    <value>Az adott eszközön nincs elég szabad hely a fájlok átmásolásához.</value>
+  </data>
+  <data name="UnknownSingular" xml:space="preserve">
+    <value>Ismeretlen</value>
   </data>
 </root>
