@@ -1178,7 +1178,13 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 return;
             }
 
-            WorkHandler.Run(() => FileManager.GetItemInfo(itemPath, ItemType.File), item =>
+            WorkHandler.Run(() =>
+            {
+                var item = FileManager.GetItemInfo(itemPath, ItemType.File);
+                TitleRecognizer.RecognizeType(item);
+                return item;
+            }, 
+            item =>
                 {
                     if (item == null) throw new ApplicationException(string.Format(Resx.ItemNotExistsOnPath, itemPath));
                     var vm = new FileSystemItemViewModel(item);

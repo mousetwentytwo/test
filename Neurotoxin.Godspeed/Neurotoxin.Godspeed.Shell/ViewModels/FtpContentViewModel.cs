@@ -339,20 +339,20 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             if (!IsContentScanTriggerAvailable) return;
 
             //HACK: for testing purposes only
-            if (FileManager.ServerType == FtpServerType.IIS)
-            {
-                ScanFolders = new Dictionary<int, FsdScanPath>()
-                {
-                    {1, new FsdScanPath
-                    {
-                        PathId = 1,
-                        Path = "/Hdd1/Content/0000000000000000/",
-                        ScanDepth = 2,
-                        Drive = "Hdd1"
-                    }}
-                };
-                return;
-            }
+            //if (FileManager.ServerType == FtpServerType.IIS)
+            //{
+            //    ScanFolders = new Dictionary<int, FsdScanPath>()
+            //    {
+            //        {1, new FsdScanPath
+            //        {
+            //            PathId = 1,
+            //            Path = "/Hdd1/Content/0000000000000000/",
+            //            ScanDepth = 2,
+            //            Drive = "Hdd1"
+            //        }}
+            //    };
+            //    return;
+            //}
 
             var username = Connection.HttpUsername;
             var password = Connection.HttpPassword;
