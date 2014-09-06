@@ -10,7 +10,12 @@
 
 	$name = './charts/stability.png';
 	
-	$query = "SELECT exit_code AS `key`, COUNT(exit_code) AS `value` FROM `godspeed_stats` GROUP BY exit_code ORDER BY COUNT(exit_code) DESC";
+	$w = '';
+	if (isset($_GET['version'])) {
+		$w = "where version like '".$_GET['version']."%'";
+	}
+	
+	$query = "SELECT exit_code AS `key`, COUNT(exit_code) AS `value` FROM `godspeed_stats` $w GROUP BY exit_code ORDER BY COUNT(exit_code) DESC";
 	$rs = mysql_query($query);
 	if (!mysql_query($query)) {
 		echo mysql_error();
@@ -36,6 +41,9 @@
 	);	
 	
 	$title = 'Stability';
+	if (isset($_GET['version'])) {
+		$title .= ' (Version '.$_GET['version'].')';
+	}
 
 	pie($data, $title, $name, $colors);
 

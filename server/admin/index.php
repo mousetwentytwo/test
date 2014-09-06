@@ -9,9 +9,12 @@
 			<img src="occurance.php?col=os&crop=29&keyr=os.txt"/>
 			<img src="occurance.php?col=culture"/>
 			<img src="occurance.php?col=country_name"/>
-			<img src="occurance.php?col=exit_code"/>
+			<img src="servers.php"/>
 			<img src="stability.php"/>
+			<img src="stability.php?version=1.1"/>
 			<img src="participation.php"/>
+			<img src="install.php"/>
+			<img src="version_usage.php"/>
 			<img src="usage.php"/>
 			<img src="clients.php"/>
 			<img src="recognition.php"/>

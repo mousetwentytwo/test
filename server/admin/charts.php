@@ -88,3 +88,48 @@ function stacked($data, $title, $filename) {
 	
 	$bar->Render($filename);
 }
+
+function stacked2($data, $title, $filename) {
+
+	// Dataset definition 
+	$DataSet = new pData;
+	$values = $data['values'];
+	$keys = $data['keys'];
+	
+	$bar = new pChart(1040,230);
+	
+	for ($i = 0; $i < count($values); $i++) {
+		$DataSet->AddPoint($values[$i], "Serie".($i+1));
+		if ($i != 0) {
+			$DataSet->AddSerie("Serie".($i+1));
+			$DataSet->SetSerieName($keys[$i-1], "Serie".($i+1));
+		}
+	}
+	$DataSet->SetAbsciseLabelSerie("Serie1");
+	$DataSet->SetXAxisFormat("date");
+
+	// Initialise the graph
+	$bar->setDateFormat("M.d");	
+	$bar->setFontProperties("Fonts/consola.ttf",8);
+	$bar->setGraphArea(80,30,1020,200);
+	$bar->drawFilledRoundedRectangle(2,2,1037,227,5,240,240,240);
+	$bar->drawRoundedRectangle(0,0,1039,229,5,230,230,230);
+	$bar->loadColorPalette('chartcolors.txt', ',');
+	$bar->drawGraphArea(255,255,255,TRUE);
+	$bar->drawScale($DataSet->GetData(),$DataSet->GetDataDescription(),SCALE_ADDALL,150,150,150,TRUE,0,2,TRUE);
+	$bar->drawGrid(4,TRUE,230,230,230,50);
+
+	// Draw the 0 line
+	$bar->setFontProperties("Fonts/consola.ttf",6);
+	$bar->drawTreshold(0,143,55,72,TRUE,TRUE);
+
+	// Draw the bar graph
+	$bar->drawStackedBarGraph($DataSet->GetData(),$DataSet->GetDataDescription(),100);
+	$bar->drawLegend(85,35,$DataSet->GetDataDescription(),255,255,255);
+	
+	// Finish the graph
+	$bar->setFontProperties("Fonts/MankSans.ttf",10);
+	$bar->drawTitle(10,20,$title,100,100,100);
+	
+	$bar->Render($filename);
+}
