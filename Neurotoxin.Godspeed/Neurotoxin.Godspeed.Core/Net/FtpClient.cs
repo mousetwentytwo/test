@@ -1114,7 +1114,9 @@ namespace Neurotoxin.Godspeed.Core.Net {
                     throw new FtpCommandException(reply);
             }
 
-            if (!(reply = Execute(command)).Success)
+            reply = Execute(command);
+            stream.CommandStatus = reply;
+            if (!reply.Success)
             {
                 stream.Close();
                 throw new FtpCommandException(reply);
@@ -1134,7 +1136,6 @@ namespace Neurotoxin.Godspeed.Core.Net {
 
             stream.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, SocketKeepAlive);
             stream.ReadTimeout = DataConnectionReadTimeout;
-            stream.CommandStatus = reply;
 
             return stream;
         }

@@ -218,7 +218,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             } 
             else
             {
-                WindowManager.ShowMessage(Resx.ConnectionFailed, string.Format(Resx.CantConnectToFtp, connectionName));
+                WindowManager.ShowMessage(Resx.ConnectionFailed, string.Format(Resx.CantConnectToFtp, connectionName, exception.Message));
             }
             ConnectedFtp = null;
         }

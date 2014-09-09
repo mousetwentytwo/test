@@ -20,6 +20,8 @@ namespace Neurotoxin.Godspeed.Shell.Constants
         [StringValue("Microsoft FTP Service")]
         IIS,
         [StringValue("FtpDll Ready")]
-        Aurora
+        Aurora,
+        [StringValue("xFTPDll 0.1 powered by SlimFTPd")]
+        FtpDll
     }
 }

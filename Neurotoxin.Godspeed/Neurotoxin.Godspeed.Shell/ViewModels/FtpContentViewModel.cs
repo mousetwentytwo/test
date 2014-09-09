@@ -76,6 +76,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             get { return FileManager.ServerType; }
         }
 
+        public bool IsShutdownSupported
+        {
+            get { return IsFSD || ServerType == FtpServerType.Aurora || ServerType == FtpServerType.FtpDll; }
+        }
+
         #region Command overrides
 
         private void ExecuteCloseCommand()
@@ -93,7 +98,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             if (CurrentRow != null && CurrentRow.IsXex)
             {
-                if (WindowManager.Confirm(Resx.LaunchXex, Resx.LaunchXexConfirmation)) ExecuteLaunchCommand();
+                if (ServerType == FtpServerType.FtpDll || WindowManager.Confirm(Resx.LaunchXex, Resx.LaunchXexConfirmation)) ExecuteLaunchCommand();
                 return;
             }
             base.ExecuteChangeDirectoryCommand(cmdParam);
@@ -125,7 +130,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public bool CanExecuteLaunchCommand()
         {
-            return FileManager.IsFSD && CurrentRow != null && (CurrentRow.IsGame || CurrentRow.IsXex);
+            return CurrentRow != null && (CurrentRow.IsGame && FileManager.IsFSD ||
+                                          CurrentRow.IsXex && (FileManager.IsFSD || ServerType == FtpServerType.FtpDll));
         }
 
         public void ExecuteLaunchCommand()
@@ -169,7 +175,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             if (CurrentRow.IsXex)
             {
                 FileManager.Execute(CurrentRow.Path);
-                ExecuteCloseCommand();
+                if (ServerType != FtpServerType.FtpDll) ExecuteCloseCommand();
             }
         }
 
@@ -322,7 +328,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             Initialize();
             var r = new Regex("^/[A-Z0-9_-]+/", RegexOptions.IgnoreCase);
             var defaultPath = string.IsNullOrEmpty(Connection.Model.DefaultPath)
-                                  ? FileManager.ServerType == FtpServerType.PlayStation3 ? "/dev_hdd0/" : "/Hdd1/"
+                                  ? GetDefaultDrive()
                                   : Connection.Model.DefaultPath;
 
             var m = r.Match(defaultPath);
@@ -374,6 +380,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             switch (GetScanFolders(username, password))
             {
                 case HttpStatusCode.OK:
+                    //TODO: start status timer
                     return;
                 case HttpStatusCode.Unauthorized:
                     bool result;
@@ -438,6 +445,19 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         }
                     }
                     break;
+            }
+        }
+
+        private string GetDefaultDrive()
+        {
+            switch (ServerType)
+            {
+                case FtpServerType.PlayStation3:
+                    return "/dev_hdd0/";
+                case FtpServerType.FtpDll:
+                    return "/fHdd";
+                default:
+                    return "/Hdd1/";
             }
         }
 
@@ -550,7 +570,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         default:
                             throw new NotSupportedException("Invalid server type: " + ServerType);
                     }
-
+                    //TODO: set status based upon responseString
 
                     return HttpStatusCode.OK;
                 }

@@ -209,7 +209,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             get
             {
                 var ftp = Pane<FtpContentViewModel>();
-                return ftp != null && (ftp.IsFSD || ftp.ServerType == FtpServerType.Aurora);
+                return ftp != null && ftp.IsShutdownSupported;
             }
         }
 

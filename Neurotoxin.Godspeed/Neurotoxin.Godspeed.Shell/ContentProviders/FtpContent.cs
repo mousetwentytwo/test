@@ -121,6 +121,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                     case FtpServerType.F3:
                     case FtpServerType.XeXMenu:
                     case FtpServerType.DashLaunch:
+                    case FtpServerType.FtpDll:
                         ftp.Credentials = new NetworkCredential("xbox", "xbox");
                         break;
                     default:
@@ -174,6 +175,9 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
                     break;
                 case FtpServerType.Aurora:
                     FtpClient.Execute("SITE SHUTDOWN");
+                    break;
+                case FtpServerType.FtpDll:
+                    FtpClient.Execute("SHDN");
                     break;
             }
             //TODO: default throw exception?

@@ -699,7 +699,7 @@
     <value>Nem sikerült megnyitni a következőt: {0}</value>
   </data>
   <data name="CantConnectToFtp" xml:space="preserve">
-    <value>Nem sikerült kapcsolódni a(z) {0} nevű FTP-hez</value>
+    <value>Nem sikerült kapcsolódni a(z) {0} nevű FTP-hez! ({1})</value>
   </data>
   <data name="CannotReestablishConnection" xml:space="preserve">
     <value>Az újrakapcsolódás sikertelen. (Hibaüzenet: {0})</value>

@@ -259,7 +259,7 @@ namespace Neurotoxin.Godspeed.Shell.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Can&apos;t connect to {0}.
+        ///   Looks up a localized string similar to Can&apos;t connect to {0}: {1}.
         /// </summary>
         internal static string CantConnectToFtp {
             get {

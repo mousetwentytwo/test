@@ -119,6 +119,13 @@ namespace Neurotoxin.Godspeed.Core.Net
             return raw;
         }
 
+        public bool ReadRawLine(out string raw)
+        {
+            raw = ReadRawLine();
+            var line = raw.Trim().ToUpper();
+            return line.EndsWith("END") || line.StartsWith("220 ");
+        }
+
         public void SetSocketOption(SocketOptionLevel level, SocketOptionName name, bool value)
         {
             _socketStream.SetSocketOption(level, name, value);
@@ -151,7 +158,7 @@ namespace Neurotoxin.Godspeed.Core.Net
             {
                 var sb = new StringBuilder();
                 string line;
-                while (!(line = ReadRawLine()).TrimEnd().ToUpper().EndsWith("END"))
+                while (!ReadRawLine(out line))
                 {
                     if (sb.Length != 0) sb.Append(Environment.NewLine);
                     sb.Append(line);
@@ -161,7 +168,7 @@ namespace Neurotoxin.Godspeed.Core.Net
 
             return reply;
         }
-        
+
         public void Close()
         {
             _streamReader.Close();

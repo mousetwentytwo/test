@@ -477,7 +477,7 @@
     <value>Cannot reestablish connection. (Error: {0})</value>
   </data>
   <data name="CantConnectToFtp" xml:space="preserve">
-    <value>Can't connect to {0}</value>
+    <value>Can't connect to {0}: {1}</value>
   </data>
   <data name="CantOpenFile" xml:space="preserve">
     <value>Can't open {0}</value>
