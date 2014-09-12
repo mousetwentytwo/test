@@ -38,9 +38,9 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         DelegateCommand PauseCommand { get; }
         DelegateCommand ContinueCommand { get; }
 
-        void Copy(IFileListPaneViewModel sourcePane, IFileListPaneViewModel targetPane);
-        void Move(IFileListPaneViewModel sourcePane, IFileListPaneViewModel targetPane);
-        void Delete(IFileListPaneViewModel sourcePane, IEnumerable<FileSystemItem> queue = null);
+        void Copy(IFileListPaneViewModel sourcePane, IFileListPaneViewModel targetPane, IEnumerable<FileSystemItem> queue);
+        void Move(IFileListPaneViewModel sourcePane, IFileListPaneViewModel targetPane, IEnumerable<FileSystemItem> queue);
+        void Delete(IFileListPaneViewModel sourcePane, IEnumerable<FileSystemItem> queue);
         void InitializeTransfer(Queue<QueueItem> queue, FileOperation mode);
         void AbortTransfer();
     }

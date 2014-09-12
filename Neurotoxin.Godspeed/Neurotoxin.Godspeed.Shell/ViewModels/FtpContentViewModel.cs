@@ -455,7 +455,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 case FtpServerType.PlayStation3:
                     return "/dev_hdd0/";
                 case FtpServerType.FtpDll:
-                    return "/fHdd";
+                    return "/fHdd/";
                 default:
                     return "/Hdd1/";
             }
@@ -728,7 +728,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             try
             {
-                CheckPathForSpecialChars(path); 
+                CheckPathForSpecialChars(path);
                 return base.CreateFolder(path);
             }
             catch (Exception ex)
@@ -776,7 +776,10 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void CheckPathForSpecialChars(string path)
         {
-            //TODO: error message might be not ok
+            var i = path.LastIndexOf(FileManager.Slash);
+            if (path.Substring(i + 1).Length > 42)
+                throw new TransferException(TransferErrorType.NameIsTooLong, Resx.NameIsTooLong);
+            //if (FileManager.IsUTF8Supported) return;
             if (new Regex(@"[^\x20-\x7f]").IsMatch(path))
                 throw new TransferException(TransferErrorType.NotSupporterCharactersInPath, Resx.SpecialCharactersNotSupported);
         }

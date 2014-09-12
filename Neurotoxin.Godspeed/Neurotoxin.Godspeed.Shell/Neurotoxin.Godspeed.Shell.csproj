@@ -178,7 +178,10 @@
     <Compile Include="Database\OrmLiteLogFactory.cs" />
     <Compile Include="Database\OrmLiteLogger.cs" />
     <Compile Include="Database\SqliteOrmLiteDialectProviderEx.cs" />
+    <Compile Include="Events\CanExecuteFileOperationEvent.cs" />
+    <Compile Include="Events\ExecuteFileOperationEvent.cs" />
     <Compile Include="Events\MigrationFinishedEvent.cs" />
+    <Compile Include="Exceptions\FsdMissingContentItemCellException.cs" />
     <Compile Include="Extensions\ProgressViewModelExtensions.cs" />
     <Compile Include="Interfaces\IDbContext.cs" />
     <Compile Include="ContentProviders\CompressedFileContent.cs" />
@@ -232,6 +235,7 @@
     <Compile Include="Database\QueryBuilder.cs" />
     <Compile Include="Interfaces\IDialog.cs" />
     <Compile Include="Interfaces\ILoginViewModel.cs" />
+    <Compile Include="Models\FsdContentItemCells.cs" />
     <Compile Include="Models\TransferInitializationResult.cs" />
     <Compile Include="Models\UnityItem.cs" />
     <Compile Include="Models\UnityResponse.cs" />
@@ -477,6 +481,10 @@
     <Page Include="Views\Dialogs\TreeSelectionDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\FileListPaneContextMenu.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\FtpTraceWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

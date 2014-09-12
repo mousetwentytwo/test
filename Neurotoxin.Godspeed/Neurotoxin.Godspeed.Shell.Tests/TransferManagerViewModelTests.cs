@@ -69,7 +69,7 @@ namespace Neurotoxin.Godspeed.Shell.Tests
             var b = GetDummyContentViewModel("Target");
             a.SelectAllCommand.Execute(null);
             var selection = a.SelectedItems.Select(i => i.Model).ToList();
-            vm.Copy(a, b);
+            vm.Copy(a, b, null);
 
             var sb = new StringBuilder();
             foreach (var aitem in selection)
@@ -96,7 +96,7 @@ namespace Neurotoxin.Godspeed.Shell.Tests
             var finish = new List<TransferFinishedEventArgs>();
             EventAggregator.GetEvent<TransferFinishedEvent>().Subscribe(finish.Add);
 
-            vm.Copy(a, b);
+            vm.Copy(a, b, null);
 
             Assert.IsTrue(change.Count > 0, "TransferProgressChangedEvent should be triggered at least one time.");
             Assert.AreEqual(1, finish.Count, "TransferFinishedEvent should be triggered exactly one time.");
@@ -112,7 +112,7 @@ namespace Neurotoxin.Godspeed.Shell.Tests
             a.CurrentRow = selection;
             a.ToggleSelectionCommand.Execute(ToggleSelectionMode.Insert);
             Assert.AreEqual(1, a.SelectedItems.Count(), "One item should be selected");
-            vm.Copy(a, b);
+            vm.Copy(a, b, null);
 
             Assert.IsTrue(b.Items.Any(i => i.Name == selection.Name), string.Format("The file {0} should have been copied", selection.Name));
 
@@ -127,7 +127,7 @@ namespace Neurotoxin.Godspeed.Shell.Tests
             var finish = new List<TransferFinishedEventArgs>();
             EventAggregator.GetEvent<TransferFinishedEvent>().Subscribe(finish.Add);
 
-            vm.Copy(a, b);
+            vm.Copy(a, b, null);
 
             Assert.AreEqual(1, errorOccured, "A file exists error should have been occurred exactly one time.");
             Assert.AreEqual(1, finish.Count, "TransferFinishedEvent should be triggered exactly one time.");
@@ -165,7 +165,7 @@ namespace Neurotoxin.Godspeed.Shell.Tests
             var finish = new List<TransferFinishedEventArgs>();
             EventAggregator.GetEvent<TransferFinishedEvent>().Subscribe(finish.Add);
             //then we try to do the proper way and see if it appends it
-            vm.Copy(a, b);
+            vm.Copy(a, b, null);
 
             Assert.AreEqual(1, errorOccured, "A file exists error should have been occurred exactly one time.");
             Assert.AreEqual(1, finish.Count, "TransferFinishedEvent should be triggered exactly one time.");
@@ -220,7 +220,7 @@ namespace Neurotoxin.Godspeed.Shell.Tests
             var finish = new List<TransferFinishedEventArgs>();
             EventAggregator.GetEvent<TransferFinishedEvent>().Subscribe(finish.Add);
             //then we try to do the proper way and see if it appends it
-            vm.Copy(a, b);
+            vm.Copy(a, b, null);
 
             Assert.AreEqual(1, errorOccured, "A file exists error should have been occurred exactly one time.");
             Assert.AreEqual(1, finish.Count, "TransferFinishedEvent should be triggered exactly one time.");

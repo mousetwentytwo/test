@@ -59,6 +59,11 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             get { return ServerType == FtpServerType.F3 || ServerType == FtpServerType.FSD; } // || ServerType == FtpServerType.IIS
         }
 
+        public bool IsUTF8Supported
+        {
+            get { return FtpClient.Capabilities.HasFlag(FtpCapability.UTF8); }
+        }
+
         public Stack<string> Log
         {
             get { return TraceListener.Log; }

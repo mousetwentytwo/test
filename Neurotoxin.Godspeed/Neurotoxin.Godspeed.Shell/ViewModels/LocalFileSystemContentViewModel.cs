@@ -39,9 +39,35 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             get { return false; }
         }
 
+        #region OpenWithExplorerCommand
+
+        public DelegateCommand OpenWithExplorerCommand { get; private set; }
+
+        private bool CanExecuteOpenWithExplorerCommand()
+        {
+            return true;
+        }
+
+        private void ExecuteOpenWithExplorerCommand()
+        {
+            switch (CurrentRow.Type)
+            {
+                case ItemType.Directory:
+                case ItemType.File:
+                    Process.Start(CurrentRow.Path);
+                    break;
+                case ItemType.Link:
+                    ChangeDirectoryCommand.Execute(null);
+                    break;
+            }
+        }
+
+        #endregion
+
         public LocalFileSystemContentViewModel()
         {
             EventAggregator.GetEvent<UsbDeviceChangedEvent>().Subscribe(OnUsbDeviceChanged);
+            OpenWithExplorerCommand = new DelegateCommand(ExecuteOpenWithExplorerCommand, CanExecuteOpenWithExplorerCommand);
         }
 
         public override void LoadDataAsync(LoadCommand cmd, LoadDataAsyncParameters cmdParam, Action<PaneViewModelBase> success = null, Action<PaneViewModelBase, Exception> error = null)
@@ -111,8 +137,14 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                                 UseShellExecute = false
                             });
                             var r = new Regex(string.Format("{0} \\[(.*?)\\]", Regex.Escape(CurrentFolder.Name)), RegexOptions.IgnoreCase | RegexOptions.Singleline);
-                            var m = r.Match(p.StandardOutput.ReadToEnd());
-                            path = m.Groups[1].Value;
+                            string line;
+                            while ((line = p.StandardOutput.ReadLine()) != null)
+                            {
+                                var m = r.Match(line);
+                                if (!m.Success) continue;
+                                path = m.Groups[1].Value;
+                                break;
+                            }
                             p.Close();
                         }
                         catch

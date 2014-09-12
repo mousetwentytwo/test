@@ -306,26 +306,11 @@
                         <StackPanel Orientation="Horizontal">
                             <Image Source="{Binding Thumbnail}" Width="16" Height="16" Margin="2,0,3,0" SnapsToDevicePixels="True"
                                    RenderOptions.BitmapScalingMode="NearestNeighbor"/>
-                            <TextBlock FontWeight="Bold" x:Name="Primary">
-                                    <TextBlock.Text>
-                                        <MultiBinding Converter="{StaticResource TitleConverter}">
-                                            <Binding Path="Title" />
-                                            <Binding Path="Name" />
-                                            <Binding Path="Type" />
-                                        </MultiBinding>
-                                    </TextBlock.Text>
-                            </TextBlock>
+                            <TextBlock FontWeight="Bold" x:Name="Primary" Text="{Binding Converter={StaticResource TitleConverter}}"/>
                             <Image Source="/Resources/fileaccesserror.png" Width="11" Height="16" Margin="0" 
                                         Visibility="{Binding IsLocked, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}"
                                         ToolTip="{Binding LockMessage}" />
-                            <TextBlock Opacity="0.4" x:Name="Secondary">
-                                    <TextBlock.Text>
-                                        <MultiBinding Converter="{StaticResource NameConverter}">
-                                            <Binding Path="Title" />
-                                            <Binding Path="Name" />
-                                        </MultiBinding>
-                                    </TextBlock.Text>
-                            </TextBlock>
+                            <TextBlock Opacity="0.4" x:Name="Secondary" Text="{Binding Converter={StaticResource NameConverter}}"/>
                         </StackPanel>
                         <DataTemplate.Triggers>
                             <DataTrigger Binding="{Binding IsSelected}" Value="True">

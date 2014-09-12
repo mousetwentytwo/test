@@ -169,7 +169,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
             var selection = new List<FileSystemItem>();
             GetSelectionFromTree(SelectionTree, selection);
-            _transferManager.Delete(_parent, selection);
+            EventAggregator.GetEvent<ExecuteFileOperationEvent>().Publish(new ExecuteFileOperationEventArgs(FileOperation.Delete, _parent, selection));
             ExecuteCloseCommand();
         }
 
@@ -223,9 +223,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #endregion
 
-        public FreestyleDatabaseCheckerViewModel(ITransferManagerViewModel transferManager, FtpContentViewModel parent)
+        public FreestyleDatabaseCheckerViewModel(FtpContentViewModel parent)
         {
-            _transferManager = transferManager;
             _parent = parent;
             CloseCommand = new DelegateCommand(ExecuteCloseCommand);
             CleanUpCommand = new DelegateCommand(ExecuteCleanUpCommand);
@@ -275,9 +274,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 UIThread.Run(() => IsIndetermine = false);
                 foreach (var row in rows)
                 {
-                    var cells = row.SelectNodes("td")
-                                   .Select((c, i) => new { key = (FsdContentItemProperty)i, value = c.InnerText.Trim() })
-                                   .ToDictionary(k => k.key, k => k.value);
+                    var cells = new FsdContentItemCells(row.SelectNodes("td"));
 
                     var titleIdInt = Int32.Parse(cells[FsdContentItemProperty.TitleId]);
                     if (titleIdInt != 0)

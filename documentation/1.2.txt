@@ -1,0 +1,2 @@
+* FIXED Issue #509: Null reference exception in FTP CloseDataStream
+* ADDED: DashLaunch FTPdll plugin support

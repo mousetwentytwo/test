@@ -14,7 +14,6 @@ using Microsoft.Practices.Composite;
 using Microsoft.Practices.Unity;
 using Microsoft.Win32;
 using Neurotoxin.Godspeed.Core.Models;
-using Neurotoxin.Godspeed.Core.Net;
 using Neurotoxin.Godspeed.Presentation.Formatters;
 using Neurotoxin.Godspeed.Presentation.Infrastructure.Constants;
 using Neurotoxin.Godspeed.Shell.Constants;
@@ -265,28 +264,20 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             lock (_queueLock)
             {
                 _queue = new Queue<FileSystemItem>();
-                var sw = new Stopwatch();
-                sw.Start();
                 foreach (var item in result.Where(item => item.TitleType != TitleType.Unknown && !TitleRecognizer.MergeWithCachedEntry(item)))
                 {
                     _queue.Enqueue(item);
                 }
-                sw.Stop();
-                Debug.WriteLine("[CD] Enqueued {0}: {1}", _queue.Count, sw.Elapsed);
 
+                var viewModels = result.Select(c => new FileSystemItemViewModel(c)).ToList();
                 if (CurrentFolder.Type != ItemType.Drive)
                 {
-                    result.Insert(0, new FileSystemItem
-                        {
-                            Name = Strings.UpDirectory,
-                            Type = CurrentFolder.Type,
-                            Date = CurrentFolder.Date,
-                            Path = CurrentFolder.Path,
-                            Thumbnail = ResourceManager.GetContentByteArray("/Resources/up.png")
-                        });
+                    var clone = CurrentFolder.Clone();
+                    clone.IsUpDirectory = true;
+                    viewModels.Insert(0, clone);
                 }
 
-                SortContent(result.Select(c => new FileSystemItemViewModel(c)));
+                SortContent(viewModels);
                 NotifyPropertyChanged(SIZEINFO);
 
                 if (_queue.Count > 0)
@@ -978,7 +969,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 {
                     var type = parentPath == Drive.Path ? ItemType.Drive : ItemType.Directory;
                     var folder = FileManager.GetItemInfo(parentPath, type, false);
-                    return new FileSystemItemViewModel(folder);
+                    if (folder != null) return new FileSystemItemViewModel(folder);
                 }
 
                 WindowManager.ShowMessage(Resx.IOError, string.Format(Resx.ItemNotExistsOnPath, parentPath));
@@ -1026,6 +1017,24 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #endregion
 
+        #region FileOperationCommand
+
+        public DelegateCommand<FileOperation> FileOperationCommand { get; private set; }
+
+        private bool CanExecuteFileOperationCommand(FileOperation action)
+        {
+            var e = new CanExecuteFileOperationEventArgs(this);
+            if (action == FileOperation.Copy || action == FileOperation.Move) EventAggregator.GetEvent<CanExecuteFileOperationEvent>().Publish(e);
+            return !e.Cancelled && CurrentRow != null;
+        }
+
+        private void ExecuteFileOperationCommand(FileOperation action)
+        {
+            EventAggregator.GetEvent<ExecuteFileOperationEvent>().Publish(new ExecuteFileOperationEventArgs(action, this, new List<FileSystemItem> { CurrentRow.Model }));
+        }
+
+        #endregion
+
         protected FileListPaneViewModelBase()
         {
             FileManager = Container.Resolve<T>();
@@ -1054,6 +1063,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             UpCommand = new DelegateCommand(ExecuteUpCommand, CanExecuteUpCommand);
             CancelCommand = new DelegateCommand(ExecuteCancelCommand);
             SelectDriveByInitialLetterCommand = new DelegateCommand<EventInformation<KeyEventArgs>>(ExecuteSelectDriveByInitialLetterCommand);
+            FileOperationCommand = new DelegateCommand<FileOperation>(ExecuteFileOperationCommand, CanExecuteFileOperationCommand);
 
             Items = new ObservableCollection<FileSystemItemViewModel>();
             ResumeCapability = ResumeCapability.Both;
@@ -1143,6 +1153,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 path = clearPath.Replace(path, "$1");
                 //FtpTrace.WriteLine("[PathCache hit]");
                 var model = FileManager.GetItemInfo(path);
+                TitleRecognizer.RecognizeType(model);
                 if (path == Drive.Path) model.Type = ItemType.Drive;
                 CurrentFolder = model != null ? new FileSystemItemViewModel(model) : Drive;
             }
@@ -1167,6 +1178,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             SaveThumbnailCommand.RaiseCanExecuteChanged();
             RenameTitleCommand.RaiseCanExecuteChanged();
             RenameFileSystemItemCommand.RaiseCanExecuteChanged();
+            FileOperationCommand.RaiseCanExecuteChanged();
         }
 
         public void GetItemViewModel(string itemPath)
@@ -1181,7 +1193,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             WorkHandler.Run(() =>
             {
                 var item = FileManager.GetItemInfo(itemPath, ItemType.File);
-                TitleRecognizer.RecognizeType(item);
+                if (item != null) TitleRecognizer.RecognizeType(item);
                 return item;
             }, 
             item =>
@@ -1190,6 +1202,16 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     var vm = new FileSystemItemViewModel(item);
                     RecognitionInner(item, i => PublishItemViewModel(vm), null);
                 });
+        }
+
+        public void Recognize(FileSystemItemViewModel item)
+        {
+            try
+            {
+                TitleRecognizer.RecognizeTitle(item.Model);
+                item.NotifyModelChanges();
+            }
+            catch {}
         }
 
         private void RecognitionStart()

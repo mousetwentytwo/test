@@ -21,8 +21,8 @@ namespace Neurotoxin.Godspeed.Shell.Interfaces
 
         DelegateCommand<EventInformation<KeyEventArgs>> SwitchPaneCommand { get; }
         DelegateCommand EditCommand { get; }
-        DelegateCommand CopyCommand { get; }
-        DelegateCommand MoveCommand { get; }
+        DelegateCommand<IEnumerable<FileSystemItem>> CopyCommand { get; }
+        DelegateCommand<IEnumerable<FileSystemItem>> MoveCommand { get; }
         DelegateCommand NewFolderCommand { get; }
         DelegateCommand<IEnumerable<FileSystemItem>> DeleteCommand { get; }
         DelegateCommand<UserMessageCommandParameter> OpenUserMessageCommand { get; }

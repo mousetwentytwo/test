@@ -155,36 +155,36 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         #region CopyCommand
 
-        public DelegateCommand CopyCommand { get; private set; }
+        public DelegateCommand<IEnumerable<FileSystemItem>> CopyCommand { get; private set; }
 
-        private bool CanExecuteCopyCommand()
+        private bool CanExecuteCopyCommand(IEnumerable<FileSystemItem> queue)
         {
             return TargetPane != null && SourcePane != null && SourcePane.HasValidSelection && !SourcePane.IsBusy &&
                    !TargetPane.IsBusy && !TargetPane.IsReadOnly && !SourcePane.IsInEditMode;
         }
 
-        private void ExecuteCopyCommand()
+        private void ExecuteCopyCommand(IEnumerable<FileSystemItem> queue)
         {
             if (!ConfirmCommand(FileOperation.Copy, SourcePane.SelectedItems.Count() > 1)) return;
-            _transferManager.Copy(SourcePane, TargetPane);
+            _transferManager.Copy(SourcePane, TargetPane, queue);
         }
 
         #endregion
 
         #region MoveCommand
 
-        public DelegateCommand MoveCommand { get; private set; }
+        public DelegateCommand<IEnumerable<FileSystemItem>> MoveCommand { get; private set; }
 
-        private bool CanExecuteMoveCommand()
+        private bool CanExecuteMoveCommand(IEnumerable<FileSystemItem> queue)
         {
             return TargetPane != null && SourcePane != null && SourcePane.HasValidSelection && !SourcePane.IsBusy &&
                    !TargetPane.IsBusy && !TargetPane.IsReadOnly && !SourcePane.IsReadOnly && !SourcePane.IsInEditMode;
         }
 
-        private void ExecuteMoveCommand()
+        private void ExecuteMoveCommand(IEnumerable<FileSystemItem> queue)
         {
             if (!ConfirmCommand(FileOperation.Move, SourcePane.SelectedItems.Count() > 1)) return;
-            _transferManager.Move(SourcePane, TargetPane);
+            _transferManager.Move(SourcePane, TargetPane, queue);
         }
 
         #endregion
@@ -331,8 +331,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
             SwitchPaneCommand = new DelegateCommand<EventInformation<KeyEventArgs>>(ExecuteSwitchPaneCommand, CanExecuteSwitchPaneCommand);
             EditCommand = new DelegateCommand(ExecuteEditCommand, CanExecuteEditCommand);
-            CopyCommand = new DelegateCommand(ExecuteCopyCommand, CanExecuteCopyCommand);
-            MoveCommand = new DelegateCommand(ExecuteMoveCommand, CanExecuteMoveCommand);
+            CopyCommand = new DelegateCommand<IEnumerable<FileSystemItem>>(ExecuteCopyCommand, CanExecuteCopyCommand);
+            MoveCommand = new DelegateCommand<IEnumerable<FileSystemItem>>(ExecuteMoveCommand, CanExecuteMoveCommand);
             NewFolderCommand = new DelegateCommand(ExecuteNewFolderCommand, CanExecuteNewFolderCommand);
             DeleteCommand = new DelegateCommand<IEnumerable<FileSystemItem>>(ExecuteDeleteCommand, CanExecuteDeleteCommand);
             OpenUserMessageCommand = new DelegateCommand<UserMessageCommandParameter>(ExecuteOpenUserMessageCommand);
@@ -343,6 +343,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             EventAggregator.GetEvent<ActivePaneChangedEvent>().Subscribe(OnActivePaneChanged);
             EventAggregator.GetEvent<RaiseCanExecuteChangesEvent>().Subscribe(OnRaiseCanExecuteChanges);
             EventAggregator.GetEvent<NotifyUserMessageEvent>().Subscribe(OnNotifyUserMessage);
+            EventAggregator.GetEvent<ExecuteFileOperationEvent>().Subscribe(OnExecuteFileOperation);
+            EventAggregator.GetEvent<CanExecuteFileOperationEvent>().Subscribe(OnCanExecuteFileOperation);
         }
 
         public void Initialize()
@@ -430,6 +432,36 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         private void OnNotifyUserMessage(NotifyUserMessageEventArgs e)
         {
             UIThread.Run(() => NotifyUserMessage(e));
+        }
+
+        private void OnExecuteFileOperation(ExecuteFileOperationEventArgs e)
+        {
+            switch (e.Action)
+            {
+                case FileOperation.Copy:
+                    //ensure that e.SourcePane == SourcePane
+                    _transferManager.Copy(SourcePane, TargetPane, e.Items);
+                    break;
+                case FileOperation.Move:
+                    //ensure that e.SourcePane == SourcePane
+                    _transferManager.Move(SourcePane, TargetPane, e.Items);
+                    break;
+                case FileOperation.Delete:
+                    _transferManager.Delete(e.SourcePane, e.Items);
+                    break;
+            }
+        }
+
+        private void OnCanExecuteFileOperation(CanExecuteFileOperationEventArgs e)
+        {
+            IFileListPaneViewModel target = null;
+            if (e.Sender == LeftPane) target = RightPane as IFileListPaneViewModel;
+            if (e.Sender == RightPane) target = LeftPane as IFileListPaneViewModel;
+
+            if (target == null || target.IsReadOnly)
+            {
+                e.Cancelled = true;
+            }
         }
 
         private void NotifyUserMessage(NotifyUserMessageEventArgs e)

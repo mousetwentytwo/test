@@ -52,7 +52,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             {
                 if (_thumbnail == null)
                 {
-                    var bytes = _model.Thumbnail;
+                    var bytes = IsUpDirectory ? ResourceManager.GetContentByteArray("/Resources/up.png") : _model.Thumbnail;
                     if (bytes == null)
                     {
                         switch (Type)
@@ -127,11 +127,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             set { _isSelected = value; NotifyPropertyChanged(ISSELECTED); }
         }
 
-        public bool IsUpDirectory
-        {
-            get { return Name == Strings.UpDirectory; }
-            set { if (value) Name = Strings.UpDirectory; }
-        }
+        public bool IsUpDirectory { get; set; }
 
         public bool IsCached
         {
@@ -203,6 +199,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         public FileSystemItemViewModel(FileSystemItem model)
         {
+            if (model == null) throw new ArgumentNullException("model");
             _model = model;
         }
 
@@ -217,6 +214,11 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             NotifyPropertyChanged(ISPROFILE);
             NotifyPropertyChanged(ISXEX);
             NotifyPropertyChanged(SIZE);
+        }
+
+        public FileSystemItemViewModel Clone()
+        {
+            return new FileSystemItemViewModel(Model.Clone());
         }
     }
 }

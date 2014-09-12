@@ -989,6 +989,9 @@
   <data name="SpecialCharactersNotSupported" xml:space="preserve">
     <value>This FTP server does not support special characters in file and folder names!</value>
   </data>
+  <data name="NameIsTooLong" xml:space="preserve">
+    <value>On Xbox the file and folder names length cannot exceed 42 characters!</value>
+  </data>
   <data name="FsdContentScanTrigger" xml:space="preserve">
     <value>FSD/F3 Content Scan Trigger</value>
   </data>

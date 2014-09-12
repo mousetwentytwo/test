@@ -1,21 +1,26 @@
 ﻿using System;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
+using Neurotoxin.Godspeed.Shell.ViewModels;
 
 namespace Neurotoxin.Godspeed.Shell.Converters
 {
-    public class NameConverter : IMultiValueConverter
+    public class NameConverter : IValueConverter
     {
-        public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (values[0] == DependencyProperty.UnsetValue || values[1] == DependencyProperty.UnsetValue) return null;
-            var title = (string)values[0];
-            var name = (string)values[1];
+            var item = value as FileSystemItemViewModel;
+            if (item == null) return null;
+            var title = item.Title;
+            var name = item.Name;
 
-            return name == title ? null : (name != null && title != null ? string.Format(" [{0}]", name) : null);
+            return name == title || item.IsUpDirectory
+                ? null
+                : (name != null && title != null ? string.Format(" [{0}]", name) : null);
         }
 
-        public object[] ConvertBack(object value, Type[] targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }

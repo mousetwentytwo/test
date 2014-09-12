@@ -8,9 +8,12 @@ using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
 using Neurotoxin.Godspeed.Presentation.Extensions;
 using Neurotoxin.Godspeed.Presentation.Infrastructure;
+using Neurotoxin.Godspeed.Shell.Constants;
+using Neurotoxin.Godspeed.Shell.ContentProviders;
 using Neurotoxin.Godspeed.Shell.Events;
 using Neurotoxin.Godspeed.Shell.Interfaces;
 using System.Linq;
+using Neurotoxin.Godspeed.Shell.ViewModels;
 
 namespace Neurotoxin.Godspeed.Shell.Views
 {
@@ -101,6 +104,16 @@ namespace Neurotoxin.Godspeed.Shell.Views
             box.SelectAll();
             box.Focus();
             box.ScrollToVerticalOffset(10);
+        }
+
+        private void OnContextMenuOpening(object sender, ContextMenuEventArgs e)
+        {
+            var row = (DataGridRow)sender;
+            var item = (FileSystemItemViewModel) row.DataContext;
+            if (item.Model.RecognitionState == RecognitionState.NotRecognized)
+            {
+                ((IFileListPaneViewModel)DataContext).Recognize(item);
+            }
         }
     }
 }

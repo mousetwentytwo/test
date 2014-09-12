@@ -284,26 +284,25 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             EventAggregator.GetEvent<ShowCorrespondingErrorEvent>().Subscribe(OnShowCorrespondingError);
         }
 
-        public void Copy(IFileListPaneViewModel sourcePane, IFileListPaneViewModel targetPane)
+        public void Copy(IFileListPaneViewModel sourcePane, IFileListPaneViewModel targetPane, IEnumerable<FileSystemItem> queue)
         {
             SourcePane = sourcePane;
             TargetPane = targetPane;
-            AsyncJob(() => SourcePane.PopulateQueue(FileOperation.Copy), queue => InitializeTransfer(queue, FileOperation.Copy), PopulationError);
+            AsyncJob(() => SourcePane.PopulateQueue(FileOperation.Copy, queue), q => InitializeTransfer(q, FileOperation.Copy), PopulationError);
         }
 
-        public void Move(IFileListPaneViewModel sourcePane, IFileListPaneViewModel targetPane)
+        public void Move(IFileListPaneViewModel sourcePane, IFileListPaneViewModel targetPane, IEnumerable<FileSystemItem> queue)
         {
             SourcePane = sourcePane;
             TargetPane = targetPane;
-            AsyncJob(() => SourcePane.PopulateQueue(FileOperation.Copy), queue => InitializeTransfer(queue, FileOperation.Move), PopulationError);
+            AsyncJob(() => SourcePane.PopulateQueue(FileOperation.Copy, queue), q => InitializeTransfer(q, FileOperation.Move), PopulationError);
         }
 
-        public void Delete(IFileListPaneViewModel sourcePane, IEnumerable<FileSystemItem> queue = null)
+        public void Delete(IFileListPaneViewModel sourcePane, IEnumerable<FileSystemItem> queue)
         {
             SourcePane = sourcePane;
-            AsyncJob(() => SourcePane.PopulateQueue(FileOperation.Delete, queue), 
-                      q => InitializeTransfer(q, FileOperation.Delete), 
-                      PopulationError);    
+            TargetPane = null;
+            AsyncJob(() => SourcePane.PopulateQueue(FileOperation.Delete, queue), q => InitializeTransfer(q, FileOperation.Delete), PopulationError);    
         }
 
         private OperationResult ExecuteCopy(QueueItem queueitem, CopyAction? action, string rename)
@@ -591,7 +590,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     RenameExistingFile((TransferException)exception, CopyAction.Rename, ProcessQueueItem, ProcessError);
                     break;
                 case ErrorResolutionBehavior.Skip:
-                    BytesTransferred += _queue.Peek().FileSystemItem.Size ?? 0 - _currentFileBytesTransferred;
+                    if (_queue != null) BytesTransferred += _queue.Peek().FileSystemItem.Size ?? 0 - _currentFileBytesTransferred;
                     ProcessSuccess(new OperationResult(TransferResult.Skipped));
                     break;
                 case ErrorResolutionBehavior.Cancel:
@@ -750,6 +749,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     break;
                 case TransferErrorType.WriteAccessError:
                 case TransferErrorType.NotSupporterCharactersInPath:
+                case TransferErrorType.NameIsTooLong:
                     {
                         if (_skipAll != null)
                         {
@@ -757,18 +757,29 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         }
                         else
                         {
-                            var sourceFile = _queue.Peek().FileSystemItem;
-                            var flags = CopyAction.Rename;
-                            if (IsResumeSupported && sourceFile.Size > transferException.TargetFileSize) flags |= CopyAction.Resume;
-                            if (exceptionType == TransferErrorType.WriteAccessError) flags = flags | CopyAction.Overwrite | CopyAction.OverwriteOlder;
-                            var sourcePath = sourceFile.Path;
-                            var targetPath = transferException.TargetFile;
-                            var r = WindowManager.ShowWriteErrorDialog(sourcePath, targetPath, ~flags, () =>
-                                                                                                           {
-                                                                                                               SourcePane.GetItemViewModel(sourcePath);
-                                                                                                               TargetPane.GetItemViewModel(targetPath);
-                                                                                                           });
-                            if (r != null) result = r;
+                            if (_queue == null)
+                            {
+                                WindowManager.ShowMessage(Resx.IOError, exception.Message);
+                            }
+                            else
+                            {
+                                var sourceFile = _queue.Peek().FileSystemItem;
+                                var flags = CopyAction.Rename;
+                                if (exceptionType == TransferErrorType.WriteAccessError)
+                                {
+                                    flags = flags | CopyAction.Overwrite | CopyAction.OverwriteOlder;
+                                    if (IsResumeSupported && sourceFile.Size > transferException.TargetFileSize) flags |= CopyAction.Resume;
+                                }
+                                var sourcePath = sourceFile.Path;
+                                var targetPath = transferException.TargetFile;
+                                //TODO: exception type dependent title, message and item display
+                                var r = WindowManager.ShowWriteErrorDialog(sourcePath, targetPath, ~flags, () =>
+                                {
+                                    SourcePane.GetItemViewModel(sourcePath);
+                                    if (targetPath != null) TargetPane.GetItemViewModel(targetPath);
+                                });
+                                if (r != null) result = r;
+                            }
                         }
                     }
                     break;
@@ -925,7 +936,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
 
         private void PopulationError(Exception ex)
         {
-            WindowManager.ShowErrorMessage(new SomethingWentWrongException(Resx.PopulationFailed, ex));
+            WindowManager.ShowErrorMessage(new SomethingWentWrongException(string.Format(Resx.PopulationFailed, ex.Message), ex));
         }
 
         private string RemoteChangeDirectory(string path)
