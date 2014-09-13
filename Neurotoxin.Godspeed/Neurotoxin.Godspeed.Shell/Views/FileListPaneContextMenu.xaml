@@ -10,9 +10,12 @@
     <constants:OpenStfsPackageMode x:Key="Repair">Repair</constants:OpenStfsPackageMode>
 
     <ContextMenu x:Key="FileListPaneContextMenu">
-        <MenuItem Header="{Binding ComputedName}" FontWeight="Bold"
-                  Command="{Binding Source={StaticResource ViewModel}, Path=Data.OpenWithExplorerCommand}"/>
-        
+        <MenuItem Command="{Binding Source={StaticResource ViewModel}, Path=Data.OpenWithExplorerCommand}">
+            <MenuItem.Header>
+                <TextBlock Text="{Binding ComputedName}" FontWeight="Bold" MaxWidth="400" TextTrimming="CharacterEllipsis"/>
+            </MenuItem.Header>
+        </MenuItem>
+
         <MenuItem Header="{lex:LocText Neurotoxin.Godspeed.Shell:Resources:RecognizeAgain}" Command="{Binding Source={StaticResource ViewModel}, Path=Data.RefreshTitleCommand}">
             <MenuItem.Icon>
                 <controls:GreyableImage Source="/Resources/refresh.png" Width="16" Height="16" SnapsToDevicePixels="True" />

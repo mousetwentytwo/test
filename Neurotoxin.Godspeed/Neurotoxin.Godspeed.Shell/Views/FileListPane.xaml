@@ -4,7 +4,6 @@
              xmlns:e="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              xmlns:inf="clr-namespace:Neurotoxin.Godspeed.Presentation.Infrastructure;assembly=Neurotoxin.Godspeed.Presentation"
              xmlns:vc="clr-namespace:Neurotoxin.Godspeed.Shell.Views.Controls"
-             xmlns:constants="clr-namespace:Neurotoxin.Godspeed.Shell.Constants" 
              xmlns:s="clr-namespace:Neurotoxin.Godspeed.Shell.Views.Selectors"
              xmlns:lex="http://wpflocalizeextension.codeplex.com"
              lex:LocalizeDictionary.DesignCulture="en-US"
@@ -46,7 +45,26 @@
                             </DataTemplate>
                         </s:CloseButtonsTemplateSelector.CompressedFileTemplate>
                     </s:CloseButtonsTemplateSelector>
-                    <s:CellEditingTemplateSelector x:Key="CellEditingTemplateSelector">
+                    <s:CellEditingTemplateSelector x:Key="TitleCellTemplateSelector" SelectorMember="DisplayColumnMode" TitleTemplate="{StaticResource FileSystemItemTitleTemplate}">
+                        <s:CellEditingTemplateSelector.NameTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="{Binding Thumbnail}" Width="16" Height="16" Margin="2,0,3,0" SnapsToDevicePixels="True" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                                    <TextBlock x:Name="Primary" FontWeight="Bold" Text="{Binding Converter={StaticResource NameConverter}, ConverterParameter={StaticResource True}}"
+                                               ToolTip="{Binding ComputedName}"/>
+                                    <Image Source="/Resources/fileaccesserror.png" Width="11" Height="16" Margin="0" 
+                                           Visibility="{Binding IsLocked, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}"
+                                           ToolTip="{Binding LockMessage}" />
+                                </StackPanel>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                        <Setter TargetName="Primary" Property="Foreground" Value="Red" />
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </s:CellEditingTemplateSelector.NameTemplate>
+                    </s:CellEditingTemplateSelector>
+                    <s:CellEditingTemplateSelector x:Key="CellEditingTemplateSelector" SelectorMember="EditColumnMode">
                         <s:CellEditingTemplateSelector.TitleTemplate>
                             <DataTemplate>
                                 <Grid Background="Transparent">
@@ -149,8 +167,8 @@
                   ClipboardCopyMode="None" 
                   BorderBrush="{StaticResource NormalBorderBrush}">
             <DataGrid.Columns>
-                <DataGridTemplateColumn Header="{lex:LocText Neurotoxin.Godspeed.Shell:Resources:Name}" SortMemberPath="ComputedName" Width="*" IsReadOnly="True" 
-                                        CellEditingTemplateSelector="{StaticResource CellEditingTemplateSelector}" CellTemplate="{StaticResource FileSystemItemTitleTemplate}"/>
+                <DataGridTemplateColumn Header="{Binding Source={StaticResource ViewModel}, Path=Data.TitleColumnHeader}" SortMemberPath="ComputedName" Width="*" IsReadOnly="True"
+                                        CellEditingTemplateSelector="{StaticResource CellEditingTemplateSelector}" CellTemplateSelector="{StaticResource TitleCellTemplateSelector}"/>
                 <DataGridTextColumn Header="{lex:LocText Neurotoxin.Godspeed.Shell:Resources:Size}" SortMemberPath="ComputedSize" Width="80" IsReadOnly="True">
                     <DataGridTextColumn.Binding>
                         <MultiBinding Converter="{StaticResource SizeConverter}">

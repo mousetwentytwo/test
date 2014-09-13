@@ -1210,8 +1210,14 @@ namespace Neurotoxin.Godspeed.Core.Net {
                 if (!(reply = Execute("REST {0}", restart)).Success)
                     throw new FtpCommandException(reply);
             }
+            reply = Execute(command);
+            // the command status is used to determine
+            // if a reply needs to be read from the server
+            // when the stream is closed so always set it
+            // otherwise things can get out of sync.
+            stream.CommandStatus = reply;
 
-            if (!(reply = Execute(command)).Success)
+            if (!reply.Success)
             {
                 stream.Close();
                 throw new FtpCommandException(reply);
@@ -1221,11 +1227,6 @@ namespace Neurotoxin.Godspeed.Core.Net {
             if (DataConnectionEncryption && EncryptionMode != FtpEncryptionMode.None)
                 stream.ActivateEncryption(Host, ClientCertificates.Count > 0 ? ClientCertificates : null);
 
-            // the command status is used to determine
-            // if a reply needs to be read from the server
-            // when the stream is closed so always set it
-            // otherwise things can get out of sync.
-            stream.CommandStatus = reply;
 
             return stream;
         }

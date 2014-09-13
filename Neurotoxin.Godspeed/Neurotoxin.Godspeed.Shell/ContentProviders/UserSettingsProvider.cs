@@ -129,12 +129,13 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public FileListPaneSettings LeftPaneFileListPaneSettings
         {
-            get { return new FileListPaneSettings(_userSettings.LeftPaneDirectory, _userSettings.LeftPaneSortByField, (ListSortDirection)_userSettings.LeftPaneSortDirection); }
+            get { return new FileListPaneSettings(_userSettings.LeftPaneDirectory, _userSettings.LeftPaneSortByField, (ListSortDirection)_userSettings.LeftPaneSortDirection, (ColumnMode)_userSettings.LeftPaneDisplayColumnMode); }
             set
             {
                 _userSettings.LeftPaneDirectory = value.Directory;
                 _userSettings.LeftPaneSortByField = value.SortByField;
                 _userSettings.LeftPaneSortDirection = (int)value.SortDirection;
+                _userSettings.LeftPaneDisplayColumnMode = (int)value.DisplayColumnMode;
             }
         }
 
@@ -146,12 +147,13 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
 
         public FileListPaneSettings RightPaneFileListPaneSettings
         {
-            get { return new FileListPaneSettings(_userSettings.RightPaneDirectory, _userSettings.RightPaneSortByField, (ListSortDirection)_userSettings.RightPaneSortDirection); }
+            get { return new FileListPaneSettings(_userSettings.RightPaneDirectory, _userSettings.RightPaneSortByField, (ListSortDirection)_userSettings.RightPaneSortDirection, (ColumnMode)_userSettings.RightPaneDisplayColumnMode); }
             set 
             { 
                 _userSettings.RightPaneDirectory = value.Directory;
                 _userSettings.RightPaneSortByField = value.SortByField;
                 _userSettings.RightPaneSortDirection = (int)value.SortDirection;
+                _userSettings.RightPaneDisplayColumnMode = (int)value.DisplayColumnMode;
             }
         }
         public bool? DisableUserStatisticsParticipation

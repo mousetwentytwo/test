@@ -178,7 +178,15 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                 db.CreateTableIfNotExists<IgnoredMessage>();
                 db.CreateTableIfNotExists<Statistics>();
                 db.CreateTableIfNotExists<UserSettings>();
-                return db.Count<UserSettings>() == 1;
+                var userSettings = db.Get<UserSettings>().FirstOrDefault();
+                if (userSettings == null) return false;
+                if (userSettings.Version == 1)
+                {
+                    userSettings.Version = 2;
+                    db.DropAndCreateTable<UserSettings>();
+                    db.Insert(userSettings);
+                }
+                return true;
             }
         }
 

@@ -140,6 +140,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="Constants\ColumnMode.cs" />
     <Compile Include="Constants\DeleteConfirmationResult.cs" />
     <Compile Include="Constants\ItemState.cs" />
     <Compile Include="Constants\ConnectionImage.cs" />

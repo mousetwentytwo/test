@@ -338,10 +338,34 @@ namespace Neurotoxin.Godspeed.Shell.Database.Models
             }
         }
 
+        private int _leftPaneDisplayColumnMode;
+
+        public int LeftPaneDisplayColumnMode
+        {
+            get { return _leftPaneDisplayColumnMode; }
+            set
+            {
+                _leftPaneDisplayColumnMode = value;
+                SetDirtyFlag("LeftPaneDisplayColumnMode");
+            }
+        }
+
+        private int _rightPaneDisplayColumnMode;
+
+        public int RightPaneDisplayColumnMode
+        {
+            get { return _rightPaneDisplayColumnMode; }
+            set
+            {
+                _rightPaneDisplayColumnMode = value;
+                SetDirtyFlag("RightPaneDisplayColumnMode");
+            }
+        }
+
         public UserSettings()
         {
             ClientId = Guid.NewGuid();
-            Version = 1;
+            Version = 2;
             UseVersionChecker = true;
             FsdContentScanTrigger = (int) Constants.FsdContentScanTrigger.AfterUpload;
 

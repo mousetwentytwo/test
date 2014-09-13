@@ -133,6 +133,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
         }
 
+        private const string TITLECOLUMNHEADER = "TitleColumnHeader";
+        public string TitleColumnHeader
+        {
+            get { return Resx.ResourceManager.GetString(Settings.DisplayColumnMode.ToString()); }
+        }
+
         private const string SIZEINFO = "SizeInfo";
         public string SizeInfo
         {
@@ -162,6 +168,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             get { return SelectedItems.Any() || CurrentRow != null && !CurrentRow.IsUpDirectory; }
         }
+
+        public ColumnMode DisplayColumnMode
+        {
+            get { return Settings.DisplayColumnMode; }
+        }
+        public ColumnMode EditColumnMode { get; private set; }
 
         public abstract bool IsReadOnly { get; }
 
@@ -499,6 +511,12 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             var e = cmdParam.EventArgs;
             var column = e.Column;
             e.Handled = true;
+            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control) && column.SortMemberPath == "ComputedName")
+            {
+                column.SortDirection = column.SortDirection == ListSortDirection.Ascending ? ListSortDirection.Descending : ListSortDirection.Ascending;
+                Settings.DisplayColumnMode = Settings.DisplayColumnMode == ColumnMode.Title ? ColumnMode.Name : ColumnMode.Title;
+                NotifyPropertyChanged(TITLECOLUMNHEADER);
+            }
             Settings.SortByField = column.SortMemberPath;
             Settings.SortDirection = column.SortDirection == ListSortDirection.Ascending ? ListSortDirection.Descending : ListSortDirection.Ascending;
             var selection = CurrentRow;
@@ -517,7 +535,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             if (content == null) return;
 
             var x = content.OrderByDescending(p => p.Type);
-            if (Settings != null) x = x.ThenByProperty(Settings.SortByField, Settings.SortDirection);
+            var sortBy = Settings.DisplayColumnMode == ColumnMode.Name && Settings.SortByField == "ComputedName" ? "Name" : Settings.SortByField;
+            if (Settings != null) x = x.ThenByProperty(sortBy, Settings.SortDirection);
             var list = x.ToList();
             var up = list.FirstOrDefault(item => item.IsUpDirectory);
             if (up != null)
@@ -821,7 +840,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             if (row == null) return;
             if (grid == null) grid = row.FindAncestor<DataGrid>();
             var cell = row.FirstCell();
-            cell.Tag = tag; //param for template selector
+            //cell.Tag = tag; //param for template selector
+            EditColumnMode = EnumHelper.GetField<ColumnMode>(tag);
             grid.PreparingCellForEdit += GridOnPreparingCellForEdit;
             grid.CellEditEnding += GridOnCellEditEnding;
             grid.PreviewKeyDown += GridOnPreviewKeyDown;
@@ -845,14 +865,14 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             grid.PreviewKeyDown -= GridOnPreviewKeyDown;
             if (e.EditAction == DataGridEditAction.Cancel) return;
 
-            var tag = (string)content.FindAncestor<DataGridCell>().Tag;
+            //var tag = (string)content.FindAncestor<DataGridCell>().Tag;
             var template = content.ContentTemplateSelector.SelectTemplate(null, content);
             var textBox = (TextBox)template.FindName("TitleEditBox", content);
             var newValue = textBox.Text.Trim();
 
-            switch (tag)
+            switch (EditColumnMode)
             {
-                case FileSystemItemViewModel.TITLE:
+                case ColumnMode.Title:
                     if (CurrentRow.Title != newValue)
                     {
                         if (string.IsNullOrEmpty(newValue))
@@ -866,7 +886,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         }
                     }
                     break;
-                case FileSystemItemViewModel.NAME:
+                case ColumnMode.Name:
                     if (CurrentRow.Name != newValue)
                     {
                         if (string.IsNullOrEmpty(newValue))
@@ -887,7 +907,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                     }
                     break;
                 default:
-                    throw new NotSupportedException("Something went wrong, property change not supported: " + tag);
+                    throw new NotSupportedException("Something went wrong, property change not supported: " + EditColumnMode);
             }
             SortContent();
             ChangeDirectoryCommand.RaiseCanExecuteChanged();

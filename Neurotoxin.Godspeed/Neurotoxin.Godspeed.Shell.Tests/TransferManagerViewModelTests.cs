@@ -191,9 +191,9 @@ namespace Neurotoxin.Godspeed.Shell.Tests
 
             var vm = GetInstance();
             var a = new LocalFileSystemContentViewModel();
-            a.LoadDataAsync(LoadCommand.Load, new LoadDataAsyncParameters(new FileListPaneSettings(aPath, "Name", ListSortDirection.Ascending)));
+            a.LoadDataAsync(LoadCommand.Load, new LoadDataAsyncParameters(new FileListPaneSettings(aPath, "Name", ListSortDirection.Ascending, ColumnMode.Title)));
             var b = new LocalFileSystemContentViewModel();
-            b.LoadDataAsync(LoadCommand.Load, new LoadDataAsyncParameters(new FileListPaneSettings(bPath, "Name", ListSortDirection.Ascending)));
+            b.LoadDataAsync(LoadCommand.Load, new LoadDataAsyncParameters(new FileListPaneSettings(bPath, "Name", ListSortDirection.Ascending, ColumnMode.Title)));
 
             var selection = a.Items.First(i => i.Name != "..");
             a.CurrentRow = selection;

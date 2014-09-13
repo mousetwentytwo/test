@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.Models;
 using Neurotoxin.Godspeed.Shell.ViewModels;
 
@@ -9,7 +10,7 @@ namespace Neurotoxin.Godspeed.Shell.Tests.Dummies
     {
         public DummyContentViewModel(FakingRules rules)
         {
-            Settings = new FileListPaneSettings("/", "ComputedName", ListSortDirection.Ascending);
+            Settings = new FileListPaneSettings("/", "ComputedName", ListSortDirection.Ascending, ColumnMode.Title);
             FileManager.FakingRules = rules;
             Initialize();
         }

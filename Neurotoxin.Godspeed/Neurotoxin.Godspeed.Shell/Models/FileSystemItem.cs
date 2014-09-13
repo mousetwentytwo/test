@@ -45,7 +45,8 @@ namespace Neurotoxin.Godspeed.Shell.Models
                     Path = Path,
                     FullPath = FullPath,
                     Size = Size,
-                    Date = Date
+                    Date = Date,
+                    RecognitionState = RecognitionState
                 };
         }
 

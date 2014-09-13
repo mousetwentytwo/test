@@ -1,2 +1,6 @@
 * FIXED Issue #509: Null reference exception in FTP CloseDataStream
 * ADDED: DashLaunch FTPdll plugin support
+* ADDED: File operation options to the context menu
+* ADDED: Title bar to the context menu (Open with Explorer action for local contents)
+* ADDED: Title/Name column mode switch (Ctrl+Click on the Title/Name column)
+* ADDED: FATX file name length limitation (42 bytes) awareness

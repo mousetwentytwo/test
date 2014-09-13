@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
+using Neurotoxin.Godspeed.Shell.Constants;
 using Neurotoxin.Godspeed.Shell.ViewModels;
 
 namespace Neurotoxin.Godspeed.Shell.Converters
@@ -14,6 +15,13 @@ namespace Neurotoxin.Godspeed.Shell.Converters
             if (item == null) return null;
             var title = item.Title;
             var name = item.Name;
+
+            if (parameter is bool && ((bool)parameter))
+            {
+                if (item.IsUpDirectory) name = Strings.UpDirectory;
+                var format = item.Type == ItemType.Directory ? "[{0}]" : "{0}";
+                return string.Format(format, name);
+            }
 
             return name == title || item.IsUpDirectory
                 ? null

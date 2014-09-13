@@ -143,6 +143,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             a.TitleType = (TitleType)b.TitleType;
             a.ContentType = (ContentType)b.ContentType;
             a.Thumbnail = b.Thumbnail;
+            a.RecognitionState = (RecognitionState)b.RecognitionState;
         }
 
         public CacheItem RecognizeTitle(FileSystemItem item)
@@ -347,7 +348,7 @@ namespace Neurotoxin.Godspeed.Shell.ContentProviders
             {
                 item.IsLocked = true;
                 //TODO: exception message in non-English environment
-                item.LockMessage = ex.Message == "Permission denied" ? Resx.ProfileIsInUseErrorMessage : ex.Message;
+                item.LockMessage = ex.Message == "Permission denied" || ex.Message == "Could not open file" ? Resx.ProfileIsInUseErrorMessage : ex.Message;
                 return null;
             }
         }
