@@ -1071,7 +1071,7 @@
     <value>Jelöld ki az eltávolítandó elemeket</value>
   </data>
   <data name="CreditsContent" xml:space="preserve">
-    <value>&lt;p&gt;&lt;b&gt;Készítők:&lt;/b&gt;&lt;br/&gt;Fejlesztő: mercenary&lt;br/&gt;Vezető tesztelő: mousetwentytwo&lt;br/&gt;Fordítás: wilee360&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Honlap:&lt;/b&gt;&lt;br/&gt;&lt;a href="http://godspeed.codeplex.com" target="_blank"&gt;http://godspeed.codeplex.com&lt;/a&gt;&lt;/p&gt;</value>
+    <value>&lt;p&gt;&lt;b&gt;Készítők:&lt;/b&gt;&lt;br/&gt;Fejlesztő: mercenary&lt;br/&gt;Vezető tesztelő: mousetwentytwo&lt;br/&gt;&lt;b&gt;Honlap:&lt;/b&gt;&lt;br/&gt;&lt;a href="http://godspeed.codeplex.com" target="_blank"&gt;http://godspeed.codeplex.com&lt;/a&gt;&lt;/p&gt;</value>
   </data>
   <data name="AddNewFolder" xml:space="preserve">
     <value>Új Mappa létrehozása</value>
