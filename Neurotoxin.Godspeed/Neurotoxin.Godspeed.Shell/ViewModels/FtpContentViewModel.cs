@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Timers;
 using HtmlAgilityPack;
 using Microsoft.Practices.ObjectBuilder2;
 using Microsoft.Practices.Unity;
@@ -30,6 +31,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
     {
         private readonly HashSet<int> _doContentScanOn = new HashSet<int>();
         private readonly Dictionary<string, string> _driveLabelCache = new Dictionary<string, string>();
+        private string _fsdStatus;
+        private Timer _statusUpdateTimer = new Timer(3000);
 
         public FtpConnectionItemViewModel Connection { get; private set; }
         public Stack<string> Log { get { return FileManager.Log; } }
@@ -380,7 +383,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             switch (GetScanFolders(username, password))
             {
                 case HttpStatusCode.OK:
-                    //TODO: start status timer
+                    _statusUpdateTimer.Elapsed += StatusUpdateTimerOnElapsed;
+                    _statusUpdateTimer.Start();
                     return;
                 case HttpStatusCode.Unauthorized:
                     bool result;
@@ -570,8 +574,7 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
                         default:
                             throw new NotSupportedException("Invalid server type: " + ServerType);
                     }
-                    //TODO: set status based upon responseString
-
+                    SetStatus(responseString);
                     return HttpStatusCode.OK;
                 }
             }
@@ -579,6 +582,43 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             {
                 return HttpStatusCode.RequestTimeout;
             }
+        }
+
+        private void StatusUpdateTimerOnElapsed(object sender, ElapsedEventArgs e)
+        {
+            try
+            {
+                var response = HttpGetString(string.Empty, Encoding.UTF8);
+                _statusUpdateTimer.Interval = SetStatus(response) ? 500 : 3000;
+            }
+            catch
+            {
+                //intentional swallow
+            }
+        }
+
+        private bool SetStatus(string responseString)
+        {
+            var r = new Regex("<b>Status :</b>(.*?)</td>");
+            var m = r.Match(responseString);
+            _fsdStatus = null;
+            if (m.Success)
+            {
+                var r2 = new Regex("( \\| )?FTP : Connected( \\| )?");
+                _fsdStatus = r2.Replace(m.Groups[1].Value.Trim(), string.Empty);
+            }
+            UIThread.Run(() => NotifyPropertyChanged(SIZEINFO));
+            return !string.IsNullOrWhiteSpace(_fsdStatus);
+        }
+
+        protected override string GetSizeInfo()
+        {
+            var sizeInfo = base.GetSizeInfo();
+            if (!string.IsNullOrWhiteSpace(_fsdStatus))
+            {
+                sizeInfo += " | " + _fsdStatus;
+            }
+            return sizeInfo;
         }
 
         private FsdScanPath GetCorrespondingScanFolder(string path)
@@ -753,6 +793,10 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             try
             {
+                if (!string.IsNullOrWhiteSpace(_fsdStatus))
+                {
+                    //TODO
+                }
                 CheckPathForSpecialChars(path);
                 return base.GetStream(path, mode, access, startPosition);
             }
@@ -838,6 +882,8 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
         {
             EventAggregator.GetEvent<CloseFtpTraceWindowEvent>().Publish(new CloseFtpTraceWindowEventArgs(FileManager.TraceListener, false));
             FileManager.Disconnect();
+            _statusUpdateTimer.Stop();
+            _statusUpdateTimer.Elapsed -= StatusUpdateTimerOnElapsed;
             _doContentScanOn.ForEach(TriggerContentScan);
             if (CurrentFolder != null) Connection.Model.DefaultPath = CurrentFolder.Path;
             base.Dispose();

@@ -139,22 +139,10 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             get { return Resx.ResourceManager.GetString(Settings.DisplayColumnMode.ToString()); }
         }
 
-        private const string SIZEINFO = "SizeInfo";
+        protected const string SIZEINFO = "SizeInfo";
         public string SizeInfo
         {
-            get
-            {
-                if (Items == null) return null;
-
-                var selectedSize = Items.Where(item => item.Size != null && item.IsSelected).Sum(item => item.Size.Value);
-                var totalSize = Items.Where(item => item.Size != null).Sum(item => item.Size.Value);
-                var selectedFileCount = Items.Count(item => item.Type == ItemType.File && item.IsSelected);
-                var totalFileCount = Items.Count(item => item.Type == ItemType.File);
-                var selectedDirCount = Items.Count(item => item.Type == ItemType.Directory && item.IsSelected);
-                var totalDirCount = Items.Count(item => item.Type == ItemType.Directory && !item.IsUpDirectory);
-
-                return string.Format(new PluralFormatProvider(), Resx.SizeInfo, selectedSize, totalSize, selectedFileCount, totalFileCount, selectedDirCount, totalDirCount);
-            }
+            get { return Items == null ? null : GetSizeInfo(); }
         }
 
         public long? FreeSpace
@@ -1122,6 +1110,18 @@ namespace Neurotoxin.Godspeed.Shell.ViewModels
             }
             CurrentRow = Items.FirstOrDefault();
             RaiseCanExecuteChanges();
+        }
+
+        protected virtual string GetSizeInfo()
+        {
+                var selectedSize = Items.Where(item => item.Size != null && item.IsSelected).Sum(item => item.Size.Value);
+                var totalSize = Items.Where(item => item.Size != null).Sum(item => item.Size.Value);
+                var selectedFileCount = Items.Count(item => item.Type == ItemType.File && item.IsSelected);
+                var totalFileCount = Items.Count(item => item.Type == ItemType.File);
+                var selectedDirCount = Items.Count(item => item.Type == ItemType.Directory && item.IsSelected);
+                var totalDirCount = Items.Count(item => item.Type == ItemType.Directory && !item.IsUpDirectory);
+
+                return string.Format(new PluralFormatProvider(), Resx.SizeInfo, selectedSize, totalSize, selectedFileCount, totalFileCount, selectedDirCount, totalDirCount);
         }
 
         public FileExistenceInfo FileExists(string path)
